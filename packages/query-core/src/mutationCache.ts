@@ -1,8 +1,10 @@
+import { mutationCaches } from './mutationCacheStorage'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import { matchMutation, noop } from './utils'
 import type { Action, Mutation } from './mutation'
 import type { MutationObserver } from './mutationObserver'
+import type { QueryClient } from './queryClient'
 import type {
   CacheKeyConfig,
   DefaultError,
@@ -127,7 +129,7 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
  */
 export class MutationCache extends Subscribable<MutationCacheListener> {
   #mutations: Set<Mutation<any, any, any, any>>
-  #scopes: Map<string, Array<Mutation<any, any, any, any>>>
+  #scopes: Map<string | undefined, Array<Mutation<any, any, any, any>>>
   #mutationId: number
 
   constructor(public config: MutationCacheConfig = {}) {
@@ -179,15 +181,12 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     if (this.#mutations.delete(mutation)) {
       mutation.destroy()
       const scope = scopeFor(mutation)
-      if (typeof scope === 'string') {
-        const scopedMutations = this.#scopes.get(scope)
-        if (scopedMutations) {
-          if (scopedMutations.length > 1) {
-            const index = scopedMutations.indexOf(mutation)
-            if (index !== -1) {
-              scopedMutations.splice(index, 1)
-            }
-          } else if (scopedMutations[0] === mutation) {
+      const scopedMutations = this.#scopes.get(scope)
+      if (scopedMutations) {
+        const index = scopedMutations.indexOf(mutation)
+        if (index !== -1) {
+          scopedMutations.splice(index, 1)
+          if (!scopedMutations.length) {
             this.#scopes.delete(scope)
           }
         }
@@ -217,20 +216,10 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * ahead of it.
    */
   canRun(mutation: Mutation<any, any, any, any>): boolean {
-    const scope = scopeFor(mutation)
-    if (typeof scope === 'string') {
-      const mutationsWithSameScope = this.#scopes.get(scope)
-      const firstPendingMutation = mutationsWithSameScope?.find(
-        (m) => m.state.status === 'pending',
-      )
-      // we can run if there is no current pending mutation (start use-case)
-      // or if WE are the first pending mutation (continue use-case)
-      return !firstPendingMutation || firstPendingMutation === mutation
-    } else {
-      // For unscoped mutations there are never any pending mutations in front of the
-      // current mutation
-      return true
-    }
+    const firstPendingMutation = this.#scopes
+      .get(scopeFor(mutation))
+      ?.find((mutation) => mutation.state.status === 'pending')
+    return !firstPendingMutation || firstPendingMutation === mutation
   }
 
   /**
@@ -241,16 +230,11 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * or immediately if there is none.
    */
   runNext(mutation: Mutation<any, any, any, any>): Promise<unknown> {
-    const scope = scopeFor(mutation)
-    if (typeof scope === 'string') {
-      const foundMutation = this.#scopes
-        .get(scope)
-        ?.find((m) => m !== mutation && m.state.isPaused)
+    const next = this.#scopes
+      .get(scopeFor(mutation))
+      ?.find((entry) => entry !== mutation && entry.state.isPaused)
 
-      return foundMutation?.continue() ?? Promise.resolve()
-    } else {
-      return Promise.resolve()
-    }
+    return next?.continue() ?? Promise.resolve()
   }
 
   /**
@@ -258,7 +242,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * Mutations that are already running continue to execute.
    * @example
    * ```ts
-   * const mutationCache = queryClient.getMutationCache()
+   * const mutationCache = getMutationCache(queryClient)
    *
    * mutationCache.clear()
    * ```
@@ -283,7 +267,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * @returns Every mutation in the cache.
    * @example
    * ```ts
-   * const mutationCache = queryClient.getMutationCache()
+   * const mutationCache = getMutationCache(queryClient)
    *
    * const mutations = mutationCache.getAll()
    * ```
@@ -303,7 +287,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * @see {@link MutationCache#findAll}
    * @example
    * ```ts
-   * const mutationCache = queryClient.getMutationCache()
+   * const mutationCache = getMutationCache(queryClient)
    *
    * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
    * ```
@@ -334,7 +318,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * @see {@link MutationCache#find}
    * @example
    * ```ts
-   * const mutationCache = queryClient.getMutationCache()
+   * const mutationCache = getMutationCache(queryClient)
    *
    * const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
    * ```
@@ -381,4 +365,19 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
  */
 function scopeFor(mutation: Mutation<any, any, any, any>) {
   return mutation.options.scope?.id
+}
+
+/**
+ * Returns the mutation cache for a client, creating the default cache on first access.
+ * If the client has a custom mutation cache, returns that cache.
+ * @param client - The client whose mutation cache to read.
+ * @returns The mutation cache associated with the client.
+ */
+export function getMutationCache(client: QueryClient): MutationCache {
+  let cache = mutationCaches.get(client)
+  if (!cache) {
+    cache = new MutationCache()
+    mutationCaches.set(client, cache)
+  }
+  return cache
 }

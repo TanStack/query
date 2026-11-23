@@ -1,4 +1,5 @@
 import { fireEvent, render } from '@solidjs/testing-library'
+import { getMutationCache } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   ErrorBoundary,
@@ -1030,12 +1031,12 @@ describe('useMutation', () => {
     expect(states).toStrictEqual(['idle', 'pending'])
 
     fireEvent.click(rendered.getByText('unmount'))
-    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+    expect(getMutationCache(queryClient).getAll()[0]?.state.status).toBe(
       'pending',
     )
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+    expect(getMutationCache(queryClient).getAll()[0]?.state.status).toBe(
       'success',
     )
     expect(states).toStrictEqual(['idle', 'pending'])
@@ -1295,7 +1296,7 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
     await vi.advanceTimersByTimeAsync(10)
     expect(
-      queryClient.getMutationCache().findAll({ mutationKey: mutationKey }),
+      getMutationCache(queryClient).findAll({ mutationKey: mutationKey }),
     ).toHaveLength(0)
     expect(count).toBe(1)
 

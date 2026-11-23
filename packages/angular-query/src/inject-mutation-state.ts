@@ -1,5 +1,5 @@
 import { assertInInjectionContext, inject } from '@angular/core'
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, getMutationCache } from '@tanstack/query-core'
 import { injectExternalStore } from './utils/inject-external-store'
 import type { Signal } from '@angular/core'
 import type {
@@ -126,7 +126,7 @@ export function injectMutationState<
     assertInInjectionContext(injectMutationState)
   }
   const queryClient = inject(QueryClient)
-  const mutationCache = queryClient.getMutationCache()
+  const mutationCache = getMutationCache(queryClient)
 
   return injectExternalStore(
     () => ({

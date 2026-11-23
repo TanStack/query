@@ -1,6 +1,7 @@
 import { DropdownMenu, RadioGroup } from '@kobalte/core'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { rankItem } from '@tanstack/match-sorter-utils'
+import { getMutationCache } from '@tanstack/query-core'
 import {
   For,
   Show,
@@ -674,7 +675,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   })
 
   const mutation_cache = createMemo(() => {
-    return useQueryDevtoolsContext().client.getMutationCache()
+    return getMutationCache(useQueryDevtoolsContext().client)
   })
 
   const queryCount = createSubscribeToQueryCacheBatcher((queryCache) => {
@@ -2256,7 +2257,7 @@ const setupMutationCacheSubscription = () => {
   const { mutationCacheSubscriptions } = useDevtoolsSubscriptions()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
-    return client.getMutationCache()
+    return getMutationCache(client)
   })
 
   createEffect(() => {
@@ -2291,7 +2292,7 @@ const createSubscribeToMutationCacheBatcher = <T,>(
   const { mutationCacheSubscriptions } = useDevtoolsSubscriptions()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
-    return client.getMutationCache()
+    return getMutationCache(client)
   })
 
   const [value, setValue] = createSignal<T>(

@@ -1,4 +1,5 @@
 import { Mutation } from './mutation'
+import { mutationCaches } from './mutationCacheStorage'
 import { noop } from './utils'
 import type { MutationState } from './mutation'
 import type { Query, QueryState } from './query'
@@ -252,12 +253,13 @@ export function dehydrate(
     client.getDefaultOptions().dehydrate?.shouldDehydrateMutation ??
     defaultShouldDehydrateMutation
 
-  const mutations = client
-    .getMutationCache()
-    .getAll()
-    .flatMap((mutation) =>
-      filterMutation(mutation) ? [dehydrateMutation(mutation)] : [],
-    )
+  const mutations =
+    mutationCaches
+      .get(client)
+      ?.getAll()
+      .flatMap((mutation) =>
+        filterMutation(mutation) ? [dehydrateMutation(mutation)] : [],
+      ) ?? []
 
   const filterQuery =
     options.shouldDehydrateQuery ??

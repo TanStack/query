@@ -1,6 +1,5 @@
 import { fireEvent, render } from '@solidjs/testing-library'
-import { Mutation } from '@tanstack/query-core'
-import * as QueryCore from '@tanstack/query-core'
+import { Mutation, MutationCache, getMutationCache } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -193,7 +192,7 @@ describe('useIsMutating', () => {
     const queryClient1 = new QueryClient()
     const queryClient2 = new QueryClient()
     const [client, setClient] = createSignal(queryClient1)
-    const mutationCache1 = queryClient1.getMutationCache()
+    const mutationCache1 = getMutationCache(queryClient1)
     const originalSubscribe1 = mutationCache1.subscribe.bind(mutationCache1)
     const unsubscribe1 = vi.fn<() => void>()
 
@@ -240,20 +239,16 @@ describe('useIsMutating', () => {
     const states: Array<number> = []
     // We have to mock the MutationCache to not unsubscribe
     // the listener when the component is unmounted
-    class MutationCacheMock extends QueryCore.MutationCache {
+    class MutationCacheMock extends MutationCache {
       override subscribe(listener: any) {
         super.subscribe(listener)
         return () => void 0
       }
     }
 
-    vi.spyOn(QueryCore, 'MutationCache').mockImplementation((fn) => {
-      return new MutationCacheMock(fn)
+    const spiedClient = new QueryClient({
+      mutationCache: new MutationCacheMock(),
     })
-
-    // Create the client after mocking MutationCache so it uses the mock,
-    // not the centralized client from beforeEach
-    const spiedClient = new QueryClient()
     const mutationKey1 = createKey()
 
     function IsMutating() {
@@ -290,12 +285,12 @@ describe('useIsMutating', () => {
     expect(states).toStrictEqual([0, 1])
 
     fireEvent.click(rendered.getByText('unmount'))
-    expect(spiedClient.getMutationCache().getAll()[0]?.state.status).toBe(
+    expect(getMutationCache(spiedClient).getAll()[0]?.state.status).toBe(
       'pending',
     )
 
     await vi.advanceTimersByTimeAsync(20)
-    expect(spiedClient.getMutationCache().getAll()[0]?.state.status).toBe(
+    expect(getMutationCache(spiedClient).getAll()[0]?.state.status).toBe(
       'success',
     )
     expect(states).toStrictEqual([0, 1])

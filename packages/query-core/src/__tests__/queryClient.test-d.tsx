@@ -1,4 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { getMutationCache } from '../mutationCache'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
 import type { Mutation } from '../mutation'
@@ -877,9 +878,7 @@ describe('queryClient', () => {
     it('should return the MutationCache', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(
-        queryClient.getMutationCache(),
-      ).toEqualTypeOf<MutationCache>()
+      expectTypeOf(getMutationCache(queryClient)).toEqualTypeOf<MutationCache>()
     })
   })
 

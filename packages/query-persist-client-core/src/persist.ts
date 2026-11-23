@@ -1,4 +1,4 @@
-import { dehydrate, hydrate } from '@tanstack/query-core'
+import { dehydrate, getMutationCache, hydrate } from '@tanstack/query-core'
 import type {
   DehydrateOptions,
   DehydratedState,
@@ -209,13 +209,13 @@ export function persistQueryClientSubscribe(
       }
     })
 
-  const unsubscribeMutationCache = props.queryClient
-    .getMutationCache()
-    .subscribe((event) => {
-      if (isCacheEventType(event.type)) {
-        save()
-      }
-    })
+  const unsubscribeMutationCache = getMutationCache(
+    props.queryClient,
+  ).subscribe((event) => {
+    if (isCacheEventType(event.type)) {
+      save()
+    }
+  })
 
   return () => {
     unsubscribeQueryCache()

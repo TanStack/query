@@ -11,7 +11,7 @@ export {
   hydrate,
 } from './hydration'
 export { InfiniteQueryObserver } from './infiniteQueryObserver'
-export { MutationCache } from './mutationCache'
+export { getMutationCache, MutationCache } from './mutationCache'
 export type { MutationCacheNotifyEvent } from './mutationCache'
 export { MutationObserver } from './mutationObserver'
 export { defaultScheduler, notifyManager } from './notifyManager'

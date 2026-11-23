@@ -1,4 +1,4 @@
-import { QueryClient, noop } from '@tanstack/query-core'
+import { QueryClient, getMutationCache, noop } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import {
@@ -118,14 +118,14 @@ describe('createMutationController', () => {
     await vi.advanceTimersByTimeAsync(10)
     await expect(mutatePromise).resolves.toBe(3)
     expect(
-      queryClient
-        .getMutationCache()
-        .findAll({ mutationKey: consumer.mutationKey }).length,
+      getMutationCache(queryClient).findAll({
+        mutationKey: consumer.mutationKey,
+      }).length,
     ).toBeGreaterThan(0)
     expect(
-      providerClient
-        .getMutationCache()
-        .findAll({ mutationKey: consumer.mutationKey }),
+      getMutationCache(providerClient).findAll({
+        mutationKey: consumer.mutationKey,
+      }),
     ).toHaveLength(0)
 
     consumer.mutation.destroy()
@@ -968,8 +968,7 @@ describe('createMutationController', () => {
     await vi.advanceTimersByTimeAsync(10)
     await expect(mutatePromise).resolves.toBe(2)
     expect(
-      queryClient
-        .getMutationCache()
+      getMutationCache(queryClient)
         .findAll({ mutationKey: key })
         .map((mutation) => mutation.options.mutationKey),
     ).toStrictEqual([[...key, 'alpha']])
@@ -1006,9 +1005,9 @@ describe('createMutationController', () => {
     const firstMutation = consumer.mutation.mutateAsync(1)
     await vi.advanceTimersByTimeAsync(10)
     await expect(firstMutation).resolves.toBe(2)
-    const countAAfterFirst = clientA
-      .getMutationCache()
-      .findAll({ mutationKey: consumer.mutationKey }).length
+    const countAAfterFirst = getMutationCache(clientA).findAll({
+      mutationKey: consumer.mutationKey,
+    }).length
     expect(countAAfterFirst).toBeGreaterThan(0)
 
     provider.client = clientB
@@ -1017,12 +1016,12 @@ describe('createMutationController', () => {
     const secondMutation = consumer.mutation.mutateAsync(2)
     await vi.advanceTimersByTimeAsync(10)
     await expect(secondMutation).resolves.toBe(3)
-    const countAAfterSecond = clientA
-      .getMutationCache()
-      .findAll({ mutationKey: consumer.mutationKey }).length
-    const countBAfterSecond = clientB
-      .getMutationCache()
-      .findAll({ mutationKey: consumer.mutationKey }).length
+    const countAAfterSecond = getMutationCache(clientA).findAll({
+      mutationKey: consumer.mutationKey,
+    }).length
+    const countBAfterSecond = getMutationCache(clientB).findAll({
+      mutationKey: consumer.mutationKey,
+    }).length
     expect(countAAfterSecond).toBe(countAAfterFirst)
     expect(countBAfterSecond).toBeGreaterThan(0)
 
@@ -1116,11 +1115,11 @@ describe('createMutationController', () => {
     await vi.advanceTimersByTimeAsync(10)
     await expect(secondMutation).resolves.toBe(3)
     expect(
-      clientA.getMutationCache().findAll({ mutationKey: consumer.mutationKey })
+      getMutationCache(clientA).findAll({ mutationKey: consumer.mutationKey })
         .length,
     ).toBeGreaterThan(0)
     expect(
-      clientB.getMutationCache().findAll({ mutationKey: consumer.mutationKey })
+      getMutationCache(clientB).findAll({ mutationKey: consumer.mutationKey })
         .length,
     ).toBeGreaterThan(0)
 

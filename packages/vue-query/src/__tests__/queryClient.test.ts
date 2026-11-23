@@ -1,4 +1,7 @@
-import { QueryClient as QueryClientOrigin } from '@tanstack/query-core'
+import {
+  QueryClient as QueryClientOrigin,
+  getMutationCache,
+} from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref, unref } from 'vue'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -43,7 +46,7 @@ describe('QueryCache', () => {
       const queryClient = new QueryClient({ queryCache, mutationCache })
 
       expect(queryClient.getQueryCache()).toBe(queryCache)
-      expect(queryClient.getMutationCache()).toBe(mutationCache)
+      expect(getMutationCache(queryClient)).toBe(mutationCache)
     })
   })
 

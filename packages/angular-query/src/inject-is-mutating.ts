@@ -1,5 +1,5 @@
 import { assertInInjectionContext, inject } from '@angular/core'
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, getMutationCache } from '@tanstack/query-core'
 import { injectExternalStore } from './utils/inject-external-store'
 import type { Signal } from '@angular/core'
 import type { MutationFilters } from '@tanstack/query-core'
@@ -34,7 +34,7 @@ export function injectIsMutating(
     assertInInjectionContext(injectIsMutating)
   }
   const queryClient = inject(QueryClient)
-  const cache = queryClient.getMutationCache()
+  const cache = getMutationCache(queryClient)
 
   return injectExternalStore(() => ({
     getSnapshot: () => queryClient.isMutating(filters()),

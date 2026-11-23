@@ -1,3 +1,4 @@
+import { getMutationCache } from '@tanstack/query-core'
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { BaseController } from './controllers/BaseController.js'
 import type { MutationFilters, QueryClient } from '@tanstack/query-core'
@@ -95,7 +96,7 @@ class IsMutatingController extends BaseController<number> {
       return
     }
 
-    this.unsubscribe = this.queryClient.getMutationCache().subscribe(() => {
+    this.unsubscribe = getMutationCache(this.queryClient).subscribe(() => {
       this.setResult(this.computeValue())
     })
   }

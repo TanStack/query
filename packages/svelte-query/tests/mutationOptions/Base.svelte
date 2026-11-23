@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getMutationCache } from '@tanstack/query-core'
   import {
     createMutation,
     setQueryClientContext,
@@ -36,7 +37,7 @@
   let clientIsMutating = $state(0)
 
   $effect(() => {
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     clientIsMutating = isMutatingFilters
       ? queryClient.isMutating(isMutatingFilters)
       : queryClient.isMutating()

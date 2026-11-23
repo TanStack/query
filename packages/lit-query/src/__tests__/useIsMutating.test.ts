@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, getMutationCache } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import {
@@ -119,14 +119,14 @@ describe('useIsMutating', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.isMutating()).toBe(0)
     expect(
-      queryClient
-        .getMutationCache()
-        .findAll({ mutationKey: consumer.mutationKey }).length,
+      getMutationCache(queryClient).findAll({
+        mutationKey: consumer.mutationKey,
+      }).length,
     ).toBeGreaterThan(0)
     expect(
-      providerClient
-        .getMutationCache()
-        .findAll({ mutationKey: consumer.mutationKey }),
+      getMutationCache(providerClient).findAll({
+        mutationKey: consumer.mutationKey,
+      }),
     ).toHaveLength(0)
 
     consumer.mutation.destroy()

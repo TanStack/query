@@ -9,6 +9,7 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import { getMutationCache } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/angular'
 import { firstValueFrom } from 'rxjs'
@@ -47,7 +48,7 @@ describe('injectMutation', () => {
     vi.useRealTimers()
     queryClient.setDefaultOptions({ mutations: { throwOnError: true } })
     const cacheReport = vi.fn<(error: Error) => void>()
-    queryClient.getMutationCache().config.onError = cacheReport
+    getMutationCache(queryClient).config.onError = cacheReport
     const report = vi.spyOn(TestBed.inject(ErrorHandler), 'handleError')
     const error = new Error('mutation failed')
     const mutation = TestBed.runInInjectionContext(() =>
@@ -160,7 +161,7 @@ describe('injectMutation', () => {
   })
 
   it('reactive options should update mutation', () => {
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     // Signal will be updated before the mutation is called
     // this test confirms that the mutation uses the updated value
     const mutationKey = signal(['1'])
@@ -223,7 +224,7 @@ describe('injectMutation', () => {
     const readResult = vi.fn<() => 'error' | 'idle' | 'pending' | 'success'>(
       () => mutation.status(),
     )
-    const unsubscribe = queryClient.getMutationCache().subscribe((event) => {
+    const unsubscribe = getMutationCache(queryClient).subscribe((event) => {
       // setOptions emits synchronously; this read must not re-enter the signal
       // computation that caused the options update.
       if (event.type === 'observerOptionsUpdated') readResult()
@@ -728,7 +729,7 @@ describe('injectMutation', () => {
   })
 
   it('should support required signal inputs', async () => {
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
 
     @Component({
       selector: 'app-fake',
@@ -772,7 +773,7 @@ describe('injectMutation', () => {
   })
 
   it('should update options on required signal input change', async () => {
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
 
     @Component({
       selector: 'app-fake',

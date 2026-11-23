@@ -2,6 +2,7 @@ import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MutationCache, MutationObserver, QueryClient } from '..'
 import { Mutation } from '../mutation'
+import { getMutationCache } from '../mutationCache'
 import { executeMutation } from './utils'
 import type {
   DefaultError,
@@ -496,17 +497,17 @@ describe('mutationCache', () => {
         mutationFn: (input: number) => sleep(10).then(() => input),
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      expect(getMutationCache(queryClient).getAll()).toHaveLength(0)
 
       observer.mutate(1)
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      expect(getMutationCache(queryClient).getAll()).toHaveLength(1)
       await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      expect(getMutationCache(queryClient).getAll()).toHaveLength(1)
 
       unsubscribe()
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      expect(getMutationCache(queryClient).getAll()).toHaveLength(1)
       await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      expect(getMutationCache(queryClient).getAll()).toHaveLength(0)
     })
 
     it('should be garbage collected later when unsubscribed and mutation is pending', async () => {
@@ -530,13 +531,13 @@ describe('mutationCache', () => {
       observer.mutate(1)
 
       unsubscribe()
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      expect(getMutationCache(queryClient).getAll()).toHaveLength(1)
       await vi.advanceTimersByTimeAsync(10)
       // unsubscribe should not remove even though gcTime has elapsed b/c mutation is still pending
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      expect(getMutationCache(queryClient).getAll()).toHaveLength(1)
       await vi.advanceTimersByTimeAsync(10)
       // should be removed after an additional gcTime wait
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      expect(getMutationCache(queryClient).getAll()).toHaveLength(0)
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
@@ -562,7 +563,7 @@ describe('mutationCache', () => {
 
       unsubscribe()
       await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      expect(getMutationCache(queryClient).getAll()).toHaveLength(0)
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
   })

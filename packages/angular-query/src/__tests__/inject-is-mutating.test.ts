@@ -1,6 +1,6 @@
 import { Component, input, inputBinding, signal } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { Mutation } from '@tanstack/query-core'
+import { Mutation, getMutationCache } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/angular'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -105,7 +105,7 @@ describe('injectIsMutating', () => {
       }))
     }
 
-    const subscribe = vi.spyOn(queryClient.getMutationCache(), 'subscribe')
+    const subscribe = vi.spyOn(getMutationCache(queryClient), 'subscribe')
     const includeMutation = signal(true)
     const rendered = await render(Page, {
       bindings: [inputBinding('includeMutation', includeMutation)],

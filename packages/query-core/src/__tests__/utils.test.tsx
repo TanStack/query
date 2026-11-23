@@ -2,6 +2,7 @@ import { createKey } from '@tanstack/query-test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '..'
 import { Mutation } from '../mutation'
+import { getMutationCache } from '../mutationCache'
 import {
   addConsumeAwareSignal,
   addToArray,
@@ -559,7 +560,7 @@ describe('core/utils', () => {
       const mutation = new Mutation({
         client: queryClient,
         mutationId: 1,
-        mutationCache: queryClient.getMutationCache(),
+        mutationCache: getMutationCache(queryClient),
         options: {},
       })
 

@@ -1,3 +1,4 @@
+import { getMutationCache } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isReactive, ref } from 'vue'
@@ -267,7 +268,7 @@ describe('mutationOptions', () => {
 
     const { mutate } = useMutation(mutationOpts)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(queryClient.isMutating(mutationOpts))
     })
@@ -293,7 +294,7 @@ describe('mutationOptions', () => {
 
     const { mutate } = useMutation(mutationOpts)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(queryClient.isMutating())
     })
@@ -324,7 +325,7 @@ describe('mutationOptions', () => {
     const { mutate: mutate1 } = useMutation(mutationOpts1)
     const { mutate: mutate2 } = useMutation(mutationOpts2)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(queryClient.isMutating())
     })
@@ -356,7 +357,7 @@ describe('mutationOptions', () => {
     const { mutate: mutate1 } = useMutation(mutationOpts1)
     const { mutate: mutate2 } = useMutation(mutationOpts2)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(
         queryClient.isMutating({
@@ -394,7 +395,7 @@ describe('mutationOptions', () => {
 
     const resolvedOpts = mutationOpts()
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(queryClient.isMutating(resolvedOpts))
     })
@@ -420,7 +421,7 @@ describe('mutationOptions', () => {
 
     const { mutate } = useMutation(mutationOpts)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(queryClient.isMutating())
     })
@@ -451,7 +452,7 @@ describe('mutationOptions', () => {
     const { mutate: mutate1 } = useMutation(mutationOpts1)
     const { mutate: mutate2 } = useMutation(mutationOpts2)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(queryClient.isMutating())
     })
@@ -485,7 +486,7 @@ describe('mutationOptions', () => {
     const { mutate: mutate1 } = useMutation(mutationOpts1)
     const { mutate: mutate2 } = useMutation(mutationOpts2)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(
         queryClient.isMutating({

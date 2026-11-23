@@ -261,7 +261,7 @@ export function matchQuery(
  * @returns `true` if the mutation matches every specified filter.
  * @example
  * ```ts
- * const mutationCache = queryClient.getMutationCache()
+ * const mutationCache = getMutationCache(queryClient)
  *
  * const matchingMutations = mutationCache
  *   .getAll()

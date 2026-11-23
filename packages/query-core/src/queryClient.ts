@@ -1,5 +1,5 @@
 import { focusManager } from './focusManager'
-import { MutationCache } from './mutationCache'
+import { mutationCaches } from './mutationCacheStorage'
 import { notifyManager } from './notifyManager'
 import { onlineManager } from './onlineManager'
 import { QueryCache } from './queryCache'
@@ -56,7 +56,7 @@ interface MutationDefaults {
 
 /**
  * `QueryClient` is used to interact with a cache of queries and mutations. It owns a
- * `QueryCache` and a `MutationCache` (creating default ones if none are passed in) and holds
+ * `QueryCache` and can hold a lazily created `MutationCache`. It also holds
  * the default options that are applied to queries and mutations created through it.
  * @example
  * ```ts
@@ -73,7 +73,6 @@ interface MutationDefaults {
  */
 export class QueryClient {
   #queryCache: QueryCache
-  #mutationCache: MutationCache
   #defaultOptions: DefaultOptions
   #queryDefaults: Map<string, QueryDefaults>
   #mutationDefaults: Map<string, MutationDefaults>
@@ -83,7 +82,9 @@ export class QueryClient {
 
   constructor(config: QueryClientConfig = {}) {
     this.#queryCache = config.queryCache || new QueryCache()
-    this.#mutationCache = config.mutationCache || new MutationCache()
+    if (config.mutationCache) {
+      mutationCaches.set(this, config.mutationCache)
+    }
     this.#defaultOptions = config.defaultOptions || {}
     this.#queryDefaults = new Map()
     this.#mutationDefaults = new Map()
@@ -168,7 +169,10 @@ export class QueryClient {
       any
     >,
   >(filters?: NoInfer<Omit<TMutationFilters, 'status'>>): number {
-    return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
+    return (
+      mutationCaches.get(this)?.findAll({ ...filters, status: 'pending' })
+        .length ?? 0
+    )
   }
 
   /**
@@ -657,7 +661,9 @@ export class QueryClient {
    */
   resumePausedMutations(): Promise<unknown> {
     if (onlineManager.isOnline()) {
-      return this.#mutationCache.resumePausedMutations()
+      return (
+        mutationCaches.get(this)?.resumePausedMutations() ?? Promise.resolve()
+      )
     }
     return Promise.resolve()
   }
@@ -676,22 +682,6 @@ export class QueryClient {
    */
   getQueryCache(): QueryCache {
     return this.#queryCache
-  }
-
-  /**
-   * Returns the mutation cache this client is connected to.
-   * @returns The {@link MutationCache} instance.
-   * @example
-   * ```ts
-   * import { QueryClient } from '@tanstack/query-core'
-   *
-   * const queryClient = new QueryClient()
-   * const mutationCache = queryClient.getMutationCache()
-   * const mutations = mutationCache.findAll({ status: 'pending' })
-   * ```
-   */
-  getMutationCache(): MutationCache {
-    return this.#mutationCache
   }
 
   /**
@@ -829,7 +819,10 @@ export class QueryClient {
     >,
   ): void {
     this.#mutationDefaults.set(
-      hashKeyByOptions(mutationKey, this.#mutationCache.config.mutationKey),
+      hashKeyByOptions(
+        mutationKey,
+        mutationCaches.get(this)?.config.mutationKey,
+      ),
       {
         mutationKey,
         defaultOptions: options,
@@ -862,7 +855,7 @@ export class QueryClient {
         partialMatchKey(
           mutationKey,
           queryDefault.mutationKey,
-          this.#mutationCache.config.mutationKey?.equalityFn,
+          mutationCaches.get(this)?.config.mutationKey?.equalityFn,
         )
       ) {
         Object.assign(result, queryDefault.defaultOptions)
@@ -1002,6 +995,6 @@ export class QueryClient {
    */
   clear(): void {
     this.#queryCache.clear()
-    this.#mutationCache.clear()
+    mutationCaches.get(this)?.clear()
   }
 }

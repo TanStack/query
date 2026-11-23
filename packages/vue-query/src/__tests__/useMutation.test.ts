@@ -1,4 +1,4 @@
-import { noop } from '@tanstack/query-core'
+import { getMutationCache, noop } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isReactive, isReadonly, onScopeDispose, reactive, ref } from 'vue'
@@ -119,7 +119,7 @@ describe('useMutation', () => {
     const key1 = createKey()
     const key2 = createKey()
     const queryClient = useQueryClient()
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const options = reactive({
       mutationKey: key1,
       mutationFn: (params: string) => sleep(10).then(() => params),
@@ -148,7 +148,7 @@ describe('useMutation', () => {
       },
     ])
     const queryClient = useQueryClient()
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const options = reactive({
       mutationKey,
       mutationFn: (params: string) => sleep(10).then(() => params),
@@ -183,7 +183,7 @@ describe('useMutation', () => {
     const mutationKeyRef = ref<Array<string>>(key1)
     const mutationFn = ref((params: string) => sleep(0).then(() => params))
     const queryClient = useQueryClient()
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const mutation = useMutation({ mutationKey: mutationKeyRef, mutationFn })
 
     mutationKeyRef.value = key2

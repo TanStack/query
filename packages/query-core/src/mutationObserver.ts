@@ -1,4 +1,5 @@
 import { Mutation, getDefaultState } from './mutation'
+import { getMutationCache } from './mutationCache'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import { hashKeyByOptions, shallowEqualObjects } from './utils'
@@ -110,7 +111,7 @@ export class MutationObserver<
       | undefined
     this.options = this.#client.defaultMutationOptions(options)
     if (!shallowEqualObjects(this.options, prevOptions)) {
-      this.#client.getMutationCache().notify({
+      getMutationCache(this.#client).notify({
         type: 'observerOptionsUpdated',
         mutation: this.#currentMutation,
         observer: this,
@@ -122,11 +123,11 @@ export class MutationObserver<
       this.options.mutationKey &&
       hashKeyByOptions(
         prevOptions.mutationKey,
-        this.#client.getMutationCache().config.mutationKey,
+        getMutationCache(this.#client).config.mutationKey,
       ) !==
         hashKeyByOptions(
           this.options.mutationKey,
-          this.#client.getMutationCache().config.mutationKey,
+          getMutationCache(this.#client).config.mutationKey,
         )
     ) {
       this.reset()

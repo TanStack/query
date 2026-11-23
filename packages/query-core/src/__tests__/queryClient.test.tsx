@@ -10,11 +10,13 @@ import {
   defaultQueryFn,
   dehydrate,
   focusManager,
+  getMutationCache,
   hydrate,
   noop,
   onlineManager,
   skipToken,
 } from '..'
+import { mutationCaches } from '../mutationCacheStorage'
 import { mockOnlineManagerIsOnline } from './utils'
 import type {
   InfiniteData,
@@ -486,6 +488,18 @@ describe('queryClient', () => {
       await vi.advanceTimersByTimeAsync(5)
       expect(queryClient.isFetching()).toBe(0)
     })
+  })
+
+  it('creates the default mutation cache only when requested', async () => {
+    expect(queryClient.isMutating()).toBe(0)
+    expect(dehydrate(queryClient).mutations).toStrictEqual([])
+    await queryClient.resumePausedMutations()
+    queryClient.clear()
+    expect(mutationCaches.has(queryClient)).toBe(false)
+
+    const cache = getMutationCache(queryClient)
+    expect(getMutationCache(queryClient)).toBe(cache)
+    expect(getMutationCache(new QueryClient())).not.toBe(cache)
   })
 
   describe('isMutating', () => {
@@ -2395,7 +2409,7 @@ describe('queryClient', () => {
         'onOnline',
       )
       const mutationCacheResumePausedMutationsSpy = vi.spyOn(
-        testClient.getMutationCache(),
+        getMutationCache(testClient),
         'resumePausedMutations',
       )
 
@@ -2424,7 +2438,7 @@ describe('queryClient', () => {
         'onOnline',
       )
       const mutationCacheResumePausedMutationsSpy = vi.spyOn(
-        testClient.getMutationCache(),
+        getMutationCache(testClient),
         'resumePausedMutations',
       )
 
@@ -2592,15 +2606,15 @@ describe('queryClient', () => {
       hydrate(newQueryClient, state)
 
       // still paused because we are still offline
-      expect(
-        newQueryClient.getMutationCache().getAll()[0]?.state.isPaused,
-      ).toBe(true)
+      expect(getMutationCache(newQueryClient).getAll()[0]?.state.isPaused).toBe(
+        true,
+      )
 
       await newQueryClient.resumePausedMutations()
 
       onlineManager.setOnline(true)
       await vi.advanceTimersByTimeAsync(0)
-      expect(newQueryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      expect(getMutationCache(newQueryClient).getAll()[0]?.state.status).toBe(
         'success',
       )
 
@@ -2705,7 +2719,7 @@ describe('queryClient', () => {
         'onOnline',
       )
       const mutationCacheResumePausedMutationsSpy = vi.spyOn(
-        testClient.getMutationCache(),
+        getMutationCache(testClient),
         'resumePausedMutations',
       )
 
@@ -2740,7 +2754,7 @@ describe('queryClient', () => {
         'onOnline',
       )
       const mutationCacheResumePausedMutationsSpy = vi.spyOn(
-        testClient.getMutationCache(),
+        getMutationCache(testClient),
         'resumePausedMutations',
       )
 

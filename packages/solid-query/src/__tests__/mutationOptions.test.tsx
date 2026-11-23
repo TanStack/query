@@ -1,4 +1,5 @@
 import { fireEvent } from '@solidjs/testing-library'
+import { getMutationCache } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { createEffect, createRenderEffect } from 'solid-js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -204,7 +205,7 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(queryClient.isMutating(mutationOpts))
     })
@@ -240,7 +241,7 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(queryClient.isMutating())
     })
@@ -283,7 +284,7 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(queryClient.isMutating())
     })
@@ -327,7 +328,7 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(
         queryClient.isMutating({
