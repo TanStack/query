@@ -1,5 +1,10 @@
 import { runInNewContext } from 'node:vm'
-import { Mutation, QueryClient, QueryObserver } from '@tanstack/query-core'
+import {
+  Mutation,
+  QueryClient,
+  QueryObserver,
+  defaultQueryFn,
+} from '@tanstack/query-core'
 import { createRoot } from 'solid-js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
@@ -1097,6 +1102,7 @@ describe('Utils tests', () => {
       function addObserver(query: Query) {
         const observer = new QueryObserver(queryClient, {
           queryKey: query.queryKey,
+          queryFn: defaultQueryFn,
           enabled: false,
         })
         return observer.subscribe(() => {})
@@ -1143,6 +1149,7 @@ describe('Utils tests', () => {
       it('should place a stale query after a fresh one when both are idle and have observers', () => {
         const staleObserver = new QueryObserver(queryClient, {
           queryKey: ['stale'],
+          queryFn: defaultQueryFn,
           staleTime: 0,
         })
         const staleUnsubscribe = staleObserver.subscribe(() => {})
@@ -1421,6 +1428,7 @@ describe('Utils tests', () => {
     function addObserver(query: Query) {
       const observer = new QueryObserver(queryClient, {
         queryKey: query.queryKey,
+        queryFn: defaultQueryFn,
         enabled: false,
       })
       return observer.subscribe(() => {})
@@ -1460,6 +1468,7 @@ describe('Utils tests', () => {
     it('should return "paused" even when stale if fetchStatus is "paused"', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: ['paused-stale'],
+        queryFn: defaultQueryFn,
         staleTime: 0,
       })
       const unsubscribe = observer.subscribe(() => {})
@@ -1484,6 +1493,7 @@ describe('Utils tests', () => {
     it('should return "stale" when query is idle, has observers, and is stale', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: ['stale'],
+        queryFn: defaultQueryFn,
         staleTime: 0,
       })
       const unsubscribe = observer.subscribe(() => {})

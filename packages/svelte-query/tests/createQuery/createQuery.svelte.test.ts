@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   createQuery,
+  defaultQueryFn,
   keepPreviousData,
   noop,
 } from '../../src/index.js'
@@ -361,7 +362,7 @@ describe('createQuery', () => {
     expect(fetchCount).toBe(1)
   })
 
-  it('should be able to watch a query without providing a query function', async () => {
+  it('should use the default query function for the query key', async () => {
     const key = createKey()
 
     queryClient.setQueryDefaults(key, {
@@ -371,7 +372,7 @@ describe('createQuery', () => {
     const rendered = render(Base, {
       props: {
         queryClient,
-        options: () => ({ queryKey: key }),
+        options: () => ({ queryKey: key, queryFn: defaultQueryFn }),
       },
     })
 
@@ -459,7 +460,7 @@ describe('createQuery', () => {
           queryKey: key,
           queryFn: () => Promise.resolve('data'),
           gcTime: 0,
-          notifyOnChangeProps: ['isPending', 'isSuccess', 'data'],
+          notifyOnChangeProps: 'all',
         }),
         () => queryClient,
       )
@@ -481,7 +482,7 @@ describe('createQuery', () => {
           queryKey: key,
           queryFn: () => Promise.resolve('data'),
           gcTime: 0,
-          notifyOnChangeProps: ['isPending', 'isSuccess', 'data'],
+          notifyOnChangeProps: 'all',
         }),
         () => queryClient,
       )
@@ -1166,49 +1167,6 @@ describe('createQuery', () => {
     await vi.advanceTimersByTimeAsync(51)
     expect(rendered.getByTestId('isStale')).toHaveTextContent('true')
   })
-
-  it(
-    'should not re-render when it should only re-render on data changes and the data did not change',
-    withEffectRoot(async () => {
-      const key = createKey()
-      const states: Array<CreateQueryResult<string>> = []
-      const { promise, resolve } = promiseWithResolvers<string>()
-
-      const query = createQuery<string>(
-        () => ({
-          queryKey: key,
-          queryFn: () => promise,
-          notifyOnChangeProps: ['data'],
-        }),
-        () => queryClient,
-      )
-
-      $effect(() => {
-        states.push({ ...query })
-      })
-
-      resolve('test')
-
-      // Refetch the query
-      setTimeout(() => {
-        query.refetch()
-      }, 10)
-
-      await vi.advanceTimersByTimeAsync(10)
-      expect(states).toHaveLength(2)
-
-      expect(states[0]).toMatchObject({
-        data: undefined,
-        status: 'pending',
-        isFetching: true,
-      })
-      expect(states[1]).toMatchObject({
-        data: 'test',
-        status: 'success',
-        isFetching: false,
-      })
-    }),
-  )
 
   it(
     'should track properties and only re-render when a tracked property changes',

@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { createQuery, useQueryClient } from '@tanstack/svelte-query'
+  import {
+    createQuery,
+    defaultQueryFn,
+    useQueryClient,
+  } from '@tanstack/svelte-query'
   import type { Post } from './types'
 
   type Props = {
@@ -10,9 +14,9 @@
 
   const queryClient = useQueryClient()
 
-  // All you have to do now is pass a key!
   const query = createQuery<Array<Post>>(() => ({
     queryKey: ['/posts'],
+    queryFn: defaultQueryFn,
   }))
 </script>
 

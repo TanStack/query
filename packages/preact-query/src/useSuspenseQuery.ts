@@ -3,7 +3,6 @@ import { defaultThrowOnError, suspenseQueryPolicy } from './suspense'
 import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
-  DistributiveOmit,
   OmitKeyof,
   QueryClient,
   QueryKey,
@@ -22,11 +21,11 @@ type SkippableSuspenseQueryOptions<
   TQueryKey extends QueryKey,
 > = OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'enabled' | 'throwOnError' | 'placeholderData'
+  'enabled' | 'throwOnError'
 >
 
 /**
- * Runs a query with Suspense. The options match those of `useQuery` except for `throwOnError`, `enabled`, and `placeholderData`.
+ * Runs a query with Suspense. The options match those of `useQuery` except for `throwOnError` and `enabled`.
  *
  * Caveat: cancellation does not work.
  * @param options - The {@link UseSuspenseQueryOptions} for a query that always runs.
@@ -120,7 +119,7 @@ export function useSuspenseQuery<
 
 /**
  * Pass `skipToken` as `queryFn` to skip the query. While skipped, the query can read cached data
- * but does not fetch automatically, suspend, or throw a query error to the nearest error boundary.
+ * but does not fetch automatically or suspend. Query errors without cached data reach the nearest error boundary.
  * Pass a query function to resume normal Suspense behavior.
  * @param options - Options for a query that can be skipped.
  * @param queryClient - The client to use. Defaults to the client from the nearest context.
@@ -139,7 +138,7 @@ export function useSuspenseQuery<
     TQueryKey
   >,
   queryClient?: QueryClient,
-): DistributiveOmit<UseQueryResult<TData, TError>, 'isPlaceholderData'>
+): UseQueryResult<TData, TError>
 
 export function useSuspenseQuery<
   TQueryFnData = unknown,
@@ -154,15 +153,14 @@ export function useSuspenseQuery<
     TQueryKey
   >,
   queryClient?: QueryClient,
-): DistributiveOmit<UseQueryResult<TData, TError>, 'isPlaceholderData'> {
+): UseQueryResult<TData, TError> {
   const skipped = options.queryFn === skipToken
 
   return useBaseQuery(
     {
       ...options,
       enabled: !skipped,
-      throwOnError: skipped ? false : defaultThrowOnError,
-      placeholderData: undefined,
+      throwOnError: defaultThrowOnError,
     },
     QueryObserver,
     queryClient,

@@ -640,29 +640,25 @@ export function keepPreviousData<T>(
 }
 
 /**
- * Returns a new array with `item` added at the end. If that makes the array longer than `max`,
- * excess items are removed from the start.
+ * Adds an item to one end of a new array. If the result exceeds `max`, removes
+ * excess items from the opposite end.
  * @param items - The current items.
- * @param item - The value to append.
- * @param max - The maximum number of items to keep. `0` (the default) means no limit.
+ * @param item - The value to add.
+ * @param max - The maximum number of items to keep. Omit it or use `0` for no limit.
+ * @param prepend - Pass `true` to add at the start. The default is to add at the end.
  * @returns A new array with `item` added.
  */
-export function addToEnd<T>(items: Array<T>, item: T, max = 0): Array<T> {
-  const newItems = [...items, item]
-  return max && newItems.length > max ? newItems.slice(-max) : newItems
-}
-
-/**
- * Returns a new array with `item` added at the start. If that makes the array longer than `max`,
- * excess items are removed from the end.
- * @param items - The current items.
- * @param item - The value to prepend.
- * @param max - The maximum number of items to keep. `0` (the default) means no limit.
- * @returns A new array with `item` added.
- */
-export function addToStart<T>(items: Array<T>, item: T, max = 0): Array<T> {
-  const newItems = [item, ...items]
-  return max && newItems.length > max ? newItems.slice(0, max) : newItems
+export function addToArray<T>(
+  items: Array<T>,
+  item: T,
+  max?: number,
+  prepend?: boolean,
+): Array<T> {
+  const newItems = prepend ? [item, ...items] : [...items, item]
+  if (max && newItems.length > max) {
+    return prepend ? newItems.slice(0, max) : newItems.slice(-max)
+  }
+  return newItems
 }
 
 /**
@@ -684,9 +680,19 @@ export const skipToken = Symbol()
 export type SkipToken = typeof skipToken
 
 /**
+ * Pass this as `queryFn` to use the query function configured on the client.
+ * The defaults for the query key take precedence over the client's global query defaults.
+ * If no query function is configured, a fetch fails with a `Missing queryFn` error.
+ */
+export const defaultQueryFn = Symbol()
+
+/** The type of the {@link defaultQueryFn} sentinel value. */
+export type DefaultQueryFn = typeof defaultQueryFn
+
+/**
  * Returns the function to call for a fetch. If there is no `queryFn` but the fetch was started from
- * an `initialPromise`, that promise is returned instead. If there is no usable `queryFn` (missing or
- * {@link skipToken}), the returned function rejects with a `Missing queryFn` error.
+ * an `initialPromise`, that promise is returned instead. If there is no usable `queryFn`, the returned
+ * function rejects with a `Missing queryFn` error.
  * @param options - The query options with the `queryFn`, and the `queryHash` used in error messages.
  * @param fetchOptions - The fetch options, which may carry an `initialPromise`.
  * @returns The function to call for the fetch.
@@ -696,7 +702,10 @@ export function ensureQueryFn<
   TQueryKey extends QueryKey = QueryKey,
 >(
   options: {
-    queryFn?: QueryFunction<TQueryFnData, TQueryKey> | SkipToken
+    queryFn?:
+      | QueryFunction<TQueryFnData, TQueryKey>
+      | SkipToken
+      | DefaultQueryFn
     queryHash?: string
   },
   fetchOptions?: FetchOptions<TQueryFnData>,
@@ -716,7 +725,11 @@ export function ensureQueryFn<
     return () => fetchOptions.initialPromise!
   }
 
-  if (!options.queryFn || options.queryFn === skipToken) {
+  if (
+    !options.queryFn ||
+    options.queryFn === skipToken ||
+    options.queryFn === defaultQueryFn
+  ) {
     return () =>
       Promise.reject(new Error(`Missing queryFn: '${options.queryHash}'`))
   }

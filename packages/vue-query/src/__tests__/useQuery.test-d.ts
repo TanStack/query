@@ -1,7 +1,7 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue'
-import { queryOptions, skipToken, useQuery } from '..'
+import { defaultQueryFn, queryOptions, skipToken, useQuery } from '..'
 import type { Ref } from 'vue'
 import type { OmitKeyof, UseQueryOptions, UseQueryReturnType } from '..'
 
@@ -145,6 +145,7 @@ describe('useQuery', () => {
       const { data } = reactive(
         useQuery({
           queryKey: key,
+          queryFn: defaultQueryFn,
           initialData: 42,
         }),
       )

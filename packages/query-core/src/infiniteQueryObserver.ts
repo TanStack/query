@@ -24,6 +24,28 @@ type InfiniteQueryObserverListener<TData, TError> = (
   result: InfiniteQueryObserverResult<TData, TError>,
 ) => void
 
+type InfiniteObserverOptionsInput<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey,
+  TPageParam,
+> =
+  | InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >
+  | DefaultedInfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >
+
 /**
  * An `InfiniteQueryObserver` extends `QueryObserver` to observe and switch
  * between infinite queries. It augments the base `QueryObserverResult` with
@@ -86,7 +108,7 @@ export class InfiniteQueryObserver<
 
   constructor(
     client: QueryClient,
-    options: InfiniteQueryObserverOptions<
+    options: InfiniteObserverOptionsInput<
       TQueryFnData,
       TError,
       TData,
@@ -111,7 +133,7 @@ export class InfiniteQueryObserver<
    * @param options - The new infinite query observer options.
    */
   override setOptions(
-    options: InfiniteQueryObserverOptions<
+    options: InfiniteObserverOptionsInput<
       TQueryFnData,
       TError,
       TData,
@@ -212,7 +234,7 @@ export class InfiniteQueryObserver<
       InfiniteData<TQueryFnData, TPageParam>,
       TQueryKey
     >,
-    options: InfiniteQueryObserverOptions<
+    options: InfiniteObserverOptionsInput<
       TQueryFnData,
       TError,
       TData,

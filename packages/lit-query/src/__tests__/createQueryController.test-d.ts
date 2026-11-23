@@ -2,6 +2,7 @@ import { QueryClient } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { defaultQueryFn } from '..'
 import { createQueryController } from '../createQueryController.js'
 import { queryOptions } from '../queryOptions.js'
 import type {
@@ -17,7 +18,7 @@ describe('createQueryController', () => {
   it('should default data to unknown when the query function is not specified', () => {
     const query = createQueryController(
       new Host(),
-      { queryKey: createKey() },
+      { queryKey: createKey(), queryFn: defaultQueryFn },
       new QueryClient(),
     )
 

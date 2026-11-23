@@ -1,6 +1,7 @@
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { defaultQueryFn } from '..'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import { useQuery } from '../useQuery'
@@ -16,6 +17,7 @@ import type {
 // internal data tag symbols into the consumer's .d.ts output.
 export const exportedInfiniteQueryOptions = infiniteQueryOptions({
   queryKey: ['invalid'],
+  queryFn: defaultQueryFn,
   getNextPageParam: () => 1,
   initialPageParam: 1,
 })
@@ -232,7 +234,7 @@ describe('infiniteQueryOptions', () => {
     >()
   })
 
-  it('should throw a type error when using queryFn with skipToken in a suspense query', () => {
+  it('should allow undefined data when passing options with skipToken to useSuspenseInfiniteQuery', () => {
     const options = infiniteQueryOptions({
       queryKey: createKey(),
       queryFn:
@@ -240,9 +242,10 @@ describe('infiniteQueryOptions', () => {
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
-    // @ts-expect-error TS2345
     const { data } = useSuspenseInfiniteQuery(options)
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
+    expectTypeOf(data).toEqualTypeOf<
+      InfiniteData<string, unknown> | undefined
+    >()
   })
 
   it('should not be allowed to be passed to non-infinite query functions', () => {

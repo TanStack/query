@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { useQuery, useQueryClient } from '@tanstack/vue-query'
+import { defaultQueryFn, useQuery, useQueryClient } from '@tanstack/vue-query'
 import type { Post } from './types'
 
 defineEmits<{ setPostId: [id: number] }>()
 
 const queryClient = useQueryClient()
 
-// All you have to do now is pass a key!
 const { isPending, isError, isFetching, data, error } = useQuery<Array<Post>>({
   queryKey: ['/posts'],
+  queryFn: defaultQueryFn,
 })
 </script>
 

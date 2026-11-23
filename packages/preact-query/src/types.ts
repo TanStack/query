@@ -7,6 +7,7 @@ import type {
   InfiniteData,
   InfiniteQueryExecuteOptions,
   InfiniteQueryObserverOptions,
+  InfiniteQueryObserverPlaceholderResult,
   InfiniteQueryObserverResult,
   MutateFunction,
   MutationObserverOptions,
@@ -16,6 +17,7 @@ import type {
   QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
+  QueryObserverPlaceholderResult,
   QueryObserverResult,
   SkipToken,
 } from '@tanstack/query-core'
@@ -63,8 +65,8 @@ export interface UseBaseQueryOptions<
 }
 
 /**
- * The options accepted by `usePrefetchQuery` — everything you can pass to `queryClient.query`, except `queryFn`
- * is required unless a default query function has been defined.
+ * The options accepted by `usePrefetchQuery` — everything you can pass to `queryClient.query`, with a
+ * required `queryFn`. Pass `defaultQueryFn` to use the client defaults.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
@@ -84,10 +86,9 @@ export type UsePrefetchQueryOptions<
   'queryFn'
 > & {
   /**
-   * `skipToken` is not allowed as a value here — a prefetch always needs a query function to actually run,
-   * unless a default query function has been defined.
+   * Pass a query function or `defaultQueryFn` to use the client defaults. Prefetch hooks do not accept `skipToken`.
    */
-  queryFn?: Exclude<
+  queryFn: Exclude<
     QueryExecuteOptions<
       TQueryFnData,
       TError,
@@ -95,13 +96,13 @@ export type UsePrefetchQueryOptions<
       TQueryFnData,
       TQueryKey
     >['queryFn'],
-    SkipToken
+    SkipToken | undefined
   >
 }
 
 /**
  * The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `queryClient.infiniteQuery`,
- * except `queryFn` is required unless a default query function has been defined.
+ * with a required `queryFn`. Pass `defaultQueryFn` to use the client defaults.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` (a single page)
@@ -127,10 +128,9 @@ export type UsePrefetchInfiniteQueryOptions<
   'queryFn'
 > & {
   /**
-   * `skipToken` is not allowed as a value here — a prefetch always needs a query function to actually run,
-   * unless a default query function has been defined.
+   * Pass a query function or `defaultQueryFn` to use the client defaults. Prefetch hooks do not accept `skipToken`.
    */
-  queryFn?: Exclude<
+  queryFn: Exclude<
     InfiniteQueryExecuteOptions<
       TQueryFnData,
       TError,
@@ -138,7 +138,7 @@ export type UsePrefetchInfiniteQueryOptions<
       TQueryKey,
       TPageParam
     >['queryFn'],
-    SkipToken
+    SkipToken | undefined
   >
 }
 
@@ -178,7 +178,7 @@ export type AnyUseSuspenseQueryOptions = UseSuspenseQueryOptions<
 >
 /**
  * Options for a `useSuspenseQuery` call whose data is defined. The options match those of
- * {@link UseQueryOptions} except for `throwOnError`, `enabled`, and `placeholderData`.
+ * {@link UseQueryOptions} except for `throwOnError` and `enabled`.
  * Use the other overload for a query function that can be `skipToken`.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -193,12 +193,12 @@ export interface UseSuspenseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+  'queryFn' | 'enabled' | 'throwOnError'
 > {
   /**
-   * A query function. Omit this option to use the client's default query function.
+   * The query function. Use `defaultQueryFn` to use the client's configured function.
    */
-  queryFn?: Exclude<
+  queryFn: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
     SkipToken
   >
@@ -256,9 +256,8 @@ export interface UseInfiniteQueryOptions<
 export type AnyUseSuspenseInfiniteQueryOptions =
   UseSuspenseInfiniteQueryOptions<any, any, any, any, any>
 /**
- * The options accepted by `useSuspenseInfiniteQuery`. Same as {@link UseInfiniteQueryOptions}, minus `enabled`,
- * `throwOnError`, and `placeholderData` — Suspense hooks cannot render a "disabled" or "placeholder" state, so
- * those options don't apply.
+ * The options accepted by `useSuspenseInfiniteQuery`. Same as {@link UseInfiniteQueryOptions}, except for
+ * `enabled` and `throwOnError`. If `placeholderData` provides data, the query can render while the fetch runs.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
@@ -274,13 +273,12 @@ export interface UseSuspenseInfiniteQueryOptions<
   TPageParam = unknown,
 > extends OmitKeyof<
   UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
-  'queryFn' | 'enabled' | 'throwOnError' | 'placeholderData'
+  'queryFn' | 'enabled' | 'throwOnError'
 > {
   /**
-   * `skipToken` is not allowed here — Suspense hooks cannot render a "disabled" state, so a query function
-   * must always be provided, unless a default query function has been defined.
+   * The query function. Use `defaultQueryFn` to use the client defaults. Use the other overload when the function can be `skipToken`.
    */
-  queryFn?: Exclude<
+  queryFn: Exclude<
     UseInfiniteQueryOptions<
       TQueryFnData,
       TError,
@@ -314,23 +312,13 @@ export type UseQueryResult<
   TError = DefaultError,
 > = UseBaseQueryResult<TData, TError>
 
-/**
- * The result of `useSuspenseQuery`. Same as {@link DefinedUseQueryResult}, minus `isPlaceholderData` — always
- * `false` on that type, so this drops the dead field rather than an active state.
- * @template TData - The type `data` ends up as after `select` runs.
- * @template TError - The type of errors your `queryFn` may throw.
- */
-export type UseSuspenseQueryResult<
-  TData = unknown,
-  TError = DefaultError,
-> = DistributiveOmit<
-  DefinedQueryObserverResult<TData, TError>,
-  'isPlaceholderData'
->
+/** The result of `useSuspenseQuery`, including defined placeholder data when configured. */
+export type UseSuspenseQueryResult<TData = unknown, TError = DefaultError> =
+  | DefinedQueryObserverResult<TData, TError>
+  | QueryObserverPlaceholderResult<TData, TError>
 
 /**
- * The result of `useQuery` when `initialData` is set, or of `useSuspenseQuery` before the `isPlaceholderData`
- * omission — `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
+ * The result of `useQuery` when `initialData` is set. The `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
  * Re-exports {@link DefinedQueryObserverResult} from `@tanstack/query-core`.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -364,18 +352,16 @@ export type DefinedUseInfiniteQueryResult<
 > = DefinedInfiniteQueryObserverResult<TData, TError>
 
 /**
- * The result of `useSuspenseInfiniteQuery`. Same as {@link DefinedUseInfiniteQueryResult}, minus
- * `isPlaceholderData` — Suspense hooks never render placeholder data.
+ * The result of `useSuspenseInfiniteQuery`, including defined placeholder data when configured.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
 export type UseSuspenseInfiniteQueryResult<
   TData = unknown,
   TError = DefaultError,
-> = OmitKeyof<
-  DefinedInfiniteQueryObserverResult<TData, TError>,
-  'isPlaceholderData'
->
+> =
+  | DefinedInfiniteQueryObserverResult<TData, TError>
+  | InfiniteQueryObserverPlaceholderResult<TData, TError>
 
 /**
  * {@link UseMutationOptions} with all type parameters set to `any`, useful when the specific types aren't

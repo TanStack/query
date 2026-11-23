@@ -4,6 +4,7 @@ import { notifyManager } from './notifyManager'
 import { onlineManager } from './onlineManager'
 import { QueryCache } from './queryCache'
 import {
+  defaultQueryFn,
   functionalUpdate,
   hashKeyByOptions,
   noop,
@@ -30,7 +31,7 @@ import type {
   QueryClientConfig,
   QueryExecuteOptions,
   QueryKey,
-  QueryObserverOptions,
+  QueryObserverOptionsBase,
   QueryOptions,
   RefetchOptions,
   RefetchQueryFilters,
@@ -856,7 +857,7 @@ export class QueryClient {
     queryKey: QueryKey,
     options: Partial<
       OmitKeyof<
-        QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>,
+        QueryObserverOptionsBase<TQueryFnData, TError, TData, TQueryData>,
         'queryKey'
       >
     >,
@@ -884,9 +885,9 @@ export class QueryClient {
    */
   getQueryDefaults(
     queryKey: QueryKey,
-  ): OmitKeyof<QueryObserverOptions<any, any, any, any, any>, 'queryKey'> {
+  ): OmitKeyof<QueryObserverOptionsBase<any, any, any, any, any>, 'queryKey'> {
     const result: OmitKeyof<
-      QueryObserverOptions<any, any, any, any, any>,
+      QueryObserverOptionsBase<any, any, any, any, any>,
       'queryKey'
     > = {}
 
@@ -989,28 +990,21 @@ export class QueryClient {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options:
-      | QueryObserverOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryData,
-          TQueryKey,
-          TPageParam
-        >
-      | DefaultedQueryObserverOptions<
-          TQueryFnData,
-          TError,
-          TData,
-          TQueryData,
-          TQueryKey
-        >,
+    options: QueryObserverOptionsBase<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
   ): DefaultedQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryData,
-    TQueryKey
+    TQueryKey,
+    TPageParam
   > {
     if (options._defaulted) {
       return options as DefaultedQueryObserverOptions<
@@ -1018,15 +1012,24 @@ export class QueryClient {
         TError,
         TData,
         TQueryData,
-        TQueryKey
+        TQueryKey,
+        TPageParam
       >
     }
 
+    const queryDefaults = this.getQueryDefaults(options.queryKey)
     const defaultedOptions = {
       ...this.#defaultOptions.queries,
-      ...this.getQueryDefaults(options.queryKey),
+      ...queryDefaults,
       ...options,
       _defaulted: true,
+    }
+
+    if (defaultedOptions.queryFn === defaultQueryFn) {
+      defaultedOptions.queryFn =
+        'queryFn' in queryDefaults
+          ? queryDefaults.queryFn
+          : this.#defaultOptions.queries?.queryFn
     }
 
     if (!defaultedOptions.queryHash) {
@@ -1058,7 +1061,8 @@ export class QueryClient {
       TError,
       TData,
       TQueryData,
-      TQueryKey
+      TQueryKey,
+      TPageParam
     >
   }
 
@@ -1087,6 +1091,8 @@ export class QueryClient {
 
   /**
    * Clears both the query cache and the mutation cache this client is connected to.
+   * This clears their garbage collection timers and cancels in-flight query fetches.
+   * Running mutations continue to execute.
    * @example
    * ```ts
    * import { QueryClient } from '@tanstack/query-core'

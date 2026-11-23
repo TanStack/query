@@ -176,8 +176,7 @@ function Article({ id }) {
   useQuery({
     queryKey: ['article-comments', id],
     queryFn: getArticleCommentsById,
-    // Optional optimization to avoid rerenders when this query changes:
-    notifyOnChangeProps: [],
+    notifyOnChangeProps: 'none',
   })
 
   if (isPending) {

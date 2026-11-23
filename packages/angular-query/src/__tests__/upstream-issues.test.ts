@@ -14,6 +14,7 @@ import {
   injectMutation,
   injectQuery,
   provideTanStackQuery,
+  skipToken,
 } from '..'
 import { provideAngularQueryChangeDetection } from './test-utils'
 
@@ -262,7 +263,7 @@ describe('upstream Angular issue reproductions', () => {
     const query = TestBed.runInInjectionContext(() =>
       injectQuery(() => ({
         queryKey: ['6567', key()],
-        enabled: false,
+        queryFn: skipToken,
       })),
     )
     expect(query.data()).toBe('A')

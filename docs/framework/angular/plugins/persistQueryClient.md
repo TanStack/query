@@ -211,7 +211,7 @@ import {
 
 ### Building A Persister
 
-You can persist however you like. Here is an example of how to build an [Indexed DB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) persister. Compared to `Web Storage API`, Indexed DB is faster, stores more than 5MB, and doesn't require serialization. That means it can readily store Javascript native types, such as `Date` and `File`.
+You can persist however you like. Here is an example of how to build an [Indexed DB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) persister. Compared to `Web Storage API`, Indexed DB is faster, stores more than 5MB, and doesn't require serialization. That means it can readily store JavaScript native types, such as `Date` and `File`.
 
 ```ts
 import {

@@ -40,9 +40,16 @@ export {
   partialMatchKey,
   replaceEqualDeep,
   shouldThrowError,
+  defaultQueryFn,
   skipToken,
 } from './utils'
-export type { MutationFilters, QueryFilters, SkipToken, Updater } from './utils'
+export type {
+  DefaultQueryFn,
+  MutationFilters,
+  QueryFilters,
+  SkipToken,
+  Updater,
+} from './utils'
 
 export { streamedQuery } from './streamedQuery'
 

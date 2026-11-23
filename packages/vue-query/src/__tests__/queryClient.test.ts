@@ -388,12 +388,14 @@ describe('QueryCache', () => {
       const queryClient = new QueryClient()
       const options = queryOptions(() => ({
         queryKey: queryKeyRef,
+        queryFn: fn,
       }))
 
       queryClient.query(options())
 
       expect(QueryClientOrigin.prototype.query).toHaveBeenCalledWith({
         queryKey: queryKeyUnref,
+        queryFn: fn,
       })
     })
   })
@@ -429,6 +431,7 @@ describe('QueryCache', () => {
 
       const options = infiniteQueryOptions({
         queryKey: queryKeyRef,
+        queryFn: fn,
         initialPageParam: ref(0),
         getNextPageParam: ref(getNextPageParam),
       })

@@ -100,7 +100,7 @@ export function useSuspenseQuery<
 
 /**
  * Pass `skipToken` as `queryFn` to skip the query. While skipped, the query can read cached data
- * but does not fetch automatically, suspend, or throw a query error to the nearest error boundary.
+ * but does not fetch automatically or suspend. Query errors without cached data reach the nearest error boundary.
  * Pass a query function to resume normal Suspense behavior.
  * @param options - Options for a query that can be skipped.
  * @param queryClient - The client to use. Defaults to the client from the nearest context.
@@ -141,7 +141,7 @@ export function useSuspenseQuery<
     {
       ...options,
       enabled: !skipped,
-      throwOnError: skipped ? false : defaultThrowOnError,
+      throwOnError: defaultThrowOnError,
     },
     QueryObserver,
     queryClient,

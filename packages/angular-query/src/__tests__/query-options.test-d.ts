@@ -3,6 +3,7 @@ import { assertType, describe, expectTypeOf, it } from 'vitest'
 import {
   QueryClient,
   dataTagSymbol,
+  defaultQueryFn,
   injectQuery,
   queryOptions,
   skipToken,
@@ -15,6 +16,7 @@ import type { InitialDataFunction } from '@tanstack/query-core'
 // internal data tag symbols into the consumer's .d.ts output.
 export const exportedQueryOptions = queryOptions({
   queryKey: ['invalid'],
+  queryFn: defaultQueryFn,
 })
 
 describe('queryOptions', () => {
@@ -141,10 +143,11 @@ describe('queryOptions', () => {
     assertType<number>(tagged[dataTagSymbol])
   })
 
-  it('should tag the queryKey with unknown if there is no queryFn', () => {
+  it('should tag the queryKey with unknown when using defaultQueryFn', () => {
     const key = createKey()
     const { queryKey: tagged } = queryOptions({
       queryKey: key,
+      queryFn: defaultQueryFn,
     })
 
     assertType<unknown>(tagged[dataTagSymbol])

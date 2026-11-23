@@ -5,18 +5,32 @@ import { useBaseQuery } from './useBaseQuery'
 import type {
   DefaultError,
   InfiniteData,
+  OmitKeyof,
   QueryClient,
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
 import type {
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryResult,
   UseSuspenseInfiniteQueryOptions,
   UseSuspenseInfiniteQueryResult,
 } from './types'
 
+type SkippableSuspenseInfiniteQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey,
+  TPageParam,
+> = OmitKeyof<
+  UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
+  'enabled' | 'throwOnError'
+>
+
 /**
- * The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
- * `enabled`, and `placeholderData`.
+ * The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`
+ * and `enabled`.
  *
  * Caveat: cancellation does not work.
  * @param options - The {@link UseSuspenseInfiniteQueryOptions} to use — the same options as `useInfiniteQuery`, minus the ones listed above.
@@ -113,21 +127,58 @@ export function useSuspenseInfiniteQuery<
     TPageParam
   >,
   queryClient?: QueryClient,
-): UseSuspenseInfiniteQueryResult<TData, TError> {
-  if (process.env.NODE_ENV !== 'production') {
-    if ((options.queryFn as any) === skipToken) {
-      console.error('skipToken is not allowed for useSuspenseInfiniteQuery')
-    }
-  }
+): UseSuspenseInfiniteQueryResult<TData, TError>
+
+/**
+ * A skipped query does not fetch automatically or suspend. Query errors without cached
+ * data reach the nearest error boundary.
+ * @param options - The infinite query options. The query function can be `skipToken`.
+ * @param queryClient - The client to use. Defaults to the client from the nearest context.
+ * @returns An infinite query result that can be pending and can have undefined data.
+ */
+export function useSuspenseInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: SkippableSuspenseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError>
+
+export function useSuspenseInfiniteQuery<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+>(
+  options: SkippableSuspenseInfiniteQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey,
+    TPageParam
+  >,
+  queryClient?: QueryClient,
+): UseInfiniteQueryResult<TData, TError> {
+  const skipped = options.queryFn === skipToken
 
   return useBaseQuery(
     {
       ...options,
-      enabled: true,
+      enabled: !skipped,
       throwOnError: defaultThrowOnError,
     },
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
-    suspenseQueryPolicy,
-  ) as UseSuspenseInfiniteQueryResult<TData, TError>
+    skipped ? undefined : suspenseQueryPolicy,
+  ) as UseInfiniteQueryResult<TData, TError>
 }

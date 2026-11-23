@@ -2,8 +2,7 @@ import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import {
   addConsumeAwareSignal,
-  addToEnd,
-  addToStart,
+  addToArray,
   ensureQueryFn,
   functionalUpdate,
   hashKey,
@@ -36,6 +35,7 @@ import type {
   QueryOptions,
 } from '../types'
 import type {
+  DefaultQueryFn,
   MutationFilters,
   QueryFilters,
   QueryTypeFilter,
@@ -684,9 +684,9 @@ describe('keepPreviousData', () => {
   })
 })
 
-describe('addToEnd', () => {
+describe('addToArray (append)', () => {
   it('should return a mutable Array<T>', () => {
-    const result = addToEnd([1, 2], 3)
+    const result = addToArray([1, 2], 3)
     expectTypeOf(result).toEqualTypeOf<Array<number>>()
 
     // the result is mutable, so push is available
@@ -694,21 +694,21 @@ describe('addToEnd', () => {
   })
 
   it('should accept the max argument optionally', () => {
-    expectTypeOf(addToEnd([1], 2)).toEqualTypeOf<Array<number>>()
-    expectTypeOf(addToEnd([1], 2, 5)).toEqualTypeOf<Array<number>>()
+    expectTypeOf(addToArray([1], 2)).toEqualTypeOf<Array<number>>()
+    expectTypeOf(addToArray([1], 2, 5)).toEqualTypeOf<Array<number>>()
   })
 
   it('should reject a readonly array of items', () => {
     const items: ReadonlyArray<number> = [1, 2]
-    expectTypeOf(addToEnd([...items], 3)).toEqualTypeOf<Array<number>>()
+    expectTypeOf(addToArray([...items], 3)).toEqualTypeOf<Array<number>>()
     // @ts-expect-error a readonly array is not assignable to Array<T>
-    addToEnd(items, 3)
+    addToArray(items, 3)
   })
 })
 
-describe('addToStart', () => {
+describe('addToArray (prepend)', () => {
   it('should return a mutable Array<T>', () => {
-    const result = addToStart([1, 2], 3)
+    const result = addToArray([1, 2], 3, undefined, true)
     expectTypeOf(result).toEqualTypeOf<Array<number>>()
 
     result.push(4)
@@ -716,9 +716,11 @@ describe('addToStart', () => {
 
   it('should reject a readonly array of items', () => {
     const items: ReadonlyArray<number> = [1, 2]
-    expectTypeOf(addToStart([...items], 3)).toEqualTypeOf<Array<number>>()
+    expectTypeOf(addToArray([...items], 3, undefined, true)).toEqualTypeOf<
+      Array<number>
+    >()
     // @ts-expect-error a readonly array is not assignable to Array<T>
-    addToStart(items, 3)
+    addToArray(items, 3, undefined, true)
   })
 })
 
@@ -745,7 +747,10 @@ describe('ensureQueryFn', () => {
     expectTypeOf<
       Parameters<typeof ensureQueryFn<number, readonly ['key']>>[0]['queryFn']
     >().toEqualTypeOf<
-      QueryFunction<number, readonly ['key']> | SkipToken | undefined
+      | QueryFunction<number, readonly ['key']>
+      | SkipToken
+      | DefaultQueryFn
+      | undefined
     >()
 
     const resolved = ensureQueryFn<number, readonly ['key']>({ queryFn })
@@ -764,7 +769,10 @@ describe('ensureQueryFn', () => {
     expectTypeOf<
       Parameters<typeof ensureQueryFn<number, readonly ['key']>>[0]
     >().toEqualTypeOf<{
-      queryFn?: QueryFunction<number, readonly ['key']> | SkipToken
+      queryFn?:
+        | QueryFunction<number, readonly ['key']>
+        | SkipToken
+        | DefaultQueryFn
       queryHash?: string
     }>()
   })

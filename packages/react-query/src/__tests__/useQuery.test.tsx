@@ -11,6 +11,7 @@ import {
   IsRestoringProvider,
   QueryCache,
   QueryClient,
+  defaultQueryFn,
   dehydrate,
   focusManager,
   hydrate,
@@ -549,14 +550,14 @@ describe('useQuery', () => {
     expect(fetchCount).toBe(1)
   })
 
-  it('should be able to watch a query without providing a query function', async () => {
+  it('should use the default query function for the query key', async () => {
     const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
     queryClient.setQueryDefaults(key, { queryFn: () => 'data' })
 
     function Page() {
-      const state = useQuery<string>({ queryKey: key })
+      const state = useQuery<string>({ queryKey: key, queryFn: defaultQueryFn })
       states.push(state)
       return null
     }
@@ -652,7 +653,7 @@ describe('useQuery', () => {
         queryFn: () => sleep(5).then(() => 'data'),
 
         gcTime: 0,
-        notifyOnChangeProps: ['isPending', 'isSuccess', 'data'],
+        notifyOnChangeProps: 'all',
       })
 
       states.push(state)
@@ -2152,7 +2153,6 @@ describe('useQuery', () => {
           queryKey: key,
           queryFn: () => ({ name: 'test' }),
           select: (data) => data.name,
-          notifyOnChangeProps: ['data'],
         })
 
         states.push(state)
@@ -2190,8 +2190,6 @@ describe('useQuery', () => {
         const state = useQuery({
           queryKey: key,
           queryFn: () => sleep(5).then(() => 'test'),
-
-          notifyOnChangeProps: ['data'],
         })
 
         states.push(state)
@@ -2233,154 +2231,28 @@ describe('useQuery', () => {
       })
     })
 
-    // See https://github.com/TanStack/query/discussions/5588
-    describe('function', () => {
-      it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
-        const key = createKey()
-        const states: Array<UseQueryResult<string>> = []
+    it('fetches without re-rendering when notifyOnChangeProps is none', async () => {
+      const key = createKey()
+      let renders = 0
 
-        function Page() {
-          const state = useQuery({
-            queryKey: key,
-            queryFn: () => sleep(5).then(() => 'test'),
-            notifyOnChangeProps: () => ['data'],
-          })
-
-          states.push(state)
-
-          return (
-            <>
-              <button
-                onClick={async () => {
-                  await state.refetch()
-                }}
-              >
-                refetch
-              </button>
-
-              <div>{state.data}</div>
-            </>
-          )
-        }
-
-        const rendered = renderWithClient(queryClient, <Page />)
-
-        await vi.advanceTimersByTimeAsync(6)
-        rendered.getByText('test')
-
-        fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
-        await vi.advanceTimersByTimeAsync(20)
-        expect(states).toHaveLength(2)
-        expect(states[0]).toMatchObject({
-          data: undefined,
-          status: 'pending',
-          isFetching: true,
+      function Page() {
+        renders++
+        const { data } = useQuery({
+          queryKey: key,
+          queryFn: () => sleep(5).then(() => 'data'),
+          notifyOnChangeProps: 'none',
         })
-        expect(states[1]).toMatchObject({
-          data: 'test',
-          status: 'success',
-          isFetching: false,
-        })
-      })
+        return <div>{data ?? 'pending'}</div>
+      }
 
-      it('should not re-render when change props are not actively being tracked', async () => {
-        const key = createKey()
-        const states: Array<UseQueryResult<string>> = []
+      const rendered = renderWithClient(queryClient, <Page />)
+      const initialRenders = renders
 
-        function Page() {
-          const fetchCounterRef = React.useRef(0)
-          const trackChangesRef = React.useRef(true)
+      await vi.advanceTimersByTimeAsync(10)
 
-          const notifyOnChangeProps = React.useCallback(() => {
-            return trackChangesRef.current ? 'all' : []
-          }, [])
-
-          const state = useQuery({
-            queryKey: key,
-            queryFn: () =>
-              sleep(5).then(
-                () => `fetch counter: ${++fetchCounterRef.current}`,
-              ),
-            notifyOnChangeProps,
-          })
-
-          states.push(state)
-
-          return (
-            <>
-              <button
-                onClick={async () => {
-                  await state.refetch()
-                }}
-              >
-                refetch
-              </button>
-              <button
-                onClick={() => {
-                  trackChangesRef.current = true
-                }}
-              >
-                enableTracking
-              </button>
-              <button
-                onClick={() => {
-                  trackChangesRef.current = false
-                }}
-              >
-                disableTracking
-              </button>
-
-              <div>{state.data}</div>
-            </>
-          )
-        }
-
-        const rendered = renderWithClient(queryClient, <Page />)
-
-        await vi.advanceTimersByTimeAsync(6)
-        rendered.getByText('fetch counter: 1')
-
-        expect(states).toHaveLength(2)
-        expect(states[0]).toMatchObject({
-          data: undefined,
-          isFetching: true,
-          status: 'pending',
-        })
-        expect(states[1]).toMatchObject({
-          data: 'fetch counter: 1',
-          status: 'success',
-          isFetching: false,
-        })
-
-        // disable tracking and refetch to check for re-renders
-        fireEvent.click(
-          rendered.getByRole('button', { name: 'disableTracking' }),
-        )
-        fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
-        await vi.advanceTimersByTimeAsync(20)
-        // still expect to only have two re-renders from the initial fetch
-        expect(states).toHaveLength(2)
-
-        // enable tracking and refetch to check for re-renders
-        fireEvent.click(
-          rendered.getByRole('button', { name: 'enableTracking' }),
-        )
-        fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
-        await vi.advanceTimersByTimeAsync(6)
-        rendered.getByText('fetch counter: 3')
-        await vi.advanceTimersByTimeAsync(20)
-        expect(states).toHaveLength(4)
-        expect(states[2]).toMatchObject({
-          data: 'fetch counter: 2',
-          status: 'success',
-          isFetching: true,
-        })
-        expect(states[3]).toMatchObject({
-          data: 'fetch counter: 3',
-          status: 'success',
-          isFetching: false,
-        })
-      })
+      expect(queryClient.getQueryData(key)).toBe('data')
+      expect(rendered.getByText('pending')).toBeInTheDocument()
+      expect(renders).toBe(initialRenders)
     })
   })
 
@@ -6848,12 +6720,12 @@ describe('useQuery', () => {
     )
   })
 
-  it('should console.error when there is no queryFn', () => {
+  it('should console.error when no default query function is configured', () => {
     const consoleErrorMock = vi.spyOn(console, 'error')
     const key = createKey()
 
     function Example() {
-      useQuery({ queryKey: key })
+      useQuery({ queryKey: key, queryFn: defaultQueryFn })
       return <></>
     }
 
@@ -6861,7 +6733,7 @@ describe('useQuery', () => {
 
     expect(consoleErrorMock).toHaveBeenCalledTimes(1)
     expect(consoleErrorMock).toHaveBeenCalledWith(
-      `[${queryClient.getQueryCache().find({ queryKey: key })?.queryHash}]: No queryFn was passed as an option, and no default queryFn was found. The queryFn parameter is only optional when using a default queryFn. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
+      `[${queryClient.getQueryCache().find({ queryKey: key })?.queryHash}]: No query function was provided or configured in the query defaults. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
     )
   })
 

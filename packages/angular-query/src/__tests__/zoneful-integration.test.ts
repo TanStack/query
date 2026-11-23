@@ -14,6 +14,7 @@ import {
   injectQueries,
   injectQuery,
   provideTanStackQuery,
+  skipToken,
 } from '..'
 import { provideIsRestoring } from '../internal'
 
@@ -45,7 +46,7 @@ describe('Zone.js notification integration', () => {
     const query = TestBed.runInInjectionContext(() =>
       injectQuery(() => ({
         queryKey: key,
-        enabled: false,
+        queryFn: skipToken,
       })),
     )
 
@@ -60,7 +61,7 @@ describe('Zone.js notification integration', () => {
     const key = ['zoneful-queries']
     const queries = TestBed.runInInjectionContext(() =>
       injectQueries(() => ({
-        queries: [{ queryKey: key, enabled: false }],
+        queries: [{ queryKey: key, queryFn: skipToken }],
       })),
     )
 
@@ -76,7 +77,7 @@ describe('Zone.js notification integration', () => {
     const query = TestBed.runInInjectionContext(() =>
       injectQuery(() => ({
         queryKey: key,
-        enabled: false,
+        queryFn: skipToken,
       })),
     )
     const seenInOnMutate: Array<string | undefined> = []
@@ -167,10 +168,10 @@ describe('Zone.js notification integration', () => {
     class Page {
       query = injectQuery(() => ({
         queryKey: ['outside-single'],
-        enabled: false,
+        queryFn: skipToken,
       }))
       queries = injectQueries(() => ({
-        queries: [{ queryKey: ['outside-multiple'], enabled: false }],
+        queries: [{ queryKey: ['outside-multiple'], queryFn: skipToken }],
       }))
       mutation = injectMutation(() => ({ mutationFn: async () => 'done' }))
     }

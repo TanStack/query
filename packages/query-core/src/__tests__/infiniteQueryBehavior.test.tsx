@@ -1,6 +1,11 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { CancelledError, InfiniteQueryObserver, QueryClient } from '..'
+import {
+  CancelledError,
+  InfiniteQueryObserver,
+  QueryClient,
+  defaultQueryFn,
+} from '..'
 import { infiniteQueryBehavior } from '../infiniteQueryBehavior'
 import type {
   InfiniteData,
@@ -31,6 +36,7 @@ describe('InfiniteQueryBehavior', () => {
 
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
+      queryFn: defaultQueryFn,
       retry: false,
       initialPageParam: 1,
       getNextPageParam: () => 2,
