@@ -3,4 +3,4 @@
 '@tanstack/vue-query': minor
 ---
 
-Read cached data when an explicit `queryFn: skipToken` reaches `queryClient.query` or `queryClient.infiniteQuery`. A skipped call returns cached data regardless of freshness, or `undefined` when the cache has no data. It does not start a fetch or wait for one. If the options type allows `skipToken`, the result type includes `undefined`.
+Allow shared options that contain `skipToken` in `queryClient.query` and `queryClient.infiniteQuery`. When `queryFn` is `skipToken`, the call skips fetching and returns existing data or `undefined`. If the options type allows `skipToken`, the result type includes `undefined`.

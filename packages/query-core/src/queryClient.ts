@@ -542,9 +542,10 @@ export class QueryClient {
    * `refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount`, `retryOnMount`,
    * `notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData` are not part of this
    * method's options.
-   * An explicit `queryFn: skipToken` reads existing cached data regardless of freshness and applies
-   * `select` if data exists. On a cache miss, it resolves to `undefined` without creating a query.
-   * It does not start or wait for a fetch.
+   * Shared query options can contain `skipToken` as their `queryFn`. If the supplied options contain
+   * the token, the call skips fetching and resolves with existing data regardless of freshness.
+   * It applies `select` when data exists and resolves to `undefined` on a cache miss.
+   * Use {@link QueryClient#getQueryData} to read the cache directly.
    * @param options - The query options, including the `queryKey` and the `queryFn` used if the
    * query needs to fetch.
    * @returns A promise that resolves to the data, or to the result of `select` if provided. It
@@ -657,8 +658,9 @@ export class QueryClient {
    * Requires `initialPageParam` and `getNextPageParam`. Use `pages` to specify how many
    * pages to fetch. If you omit `pages`, the client fetches up to the number of cached
    * pages, or one page if the cache has no pages.
-   * An explicit `queryFn: skipToken` reads existing cached pages regardless of freshness. It
-   * resolves to `undefined` if the cache has no data for the query.
+   * If shared infinite query options contain `skipToken` as their `queryFn`, the call skips fetching
+   * and resolves with existing data or `undefined` on a cache miss. Use {@link QueryClient#getQueryData}
+   * to read the cache directly.
    * @param options - The query to fetch and the options that control which pages to fetch.
    * @returns A promise that resolves to the {@link InfiniteData}, or to the result of `select` if
    * provided. It rejects with the error from the fetch or from `select`.
