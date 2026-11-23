@@ -1,5 +1,13 @@
 # @tanstack/angular-query-devtools
 
+## 5.108.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @tanstack/angular-query@5.108.4
+  - @tanstack/query-devtools@5.108.4
+
 ## 5.108.3
 
 ### Patch Changes
