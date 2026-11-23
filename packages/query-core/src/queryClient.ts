@@ -614,34 +614,33 @@ export class QueryClient {
     >,
   ): Promise<TData | undefined> {
     const defaultedOptions = this.defaultQueryOptions(options)
+    let queryData: TQueryData
 
     if (options.queryFn === skipToken) {
-      const data = this.#queryCache.get<
+      const cachedData = this.#queryCache.get<
         TQueryFnData,
         TError,
         TQueryData,
         TQueryKey
       >(defaultedOptions.queryHash)?.state.data
-      if (data === undefined) return undefined
-      return defaultedOptions.select
-        ? defaultedOptions.select(data)
-        : (data as unknown as TData)
+      if (cachedData === undefined) return undefined
+      queryData = cachedData
+    } else {
+      // https://github.com/tannerlinsley/react-query/issues/652
+      if (defaultedOptions.retry === undefined) {
+        defaultedOptions.retry = false
+      }
+
+      const query = this.#queryCache.build(this, defaultedOptions)
+
+      const isStale = query.isStaleByTime(
+        resolveQueryValue(defaultedOptions.staleTime, query),
+      )
+
+      queryData = isStale
+        ? await query.fetch(defaultedOptions)
+        : (query.state.data as TQueryData)
     }
-
-    // https://github.com/tannerlinsley/react-query/issues/652
-    if (defaultedOptions.retry === undefined) {
-      defaultedOptions.retry = false
-    }
-
-    const query = this.#queryCache.build(this, defaultedOptions)
-
-    const isStale = query.isStaleByTime(
-      resolveQueryValue(defaultedOptions.staleTime, query),
-    )
-
-    const queryData = isStale
-      ? await query.fetch(defaultedOptions)
-      : (query.state.data as TQueryData)
 
     const select = defaultedOptions.select
 
