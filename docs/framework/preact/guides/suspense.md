@@ -12,7 +12,7 @@ When using suspense mode, `status` states and `error` objects are not needed and
 [//]: # 'Info'
 [//]: # 'PlaceholderData'
 
-`placeholderData` also doesn't exist for this Query.
+If `placeholderData` provides data, the query renders it while the fetch runs in the background. Use `isPlaceholderData` to distinguish placeholder data from fetched data.
 
 [//]: # 'PlaceholderData'
 [//]: # 'ExampleResetComponent'

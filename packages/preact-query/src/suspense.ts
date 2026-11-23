@@ -79,6 +79,9 @@ export const shouldSuspend = (
   result: QueryObserverResult<any, any>,
 ) => defaultedOptions?.suspense && result.isPending
 
+const shouldFetchInBackground = (result: QueryObserverResult<any, any>) =>
+  result.isFetching && result.isPlaceholderData
+
 /**
  * Starts or reuses a Suspense fetch without affecting the observer's own result.
  * @param defaultedOptions - The defaulted query options to fetch with.
@@ -135,18 +138,20 @@ const useReadSuspenseQuery = (
   client: QueryClient,
   errorResetBoundary: QueryErrorResetBoundaryValue,
 ) => {
-  // Suspend before registering external-store effects for this render.
-  if (shouldSuspend(defaultedOptions, reader.getSnapshot())) {
-    const suspenseQuery = client.getQueryCache().build(client, defaultedOptions)
-    use(
-      getSuspensePromise(
-        defaultedOptions,
-        observer,
-        errorResetBoundary,
-        suspenseQuery,
-      ),
-    )
-  }
+  if (!defaultedOptions.suspense) return
+
+  const result = reader.getSnapshot()
+  const suspend = shouldSuspend(defaultedOptions, result)
+  if (!suspend && !shouldFetchInBackground(result)) return
+
+  const query = client.getQueryCache().build(client, defaultedOptions)
+  const promise = getSuspensePromise(
+    defaultedOptions,
+    observer,
+    errorResetBoundary,
+    query,
+  )
+  if (suspend) use(promise)
 }
 
 /** Supplies Suspense behavior for one query. */
@@ -163,15 +168,19 @@ const useReadSuspenseQueries = (
 ) => {
   const suspensePromises = reader.getSnapshot().flatMap((result, index) => {
     const options = defaultedQueries[index]
-    if (!options || !shouldSuspend(options, result)) return []
+    if (!options?.suspense) return []
+
+    const suspend = shouldSuspend(options, result)
+    if (!suspend && !shouldFetchInBackground(result)) return []
 
     const observer = new QueryObserver(client, options)
-    return getSuspensePromise(
+    const promise = getSuspensePromise(
       options,
       observer,
       errorResetBoundary,
       observer.getCurrentQuery(),
     )
+    return suspend ? [promise] : []
   })
 
   if (suspensePromises.length > 0) {

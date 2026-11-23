@@ -16,14 +16,14 @@ import type {
 
 /**
  * The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`,
- * `enabled`, and `placeholderData`.
+ * and `enabled`.
  *
  * Caveat: cancellation does not work.
  * @param options - The {@link UseSuspenseInfiniteQueryOptions} to use — the same options as `useInfiniteQuery`, minus the ones listed above.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns The same object as `useInfiniteQuery`, except that `data` is guaranteed to be defined,
- * `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived flags set
+ * `status` is either `success` or `error` (with the derived flags set
  * accordingly).
  * @remarks Multiple suspenseful query calls in the same component suspend serially, causing a request
  * waterfall — each one blocks rendering until it resolves, so the next doesn't even start fetching until
@@ -145,7 +145,6 @@ export function useSuspenseInfiniteQuery<
       ...options,
       enabled: true,
       throwOnError: defaultThrowOnError,
-      placeholderData: undefined,
     },
     InfiniteQueryObserver as typeof QueryObserver,
     queryClient,
