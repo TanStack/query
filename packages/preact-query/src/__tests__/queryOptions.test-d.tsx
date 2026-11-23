@@ -228,14 +228,13 @@ describe('queryOptions', () => {
     expectTypeOf(options.queryKey[dataTagSymbol]).toEqualTypeOf<unknown>()
   })
 
-  it('should throw a type error when using queryFn with skipToken in a suspense query', () => {
+  it('should allow undefined data when passing options with skipToken to useSuspenseQuery', () => {
     const options = queryOptions({
       queryKey: createKey(),
       queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
     })
-    // @ts-expect-error TS2345
     const { data } = useSuspenseQuery(options)
-    expectTypeOf(data).toEqualTypeOf<number>()
+    expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
   it('should allow undefined response in initialData', () => {

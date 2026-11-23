@@ -27,6 +27,47 @@ describe('useSuspenseInfiniteQuery', () => {
     vi.useRealTimers()
   })
 
+  it('should render without fetching until skipToken is replaced by a query function', async () => {
+    const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'fetched'),
+    )
+
+    function Page() {
+      const [ready, setReady] = React.useState(false)
+      const result = useSuspenseInfiniteQuery({
+        queryKey: key,
+        queryFn: ready ? queryFn : skipToken,
+        initialPageParam: 0,
+        getNextPageParam: () => undefined,
+      })
+
+      return (
+        <>
+          <button onClick={() => setReady(true)}>start</button>
+          <div>
+            {result.data?.pages[0] ?? `${result.status}/${result.fetchStatus}`}
+          </div>
+        </>
+      )
+    }
+
+    const rendered = await renderWithSuspense(queryClient, <Page />)
+
+    expect(rendered.getByText('pending/idle')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(queryFn).not.toHaveBeenCalled()
+
+    await act(() => {
+      fireEvent.click(rendered.getByRole('button', { name: 'start' }))
+    })
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(() => vi.advanceTimersByTimeAsync(10))
+    expect(rendered.getByText('fetched')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
   it('should return the correct states for a successful infinite query', async () => {
     const key = createKey()
     const states: Array<UseSuspenseInfiniteQueryResult<InfiniteData<number>>> =
@@ -76,95 +117,6 @@ describe('useSuspenseInfiniteQuery', () => {
       data: { pages: [2], pageParams: [1] },
       status: 'success',
     })
-  })
-
-  it('should log an error when skipToken is passed as queryFn', async () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => {})
-    const key = createKey()
-
-    function Page() {
-      useSuspenseInfiniteQuery({
-        queryKey: key,
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-        // @ts-expect-error
-        queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
-      })
-
-      return null
-    }
-
-    function App() {
-      return (
-        <React.Suspense fallback="Loading...">
-          <Page />
-        </React.Suspense>
-      )
-    }
-
-    await renderWithSuspense(queryClient, <App />)
-
-    expect(consoleErrorMock).toHaveBeenCalledWith(
-      'skipToken is not allowed for useSuspenseInfiniteQuery',
-    )
-  })
-
-  it('should log an error when skipToken is used in development environment', async () => {
-    const envCopy = process.env.NODE_ENV
-    process.env.NODE_ENV = 'development'
-
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
-    const key = createKey()
-
-    function Page() {
-      useSuspenseInfiniteQuery({
-        queryKey: key,
-        queryFn: skipToken as any,
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-      })
-
-      return null
-    }
-
-    await renderWithSuspense(queryClient, <Page />)
-
-    expect(consoleErrorMock).toHaveBeenCalledWith(
-      'skipToken is not allowed for useSuspenseInfiniteQuery',
-    )
-
-    process.env.NODE_ENV = envCopy
-  })
-
-  it('should not log an error when skipToken is used in production environment', async () => {
-    const envCopy = process.env.NODE_ENV
-    process.env.NODE_ENV = 'production'
-
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
-    const key = createKey()
-
-    function Page() {
-      useSuspenseInfiniteQuery({
-        queryKey: key,
-        queryFn: skipToken as any,
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-      })
-
-      return null
-    }
-
-    await renderWithSuspense(queryClient, <Page />)
-
-    expect(consoleErrorMock).not.toHaveBeenCalled()
-
-    process.env.NODE_ENV = envCopy
   })
 
   it('should use static placeholderData without suspending', async () => {

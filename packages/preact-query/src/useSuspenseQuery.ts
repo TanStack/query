@@ -1,14 +1,34 @@
 import { QueryObserver, skipToken } from '@tanstack/query-core'
 import { defaultThrowOnError, suspenseQueryPolicy } from './suspense'
 import { useBaseQuery } from './useBaseQuery'
-import type { DefaultError, QueryClient, QueryKey } from '@tanstack/query-core'
-import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
+import type {
+  DefaultError,
+  OmitKeyof,
+  QueryClient,
+  QueryKey,
+} from '@tanstack/query-core'
+import type {
+  UseQueryOptions,
+  UseQueryResult,
+  UseSuspenseQueryOptions,
+  UseSuspenseQueryResult,
+} from './types'
+
+type SkippableSuspenseQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey,
+> = OmitKeyof<
+  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  'enabled' | 'throwOnError'
+>
 
 /**
- * The options for `useSuspenseQuery` are the same as for `useQuery`, except for `throwOnError` and `enabled`.
+ * Runs a query with Suspense. The options match those of `useQuery` except for `throwOnError` and `enabled`.
  *
  * Caveat: cancellation does not work.
- * @param options - The {@link UseSuspenseQueryOptions} to use — the same options as `useQuery`, minus the ones listed above.
+ * @param options - The {@link UseSuspenseQueryOptions} for a query that always runs.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @returns A result with data of type `TData` and a status of `success` or `error`.
@@ -95,21 +115,55 @@ export function useSuspenseQuery<
 >(
   options: UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   queryClient?: QueryClient,
-): UseSuspenseQueryResult<TData, TError> {
-  if (process.env.NODE_ENV !== 'production') {
-    if ((options.queryFn as any) === skipToken) {
-      console.error('skipToken is not allowed for useSuspenseQuery')
-    }
-  }
+): UseSuspenseQueryResult<TData, TError>
+
+/**
+ * Pass `skipToken` as `queryFn` to skip the query. While skipped, the query can read cached data
+ * but does not fetch automatically or suspend. Query errors without cached data reach the nearest error boundary.
+ * Pass a query function to resume normal Suspense behavior.
+ * @param options - Options for a query that can be skipped.
+ * @param queryClient - The client to use. Defaults to the client from the nearest context.
+ * @returns A result whose data can be undefined and whose status can be `pending`.
+ */
+export function useSuspenseQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: SkippableSuspenseQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  >,
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError>
+
+export function useSuspenseQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: SkippableSuspenseQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  >,
+  queryClient?: QueryClient,
+): UseQueryResult<TData, TError> {
+  const skipped = options.queryFn === skipToken
 
   return useBaseQuery(
     {
       ...options,
-      enabled: true,
+      enabled: !skipped,
       throwOnError: defaultThrowOnError,
     },
     QueryObserver,
     queryClient,
-    suspenseQueryPolicy,
-  ) as UseSuspenseQueryResult<TData, TError>
+    skipped ? undefined : suspenseQueryPolicy,
+  )
 }

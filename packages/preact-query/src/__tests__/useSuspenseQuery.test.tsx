@@ -949,35 +949,107 @@ describe('useSuspenseQuery', () => {
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
   })
 
-  it('should log an error when skipToken is passed as queryFn', () => {
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => {})
+  it('should render without fetching until skipToken is replaced by a query function', async () => {
     const key = createKey()
+    const queryFn = vi.fn<() => Promise<string>>(() =>
+      sleep(10).then(() => 'fetched'),
+    )
 
     function Page() {
-      useSuspenseQuery({
+      const [ready, setReady] = useState(false)
+      const result = useSuspenseQuery({
         queryKey: key,
-        // @ts-expect-error
-        queryFn: Math.random() >= 0 ? skipToken : () => Promise.resolve(5),
+        queryFn: ready ? queryFn : skipToken,
       })
 
-      return null
-    }
-
-    function App() {
       return (
-        <Suspense fallback="loading">
-          <Page />
-        </Suspense>
+        <>
+          <button onClick={() => setReady(true)}>start</button>
+          <div>{result.data ?? `${result.status}/${result.fetchStatus}`}</div>
+        </>
       )
     }
 
-    renderWithClient(queryClient, <App />)
-
-    expect(consoleErrorMock).toHaveBeenCalledWith(
-      'skipToken is not allowed for useSuspenseQuery',
+    const rendered = renderWithClient(
+      queryClient,
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>,
     )
+
+    expect(rendered.getByText('pending/idle')).toBeInTheDocument()
+    expect(rendered.queryByText('loading')).not.toBeInTheDocument()
+    expect(queryFn).not.toHaveBeenCalled()
+
+    await act(() => {
+      fireEvent.click(rendered.getByRole('button', { name: 'start' }))
+    })
+
+    expect(rendered.getByText('loading')).toBeInTheDocument()
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10)
+    })
+    expect(rendered.getByText('fetched')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should throw a cached error without data when queryFn is skipToken', async () => {
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const queryKey = createKey()
+    const error = new Error('query failed')
+
+    await expect(
+      queryClient.query({
+        queryKey,
+        queryFn: () => Promise.reject(error),
+        retry: false,
+      }),
+    ).rejects.toBe(error)
+
+    function Page() {
+      useSuspenseQuery({ queryKey, queryFn: skipToken })
+      return <div>page</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Suspense fallback="loading">
+          <Page />
+        </Suspense>
+      </ErrorBoundary>,
+    )
+
+    expect(rendered.getByText('error boundary')).toBeInTheDocument()
+  })
+
+  it('should observe cached data while queryFn is skipToken', async () => {
+    const key = createKey()
+    queryClient.setQueryData(key, 'cached')
+
+    function Page() {
+      const { data } = useSuspenseQuery<string>({
+        queryKey: key,
+        queryFn: skipToken,
+      })
+
+      return <div>{data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Suspense fallback="loading">
+        <Page />
+      </Suspense>,
+    )
+    expect(rendered.getByText('cached')).toBeInTheDocument()
+
+    await act(async () => {
+      queryClient.setQueryData(key, 'updated')
+      await vi.advanceTimersByTimeAsync(0)
+    })
+
+    expect(rendered.getByText('updated')).toBeInTheDocument()
   })
 
   it('should properly refresh data when refetchInterval is set', async () => {
@@ -1016,68 +1088,6 @@ describe('useSuspenseQuery', () => {
     expect(rendered.getByText('count: 3')).toBeInTheDocument()
 
     expect(count).toBeGreaterThanOrEqual(3)
-  })
-
-  it('should log an error when skipToken is used in development environment', () => {
-    const envCopy = process.env.NODE_ENV
-    process.env.NODE_ENV = 'development'
-
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
-    const key = createKey()
-
-    function Page() {
-      useSuspenseQuery({
-        queryKey: key,
-        queryFn: skipToken as any,
-      })
-
-      return null
-    }
-
-    renderWithClient(
-      queryClient,
-      <Suspense fallback="loading">
-        <Page />
-      </Suspense>,
-    )
-
-    expect(consoleErrorMock).toHaveBeenCalledWith(
-      'skipToken is not allowed for useSuspenseQuery',
-    )
-
-    process.env.NODE_ENV = envCopy
-  })
-
-  it('should not log an error when skipToken is used in production environment', () => {
-    const envCopy = process.env.NODE_ENV
-    process.env.NODE_ENV = 'production'
-
-    const consoleErrorMock = vi
-      .spyOn(console, 'error')
-      .mockReturnValue(undefined)
-    const key = createKey()
-
-    function Page() {
-      useSuspenseQuery({
-        queryKey: key,
-        queryFn: skipToken as any,
-      })
-
-      return null
-    }
-
-    renderWithClient(
-      queryClient,
-      <Suspense fallback="loading">
-        <Page />
-      </Suspense>,
-    )
-
-    expect(consoleErrorMock).not.toHaveBeenCalled()
-
-    process.env.NODE_ENV = envCopy
   })
 
   it('should release suspense when setQueryData is called while fetch is in-flight', async () => {
