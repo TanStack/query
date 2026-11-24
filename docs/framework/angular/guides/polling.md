@@ -19,15 +19,19 @@ injectQuery(() => ({
 [//]: # 'Example2'
 
 ```ts
-injectQuery(() => ({
-  queryKey: ['job', this.jobId()],
-  queryFn: () => fetchJobStatus(this.jobId()),
-  refetchInterval: (query) => {
-    // Stop polling once the job finishes
-    if (query.state.data?.status === 'complete') return false
-    return 2 * 1000
-  },
-}))
+injectQuery(() => {
+  const jobId = this.jobId()
+
+  return {
+    queryKey: ['job', jobId],
+    queryFn: () => fetchJobStatus(jobId),
+    refetchInterval: (query) => {
+      // Stop polling once the job finishes
+      if (query.state.data?.status === 'complete') return false
+      return 2 * 1000
+    },
+  }
+})
 ```
 
 [//]: # 'Example2'
