@@ -24,6 +24,7 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   SetDataOptions,
+  SkipToken,
   Updater,
 } from '@tanstack/query-core'
 import type { Ref } from 'vue'
@@ -36,14 +37,24 @@ import type {
   QueryClientConfig,
 } from './types'
 
-type VueQueryExecutionOptions<TOptions extends { queryKey: unknown }> =
-  MaybeRef<{
-    [Property in keyof TOptions]: Property extends 'queryFn'
-      ? MaybeRefDeep<TOptions[Property] | symbol>
-      : Property extends 'queryKey'
-        ? MaybeRefOrGetter<MaybeRefDeep<TOptions[Property]>>
-        : MaybeRefDeep<TOptions[Property]>
-  }>
+type WithoutSkipToken<T extends { queryFn?: unknown }> = Omit<T, 'queryFn'> & {
+  queryFn?: Exclude<T['queryFn'], SkipToken>
+}
+
+type VueQueryExecutionOptions<
+  TOptions extends { queryKey: unknown },
+  TAllowSkipToken extends boolean = true,
+> = MaybeRef<{
+  [Property in keyof TOptions]: Property extends 'queryFn'
+    ? MaybeRefDeep<
+        TAllowSkipToken extends true
+          ? TOptions[Property] | symbol
+          : Exclude<TOptions[Property], SkipToken>
+      >
+    : Property extends 'queryKey'
+      ? MaybeRefOrGetter<MaybeRefDeep<TOptions[Property]>>
+      : MaybeRefDeep<TOptions[Property]>
+}>
 
 /**
  * Vue-aware subclass of `@tanstack/query-core`'s `QueryClient`. Methods that accept `options` (such as
@@ -262,13 +273,15 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = never,
   >(
-    options: QueryExecuteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey,
-      TPageParam
+    options: WithoutSkipToken<
+      QueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >
     >,
   ): Promise<TData>
   /** {@inheritDoc QueryClient.query:0} */
@@ -288,7 +301,8 @@ export class QueryClient extends QC {
         TQueryData,
         TQueryKey,
         TPageParam
-      >
+      >,
+      false
     >,
   ): Promise<TData>
   override query<
@@ -309,7 +323,26 @@ export class QueryClient extends QC {
         TPageParam
       >
     >,
-  ): Promise<TData> {
+  ): Promise<TData | undefined>
+  override query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: VueQueryExecutionOptions<
+      QueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<TData | undefined> {
     return super.query(
       cloneDeepUnref(
         options as MaybeRefDeep<
@@ -335,12 +368,14 @@ export class QueryClient extends QC {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
-    options: InfiniteQueryExecuteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
+    options: WithoutSkipToken<
+      InfiniteQueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
     >,
   ): Promise<
     Array<TData> extends Array<InfiniteData<TQueryFnData>>
@@ -356,12 +391,14 @@ export class QueryClient extends QC {
     TPageParam = unknown,
   >(
     options: MaybeRefDeep<
-      InfiniteQueryExecuteOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam
+      WithoutSkipToken<
+        InfiniteQueryExecuteOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryKey,
+          TPageParam
+        >
       >
     >,
   ): Promise<
@@ -386,9 +423,32 @@ export class QueryClient extends QC {
       >
     >,
   ): Promise<
-    Array<TData> extends Array<InfiniteData<TQueryFnData>>
-      ? InfiniteData<TQueryFnData, TPageParam>
-      : TData
+    | undefined
+    | (Array<TData> extends Array<InfiniteData<TQueryFnData>>
+        ? InfiniteData<TQueryFnData, TPageParam>
+        : TData)
+  >
+  override infiniteQuery<
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: MaybeRefDeep<
+      InfiniteQueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<
+    | undefined
+    | (Array<TData> extends Array<InfiniteData<TQueryFnData>>
+        ? InfiniteData<TQueryFnData, TPageParam>
+        : TData)
   > {
     return super.infiniteQuery(cloneDeepUnref(options))
   }

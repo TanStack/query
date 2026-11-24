@@ -374,7 +374,7 @@ describe('queryClient', () => {
         select: (data: string) => data.length,
       })
 
-      expectTypeOf(result).toEqualTypeOf<Promise<number>>()
+      expectTypeOf(result).toEqualTypeOf<Promise<number | undefined>>()
     })
 
     it('should not allow enabled', () => {
@@ -392,7 +392,7 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
       const data = await queryClient.query(typedQueryOptions)
 
-      expectTypeOf(data).toEqualTypeOf<TypedData>()
+      expectTypeOf(data).toEqualTypeOf<TypedData | undefined>()
     })
 
     it('should resolve with unknown when untyped', async () => {
@@ -489,14 +489,18 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
       const data = await queryClient.infiniteQuery(typedInfiniteQueryOptions)
 
-      expectTypeOf(data).toEqualTypeOf<InfiniteData<TypedData, unknown>>()
+      expectTypeOf(data).toEqualTypeOf<
+        InfiniteData<TypedData, unknown> | undefined
+      >()
     })
 
     it('should resolve with InfiniteData of unknown when untyped', async () => {
       const queryClient = new QueryClient()
       const data = await queryClient.infiniteQuery(untypedInfiniteQueryOptions)
 
-      expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, unknown>>()
+      expectTypeOf(data).toEqualTypeOf<
+        InfiniteData<unknown, unknown> | undefined
+      >()
     })
   })
 

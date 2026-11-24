@@ -158,7 +158,9 @@ describe('infiniteQueryOptions', () => {
 
     const data = await new QueryClient().infiniteQuery(options)
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<unknown, number>>()
+    expectTypeOf(data).toEqualTypeOf<
+      InfiniteData<unknown, number> | undefined
+    >()
   })
 
   it('should tag the queryKey with the result type of the QueryFn', () => {

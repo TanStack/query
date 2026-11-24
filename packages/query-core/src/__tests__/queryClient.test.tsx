@@ -821,8 +821,9 @@ describe('queryClient', () => {
       expect(booleanQueryFn).toHaveBeenCalledTimes(1)
     })
 
-    it('should throw when skipToken is provided and no cached data exists', async () => {
+    it('should leave a cache miss untouched when skipToken is provided', async () => {
       const key = createKey()
+      const initialData = vi.fn<() => string>(() => 'initial')
       const select = vi.fn<(data: unknown) => number>(
         (data: unknown) => (data as string).length,
       )
@@ -832,13 +833,16 @@ describe('queryClient', () => {
           queryKey: key,
           queryFn: skipToken,
           select,
+          initialData,
         }),
-      ).rejects.toThrow('Missing queryFn')
+      ).resolves.toBeUndefined()
 
       expect(select).not.toHaveBeenCalled()
+      expect(initialData).not.toHaveBeenCalled()
+      expect(queryClient.getQueryState(key)).toBeUndefined()
     })
 
-    it('should return cached data when skipToken is provided', async () => {
+    it('should return stale cached data when skipToken is provided', async () => {
       const key = createKey()
 
       queryClient.setQueryData(key, 'cached-data')
@@ -846,35 +850,22 @@ describe('queryClient', () => {
       const result = await queryClient.query({
         queryKey: key,
         queryFn: skipToken,
-        staleTime: 'static',
         select: (data: unknown) => (data as string).length,
       })
       expect(result).toBe('cached-data'.length)
     })
 
-    it('should return cached data when skipToken and enabled false are both provided', async () => {
-      const key = createKey()
+    it('should read the cache without waiting for an in-flight query', async () => {
+      const queryKey = createKey()
+      const { promise, resolve } = Promise.withResolvers<number>()
+      const fetching = queryClient.query({ queryKey, queryFn: () => promise })
 
-      queryClient.setQueryData(key, { value: 'cached-data' })
-
-      const result = await queryClient.query({
-        queryKey: key,
-        queryFn: skipToken,
-        // @ts-expect-error enabled is not supported for imperative queries
-        enabled: false,
-        staleTime: 'static',
-        select: (data: { value: string }) => data.value.toUpperCase(),
-      })
-      expect(result).toBe('CACHED-DATA')
-    })
-
-    it('should throw when skipToken is provided with no cached data', async () => {
       await expect(
-        queryClient.query({
-          queryKey: createKey(),
-          queryFn: skipToken,
-        }),
-      ).rejects.toThrow('Missing queryFn')
+        queryClient.query({ queryKey, queryFn: skipToken }),
+      ).resolves.toBeUndefined()
+
+      resolve(5)
+      await expect(fetching).resolves.toBe(5)
     })
 
     it('should fetch when enabled callback returns false', async () => {
@@ -1227,7 +1218,7 @@ describe('queryClient', () => {
       expect(queryFn).toHaveBeenCalledTimes(1)
     })
 
-    it('should return cached data when skipToken is provided', async () => {
+    it('should return stale cached data when skipToken is provided', async () => {
       const key = createKey()
 
       queryClient.setQueryData(key, {
@@ -1240,7 +1231,6 @@ describe('queryClient', () => {
         queryFn: skipToken,
         getNextPageParam: () => undefined,
         initialPageParam: 0,
-        staleTime: 'static',
       })
       expect(result).toStrictEqual({
         pages: ['page-1'],
@@ -1248,7 +1238,7 @@ describe('queryClient', () => {
       })
     })
 
-    it('should throw when skipToken is provided and no cached data exists', async () => {
+    it('should leave a cache miss untouched when skipToken is provided', async () => {
       const key = createKey()
       const select = vi.fn<(data: { pages: Array<string> }) => number>(
         (data: { pages: Array<string> }) => data.pages.length,
@@ -1262,20 +1252,10 @@ describe('queryClient', () => {
           initialPageParam: 0,
           select,
         }),
-      ).rejects.toThrow('Missing queryFn')
+      ).resolves.toBeUndefined()
 
       expect(select).not.toHaveBeenCalled()
-    })
-
-    it('should throw when skipToken is provided with no cached data', async () => {
-      await expect(
-        queryClient.infiniteQuery({
-          queryKey: createKey(),
-          queryFn: skipToken,
-          getNextPageParam: () => undefined,
-          initialPageParam: 0,
-        }),
-      ).rejects.toThrow('Missing queryFn')
+      expect(queryClient.getQueryState(key)).toBeUndefined()
     })
 
     it('should evaluate staleTime callback and refetch when it returns stale', async () => {

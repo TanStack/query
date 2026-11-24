@@ -25,6 +25,11 @@ Prefetching a query uses the `query` method. This method by default will
 - Return the result of that query
 - Throw if it hits any errors
 
+You can pass shared options from `queryOptions` or `infiniteQueryOptions` to
+these methods even when `queryFn` can be `skipToken`. When the options contain
+the token, the call skips the fetch and returns existing data or `undefined`.
+Use `getQueryData` when you need to read the cache directly.
+
 For prefetching you often want to modify these defaults:
 
 - Out of the box, `query` uses the default `staleTime` configured for the `queryClient` to determine whether existing data in the cache is fresh or needs to be fetched again

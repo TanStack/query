@@ -59,7 +59,7 @@ describe('queryOptions', () => {
     })
 
     const data = await new QueryClient().query(options)
-    expectTypeOf(data).toEqualTypeOf<number>()
+    expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
   it('should work when passed to query with select', async () => {
@@ -70,7 +70,7 @@ describe('queryOptions', () => {
     })
 
     const data = await new QueryClient().query(options)
-    expectTypeOf(data).toEqualTypeOf<string>()
+    expectTypeOf(data).toEqualTypeOf<string | undefined>()
   })
 
   it('should work when passed to query with enabled: false', async () => {
@@ -81,7 +81,7 @@ describe('queryOptions', () => {
     })
 
     const data = await new QueryClient().query(options)
-    expectTypeOf(data).toEqualTypeOf<number>()
+    expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
   it('should work when passed to query with skipToken', async () => {

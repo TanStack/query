@@ -40,6 +40,10 @@ import type {
 } from './types'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
 
+type WithoutSkipToken<T extends { queryFn?: unknown }> = Omit<T, 'queryFn'> & {
+  queryFn?: Exclude<T['queryFn'], typeof skipToken>
+}
+
 // TYPES
 
 interface QueryDefaults {
@@ -539,6 +543,10 @@ export class QueryClient {
    * `refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount`, `retryOnMount`,
    * `notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData` are not part of this
    * method's options.
+   * Shared query options can contain `skipToken` as their `queryFn`. If the supplied options contain
+   * the token, the call skips fetching and resolves with existing data regardless of freshness.
+   * It applies `select` when data exists and resolves to `undefined` on a cache miss.
+   * Use {@link QueryClient#getQueryData} to read the cache directly.
    * @param options - The query options, including the `queryKey` and the `queryFn` used if the
    * query needs to fetch.
    * @returns A promise that resolves to the data, or to the result of `select` if provided. It
@@ -552,6 +560,42 @@ export class QueryClient {
    * }
    * ```
    */
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: WithoutSkipToken<
+      QueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<TData>
+  query<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = never,
+  >(
+    options: QueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<TData | undefined>
   async query<
     TQueryFnData,
     TError = DefaultError,
@@ -568,23 +612,35 @@ export class QueryClient {
       TQueryKey,
       TPageParam
     >,
-  ): Promise<TData> {
+  ): Promise<TData | undefined> {
     const defaultedOptions = this.defaultQueryOptions(options)
+    let queryData: TQueryData
 
-    // https://github.com/tannerlinsley/react-query/issues/652
-    if (defaultedOptions.retry === undefined) {
-      defaultedOptions.retry = false
+    if (options.queryFn === skipToken) {
+      const cachedData = this.#queryCache.get<
+        TQueryFnData,
+        TError,
+        TQueryData,
+        TQueryKey
+      >(defaultedOptions.queryHash)?.state.data
+      if (cachedData === undefined) return undefined
+      queryData = cachedData
+    } else {
+      // https://github.com/tannerlinsley/react-query/issues/652
+      if (defaultedOptions.retry === undefined) {
+        defaultedOptions.retry = false
+      }
+
+      const query = this.#queryCache.build(this, defaultedOptions)
+
+      const isStale = query.isStaleByTime(
+        resolveQueryValue(defaultedOptions.staleTime, query),
+      )
+
+      queryData = isStale
+        ? await query.fetch(defaultedOptions)
+        : (query.state.data as TQueryData)
     }
-
-    const query = this.#queryCache.build(this, defaultedOptions)
-
-    const isStale = query.isStaleByTime(
-      resolveQueryValue(defaultedOptions.staleTime, query),
-    )
-
-    const queryData = isStale
-      ? await query.fetch(defaultedOptions)
-      : (query.state.data as TQueryData)
 
     const select = defaultedOptions.select
 
@@ -602,6 +658,9 @@ export class QueryClient {
    * Requires `initialPageParam` and `getNextPageParam`. Use `pages` to specify how many
    * pages to fetch. If you omit `pages`, the client fetches up to the number of cached
    * pages, or one page if the cache has no pages.
+   * If shared infinite query options contain `skipToken` as their `queryFn`, the call skips fetching
+   * and resolves with existing data or `undefined` on a cache miss. Use {@link QueryClient#getQueryData}
+   * to read the cache directly.
    * @param options - The query to fetch and the options that control which pages to fetch.
    * @returns A promise that resolves to the {@link InfiniteData}, or to the result of `select` if
    * provided. It rejects with the error from the fetch or from `select`.
@@ -627,6 +686,27 @@ export class QueryClient {
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
+    options: WithoutSkipToken<
+      InfiniteQueryExecuteOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey,
+        TPageParam
+      >
+    >,
+  ): Promise<
+    Array<TData> extends Array<InfiniteData<TQueryFnData>>
+      ? InfiniteData<TQueryFnData, TPageParam>
+      : TData
+  >
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
     options: InfiniteQueryExecuteOptions<
       TQueryFnData,
       TError,
@@ -635,12 +715,32 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<
-    Array<TData> extends Array<InfiniteData<TQueryFnData>>
-      ? InfiniteData<TQueryFnData, TPageParam>
-      : TData
+    | undefined
+    | (Array<TData> extends Array<InfiniteData<TQueryFnData>>
+        ? InfiniteData<TQueryFnData, TPageParam>
+        : TData)
+  >
+  infiniteQuery<
+    TQueryFnData,
+    TError = DefaultError,
+    TData = InfiniteData<TQueryFnData>,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: InfiniteQueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): Promise<
+    | undefined
+    | (Array<TData> extends Array<InfiniteData<TQueryFnData>>
+        ? InfiniteData<TQueryFnData, TPageParam>
+        : TData)
   > {
-    options._type = 'infinite'
-    return this.query(options as any)
+    return this.query({ ...options, _type: 'infinite' } as any)
   }
 
   /**
