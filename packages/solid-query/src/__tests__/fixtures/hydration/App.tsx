@@ -11,6 +11,7 @@ import {
   QueryClientProvider,
   noop,
   useIsFetching,
+  useQueries,
   useQuery,
 } from '@tanstack/solid-query'
 import type { QueryClient } from '@tanstack/solid-query'
@@ -22,6 +23,8 @@ export interface FetchCounts {
   stale: number
   placeholder: number
   prefetched: number
+  queriesFresh: number
+  queriesStale: number
 }
 
 export interface AppProps {
@@ -101,6 +104,39 @@ function Queries(props: AppProps) {
   )
 }
 
+/** The same staleness pair as above, read through `useQueries` (#11185):
+ * its rows must prime from the server payload like `useQuery` does. */
+function QueriesList(props: AppProps) {
+  const results = useQueries(() => ({
+    queries: [
+      {
+        queryKey: ['queries-fresh'],
+        queryFn: async () => {
+          props.counts.queriesFresh++
+          await sleep(5)
+          return `queries-fresh-${props.source}`
+        },
+        staleTime: 60_000,
+      },
+      {
+        queryKey: ['queries-stale'],
+        queryFn: async () => {
+          props.counts.queriesStale++
+          await sleep(5)
+          return `queries-stale-${props.source}`
+        },
+        staleTime: 0,
+      },
+    ],
+  }))
+  return (
+    <div>
+      <span id="queries-fresh">{results[0].data}</span>
+      <span id="queries-stale">{results[1].data}</span>
+    </div>
+  )
+}
+
 /** Never rendered on the server — mounted by tests after hydration. Its
  * query was prefetched (and only prefetched) during SSR; the hash-keyed
  * registry entry must satisfy it with zero client fetches. */
@@ -138,6 +174,7 @@ export function App(props: AppProps) {
     <QueryClientProvider client={props.client}>
       <Loading fallback={<div>loading</div>}>
         <Queries {...props} />
+        <QueriesList {...props} />
         <Show when={props.lateMount?.()}>
           <LateConsumer {...props} />
         </Show>
