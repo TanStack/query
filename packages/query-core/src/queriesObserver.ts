@@ -307,8 +307,24 @@ export class QueriesObserver<
       return result
     }
 
+    let serverResult: Array<QueryObserverResult> | undefined
+    const getServerSnapshot = () => {
+      const snapshot = getSnapshot()
+      const nextResult = matches.map((match) =>
+        match.reader.getServerSnapshot(),
+      )
+      if (shallowEqualObjects(nextResult, snapshot)) {
+        return snapshot
+      }
+      if (!shallowEqualObjects(nextResult, serverResult)) {
+        serverResult = nextResult
+      }
+      return serverResult!
+    }
+
     return {
       getSnapshot,
+      getServerSnapshot,
       combineResult: (input) => {
         // Notifications may have already combined these results.
         const committed = this.#combineContext

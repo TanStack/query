@@ -1,7 +1,7 @@
 import { isServer as isServerEnvironment } from './environmentManager'
 import { focusManager } from './focusManager'
 import { notifyManager } from './notifyManager'
-import { fetchState } from './query'
+import { fetchState, pendingHydrationStates } from './query'
 import { Subscribable } from './subscribable'
 import { timeoutManager } from './timeoutManager'
 import {
@@ -40,6 +40,13 @@ interface ObserverFetchOptions extends FetchOptions {
 export interface QueryObserverResultReader<TResult> {
   /** Read the result, retaining its reference while all fields are unchanged. */
   getSnapshot: () => TResult
+  /**
+   * Read the result for server renders and hydration renders. A non-suspense query that was
+   * hydrated while its fetch was pending reads as pending, even if the streamed promise has
+   * since resolved, so the server and the client render the same result. Otherwise it returns
+   * the same result as `getSnapshot`.
+   */
+  getServerSnapshot: () => TResult
   /** Apply this reader's options and reusable computation state after commit. */
   commit: () => void
 }
@@ -416,8 +423,40 @@ export class QueryObserver<
       return result
     }
 
+    let serverResult: QueryObserverResult<TData, TError> | undefined
+    const getServerSnapshot = () => {
+      const query = this.#client
+        .getQueryCache()
+        .build(this.#client, readerOptions)
+      const pendingState = pendingHydrationStates.get(query)
+
+      // Suspense queries suspend until the promise resolves on both sides.
+      if (!pendingState || readerOptions.suspense) {
+        return getSnapshot()
+      }
+
+      if (!serverResult) {
+        // Compute from the dehydrated state alone. Data that resolved after
+        // dehydration, or a previous query, only exists on one side.
+        const lastQueryWithDefinedData = this.#lastQueryWithDefinedData
+        this.#lastQueryWithDefinedData = undefined
+        try {
+          serverResult = this.createResult(
+            Object.create(query, { state: { value: pendingState } }),
+            readerOptions,
+            {},
+            result,
+          )
+        } finally {
+          this.#lastQueryWithDefinedData = lastQueryWithDefinedData
+        }
+      }
+      return serverResult
+    }
+
     return {
       getSnapshot,
+      getServerSnapshot,
       commit: () => {
         // Reuse selections computed since the last read.
         getSnapshot()

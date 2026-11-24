@@ -1020,6 +1020,17 @@ export class Query<
 }
 
 /**
+ * The dehydrated state of each query that was hydrated while its fetch was still pending.
+ * Server renders and client hydration renders use this state, so they produce the same
+ * pending result even if the streamed promise resolves between them.
+ * @internal
+ */
+export const pendingHydrationStates = new WeakMap<
+  Query<any, any, any, any>,
+  QueryState<any, any>
+>()
+
+/**
  * Returns the state changes applied when a query starts fetching.
  * @param data - The query's current data. If it is `undefined`, the query is also reset to
  * `'pending'` with no error.

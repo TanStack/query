@@ -132,7 +132,7 @@ export function useBaseQuery<
       [observer, shouldSubscribe],
     ),
     reader.getSnapshot,
-    reader.getSnapshot,
+    reader.getServerSnapshot,
   )
 
   // Handle error boundary

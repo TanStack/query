@@ -1,4 +1,5 @@
 import { Mutation } from './mutation'
+import { pendingHydrationStates } from './query'
 import { noop } from './utils'
 import type { MutationState } from './mutation'
 import type { Query, QueryState } from './query'
@@ -41,6 +42,25 @@ function tryResolveSync(promise: PromiseLike<unknown>) {
   }
 
   return undefined
+}
+
+/**
+ * Records the dehydrated state of a query that was pending when it was dehydrated, so server
+ * renders and hydration renders can show it as pending. Clears the record otherwise.
+ * @param query - The hydrated query.
+ * @param state - The dehydrated query state.
+ * @param promise - The dehydrated fetch promise, if any.
+ */
+function setPendingHydrationState(
+  query: Query,
+  state: QueryState,
+  promise: PromiseLike<unknown> | undefined,
+) {
+  if (state.status === 'pending' && promise) {
+    pendingHydrationStates.set(query, state)
+  } else {
+    pendingHydrationStates.delete(query)
+  }
 }
 
 /**
@@ -377,6 +397,7 @@ export function hydrate(
                 }),
               }),
           })
+          setPendingHydrationState(query, state, promise)
         }
       } else {
         // Restore query
@@ -408,6 +429,7 @@ export function hydrate(
               }),
           },
         )
+        setPendingHydrationState(query, state, promise)
       }
 
       if (

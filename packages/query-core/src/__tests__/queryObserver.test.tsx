@@ -4,7 +4,9 @@ import {
   QueryClient,
   QueryObserver,
   defaultQueryFn,
+  dehydrate,
   focusManager,
+  hydrate,
   keepPreviousData,
   noop,
   timeoutManager,
@@ -2094,5 +2096,141 @@ describe('queryObserver', () => {
     })
 
     unsubscribe()
+  })
+
+  describe('getServerSnapshot', () => {
+    // A dehydrated pending query whose promise resolved before the client hydrated.
+    function hydrateResolvedStream(queryKey: ReadonlyArray<unknown>) {
+      const serverClient = new QueryClient()
+      void serverClient
+        .query({ queryKey, queryFn: () => sleep(10).then(() => 'server') })
+        .catch(noop)
+      const dehydratedState = dehydrate(serverClient, {
+        shouldDehydrateQuery: (query) => query.state.status === 'pending',
+      })
+      hydrate(queryClient, {
+        ...dehydratedState,
+        queries: dehydratedState.queries.map((query) => ({
+          ...query,
+          promise: {
+            then: (onFulfilled: (value: string) => unknown) =>
+              onFulfilled('server'),
+          } as unknown as Promise<string>,
+        })),
+      })
+      serverClient.clear()
+    }
+
+    it('should read a query hydrated while pending as pending', () => {
+      const queryKey = createKey()
+      hydrateResolvedStream(queryKey)
+
+      const options = queryClient.defaultQueryOptions({
+        queryKey,
+        queryFn: () => 'client',
+        _optimisticResults: 'optimistic',
+      })
+      const reader = new QueryObserver(
+        queryClient,
+        options,
+      ).createResultReader(options)
+
+      expect(reader.getSnapshot()).toMatchObject({
+        status: 'success',
+        data: 'server',
+      })
+      const serverSnapshot = reader.getServerSnapshot()
+      expect(serverSnapshot).toMatchObject({
+        status: 'pending',
+        fetchStatus: 'fetching',
+        isLoading: true,
+        data: undefined,
+        isFetched: false,
+      })
+      expect(reader.getServerSnapshot()).toBe(serverSnapshot)
+    })
+
+    it('should not pass client data to placeholderData', () => {
+      const queryKey = createKey()
+      hydrateResolvedStream(queryKey)
+
+      const placeholderData = vi.fn<
+        (previousData: string | undefined) => string
+      >((previousData) => previousData ?? 'placeholder')
+      const options = queryClient.defaultQueryOptions({
+        queryKey,
+        queryFn: () => 'client',
+        placeholderData: (previousData: string | undefined) =>
+          placeholderData(previousData),
+        _optimisticResults: 'optimistic',
+      })
+      const observer = new QueryObserver(queryClient, options)
+      observer.updateResult()
+      const reader = observer.createResultReader(options)
+
+      expect(reader.getServerSnapshot()).toMatchObject({
+        status: 'success',
+        data: 'placeholder',
+        isPlaceholderData: true,
+      })
+      expect(placeholderData).toHaveBeenLastCalledWith(undefined)
+    })
+
+    it('should read the current result for suspense queries', () => {
+      const queryKey = createKey()
+      hydrateResolvedStream(queryKey)
+
+      const options = queryClient.defaultQueryOptions({
+        queryKey,
+        queryFn: () => 'client',
+        suspense: true,
+      })
+      const reader = new QueryObserver(
+        queryClient,
+        options,
+      ).createResultReader(options)
+
+      expect(reader.getServerSnapshot()).toBe(reader.getSnapshot())
+      expect(reader.getServerSnapshot().data).toBe('server')
+    })
+
+    it('should read the current result after a newer settled hydration', () => {
+      const queryKey = createKey()
+      hydrateResolvedStream(queryKey)
+
+      const serverClient = new QueryClient()
+      serverClient.setQueryData(queryKey, 'newer', {
+        updatedAt: Date.now() + 1,
+      })
+      hydrate(queryClient, dehydrate(serverClient))
+
+      const options = queryClient.defaultQueryOptions({
+        queryKey,
+        queryFn: () => 'client',
+      })
+      const reader = new QueryObserver(
+        queryClient,
+        options,
+      ).createResultReader(options)
+
+      expect(reader.getServerSnapshot()).toBe(reader.getSnapshot())
+      expect(reader.getServerSnapshot().data).toBe('newer')
+    })
+
+    it('should read the current result for queries that were not hydrated', () => {
+      const queryKey = createKey()
+      queryClient.setQueryData(queryKey, 'cached')
+
+      const options = queryClient.defaultQueryOptions({
+        queryKey,
+        queryFn: () => 'client',
+      })
+      const reader = new QueryObserver(
+        queryClient,
+        options,
+      ).createResultReader(options)
+
+      expect(reader.getServerSnapshot()).toBe(reader.getSnapshot())
+    })
   })
 })

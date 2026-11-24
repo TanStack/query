@@ -462,7 +462,7 @@ export function useBaseQueries<
       [observer, shouldSubscribe],
     ),
     reader.getSnapshot,
-    reader.getSnapshot,
+    reader.getServerSnapshot,
   )
 
   const firstErrorResult = results.find((result, index) => {
