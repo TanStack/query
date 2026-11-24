@@ -5,6 +5,8 @@ lockfile:
 minimumReleaseAge: 1440
 minimumReleaseAgeExcludePrune: true
 minimumReleaseAgeExclude:
+  - 'oxlint@1.95.0' # Native 'vitest/valid-expect' checks 'expectTypeOf'.
+  - '@oxlint/binding-*' # Platform binaries pinned by the exact 'oxlint' version.
   - 'solid-js@1.9.20' # Adds setTrustedTypesPolicy, which the devtools use.
 linkWorkspacePackages: true
 preferWorkspacePackages: true
