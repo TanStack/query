@@ -46,6 +46,8 @@ describe('hydration', () => {
         stale: 1,
         placeholder: 0,
         prefetched: 1,
+        queriesFresh: 1,
+        queriesStale: 1,
       })
       expect(string.html).toContain('fresh-server')
       expect(string.html).toContain('stale-server')
@@ -223,6 +225,61 @@ describe('hydration', () => {
           )
         })
         expect(lingering).toStrictEqual([])
+      } finally {
+        dispose()
+        container.remove()
+      }
+    })
+
+    it('useQueries primes from the server payload and refetches only per staleness rules (#11185)', async () => {
+      const { string } = harness.report
+      // Both rows ship in the registry like any useQuery entry.
+      expect(string.html).toMatch(
+        /sq:\[\\"queries-fresh\\"\]"\]=[^<]*data:"queries-fresh-server"/,
+      )
+      expect(string.html).toMatch(
+        /sq:\[\\"queries-stale\\"\]"\]=[^<]*data:"queries-stale-server"/,
+      )
+
+      const app = bundle.createApp()
+      const container = document.createElement('div')
+      document.body.appendChild(container)
+      bootstrapHydrationGlobals()
+      container.innerHTML = string.html
+      for (const script of Array.from(container.querySelectorAll('script'))) {
+        if (script.textContent) {
+          window.eval(script.textContent)
+        }
+        script.remove()
+      }
+
+      const dispose = app.mount(container)
+
+      try {
+        await microtasks()
+        const serverFresh = string.queries.find(
+          (q) => q.queryHash === '["queries-fresh"]',
+        )!
+        const freshState = app.queryClient.getQueryState(['queries-fresh'])
+        expect(freshState?.data).toBe('queries-fresh-server')
+        expect(freshState?.dataUpdatedAt).toBe(serverFresh.state.dataUpdatedAt)
+        expect(container.querySelector('#queries-fresh')?.textContent).toBe(
+          'queries-fresh-server',
+        )
+
+        // The stale row refetches on mount...
+        await vi.waitFor(() => {
+          expect(app.counts.queriesStale).toBe(1)
+          expect(container.querySelector('#queries-stale')?.textContent).toBe(
+            'queries-stale-client',
+          )
+        })
+
+        // ...while the fresh row is never fetched again.
+        expect(app.counts.queriesFresh).toBe(0)
+        expect(container.querySelector('#queries-fresh')?.textContent).toBe(
+          'queries-fresh-server',
+        )
       } finally {
         dispose()
         container.remove()

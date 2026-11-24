@@ -37,6 +37,8 @@ interface ServerReport {
       stale: number
       placeholder: number
       prefetched: number
+      queriesFresh: number
+      queriesStale: number
     }
     queries: Array<QuerySnapshot>
     /** Whether the provider's dispose-time teardown emptied the cache. */
@@ -69,6 +71,8 @@ export interface ClientBundle {
       stale: number
       placeholder: number
       prefetched: number
+      queriesFresh: number
+      queriesStale: number
     }
     showLate: () => void
     mount: (container: HTMLElement) => () => void
