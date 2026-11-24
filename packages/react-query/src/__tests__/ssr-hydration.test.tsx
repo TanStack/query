@@ -1,7 +1,6 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { act } from 'react'
 import { hydrateRoot } from 'react-dom/client'
-import type { HydrationOptions } from 'react-dom/client'
 import * as ReactDOMServer from 'react-dom/server'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import {
@@ -15,6 +14,7 @@ import {
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
+import type { HydrationOptions } from 'react-dom/client'
 
 const ReactHydrate = (
   element: React.ReactElement,
@@ -226,7 +226,10 @@ describe('Server side rendering with de/rehydration', () => {
         queryFn: () => fetchData('client'),
       })
       return (
-        <PrintStateComponent componentName="StreamedComponent" result={result} />
+        <PrintStateComponent
+          componentName="StreamedComponent"
+          result={result}
+        />
       )
     }
 
@@ -314,7 +317,10 @@ describe('Server side rendering with de/rehydration', () => {
         queries: [{ queryKey: key, queryFn: () => fetchData('client') }],
       })
       return (
-        <PrintStateComponent componentName="StreamedComponent" result={result} />
+        <PrintStateComponent
+          componentName="StreamedComponent"
+          result={result}
+        />
       )
     }
 
@@ -378,6 +384,157 @@ describe('Server side rendering with de/rehydration', () => {
     expect(consoleErrorMock).toHaveBeenCalledTimes(0)
     expect(el.innerHTML).toBe(
       'StreamedComponent - status:success fetching:true data:server',
+    )
+
+    unmount()
+    queryClient.clear()
+  })
+
+  it('should not mismatch when a hydrated query changes before a component hydrates', async () => {
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockReturnValue(undefined)
+
+    const key = createKey()
+
+    // -- Shared part --
+    function HydratedComponent() {
+      const result = useQuery({
+        queryKey: key,
+        queryFn: () => fetchData('client'),
+        staleTime: Infinity,
+      })
+      return (
+        <PrintStateComponent
+          componentName="HydratedComponent"
+          result={result}
+        />
+      )
+    }
+
+    // -- Server part --
+    setIsServer(true)
+
+    const prefetchClient = new QueryClient()
+    await prefetchClient.query({
+      queryKey: key,
+      queryFn: () => fetchData('server'),
+    })
+    const dehydratedState = dehydrate(prefetchClient)
+    const renderClient = new QueryClient()
+    hydrate(renderClient, dehydratedState)
+    const markup = ReactDOMServer.renderToString(
+      <QueryClientProvider client={renderClient}>
+        <HydratedComponent />
+      </QueryClientProvider>,
+    )
+    renderClient.clear()
+    setIsServer(false)
+
+    expect(markup).toBe(
+      'HydratedComponent - status:success fetching:false data:server',
+    )
+
+    // -- Client part --
+    const el = document.createElement('div')
+    el.innerHTML = markup
+
+    const queryClient = new QueryClient()
+    hydrate(queryClient, dehydratedState)
+    // The query changes before this component hydrates, for example because a component that
+    // hydrated earlier refetched it.
+    queryClient.setQueryData(key, 'client')
+
+    const onRecoverableError = vi.fn<(error: unknown) => void>()
+    const unmount = ReactHydrate(
+      <QueryClientProvider client={queryClient}>
+        <HydratedComponent />
+      </QueryClientProvider>,
+      el,
+      { onRecoverableError },
+    )
+
+    // Check that we have no React hydration mismatches
+    expect(onRecoverableError).not.toHaveBeenCalled()
+    expect(consoleErrorMock).toHaveBeenCalledTimes(0)
+    // After hydration, the result switches to the live data.
+    expect(el.innerHTML).toBe(
+      'HydratedComponent - status:success fetching:false data:client',
+    )
+
+    unmount()
+    queryClient.clear()
+  })
+
+  it('should not mismatch when a hydrated query used by useQueries changes before a component hydrates', async () => {
+    const consoleErrorMock = vi.spyOn(console, 'error')
+    consoleErrorMock.mockReturnValue(undefined)
+
+    const key = createKey()
+
+    // -- Shared part --
+    function HydratedComponent() {
+      const [result] = useQueries({
+        queries: [
+          {
+            queryKey: key,
+            queryFn: () => fetchData('client'),
+            staleTime: Infinity,
+          },
+        ],
+      })
+      return (
+        <PrintStateComponent
+          componentName="HydratedComponent"
+          result={result}
+        />
+      )
+    }
+
+    // -- Server part --
+    setIsServer(true)
+
+    const prefetchClient = new QueryClient()
+    await prefetchClient.query({
+      queryKey: key,
+      queryFn: () => fetchData('server'),
+    })
+    const dehydratedState = dehydrate(prefetchClient)
+    const renderClient = new QueryClient()
+    hydrate(renderClient, dehydratedState)
+    const markup = ReactDOMServer.renderToString(
+      <QueryClientProvider client={renderClient}>
+        <HydratedComponent />
+      </QueryClientProvider>,
+    )
+    renderClient.clear()
+    setIsServer(false)
+
+    expect(markup).toBe(
+      'HydratedComponent - status:success fetching:false data:server',
+    )
+
+    // -- Client part --
+    const el = document.createElement('div')
+    el.innerHTML = markup
+
+    const queryClient = new QueryClient()
+    hydrate(queryClient, dehydratedState)
+    queryClient.setQueryData(key, 'client')
+
+    const onRecoverableError = vi.fn<(error: unknown) => void>()
+    const unmount = ReactHydrate(
+      <QueryClientProvider client={queryClient}>
+        <HydratedComponent />
+      </QueryClientProvider>,
+      el,
+      { onRecoverableError },
+    )
+
+    // Check that we have no React hydration mismatches
+    expect(onRecoverableError).not.toHaveBeenCalled()
+    expect(consoleErrorMock).toHaveBeenCalledTimes(0)
+    expect(el.innerHTML).toBe(
+      'HydratedComponent - status:success fetching:false data:client',
     )
 
     unmount()

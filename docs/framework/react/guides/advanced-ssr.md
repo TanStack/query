@@ -475,6 +475,8 @@ export default function Posts() {
 
 > Note that you could also `useQuery` instead of `useSuspenseQuery`, and the Promise would still be picked up correctly. However, NextJs won't suspend in that case and the component will render in the `pending` status, which also opts out of server rendering the content.
 
+> While React hydrates a component, `useQuery`, `useInfiniteQuery` and `useQueries` render a query that `hydrate` created from the state it was hydrated with, so the first client render matches the server markup. This holds even if the query changes in between, for example because its streamed Promise resolves or another component refetches it. A query that was pending when it was dehydrated therefore hydrates in the `pending` status and shows its data right after hydration. If you want the data in the server markup, use `useSuspenseQuery`. This does not cover queries that `hydrate` did not create, and `isStale` is still computed from the current time on each side.
+
 If you're using non-JSON data types and serialize the query results on the server, you can specify the `dehydrate.serializeData` and `hydrate.deserializeData` options to serialize and deserialize the data on each side of the boundary to ensure the data in the cache is the same format both on the server and the client:
 
 ```tsx

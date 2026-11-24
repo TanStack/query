@@ -1020,12 +1020,14 @@ export class Query<
 }
 
 /**
- * The dehydrated state of each query that was hydrated while its fetch was still pending.
- * Server renders and client hydration renders use this state, so they produce the same
- * pending result even if the streamed promise resolves between them.
+ * The state each query had when `hydrate` created it. Server renders and client hydration renders
+ * read this state instead of the live state, so they produce the same result even if the query
+ * changes between them, for example when a streamed promise resolves or a refetch finishes.
+ * Only the hydration that creates a query records it, because a later hydration of an existing
+ * query can happen in an effect, which never runs on the server.
  * @internal
  */
-export const pendingHydrationStates = new WeakMap<
+export const hydratedQueryStates = new WeakMap<
   Query<any, any, any, any>,
   QueryState<any, any>
 >()

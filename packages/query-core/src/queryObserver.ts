@@ -1,7 +1,7 @@
 import { isServer as isServerEnvironment } from './environmentManager'
 import { focusManager } from './focusManager'
 import { notifyManager } from './notifyManager'
-import { fetchState, pendingHydrationStates } from './query'
+import { fetchState, hydratedQueryStates } from './query'
 import { Subscribable } from './subscribable'
 import { timeoutManager } from './timeoutManager'
 import {
@@ -41,10 +41,13 @@ export interface QueryObserverResultReader<TResult> {
   /** Read the result, retaining its reference while all fields are unchanged. */
   getSnapshot: () => TResult
   /**
-   * Read the result for server renders and hydration renders. A non-suspense query that was
-   * hydrated while its fetch was pending reads as pending, even if the streamed promise has
-   * since resolved, so the server and the client render the same result. Otherwise it returns
-   * the same result as `getSnapshot`.
+   * Read the result for server renders and hydration renders. For a non-suspense query that
+   * `hydrate` created, the result is computed from the state the query was hydrated with, not
+   * the live state, so the server and the client render the same result even if the query
+   * changed in between. A query that was dehydrated while pending reads as pending even if its
+   * streamed promise has since resolved. The reference is stable, and when the computed result
+   * matches `getSnapshot` field by field, `getSnapshot`'s result is returned. Otherwise, and for
+   * queries that `hydrate` did not create, it returns the same result as `getSnapshot`.
    */
   getServerSnapshot: () => TResult
   /** Apply this reader's options and reusable computation state after commit. */
@@ -425,33 +428,41 @@ export class QueryObserver<
 
     let serverResult: QueryObserverResult<TData, TError> | undefined
     const getServerSnapshot = () => {
+      const snapshot = getSnapshot()
       const query = this.#client
         .getQueryCache()
         .build(this.#client, readerOptions)
-      const pendingState = pendingHydrationStates.get(query)
+      const hydratedState = hydratedQueryStates.get(query)
 
       // Suspense queries suspend until the promise resolves on both sides.
-      if (!pendingState || readerOptions.suspense) {
-        return getSnapshot()
+      if (!hydratedState || readerOptions.suspense) {
+        return snapshot
       }
 
       if (!serverResult) {
-        // Compute from the dehydrated state alone. Data that resolved after
-        // dehydration, or a previous query, only exists on one side.
+        // Compute from the hydrated state alone. Later changes to the query, or a previous
+        // query, only exist on one side.
         const lastQueryWithDefinedData = this.#lastQueryWithDefinedData
         this.#lastQueryWithDefinedData = undefined
         try {
           serverResult = this.createResult(
-            Object.create(query, { state: { value: pendingState } }),
+            Object.create(query, { state: { value: hydratedState } }),
             readerOptions,
-            {},
+            // Reuse the selection only when it was computed from the same data.
+            context.selection?.key.input === hydratedState.data
+              ? { selection: context.selection, selected: context.selected }
+              : {},
             result,
           )
         } finally {
           this.#lastQueryWithDefinedData = lastQueryWithDefinedData
         }
       }
-      return serverResult
+      // Return the live result when nothing differs, so React does not re-render after
+      // hydration.
+      return shallowEqualObjects(serverResult, snapshot)
+        ? snapshot
+        : serverResult
     }
 
     return {

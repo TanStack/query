@@ -2130,10 +2130,9 @@ describe('queryObserver', () => {
         queryFn: () => 'client',
         _optimisticResults: 'optimistic',
       })
-      const reader = new QueryObserver(
-        queryClient,
+      const reader = new QueryObserver(queryClient, options).createResultReader(
         options,
-      ).createResultReader(options)
+      )
 
       expect(reader.getSnapshot()).toMatchObject({
         status: 'success',
@@ -2185,19 +2184,20 @@ describe('queryObserver', () => {
         queryFn: () => 'client',
         suspense: true,
       })
-      const reader = new QueryObserver(
-        queryClient,
+      const reader = new QueryObserver(queryClient, options).createResultReader(
         options,
-      ).createResultReader(options)
+      )
 
       expect(reader.getServerSnapshot()).toBe(reader.getSnapshot())
       expect(reader.getServerSnapshot().data).toBe('server')
     })
 
-    it('should read the current result after a newer settled hydration', () => {
+    it('should keep the state from the hydration that created the query', () => {
       const queryKey = createKey()
       hydrateResolvedStream(queryKey)
 
+      // A later hydration of the existing query can run in an effect, which never runs on the
+      // server, so it does not change the server snapshot.
       const serverClient = new QueryClient()
       serverClient.setQueryData(queryKey, 'newer', {
         updatedAt: Date.now() + 1,
@@ -2208,13 +2208,62 @@ describe('queryObserver', () => {
         queryKey,
         queryFn: () => 'client',
       })
-      const reader = new QueryObserver(
-        queryClient,
+      const reader = new QueryObserver(queryClient, options).createResultReader(
         options,
-      ).createResultReader(options)
+      )
+
+      expect(reader.getSnapshot().data).toBe('newer')
+      expect(reader.getServerSnapshot()).toMatchObject({
+        status: 'pending',
+        data: undefined,
+      })
+    })
+
+    it('should read the hydrated data after the query changes', () => {
+      const queryKey = createKey()
+      const serverClient = new QueryClient()
+      serverClient.setQueryData(queryKey, 'server')
+      hydrate(queryClient, dehydrate(serverClient))
+      queryClient.setQueryData(queryKey, 'client')
+
+      const options = queryClient.defaultQueryOptions({
+        queryKey,
+        queryFn: () => 'client',
+        staleTime: Infinity,
+      })
+      const reader = new QueryObserver(queryClient, options).createResultReader(
+        options,
+      )
+
+      expect(reader.getSnapshot().data).toBe('client')
+      const serverSnapshot = reader.getServerSnapshot()
+      expect(serverSnapshot).toMatchObject({
+        status: 'success',
+        data: 'server',
+      })
+      expect(reader.getServerSnapshot()).toBe(serverSnapshot)
+    })
+
+    it('should return the live result when the hydrated result is unchanged', () => {
+      const queryKey = createKey()
+      const serverClient = new QueryClient()
+      serverClient.setQueryData(queryKey, { value: 'server' })
+      hydrate(queryClient, dehydrate(serverClient))
+
+      const options = queryClient.defaultQueryOptions({
+        queryKey,
+        queryFn: () => ({ value: 'client' }),
+        select: (data: { value: string }) => ({ selected: data.value }),
+        staleTime: Infinity,
+      })
+      const reader = new QueryObserver(queryClient, options).createResultReader(
+        options,
+      )
 
       expect(reader.getServerSnapshot()).toBe(reader.getSnapshot())
-      expect(reader.getServerSnapshot().data).toBe('newer')
+      expect(reader.getServerSnapshot().data).toStrictEqual({
+        selected: 'server',
+      })
     })
 
     it('should read the current result for queries that were not hydrated', () => {
@@ -2225,10 +2274,9 @@ describe('queryObserver', () => {
         queryKey,
         queryFn: () => 'client',
       })
-      const reader = new QueryObserver(
-        queryClient,
+      const reader = new QueryObserver(queryClient, options).createResultReader(
         options,
-      ).createResultReader(options)
+      )
 
       expect(reader.getServerSnapshot()).toBe(reader.getSnapshot())
     })
