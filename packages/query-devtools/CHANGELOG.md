@@ -1,5 +1,45 @@
 # @tanstack/query-devtools
 
+## 5.108.4
+
+### Patch Changes
+
+- Updated dependencies [[`89bb082`](https://github.com/TanStack/query/commit/89bb0820d8cf4b0ffd4819af6534c8c4057607db)]:
+  - @tanstack/query-core@5.108.4
+
+## 5.108.3
+
+### Patch Changes
+
+- Updated dependencies [[`7843249`](https://github.com/TanStack/query/commit/78432497d348ca7977c6700a5b0339591bbf8bfe), [`6b849cf`](https://github.com/TanStack/query/commit/6b849cff275dfa1a39d9fd56a47804fbcacdadd0), [`08de6c5`](https://github.com/TanStack/query/commit/08de6c5a88234dc37cd06362e4e23feca3930428), [`0538c98`](https://github.com/TanStack/query/commit/0538c98330f0a78c2d01d7fbc009275aa7215a47), [`3e36f30`](https://github.com/TanStack/query/commit/3e36f30e00530f9dffead1d6fe75c3c49fc9217c), [`a1e2497`](https://github.com/TanStack/query/commit/a1e24973a8d4e540b7f6f48bc9b33131cbe6dc77)]:
+  - @tanstack/query-core@5.108.3
+
+## 5.108.2
+
+### Patch Changes
+
+- [#12629](https://github.com/TanStack/query/pull/12629) [`f7abc93`](https://github.com/TanStack/query/commit/f7abc938a8a7fe801d78f4cfdb98d65422f276b2) - The picture-in-picture window no longer clears its document with `innerHTML`, which pages that enforce Trusted Types block.
+
+- [#12628](https://github.com/TanStack/query/pull/12628) [`80d6c41`](https://github.com/TanStack/query/commit/80d6c41fb8ee27db069874d1be75646bf48a64b0) - The devtools no longer use goober. Their styles are a static stylesheet adopted into the document or shadow root the devtools render in, instead of a `<style>` element in `<head>`. This means:
+
+  - The devtools are styled on pages with a Content Security Policy that blocks inline `<style>` elements. `styleNonce` is no longer needed and is deprecated.
+  - Devtools rendered inside a shadow root are styled without passing `shadowDOMTarget`.
+  - With `shadowDOMTarget`, the settings menu is styled.
+  - The picture-in-picture window gets all styles, including ones the devtools use only after it opened.
+  - The devtools no longer write to the shared `#_goober` style element or set `window.__nonce__`.
+  - Browsers without adoptable stylesheets (before Safari 16.4 and Firefox 101) show the devtools unstyled.
+
+- [#12643](https://github.com/TanStack/query/pull/12643) [`fd62c95`](https://github.com/TanStack/query/commit/fd62c9583ec0e1fe65ae56542876f47184534930) - Add a `trustedTypesPolicy` option, so the devtools render on pages that enforce `require-trusted-types-for 'script'`.
+- Updated dependencies []:
+  - @tanstack/query-core@5.108.2
+
+## 5.108.1
+
+### Patch Changes
+
+- Updated dependencies [[`0cf8f49`](https://github.com/TanStack/query/commit/0cf8f49e8f9cf24a8c6a7f17efb7cf4d91ea8f01)]:
+  - @tanstack/query-core@5.108.1
+
 ## 5.108.0
 
 ### Patch Changes

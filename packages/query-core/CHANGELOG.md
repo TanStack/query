@@ -1,5 +1,37 @@
 # @tanstack/query-core
 
+## 5.108.4
+
+### Patch Changes
+
+- [#12683](https://github.com/TanStack/query/pull/12683) [`89bb082`](https://github.com/TanStack/query/commit/89bb0820d8cf4b0ffd4819af6534c8c4057607db) - Clear garbage collection timers when cache entries are removed and prevent later fetch or observer cleanup from starting new timers for those entries.
+
+## 5.108.3
+
+### Patch Changes
+
+- [#12633](https://github.com/TanStack/query/pull/12633) [`7843249`](https://github.com/TanStack/query/commit/78432497d348ca7977c6700a5b0339591bbf8bfe) - Fix `QueriesObserver` returning a stale `combine` result built from the previous queries when one of them updates before `setQueries` is called with the new queries.
+
+- [#12575](https://github.com/TanStack/query/pull/12575) [`6b849cf`](https://github.com/TanStack/query/commit/6b849cff275dfa1a39d9fd56a47804fbcacdadd0) - Keep a memoized placeholder result when `select` maps it to `undefined`, so a query with `keepPreviousData` that is disabled or still loading no longer loops between `pending` and `success`.
+
+- [#12651](https://github.com/TanStack/query/pull/12651) [`08de6c5`](https://github.com/TanStack/query/commit/08de6c5a88234dc37cd06362e4e23feca3930428) - Prevent `partialMatchKey` from matching an array element against a plain object.
+
+- [#12658](https://github.com/TanStack/query/pull/12658) [`0538c98`](https://github.com/TanStack/query/commit/0538c98330f0a78c2d01d7fbc009275aa7215a47) - Fix `QueriesObserver.setQueries` (used by `useQueries`) keeping the queries it replaced, and their data, in memory after they are removed from the cache.
+
+- [#12677](https://github.com/TanStack/query/pull/12677) [`3e36f30`](https://github.com/TanStack/query/commit/3e36f30e00530f9dffead1d6fe75c3c49fc9217c) - Share the array helper for adding and trimming pages in both directions to reduce bundle size.
+
+- [#12649](https://github.com/TanStack/query/pull/12649) [`a1e2497`](https://github.com/TanStack/query/commit/a1e24973a8d4e540b7f6f48bc9b33131cbe6dc77) - Fix render loops when placeholder data or a selector produces a new result on each render.
+
+## 5.108.2
+
+No changes in this release.
+
+## 5.108.1
+
+### Patch Changes
+
+- [#12636](https://github.com/TanStack/query/pull/12636) [`0cf8f49`](https://github.com/TanStack/query/commit/0cf8f49e8f9cf24a8c6a7f17efb7cf4d91ea8f01) - Require `getNextPageParam` in the types for `queryClient.infiniteQuery`, the deprecated infinite query methods, and `usePrefetchInfiniteQuery`. If you omit `pages`, a stale query can still refetch multiple cached pages and needs the callback to compute their page parameters. Reuse the same `infiniteQueryOptions` you pass to `useInfiniteQuery` to supply the callback.
+
 ## 5.108.0
 
 ### Minor Changes

@@ -30,11 +30,10 @@ export type DistributiveOmit<
 export type OmitKeyof<
   TObject,
   TKey extends (TStrictly extends 'safely'
-    ?
-        | keyof TObject
-        | (string & Record<never, never>)
-        | (number & Record<never, never>)
-        | (symbol & Record<never, never>)
+    ? | keyof TObject
+      | (string & Record<never, never>)
+      | (number & Record<never, never>)
+      | (symbol & Record<never, never>)
     : keyof TObject),
   TStrictly extends 'strictly' | 'safely' = 'strictly',
 > = Omit<TObject, TKey>
@@ -815,17 +814,20 @@ export type EnsureInfiniteQueryDataOptions<
   revalidateIfStale?: boolean
 }
 
-type InfiniteQueryPages<TQueryFnData = unknown, TPageParam = unknown> =
-  | { pages?: never }
-  | {
-      pages: number
-      getNextPageParam: GetNextPageParamFunction<TPageParam, TQueryFnData>
-    }
+type InfiniteQueryFetchPageOptions<TQueryFnData, TPageParam> = Pick<
+  InfiniteQueryPageParamsOptions<TQueryFnData, TPageParam>,
+  'initialPageParam' | 'getNextPageParam'
+> & {
+  /**
+   * The number of pages to fetch. Defaults to the number of cached pages,
+   * or one page if the cache has no pages.
+   */
+  pages?: number
+}
 
 /**
- * The options of `queryClient.infiniteQuery`: like {@link QueryExecuteOptions}, with the
- * `initialPageParam`, and optionally `pages` together with `getNextPageParam` to fetch that many
- * pages at once.
+ * The options of `queryClient.infiniteQuery`. Extends {@link QueryExecuteOptions}
+ * with `initialPageParam`, `getNextPageParam`, and the optional `pages` count.
  */
 export type InfiniteQueryExecuteOptions<
   TQueryFnData = unknown,
@@ -844,8 +846,7 @@ export type InfiniteQueryExecuteOptions<
   >,
   'initialPageParam'
 > &
-  InitialPageParam<TPageParam> &
-  InfiniteQueryPages<TQueryFnData, TPageParam>
+  InfiniteQueryFetchPageOptions<TQueryFnData, TPageParam>
 
 /** @deprecated */
 export type FetchInfiniteQueryOptions<
@@ -864,8 +865,7 @@ export type FetchInfiniteQueryOptions<
   >,
   'initialPageParam'
 > &
-  InitialPageParam<TPageParam> &
-  InfiniteQueryPages<TQueryFnData, TPageParam>
+  InfiniteQueryFetchPageOptions<TQueryFnData, TPageParam>
 
 /**
  * Options shared by the `QueryClient` and observer methods that refetch queries, controlling

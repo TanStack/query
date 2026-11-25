@@ -146,7 +146,7 @@ The mutation's `meta`, or `undefined` if none was set.
 continue(): Promise<unknown>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:260](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L260)
+Defined in: [packages/query-core/src/mutation.ts:263](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L263)
 
 Resumes a mutation that is currently paused or was restored from a
 dehydrated, still-`pending` state.
@@ -210,7 +210,7 @@ Removable.destroy
 execute(variables: TVariables): Promise<TData>;
 ```
 
-Defined in: [packages/query-core/src/mutation.ts:301](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L301)
+Defined in: [packages/query-core/src/mutation.ts:304](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutation.ts#L304)
 
 Runs the mutation function for the given variables through a retryer, and
 drives the mutation's state and lifecycle callbacks through to settlement.
