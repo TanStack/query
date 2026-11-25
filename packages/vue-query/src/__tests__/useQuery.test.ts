@@ -693,6 +693,28 @@ describe('useQuery', () => {
     })
   })
 
+  it('should use placeholder data while the query loads', async () => {
+    const key = createKey()
+
+    const query = useQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+      placeholderData: 'placeholder',
+    })
+
+    expect(query).toMatchObject({
+      data: { value: 'placeholder' },
+      isSuccess: { value: true },
+      isPlaceholderData: { value: true },
+    })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(query).toMatchObject({
+      data: { value: 'data' },
+      isSuccess: { value: true },
+      isPlaceholderData: { value: false },
+    })
+  })
+
   it('should keep the previous page visible while the next page loads with keepPreviousData', async () => {
     const key = createKey()
     const page = ref(0)
