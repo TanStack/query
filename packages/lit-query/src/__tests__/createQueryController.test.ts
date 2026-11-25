@@ -785,6 +785,44 @@ describe('createQueryController', () => {
     )
   })
 
+  it('should use placeholder data while the query loads', async () => {
+    const key = createKey()
+
+    class Host extends LitElement {
+      readonly query = createQueryController(
+        this,
+        {
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+          placeholderData: 'placeholder',
+        },
+        queryClient,
+      )
+
+      override render() {
+        const result = this.query()
+        return html`
+          <p>data: ${result.data}</p>
+          <p>isSuccess: ${result.isSuccess}</p>
+          <p>isPlaceholderData: ${result.isPlaceholderData}</p>
+        `
+      }
+    }
+
+    customElements.define(generateElementName(), Host)
+    const host = new Host()
+    container.append(host)
+    await host.updateComplete
+
+    expect(host.shadowRoot).toHaveTextContent('data: placeholder')
+    expect(host.shadowRoot).toHaveTextContent('isSuccess: true')
+    expect(host.shadowRoot).toHaveTextContent('isPlaceholderData: true')
+    await vi.advanceTimersByTimeAsync(10)
+    expect(host.shadowRoot).toHaveTextContent('data: data')
+    expect(host.shadowRoot).toHaveTextContent('isSuccess: true')
+    expect(host.shadowRoot).toHaveTextContent('isPlaceholderData: false')
+  })
+
   it('should preserve prior data during key transitions with keepPreviousData', async () => {
     const key = createKey()
 

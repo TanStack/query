@@ -71,9 +71,9 @@
     "markdown-link-extractor": "^4.0.4",
     "npm-run-all2": "^9.0.3",
     "nx": "23.2.1",
-    "oxfmt": "0.72.0",
-    "oxlint": "^1.87.0",
-    "oxlint-tsgolint": "^7.0.2003",
+    "oxfmt": "0.79.0",
+    "oxlint": "^1.95.0",
+    "oxlint-tsgolint": "^7.0.2008",
     "premove": "^4.0.0",
     "publint": "^0.3.24",
     "sherif": "^1.13.0",
@@ -87,7 +87,7 @@
     "typescript59": "npm:typescript@5.9",
     "typescript70": "npm:typescript@7.0",
     "typescript71": "npm:typescript@7.1.0-dev.20261009.1",
-    "vite": "^8.3.5",
+    "vite": "^8.3.8",
     "vitest": "^5.0.5"
   }
 }

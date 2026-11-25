@@ -16,8 +16,8 @@ Preact Query is compatible with Preact v10+.
 
 ```html
 <script type="module">
-  import { render } from 'https://esm.sh/preact@10.23.1'
   import { QueryClient } from 'https://esm.sh/@tanstack/preact-query'
+  import { render } from 'https://esm.sh/preact@10.23.1'
 </script>
 ```
 

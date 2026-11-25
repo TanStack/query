@@ -109,8 +109,7 @@ import { ValidationQueriesService } from './validation-queries.service'
         ) {
           <p class="success">
             Registration accepted for
-            <code>{{ registrationMutation.variables().username }}</code
-            >.
+            <code>{{ registrationMutation.variables().username }}</code>.
           </p>
           <p class="hint">
             Mutation variables included

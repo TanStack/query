@@ -11,7 +11,7 @@
     "@tanstack/preact-query": "workspace:*",
     "@tanstack/preact-query-devtools": "workspace:*",
     "preact": "^11.0.1",
-    "vite": "^8.3.5"
+    "vite": "^8.3.8"
   },
   "devDependencies": {
     "typescript": "^6.0.3"

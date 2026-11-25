@@ -382,26 +382,3 @@ export const deleteNestedDataByPath = (
 
   return oldData
 }
-
-/**
- * Sets up the goober stylesheet with a `nonce`, for pages with a Content Security Policy. Without a
- * `nonce`, it does nothing and goober creates the stylesheet itself.
- * @param nonce - The nonce to set on the style tag.
- * @param target - The shadow root to add the style tag to, instead of `document.head`.
- */
-export const setupStyleSheet = (nonce?: string, target?: ShadowRoot) => {
-  if (!nonce)
-    return // Goober reads window.__nonce__ every time it creates or accesses its style
-  // element (el.nonce = window.__nonce__). Without this, goober overwrites the
-  // nonce we set on the pre-created element with undefined, clearing it.
-  ;(window as any).__nonce__ = nonce
-
-  const root = target ?? document.head
-  if (root.querySelector('#_goober')) return
-  const styleTag = document.createElement('style')
-  const textNode = document.createTextNode('')
-  styleTag.appendChild(textNode)
-  styleTag.id = '_goober'
-  styleTag.setAttribute('nonce', nonce)
-  root.appendChild(styleTag)
-}
