@@ -226,8 +226,8 @@ destroy(): void;
 
 Defined in: [packages/query-core/src/query.ts:441](https://github.com/TanStack/query/blob/main/packages/query-core/src/query.ts#L441)
 
-Clears the query's garbage collection timeout and silently cancels any
-in-flight fetch. Called by `QueryCache` when the query is removed from
+Silently cancels any in-flight fetch, then clears the query's garbage
+collection timeout. Called by `QueryCache` when the query is removed from
 the cache.
 
 #### Returns

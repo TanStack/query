@@ -427,7 +427,7 @@ To better support concurrent features and transitions we've made some changes to
 
 The `HydrationBoundary` no longer hydrates mutations, only queries. To hydrate mutations, use the low level `hydrate` API or the `persistQueryClient` plugin.
 
-Finally, as a technical detail, the timing for when queries are hydrated have changed slightly. New queries are still hydrated in the render phase so that SSR works as usual, but any queries that already exist in the cache are now hydrated in an effect instead (as long as their data is fresher than what is in the cache). If you are hydrating just once at the start of your application as is common, this wont affect you, but if you are using Server Components and pass down fresh data for hydration on a page navigation, you might notice a flash of the old data before the page immediately rerenders.
+Finally, as a technical detail, the timing for when queries are hydrated have changed slightly. New queries are still hydrated in the render phase so that SSR works as usual, but any queries that already exist in the cache are now hydrated in an effect instead (as long as their data is fresher than what is in the cache). If you are hydrating just once at the start of your application as is common, this won't affect you, but if you are using Server Components and pass down fresh data for hydration on a page navigation, you might notice a flash of the old data before the page immediately rerenders.
 
 This last change is technically a breaking one, and was made so we don't prematurely update content on the _existing_ page before a page transition has been fully committed. No action is required on your part.
 

@@ -100,8 +100,8 @@ export const withDevtools: WithDevtools = (withDevtoolsFn) =>
           position: resolveOption(options.position),
           initialIsOpen: resolveOption(options.initialIsOpen),
           errorTypes: resolveOption(options.errorTypes),
-          styleNonce: options.styleNonce,
           shadowDOMTarget: options.shadowDOMTarget,
+          trustedTypesPolicy: options.trustedTypesPolicy,
           hideDisabledQueries: options.hideDisabledQueries,
           theme: resolveOption(options.theme),
         })

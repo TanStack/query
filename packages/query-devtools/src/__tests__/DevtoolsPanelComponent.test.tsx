@@ -11,18 +11,6 @@ vi.mock(import('solid-transition-group'), () => ({
   TransitionGroup: (props) => props.children,
 }))
 
-// `goober` compiles every `css\`...\`` template literal at mount time
-// (template parsing + class hashing + style serialization), which
-// dominates mount cost and produces no value for label/role-based
-// assertions, so we replace it with a no-op factory.
-vi.mock(import('goober'), () => {
-  let counter = 0
-  const css = Object.assign(() => `tsqd-${++counter}`, {
-    bind: () => css,
-  })
-  return { css, glob: () => {}, setup: () => {} }
-})
-
 describe('DevtoolsPanelComponent', () => {
   const storage: { [key: string]: string } = {}
   let queryClient: QueryClient

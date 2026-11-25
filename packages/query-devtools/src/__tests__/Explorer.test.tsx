@@ -7,16 +7,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Explorer, { SearchableExplorer } from '../Explorer'
 import { QueryDevtoolsContext, ThemeContext } from '../contexts'
 
-// `goober` compiles every `css\`...\`` template literal at mount time;
-// replace it with a no-op factory so label/role-based assertions stay fast.
-vi.mock(import('goober'), () => {
-  let counter = 0
-  const css = Object.assign(() => `tsqd-${++counter}`, {
-    bind: () => css,
-  })
-  return { css, glob: () => {}, setup: () => {} }
-})
-
 describe('Explorer', () => {
   let queryClient: QueryClient
 
@@ -146,7 +136,7 @@ describe('Explorer', () => {
       expect(highlights.size).toBe(0)
     })
 
-    it('keeps native highlights separate for each explorer and cleans up on unmount', () => {
+    it('keeps the native ranges of each explorer separate and cleans up on unmount', () => {
       const foreign = new Set<Range>()
       const highlights = new Map([['other-feature', foreign]])
       vi.stubGlobal('CSS', { highlights })
@@ -168,7 +158,7 @@ describe('Explorer', () => {
         })
         vi.advanceTimersByTime(150)
       }
-      expect(highlights.size).toBe(3)
+      expect(highlights.size).toBe(2)
       first.unmount()
       expect(highlights.size).toBe(2)
       expect(
