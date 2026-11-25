@@ -2,4 +2,4 @@
 '@tanstack/query-devtools': patch
 ---
 
-Update the query list once instead of once per removed query when clicking the clear query cache button.
+fix(query-devtools): wrap query cache clear in 'batch' to update the list once instead of once per removed query
