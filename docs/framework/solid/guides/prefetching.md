@@ -138,7 +138,7 @@ Let's look at a slightly more advanced case next.
 import { lazy, Switch, Match, For } from 'solid-js'
 
 // This lazy loads the GraphFeedItem component, meaning
-// it wont start loading until something renders it
+// it won't start loading until something renders it
 const GraphFeedItem = lazy(() => import('./GraphFeedItem'))
 
 function Feed() {

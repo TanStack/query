@@ -22,6 +22,47 @@ describe('useQueries', () => {
     vi.useRealTimers()
   })
 
+  it.each([false, true])(
+    'should settle after fetched data reaches an inline selector (throws: %s)',
+    async (throws) => {
+      const queryKey = createKey()
+      const queryFn = () => sleep(10).then(() => 'fetched')
+      let renders = 0
+
+      function Page() {
+        renders++
+        const [{ data, error }] = useQueries({
+          queries: [
+            {
+              queryKey,
+              queryFn,
+              select: (value: string) => {
+                if (throws) throw new Error(value + ' with a select error')
+                return new Set([value])
+              },
+            },
+          ],
+        })
+        return <p>{error?.message ?? (data ? [...data].join() : 'pending')}</p>
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+      expect(rendered.getByText('pending')).toBeInTheDocument()
+      for (let i = 0; i < 3; i++) {
+        await vi.advanceTimersByTimeAsync(5)
+      }
+      expect(
+        rendered.getByText(throws ? 'fetched with a select error' : 'fetched'),
+      ).toBeInTheDocument()
+      const settledRenders = renders
+
+      for (let i = 0; i < 3; i++) {
+        await vi.advanceTimersByTimeAsync(5)
+      }
+      expect(renders).toBe(settledRenders)
+    },
+  )
+
   it('should return the correct states', async () => {
     const key1 = createKey()
     const key2 = createKey()

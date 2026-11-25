@@ -1,4 +1,4 @@
-import { addConsumeAwareSignal, addToEnd, fetchSignal } from './utils'
+import { addConsumeAwareSignal, fetchSignal } from './utils'
 import type {
   OmitKeyof,
   QueryFunction,
@@ -78,7 +78,7 @@ export function streamedQuery<
   streamFn,
   refetchMode = 'reset',
   reducer = (items, chunk) =>
-    addToEnd(items as Array<TQueryFnData>, chunk) as TData,
+    [...(items as Array<TQueryFnData>), chunk] as TData,
   initialValue = [] as TData,
 }: StreamedQueryParams<TQueryFnData, TData, TQueryKey>): QueryFunction<
   TData,

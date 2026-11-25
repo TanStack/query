@@ -3,7 +3,7 @@ id: suspense
 title: Suspense
 ---
 
-Solid Query can also be used with Solid's [Suspense](https://docs.solidjs.com/reference/components/suspense) API's.
+Solid Query can also be used with Solid's [Suspense](https://v1.solidjs.com/reference/components/suspense) API.
 
 To do that you need to wrap your suspendable component with `Suspense` component provided by Solid
 
