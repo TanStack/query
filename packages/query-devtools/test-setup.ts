@@ -11,6 +11,20 @@ const isList = (element: HTMLElement) =>
     '.tsqd-queries-overflow-container, .tsqd-mutations-overflow-container, .test-virtual-list',
   )
 
+// jsdom has no `adoptedStyleSheets`, which the devtools use to add their styles.
+for (const prototype of [Document.prototype, ShadowRoot.prototype]) {
+  const adopted = new WeakMap<object, Array<CSSStyleSheet>>()
+  Object.defineProperty(prototype, 'adoptedStyleSheets', {
+    configurable: true,
+    get() {
+      return adopted.get(this) ?? []
+    },
+    set(sheets: Array<CSSStyleSheet>) {
+      adopted.set(this, sheets)
+    },
+  })
+}
+
 beforeEach(() => {
   vi.stubGlobal('CSS', { ...globalThis.CSS, highlights: new Map() })
   vi.stubGlobal('Highlight', Set)

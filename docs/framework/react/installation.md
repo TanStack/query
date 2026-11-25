@@ -53,9 +53,9 @@ If you're not using a module bundler or package manager, you can also use this l
 
 ```html
 <script type="module">
-  import React from 'https://esm.sh/react@18.2.0'
-  import ReactDOM from 'https://esm.sh/react-dom@18.2.0'
   import { QueryClient } from 'https://esm.sh/@tanstack/react-query'
+  import ReactDOM from 'https://esm.sh/react-dom@18.2.0'
+  import React from 'https://esm.sh/react@18.2.0'
 </script>
 ```
 
