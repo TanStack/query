@@ -799,13 +799,12 @@ export class Query<
     }
     addSignalProperty(context)
 
-    const behavior =
-      this.#queryType === 'infinite'
-        ? (infiniteQueryBehavior(
-            (this.options as { pages?: number }).pages,
-          ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>)
-        : this.options.behavior
-    behavior?.onFetch(context, this as unknown as Query)
+    if (this.#queryType === 'infinite') {
+      const behavior = infiniteQueryBehavior(
+        (this.options as { pages?: number }).pages,
+      ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>
+      behavior.onFetch(context, this as unknown as Query)
+    }
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state

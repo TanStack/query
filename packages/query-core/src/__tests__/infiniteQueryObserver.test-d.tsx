@@ -23,7 +23,6 @@ import type {
   QueryObserverResult,
   QueryPersister,
 } from '..'
-import type { QueryBehavior } from '../query'
 
 class CustomError extends Error {
   override name = 'CustomError' as const
@@ -198,37 +197,6 @@ describe('infiniteQueryObserver', () => {
         expectTypeOf<InfiniteQueryObserverOptions['_type']>().toEqualTypeOf<
           'infinite' | undefined
         >()
-      })
-    })
-
-    describe('behavior', () => {
-      it('should be typed from the paged data it produces', () => {
-        expectTypeOf<
-          InfiniteQueryObserverOptions<
-            { value: string },
-            CustomError,
-            InfiniteData<{ value: string }, number>,
-            ReadonlyArray<unknown>,
-            number
-          >['behavior']
-        >().toEqualTypeOf<
-          | QueryBehavior<
-              { value: string },
-              CustomError,
-              InfiniteData<{ value: string }, number>,
-              ReadonlyArray<unknown>
-            >
-          | undefined
-        >()
-      })
-
-      it('should only accept an object with an onFetch callback', () => {
-        expectTypeOf<
-          InfiniteQueryObserverOptions<{ value: string }>['behavior']
-        >()
-          .exclude<undefined>()
-          .toHaveProperty('onFetch')
-          .toBeFunction()
       })
     })
 

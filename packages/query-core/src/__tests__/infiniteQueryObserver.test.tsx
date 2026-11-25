@@ -227,7 +227,6 @@ describe('InfiniteQueryObserver', () => {
       throwOnError: true,
       refetchOnReconnect: false,
       queryHash: key.join(''),
-      behavior: undefined,
     }
 
     const result = observer.createResultReader(options).getSnapshot()
