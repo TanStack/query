@@ -71,7 +71,7 @@
     "markdown-link-extractor": "^4.0.4",
     "npm-run-all2": "^9.0.3",
     "nx": "23.2.1",
-    "oxfmt": "0.79.0",
+    "oxfmt": "0.80.0",
     "oxlint": "^1.95.0",
     "oxlint-tsgolint": "^7.0.2008",
     "premove": "^4.0.0",
