@@ -65,9 +65,10 @@ MC.config
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:262](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L262)
+Defined in: [packages/query-core/src/mutationCache.ts:274](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L274)
 
-Removes all mutations from the cache.
+Removes all mutations and clears their garbage collection timers.
+Mutations that are already running continue to execute.
 
 #### Returns
 
@@ -212,7 +213,7 @@ MC.findAll
 getAll(): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:286](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L286)
+Defined in: [packages/query-core/src/mutationCache.ts:299](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L299)
 
 Returns all mutations within the cache.
 
