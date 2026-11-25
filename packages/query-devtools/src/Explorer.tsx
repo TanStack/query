@@ -1,6 +1,4 @@
 import { Key } from '@solid-primitives/keyed'
-import { clsx as cx } from 'clsx'
-import * as goober from 'goober'
 import {
   Index,
   Match,
@@ -27,7 +25,7 @@ import {
   Trash,
 } from './icons'
 import { getNativeObjectType } from './nativeObjectType'
-import { tokens } from './theme'
+import { createThemed } from './styles'
 import {
   deleteNestedDataByPath,
   displayValue,
@@ -63,28 +61,9 @@ function chunkArray<T extends { label: string; value: unknown }>(
 }
 
 const Expander = (props: { expanded: boolean }) => {
-  const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
-
   return (
     <span
-      class={cx(
-        styles().expander,
-        css`
-          transform: rotate(${props.expanded ? 90 : 0}deg);
-        `,
-        props.expanded &&
-          css`
-            & svg {
-              top: -1px;
-            }
-          `,
-      )}
+      class={`tsqd-style-explorer-expander ${props.expanded ? 'tsqd-style-explorer-expander-expanded' : ''}`}
     >
       <svg
         width="16"
@@ -107,17 +86,12 @@ const Expander = (props: { expanded: boolean }) => {
 type CopyState = 'NoCopy' | 'SuccessCopy' | 'ErrorCopy'
 const CopyButton = (props: { value: unknown }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const themed = createThemed(theme)
   const [copyState, setCopyState] = createSignal<CopyState>('NoCopy')
 
   return (
     <button
-      class={styles().actionButton}
+      class={themed('tsqd-style-explorer-action-button')}
       title="Copy object to clipboard"
       aria-label={`${
         copyState() === 'NoCopy'
@@ -168,17 +142,12 @@ const ClearArrayButton = (props: {
   activeQuery: Query
 }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const themed = createThemed(theme)
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={styles().actionButton}
+      class={themed('tsqd-style-explorer-action-button')}
       title={'Remove all items'}
       aria-label={'Remove all items'}
       onClick={() => {
@@ -197,17 +166,12 @@ const DeleteItemButton = (props: {
   activeQuery: Query
 }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const themed = createThemed(theme)
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={cx(styles().actionButton)}
+      class={themed('tsqd-style-explorer-action-button')}
       title={'Delete item'}
       aria-label={'Delete item'}
       onClick={() => {
@@ -227,23 +191,12 @@ const ToggleValueButton = (props: {
   value: boolean
 }) => {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const themed = createThemed(theme)
   const queryClient = useQueryDevtoolsContext().client
 
   return (
     <button
-      class={cx(
-        styles().actionButton,
-        css`
-          width: ${tokens.size[3.5]};
-          height: ${tokens.size[3.5]};
-        `,
-      )}
+      class={`${themed('tsqd-style-explorer-action-button')} tsqd-style-explorer-toggle-button`}
       title={'Toggle value'}
       aria-label={'Toggle value'}
       aria-pressed={props.value}
@@ -272,7 +225,17 @@ type ExplorerProps = {
   itemsDeletable?: boolean
   onEdit?: () => void
   search?: ExplorerSearch
-  highlight?: Highlight
+  highlight?: SearchHighlight
+}
+
+/** The name of the native highlight that marks search matches. */
+const HIGHLIGHT_NAME = 'tsqd-data-search'
+
+/** The ranges that one search adds to the native highlight. */
+type SearchHighlight = {
+  readonly size: number
+  add: (range: Range) => void
+  delete: (range: Range) => void
 }
 
 /**
@@ -285,12 +248,7 @@ export function SearchableExplorer(
   props: ExplorerProps & { searchKey?: unknown; initialSearch?: string },
 ) {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() =>
-    theme() === 'dark' ? darkStyles(css) : lightStyles(css),
-  )
+  const themed = createThemed(theme)
   const [term, setTerm] = createSignal('')
   const [debouncedTerm, setDebouncedTerm] = createSignal('')
   const clear = () => {
@@ -320,46 +278,56 @@ export function SearchableExplorer(
       ? { term: activeTerm, match: searchExplorer(props.value, activeTerm) }
       : undefined
   })
-  const highlightName = `tsqd-data-search-${createUniqueId()}`
-  const [nativeHighlight, setNativeHighlight] = createSignal<Highlight>()
+  const [nativeHighlight, setNativeHighlight] = createSignal<SearchHighlight>()
   let root!: HTMLDivElement
   onMount(() => {
     const view = root.ownerDocument.defaultView!
     const registry = view.CSS.highlights
+    // Explorers share one highlight per window, so styles.css can style it by
+    // name. Each search adds and removes only its own ranges.
+    const getHighlight = () => {
+      let highlight = registry.get(HIGHLIGHT_NAME)
+      if (!highlight) {
+        highlight = new view.Highlight()
+        registry.set(HIGHLIGHT_NAME, highlight)
+      }
+      return highlight
+    }
     createEffect(
       on(search, () => {
-        const highlight = new view.Highlight()
-        registry.set(highlightName, highlight)
+        getHighlight()
+        const ranges = new Set<Range>()
+        const highlight: SearchHighlight = {
+          get size() {
+            return ranges.size
+          },
+          add(range) {
+            ranges.add(range)
+            getHighlight().add(range)
+          },
+          delete(range) {
+            ranges.delete(range)
+            registry.get(HIGHLIGHT_NAME)?.delete(range)
+          },
+        }
         setNativeHighlight(highlight)
         onCleanup(() => {
-          registry.delete(highlightName)
-          highlight.clear()
+          for (const range of ranges) highlight.delete(range)
+          if (registry.get(HIGHLIGHT_NAME)?.size === 0) {
+            registry.delete(HIGHLIGHT_NAME)
+          }
         })
       }),
     )
   })
-  const nativeHighlightStyle = createMemo(
-    () => css`
-      & ::highlight(${highlightName}) {
-        color: ${
-          theme() === 'dark' ? tokens.colors.gray[100] : tokens.colors.gray[900]
-        };
-        background-color: ${
-          theme() === 'dark'
-            ? tokens.colors.yellow[900]
-            : tokens.colors.yellow[200]
-        };
-      }
-    `,
-  )
   return (
-    <div ref={root} class={nativeHighlightStyle()}>
-      <div class={styles().search}>
+    <div ref={root} class={themed('tsqd-style-explorer-search-root')}>
+      <div class="tsqd-style-explorer-search">
         <input
           type="search"
           aria-label={`Search ${props.label.toLowerCase()}`}
           placeholder={`Search ${props.label.toLowerCase()}`}
-          class={styles().searchInput}
+          class={themed('tsqd-style-explorer-search-input')}
           value={term()}
           onInput={(event) => setTerm(event.currentTarget.value)}
           onKeyDown={(event) => {
@@ -372,7 +340,7 @@ export function SearchableExplorer(
         <Show when={term()}>
           <button
             type="button"
-            class={styles().clearSearch}
+            class="tsqd-style-explorer-clear-search"
             onClick={clear}
             aria-label="Clear search"
           >
@@ -398,7 +366,7 @@ const MAX_HIGHLIGHT_RANGES = 1000
 function HighlightedText(props: {
   text: string
   term?: string
-  highlight?: Highlight
+  highlight?: SearchHighlight
 }) {
   const matches = createMemo(() => {
     const term = props.term
@@ -467,12 +435,7 @@ function isIterable(x: any): x is Iterable<unknown> {
  */
 export default function Explorer(props: ExplorerProps) {
   const theme = useTheme()
-  const css = useQueryDevtoolsContext().shadowDOMTarget
-    ? goober.css.bind({ target: useQueryDevtoolsContext().shadowDOMTarget })
-    : goober.css
-  const styles = createMemo(() => {
-    return theme() === 'dark' ? darkStyles(css) : lightStyles(css)
-  })
+  const themed = createThemed(theme)
   const queryClient = useQueryDevtoolsContext().client
 
   const [expanded, setExpanded] = createSignal(
@@ -630,22 +593,22 @@ export default function Explorer(props: ExplorerProps) {
   const inputId = createUniqueId()
 
   return (
-    <div class={styles().entry}>
+    <div class="tsqd-style-explorer-entry">
       <Show when={subEntryPages().length}>
-        <div class={styles().expanderButtonContainer}>
+        <div class="tsqd-style-explorer-expander-button-container">
           <button
-            class={styles().expanderButton}
+            class="tsqd-style-explorer-expander-button"
             onClick={() => toggleExpanded()}
             aria-expanded={isExpanded() ? 'true' : 'false'}
           >
             <Expander expanded={isExpanded()} /> <span>{label()}</span>{' '}
-            <span class={styles().info}>
+            <span class="tsqd-style-explorer-info">
               {String(type()).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
               {subEntries().length} {subEntries().length > 1 ? `items` : `item`}
             </span>
           </button>
           <Show when={props.editable}>
-            <div class={styles().actions}>
+            <div class="tsqd-style-explorer-actions">
               <CopyButton value={props.value} />
 
               <Show
@@ -674,7 +637,7 @@ export default function Explorer(props: ExplorerProps) {
                 }
               >
                 <button
-                  class={styles().actionButton}
+                  class={themed('tsqd-style-explorer-action-button')}
                   title={'Bulk Edit Data'}
                   aria-label={'Bulk Edit Data'}
                   onClick={() => {
@@ -689,7 +652,7 @@ export default function Explorer(props: ExplorerProps) {
         </div>
         <Show when={isExpanded()}>
           <Show when={subEntryPages().length === 1}>
-            <div class={styles().subEntry}>
+            <div class={themed('tsqd-style-explorer-sub-entry')}>
               <Key each={subEntries()} by={(item) => item.key}>
                 {(entry) => {
                   return (
@@ -714,11 +677,11 @@ export default function Explorer(props: ExplorerProps) {
             </div>
           </Show>
           <Show when={subEntryPages().length > 1}>
-            <div class={styles().subEntry}>
+            <div class={themed('tsqd-style-explorer-sub-entry')}>
               <Index each={subEntryPages()}>
                 {(entries, index) => (
                   <div>
-                    <div class={styles().entry}>
+                    <div class="tsqd-style-explorer-entry">
                       <button
                         onClick={() => {
                           if (matchingPage() === index) return
@@ -728,10 +691,7 @@ export default function Explorer(props: ExplorerProps) {
                               : [...old, index],
                           )
                         }}
-                        class={cx(
-                          styles().expanderButton,
-                          pageHasMatch(index) && styles().highlight,
-                        )}
+                        class={`tsqd-style-explorer-expander-button ${pageHasMatch(index) ? themed('tsqd-style-explorer-highlight') : ''}`}
                         aria-expanded={isPageExpanded(index)}
                         aria-description={
                           pageHasMatch(index)
@@ -744,7 +704,7 @@ export default function Explorer(props: ExplorerProps) {
                         {index * 100 + 100 - 1}]
                       </button>
                       <Show when={isPageExpanded(index)}>
-                        <div class={styles().subEntry}>
+                        <div class={themed('tsqd-style-explorer-sub-entry')}>
                           <Key each={entries()} by={(entry) => entry.key}>
                             {(entry) => (
                               <Explorer
@@ -770,8 +730,8 @@ export default function Explorer(props: ExplorerProps) {
         </Show>
       </Show>
       <Show when={subEntryPages().length === 0}>
-        <div class={styles().row}>
-          <label for={inputId} class={styles().label}>
+        <div class="tsqd-style-explorer-row">
+          <label for={inputId} class={themed('tsqd-style-explorer-label')}>
             {label()}:
           </label>
           <Show
@@ -782,7 +742,11 @@ export default function Explorer(props: ExplorerProps) {
                 type() === 'number' ||
                 type() === 'boolean')
             }
-            fallback={<span class={styles().value}>{renderedValue()}</span>}
+            fallback={
+              <span class={themed('tsqd-style-explorer-value')}>
+                {renderedValue()}
+              </span>
+            }
           >
             <Show
               when={
@@ -794,11 +758,7 @@ export default function Explorer(props: ExplorerProps) {
               <input
                 id={inputId}
                 type={type() === 'number' ? 'number' : 'text'}
-                class={cx(
-                  styles().value,
-                  styles().editableInput,
-                  props.search?.match.value && styles().highlight,
-                )}
+                class={`${themed('tsqd-style-explorer-value')} ${themed('tsqd-style-explorer-editable-input')} ${props.search?.match.value ? themed('tsqd-style-explorer-highlight') : ''}`}
                 data-search-match={props.search?.match.value || undefined}
                 value={props.value as string | number}
                 onChange={(changeEvent) => {
@@ -819,11 +779,7 @@ export default function Explorer(props: ExplorerProps) {
 
             <Show when={type() === 'boolean'}>
               <span
-                class={cx(
-                  styles().value,
-                  styles().actions,
-                  styles().editableInput,
-                )}
+                class={`${themed('tsqd-style-explorer-value')} tsqd-style-explorer-actions ${themed('tsqd-style-explorer-editable-input')}`}
               >
                 <ToggleValueButton
                   activeQuery={props.activeQuery!}
@@ -852,166 +808,3 @@ export default function Explorer(props: ExplorerProps) {
     </div>
   )
 }
-
-const stylesFactory = (
-  theme: 'light' | 'dark',
-  css: (typeof goober)['css'],
-) => {
-  const { colors, font, size, border } = tokens
-  const t = (light: string, dark: string) => (theme === 'light' ? light : dark)
-  return {
-    search: css`
-      display: flex;
-      gap: ${size[2]};
-      margin-bottom: ${size[2]};
-    `,
-    searchInput: css`
-      min-width: 0;
-      flex: 1;
-      padding: ${size[1]} ${size[2]};
-      color: inherit;
-      background: ${t(colors.gray[100], colors.darkGray[600])};
-      border: 1px solid ${t(colors.gray[300], colors.darkGray[400])};
-      border-radius: ${border.radius.xs};
-    `,
-    clearSearch: css`
-      color: inherit;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-    `,
-    highlight: css`
-      && {
-        color: ${t(colors.gray[900], colors.gray[100])};
-        background-color: ${t(colors.yellow[200], colors.yellow[900])};
-      }
-    `,
-    entry: css`
-      & * {
-        font-size: ${font.size.xs};
-        font-family:
-          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-          'Liberation Mono', 'Courier New', monospace;
-      }
-      position: relative;
-      outline: none;
-      word-break: break-word;
-    `,
-    subEntry: css`
-      margin: 0 0 0 0.5em;
-      padding-left: 0.75em;
-      border-left: 2px solid ${t(colors.gray[300], colors.darkGray[400])};
-      /* outline: 1px solid ${colors.teal[400]}; */
-    `,
-    expander: css`
-      & path {
-        stroke: ${colors.gray[400]};
-      }
-      & svg {
-        width: ${size[3]};
-        height: ${size[3]};
-      }
-      display: inline-flex;
-      align-items: center;
-      transition: all 0.1s ease;
-      /* outline: 1px solid ${colors.blue[400]}; */
-    `,
-    expanderButtonContainer: css`
-      display: flex;
-      align-items: center;
-      line-height: ${size[4]};
-      min-height: ${size[4]};
-      gap: ${size[2]};
-    `,
-    expanderButton: css`
-      cursor: pointer;
-      color: inherit;
-      font: inherit;
-      outline: inherit;
-      height: ${size[5]};
-      background: transparent;
-      border: none;
-      padding: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: ${size[1]};
-      position: relative;
-      /* outline: 1px solid ${colors.green[400]}; */
-
-      &:focus-visible {
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-      }
-
-      & svg {
-        position: relative;
-        left: 1px;
-      }
-    `,
-    info: css`
-      color: ${t(colors.gray[500], colors.gray[500])};
-      font-size: ${font.size.xs};
-      margin-left: ${size[1]};
-      /* outline: 1px solid ${colors.yellow[400]}; */
-    `,
-    label: css`
-      color: ${t(colors.gray[700], colors.gray[300])};
-      white-space: nowrap;
-    `,
-    value: css`
-      color: ${t(colors.purple[600], colors.purple[400])};
-      flex-grow: 1;
-    `,
-    actions: css`
-      display: inline-flex;
-      gap: ${size[2]};
-      align-items: center;
-    `,
-    row: css`
-      display: inline-flex;
-      gap: ${size[2]};
-      width: 100%;
-      margin: ${size[0.25]} 0px;
-      line-height: ${size[4.5]};
-      align-items: center;
-    `,
-    editableInput: css`
-      border: none;
-      padding: ${size[0.5]} ${size[1]} ${size[0.5]} ${size[1.5]};
-      flex-grow: 1;
-      border-radius: ${border.radius.xs};
-      background-color: ${t(colors.gray[200], colors.darkGray[500])};
-
-      &:hover {
-        background-color: ${t(colors.gray[300], colors.darkGray[600])};
-      }
-    `,
-    actionButton: css`
-      background-color: transparent;
-      color: ${t(colors.gray[500], colors.gray[500])};
-      border: none;
-      display: inline-flex;
-      padding: 0px;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      width: ${size[3]};
-      height: ${size[3]};
-      position: relative;
-      z-index: 1;
-
-      &:hover svg {
-        color: ${t(colors.gray[600], colors.gray[400])};
-      }
-
-      &:focus-visible {
-        border-radius: ${border.radius.xs};
-        outline: 2px solid ${colors.blue[800]};
-        outline-offset: 2px;
-      }
-    `,
-  }
-}
-
-const lightStyles = (css: (typeof goober)['css']) => stylesFactory('light', css)
-const darkStyles = (css: (typeof goober)['css']) => stylesFactory('dark', css)
