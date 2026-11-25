@@ -1,4 +1,9 @@
-import { ApplicationRef, ElementRef, signal } from '@angular/core'
+import {
+  ApplicationRef,
+  ElementRef,
+  provideZonelessChangeDetection,
+  signal,
+} from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { QueryClient } from '@tanstack/angular-query'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -68,6 +73,22 @@ describe('injectDevtoolsPanel', () => {
     expect(result).toStrictEqual({
       destroy: expect.any(Function),
     })
+  })
+
+  it("should throw 'No QueryClient found' when no 'QueryClient' is provided", () => {
+    TestBed.resetTestingModule()
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    })
+
+    TestBed.runInInjectionContext(() => {
+      injectDevtoolsPanel(() => ({
+        hostElement: mockElementRef,
+      }))
+    })
+
+    expect(() => TestBed.tick()).toThrow('No QueryClient found')
+    expect(mocks.mockTanstackQueryDevtoolsPanel).not.toHaveBeenCalled()
   })
 
   it('should initialize TanstackQueryDevtoolsPanel', async () => {

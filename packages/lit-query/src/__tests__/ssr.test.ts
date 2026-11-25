@@ -147,6 +147,7 @@ describe('Server Side Rendering', () => {
       .infiniteQuery({
         queryKey: key,
         queryFn,
+        getNextPageParam: () => undefined,
         initialPageParam: 0,
       })
       .catch(noop)
