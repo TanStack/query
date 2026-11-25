@@ -10,13 +10,13 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/lit-query": "^0.2.42",
+    "@tanstack/lit-query": "^0.2.44",
     "lit": "^3.3.3"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/eslint-config": "^0.5.0",
-    "@tanstack/eslint-plugin-query": "^5.108.2",
+    "@tanstack/eslint-plugin-query": "^5.108.4",
     "eslint": "^9.39.5",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
