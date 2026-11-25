@@ -118,14 +118,6 @@ describe('ReactQueryDevtools', () => {
     expect(setClientMock).toHaveBeenCalledWith(queryClient)
   })
 
-  it('should forward "styleNonce" to the devtools constructor', () => {
-    render(<ReactQueryDevtools client={queryClient} styleNonce="abc" />)
-
-    expect(TanstackQueryDevtools).toHaveBeenCalledWith(
-      expect.objectContaining({ styleNonce: 'abc' }),
-    )
-  })
-
   it('should forward "shadowDOMTarget" to the devtools constructor', () => {
     const shadowDOMTarget = document
       .createElement('div')

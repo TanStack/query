@@ -31,7 +31,7 @@ const prefetchTodos = async () => {
 
 ## Prefetching Infinite Queries
 
-Infinite Queries can be prefetched like regular Queries. Per default, only the first page of the Query will be prefetched and will be stored under the given QueryKey. If you want to prefetch more than one page, you can use the `pages` option, in which case you also have to provide a `getNextPageParam` function:
+Pass `getNextPageParam` when you prefetch an infinite query. On an empty cache, the client fetches the first page by default. Use `pages` to request more pages. If the cache already contains stale pages and you omit `pages`, the client refetches up to the number of cached pages.
 
 [//]: # 'ExampleInfiniteQuery'
 

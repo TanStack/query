@@ -93,11 +93,7 @@ export class QueriesObserver<
 
   protected override onSubscribe(): void {
     if (this.listeners.size === 1) {
-      this.#observers.forEach((observer) => {
-        observer.subscribe((result) => {
-          this.#onUpdate(observer, result)
-        })
-      })
+      this.#observers.forEach((observer) => this.#subscribeTo(observer))
     }
   }
 
@@ -194,11 +190,9 @@ export class QueriesObserver<
         difference(prevObservers, newObservers).forEach((observer) => {
           observer.destroy()
         })
-        difference(newObservers, prevObservers).forEach((observer) => {
-          observer.subscribe((result) => {
-            this.#onUpdate(observer, result)
-          })
-        })
+        difference(newObservers, prevObservers).forEach((observer) =>
+          this.#subscribeTo(observer),
+        )
       }
 
       this.#notify()
@@ -244,7 +238,9 @@ export class QueriesObserver<
    * the result for the given (already-defaulted) queries right now, synchronously. Called by
    * framework adapters (e.g. `useQueries`) ahead of subscribing, returning a tuple of the raw
    * per-query results, a function to compute the combined result from them, and a function to
-   * wrap the results for property-access tracking.
+   * wrap the results for property-access tracking. When the queries match the observed ones, the
+   * results also become the current result, so a later `setQueries` call with the same queries
+   * does not notify the listeners about them.
    * @param queries - The defaulted options of the queries to compute the result for.
    * @param combine - The `combine` function used by the returned `combineResult`, if any.
    * @returns A tuple of the per-query results, a function that computes the combined result, and a
@@ -262,6 +258,19 @@ export class QueriesObserver<
     const result = matches.map((match) =>
       match.observer.getOptimisticResult(match.defaultedQueryOptions),
     )
+    // The observers now hold the optimistic results as their current results.
+    // Hold them here too, so that `setQueries` does not find a change (and
+    // notify) for results that the caller already has.
+    if (
+      matches.length === this.#observers.length &&
+      matches.some(
+        (match, index) =>
+          match.observer.getCurrentResult() !== this.#result[index],
+      ) &&
+      matches.every((match, index) => match.observer === this.#observers[index])
+    ) {
+      this.#result = matches.map((match) => match.observer.getCurrentResult())
+    }
     const queryHashes = matches.map(
       (match) => match.defaultedQueryOptions.queryHash,
     )
@@ -380,6 +389,14 @@ export class QueriesObserver<
     return observers
   }
 
+  #subscribeTo(observer: QueryObserver): void {
+    // Create the listener here, not in `setQueries`: a listener created there
+    // keeps the previous observers, and their queries, alive (#12656)
+    observer.subscribe((result) => {
+      this.#onUpdate(observer, result)
+    })
+  }
+
   #onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
     const index = this.#observers.indexOf(observer)
     if (index !== -1) {
@@ -398,6 +415,9 @@ export class QueriesObserver<
         : this.#combineResult(
             this.#trackResult(this.#result, this.#observerMatches),
             this.#options?.combine,
+            this.#observerMatches.map(
+              (match) => match.defaultedQueryOptions.queryHash,
+            ),
           )
 
       if (shouldSkipCombine || previousResult !== newResult) {

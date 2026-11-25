@@ -165,7 +165,7 @@ In this example, we can't trivially flatten the waterfall by just hoisting the q
 import { lazy, Switch, Match, For } from 'solid-js'
 
 // This lazy loads the GraphFeedItem component, meaning
-// it wont start loading until something renders it
+// it won't start loading until something renders it
 const GraphFeedItem = lazy(() => import('./GraphFeedItem'))
 
 function Feed() {
