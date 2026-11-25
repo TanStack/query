@@ -164,6 +164,41 @@ describe('broadcastQueryClient', () => {
       expect(queryClient.getQueryState(existingKey)?.status).toBe('success')
     })
 
+    it('should not overwrite an error-settled query that has no data when an "added" message arrives', () => {
+      const existingKey = createKey()
+
+      broadcastQueryClient({
+        queryClient,
+        broadcastChannel: 'test_channel',
+      })
+
+      // This tab's query already settled in error, so it has no data but
+      // did fail: overwriting it with the sender's brand-new state would
+      // drop the error and make it look pending without a fetch running.
+      const existingQuery = queryCache.build(queryClient, {
+        queryKey: existingKey,
+      })
+      existingQuery.setState({
+        status: 'error',
+        error: new Error('boom'),
+        errorUpdatedAt: 1,
+      })
+
+      // Another tab just mounted the same key for the first time, so its
+      // `build()` broadcasts an `added` message with a pending state and
+      // no data.
+      lastCreatedChannel.onmessage?.({
+        type: 'added',
+        queryHash: existingQuery.queryHash,
+        queryKey: existingKey,
+        state: { status: 'pending', data: undefined },
+      })
+      expect(queryClient.getQueryState(existingKey)?.status).toBe('error')
+      expect(queryClient.getQueryState(existingKey)?.error).toStrictEqual(
+        new Error('boom'),
+      )
+    })
+
     it('should adopt an "added" message\'s state for an existing query that has no data yet', () => {
       const existingKey = createKey()
 
