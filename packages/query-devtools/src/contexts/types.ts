@@ -81,8 +81,8 @@ export interface QueryDevtoolsProps {
    */
   errorTypes?: Array<DevtoolsErrorType>
   /**
-   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
-   * within the shadow DOM instead of within the head tag in the light DOM.
+   * The shadow root to add the devtools styles to. By default, the styles are added to the shadow
+   * root the devtools render in, or to the document when they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
   /**

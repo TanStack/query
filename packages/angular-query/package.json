@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/angular-query",
-  "version": "5.108.0",
+  "version": "5.108.4",
   "description": "Signals for managing, caching and syncing asynchronous and remote data in Angular",
   "author": "Arnoud de Vries",
   "license": "MIT",
@@ -90,7 +90,7 @@
     "vite-plugin-dts": "4.2.3",
     "vite-tsconfig-paths": "^5.1.4",
     "zone.js": "^0.16.0",
-    "vite": "^8.3.5"
+    "vite": "^8.3.8"
   },
   "peerDependencies": {
     "@angular/common": ">=20.1.0",
