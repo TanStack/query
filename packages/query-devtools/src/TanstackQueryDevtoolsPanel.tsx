@@ -1,6 +1,5 @@
 import { createSignal, lazy } from 'solid-js'
-import { render } from 'solid-js/web'
-import { setupStyleSheet } from './utils'
+import { render, setTrustedTypesPolicy } from 'solid-js/web'
 import type {
   QueryClient,
   onlineManager as TOnlineManager,
@@ -20,15 +19,21 @@ import type {
  */
 export interface TanstackQueryDevtoolsPanelConfig extends QueryDevtoolsProps {
   /**
-   * Use this to pass a nonce to the style tag that is added to the document head. This is useful if
-   * you are using a Content Security Policy (CSP) nonce to allow inline styles.
+   * @deprecated The devtools no longer add a `<style>` element, so they need no nonce. This option
+   * does nothing.
    */
   styleNonce?: string
   /**
-   * Use this to pass a shadow DOM target to the devtools so that the styles will be applied
-   * within the shadow DOM instead of within the head tag in the light DOM.
+   * The shadow root to add the devtools styles to. By default, the styles are added to the shadow
+   * root the devtools render in, or to the document when they do not render in a shadow root.
    */
   shadowDOMTarget?: ShadowRoot
+  /**
+   * The Trusted Types policy the devtools use to create their HTML templates.
+   * Pass one when your page enforces `require-trusted-types-for 'script'`.
+   * The devtools only pass it their own markup.
+   */
+  trustedTypesPolicy?: { createHTML: (html: string) => unknown }
   /**
    * Callback function that is called when the devtools panel is closed.
    */
@@ -41,8 +46,8 @@ class TanstackQueryDevtoolsPanel {
   #queryFlavor: string
   #version: string
   #isMounted = false
-  #styleNonce?: string
   #shadowDOMTarget?: ShadowRoot
+  #trustedTypesPolicy?: { createHTML: (html: string) => unknown }
   #buttonPosition: Signal<DevtoolsButtonPosition | undefined>
   #position: Signal<DevtoolsPosition | undefined>
   #initialIsOpen: Signal<boolean | undefined>
@@ -63,8 +68,8 @@ class TanstackQueryDevtoolsPanel {
       position,
       initialIsOpen,
       errorTypes,
-      styleNonce,
       shadowDOMTarget,
+      trustedTypesPolicy,
       onClose,
       hideDisabledQueries,
       theme,
@@ -73,8 +78,8 @@ class TanstackQueryDevtoolsPanel {
     this.#queryFlavor = queryFlavor
     this.#version = version
     this.#onlineManager = onlineManager
-    this.#styleNonce = styleNonce
     this.#shadowDOMTarget = shadowDOMTarget
+    this.#trustedTypesPolicy = trustedTypesPolicy
     this.#buttonPosition = createSignal(buttonPosition)
     this.#position = createSignal(position)
     this.#initialIsOpen = createSignal(initialIsOpen)
@@ -116,6 +121,11 @@ class TanstackQueryDevtoolsPanel {
     if (this.#isMounted) {
       throw new Error('Devtools is already mounted')
     }
+    // Solid creates each template once, so set the policy before rendering.
+    // It is shared by every devtools instance, so never reset it.
+    if (this.#trustedTypesPolicy) {
+      setTrustedTypesPolicy(this.#trustedTypesPolicy)
+    }
     const dispose = render(() => {
       const [btnPosition] = this.#buttonPosition
       const [pos] = this.#position
@@ -134,7 +144,6 @@ class TanstackQueryDevtoolsPanel {
         this.#Component = Devtools
       }
 
-      setupStyleSheet(this.#styleNonce, this.#shadowDOMTarget)
       return (
         <Devtools
           queryFlavor={this.#queryFlavor}

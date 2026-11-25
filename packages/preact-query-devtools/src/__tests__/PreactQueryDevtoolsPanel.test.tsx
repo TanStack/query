@@ -106,14 +106,6 @@ describe('PreactQueryDevtoolsPanel', () => {
     expect(setClientMock).toHaveBeenCalledWith(queryClient)
   })
 
-  it('should forward "styleNonce" to the devtools constructor', () => {
-    render(<PreactQueryDevtoolsPanel client={queryClient} styleNonce="abc" />)
-
-    expect(TanstackQueryDevtoolsPanel).toHaveBeenCalledWith(
-      expect.objectContaining({ styleNonce: 'abc' }),
-    )
-  })
-
   it('should forward "shadowDOMTarget" to the devtools constructor', () => {
     const shadowDOMTarget = document
       .createElement('div')
