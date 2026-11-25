@@ -11,7 +11,7 @@ type EnsureInfiniteQueryDataOptions<TQueryFnData = unknown, TError = DefaultErro
 };
 ```
 
-Defined in: [packages/query-core/src/types.ts:795](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L795)
+Defined in: [packages/query-core/src/types.ts:794](https://github.com/TanStack/query/blob/main/packages/query-core/src/types.ts#L794)
 
 ## Type Parameters
 

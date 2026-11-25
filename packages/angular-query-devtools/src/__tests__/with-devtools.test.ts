@@ -158,6 +158,24 @@ describe('withDevtools feature', () => {
     },
   )
 
+  it("should throw 'No QueryClient found' when 'loadDevtools' is 'true' and no 'QueryClient' is provided", () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideZonelessChangeDetection(),
+        getQueryFeatureProviders(
+          withDevtools(() => ({
+            loadDevtools: true,
+          })),
+        ),
+      ],
+    })
+
+    expect(() => TestBed.inject(ENVIRONMENT_INITIALIZER)).toThrow(
+      'No QueryClient found',
+    )
+    expect(mockTanstackQueryDevtools).not.toHaveBeenCalled()
+  })
+
   it('should not continue loading devtools after injector is destroyed', async () => {
     TestBed.configureTestingModule({
       providers: [
@@ -476,7 +494,6 @@ describe('withDevtools feature', () => {
           () => new QueryClient(),
           withDevtools(() => ({
             loadDevtools: true,
-            styleNonce: 'nonce',
             shadowDOMTarget,
             hideDisabledQueries: true,
           })),
@@ -489,7 +506,6 @@ describe('withDevtools feature', () => {
 
     expect(mockTanstackQueryDevtools).toHaveBeenCalledWith(
       expect.objectContaining({
-        styleNonce: 'nonce',
         shadowDOMTarget,
         hideDisabledQueries: true,
       }),
