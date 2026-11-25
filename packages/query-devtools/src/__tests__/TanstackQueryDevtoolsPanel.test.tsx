@@ -1,6 +1,11 @@
 import { QueryClient, onlineManager } from '@tanstack/query-core'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { TanstackQueryDevtoolsPanel } from '..'
+
+// `solid-transition-group` resolves to its unpublished source under Vite.
+vi.mock(import('solid-transition-group'), () => ({
+  TransitionGroup: (props) => props.children,
+}))
 
 describe('TanstackQueryDevtoolsPanel', () => {
   let devtools: TanstackQueryDevtoolsPanel
@@ -116,6 +121,94 @@ describe('TanstackQueryDevtoolsPanel', () => {
           devtools.unmount()
         }
       })
+    })
+  })
+
+  describe('styles', () => {
+    it('should add the styles to the shadow root the panel renders in', async () => {
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn().mockImplementation((query: string) => ({
+          matches: false,
+          media: query,
+          addEventListener: vi.fn<MediaQueryList['addEventListener']>(),
+          removeEventListener: vi.fn<MediaQueryList['removeEventListener']>(),
+        })),
+      )
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          observe() {}
+          unobserve() {}
+          disconnect() {}
+        },
+      )
+      const host = document.createElement('div')
+      document.body.appendChild(host)
+      const shadowRoot = host.attachShadow({ mode: 'open' })
+      const el = document.createElement('div')
+      shadowRoot.appendChild(el)
+      devtools.mount(el)
+
+      try {
+        await vi.waitFor(
+          () =>
+            expect(shadowRoot.querySelector('.tsqd-main-panel')).not.toBeNull(),
+          5000,
+        )
+        expect(shadowRoot.adoptedStyleSheets).toHaveLength(1)
+      } finally {
+        devtools.unmount()
+        host.remove()
+      }
+    })
+  })
+
+  describe('trustedTypesPolicy', () => {
+    it('should create the devtools markup with the policy', async () => {
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn().mockImplementation((query: string) => ({
+          matches: false,
+          media: query,
+          addEventListener: vi.fn<MediaQueryList['addEventListener']>(),
+          removeEventListener: vi.fn<MediaQueryList['removeEventListener']>(),
+        })),
+      )
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          observe() {}
+          unobserve() {}
+          disconnect() {}
+        },
+      )
+      // Solid creates each template once, so use a fresh copy of the devtools.
+      vi.resetModules()
+      const { TanstackQueryDevtoolsPanel: FreshTanstackQueryDevtoolsPanel } =
+        await import('..')
+      const createHTML = vi.fn<(html: string) => string>((html) => html)
+      const policyDevtools = new FreshTanstackQueryDevtoolsPanel({
+        client: new QueryClient(),
+        queryFlavor: 'TanStack Query',
+        version: '5',
+        onlineManager,
+        trustedTypesPolicy: { createHTML },
+      })
+      const el = document.createElement('div')
+      document.body.appendChild(el)
+      policyDevtools.mount(el)
+
+      try {
+        await vi.waitFor(
+          () => expect(el.querySelector('.tsqd-main-panel')).not.toBeNull(),
+          5000,
+        )
+        expect(createHTML).toHaveBeenCalledWith(expect.stringContaining('<'))
+      } finally {
+        policyDevtools.unmount()
+        el.remove()
+      }
     })
   })
 })

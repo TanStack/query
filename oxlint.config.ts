@@ -171,7 +171,6 @@ export default defineConfig({
     {
       files: ['**/*.spec.ts*', '**/*.test.ts*', '**/*.test-d.ts*'],
       jsPlugins: [
-        // Unlike the native rule, also checks `expectTypeOf` calls
         { name: 'vitest-js', specifier: '@vitest/eslint-plugin' },
         { name: 'jest-dom', specifier: 'eslint-plugin-jest-dom' },
         { name: 'testing-library', specifier: 'eslint-plugin-testing-library' },
@@ -235,7 +234,6 @@ export default defineConfig({
         'vitest/require-mock-type-parameters': 'error',
         'vitest/require-to-throw-message': 'error',
         'vitest/require-top-level-describe': 'error',
-        'vitest/valid-expect': 'off',
         'vitest-js/no-conditional-in-test': 'error',
         'vitest-js/padding-around-after-all-blocks': 'error',
         'vitest-js/padding-around-after-each-blocks': 'error',
@@ -244,7 +242,6 @@ export default defineConfig({
         'vitest-js/padding-around-describe-blocks': 'error',
         'vitest-js/padding-around-test-blocks': 'error',
         'vitest-js/prefer-vi-mocked': 'error',
-        'vitest-js/valid-expect': 'error',
       },
     },
     {

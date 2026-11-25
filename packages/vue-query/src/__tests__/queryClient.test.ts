@@ -437,6 +437,7 @@ describe('QueryCache', () => {
       // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery({
         queryKey: queryKeyRef,
+        getNextPageParam: () => undefined,
         initialPageParam: 0,
       })
 
@@ -528,11 +529,13 @@ describe('QueryCache', () => {
   describe('prefetchInfiniteQuery', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
+      const getNextPageParam = () => undefined
 
       // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchInfiniteQuery({
         queryKey: queryKeyRef,
         queryFn: fn,
+        getNextPageParam,
         initialPageParam: 0,
       })
 
@@ -542,6 +545,7 @@ describe('QueryCache', () => {
         initialPageParam: 0,
         queryKey: queryKeyUnref,
         queryFn: fn,
+        getNextPageParam,
       })
     })
   })

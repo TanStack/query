@@ -1435,7 +1435,12 @@ describe('queryClient', () => {
           StrictData,
           StrictQueryKey,
           number
-        >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 }),
+        >({
+          queryKey: key,
+          queryFn: fetchFn,
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+        }),
       ).resolves.toStrictEqual(data)
     })
 
@@ -1444,6 +1449,7 @@ describe('queryClient', () => {
       // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const result = await queryClient.fetchInfiniteQuery({
         queryKey: key,
+        getNextPageParam: () => undefined,
         initialPageParam: 10,
         queryFn: ({ pageParam }) => Number(pageParam),
       })
@@ -1480,7 +1486,12 @@ describe('queryClient', () => {
           StrictData,
           StrictQueryKey,
           number
-        >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 }),
+        >({
+          queryKey: key,
+          queryFn: fetchFn,
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+        }),
       ).resolves.toStrictEqual(data)
     })
 
@@ -1488,6 +1499,7 @@ describe('queryClient', () => {
       const key = createKey()
       const result = await queryClient.infiniteQuery({
         queryKey: key,
+        getNextPageParam: () => undefined,
         initialPageParam: 10,
         queryFn: ({ pageParam }) => Number(pageParam),
       })
@@ -1512,6 +1524,7 @@ describe('queryClient', () => {
         queryClient.infiniteQuery({
           queryKey: key,
           queryFn,
+          getNextPageParam: () => undefined,
           initialPageParam: 0,
           // @ts-expect-error enabled is not supported for imperative queries
           enabled: false,
@@ -1537,6 +1550,7 @@ describe('queryClient', () => {
       const result = await queryClient.infiniteQuery({
         queryKey: key,
         queryFn,
+        getNextPageParam: () => undefined,
         initialPageParam: 0,
         // @ts-expect-error enabled is not supported for imperative queries
         enabled: false,
@@ -1557,6 +1571,7 @@ describe('queryClient', () => {
       const result = await queryClient.infiniteQuery({
         queryKey: key,
         queryFn: skipToken,
+        getNextPageParam: () => undefined,
         initialPageParam: 0,
         staleTime: 'static',
       })
@@ -1576,6 +1591,7 @@ describe('queryClient', () => {
         queryClient.infiniteQuery({
           queryKey: key,
           queryFn: skipToken,
+          getNextPageParam: () => undefined,
           initialPageParam: 0,
           select,
         }),
@@ -1589,6 +1605,7 @@ describe('queryClient', () => {
         queryClient.infiniteQuery({
           queryKey: createKey(),
           queryFn: skipToken,
+          getNextPageParam: () => undefined,
           initialPageParam: 0,
         }),
       ).rejects.toThrow('Missing queryFn')
@@ -1628,6 +1645,7 @@ describe('queryClient', () => {
       const result = await queryClient.infiniteQuery({
         queryKey: key,
         queryFn,
+        getNextPageParam: () => undefined,
         initialPageParam: 0,
         staleTime,
       })
@@ -1650,6 +1668,7 @@ describe('queryClient', () => {
       const first = await queryClient.infiniteQuery({
         queryKey: key,
         queryFn,
+        getNextPageParam: () => undefined,
         initialPageParam: 0,
         staleTime: 'static',
       })
@@ -1667,6 +1686,7 @@ describe('queryClient', () => {
       const second = await queryClient.infiniteQuery({
         queryKey: key,
         queryFn,
+        getNextPageParam: () => undefined,
         initialPageParam: 0,
         staleTime: 'static',
       })
@@ -1679,6 +1699,7 @@ describe('queryClient', () => {
 
       const result = await queryClient.infiniteQuery({
         queryKey: key,
+        getNextPageParam: () => undefined,
         initialPageParam: 10,
         queryFn: ({ pageParam }) => Number(pageParam),
         select: (data) => data.pages.map((page) => page * 2),
@@ -1704,7 +1725,12 @@ describe('queryClient', () => {
         StrictData,
         StrictQueryKey,
         number
-      >({ queryKey: key, queryFn: fetchFn, initialPageParam: 0 })
+      >({
+        queryKey: key,
+        queryFn: fetchFn,
+        getNextPageParam: () => undefined,
+        initialPageParam: 0,
+      })
 
       const result = queryClient.getQueryData(key)
 
@@ -1721,6 +1747,7 @@ describe('queryClient', () => {
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
+        getNextPageParam: () => undefined,
         initialPageParam: 10,
       })
 
@@ -1794,6 +1821,7 @@ describe('queryClient', () => {
         .infiniteQuery<StrictData, any, StrictData, StrictQueryKey, number>({
           queryKey: key,
           queryFn: fetchFn,
+          getNextPageParam: () => undefined,
           initialPageParam: 0,
         })
         .catch(noop)
@@ -1813,6 +1841,7 @@ describe('queryClient', () => {
         .infiniteQuery({
           queryKey: key,
           queryFn: ({ pageParam }) => Number(pageParam),
+          getNextPageParam: () => undefined,
           initialPageParam: 10,
         })
         .catch(noop)

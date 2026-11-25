@@ -36,6 +36,7 @@ describe('createInfiniteQuery', () => {
         queryFn: ({ pageParam }) => {
           expectTypeOf(pageParam).toEqualTypeOf<number>()
         },
+        getNextPageParam: () => undefined,
         initialPageParam: 1,
       })
     })
@@ -48,6 +49,7 @@ describe('createInfiniteQuery', () => {
         queryFn: ({ pageParam }) => {
           expectTypeOf(pageParam).toEqualTypeOf<number>()
         },
+        getNextPageParam: () => undefined,
         initialPageParam: 1,
       })
     })

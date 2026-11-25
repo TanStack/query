@@ -494,7 +494,6 @@ describe('withDevtools feature', () => {
           () => new QueryClient(),
           withDevtools(() => ({
             loadDevtools: true,
-            styleNonce: 'nonce',
             shadowDOMTarget,
             hideDisabledQueries: true,
           })),
@@ -507,7 +506,6 @@ describe('withDevtools feature', () => {
 
     expect(mockTanstackQueryDevtools).toHaveBeenCalledWith(
       expect.objectContaining({
-        styleNonce: 'nonce',
         shadowDOMTarget,
         hideDisabledQueries: true,
       }),
