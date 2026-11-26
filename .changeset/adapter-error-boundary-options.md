@@ -13,4 +13,4 @@ Move error boundary options out of query-core. React, Preact, Solid, and Vue sti
 
 Query observers now notify listeners when the result's error changes, even when the component does not track `error`. Set `notifyOnChangeProps: 'none'` to suppress all notifications and opt out of the query's `throwOnError` boundary handling.
 
-With `useQueries`, query errors can reach the error boundary even when `combine` returns the same value.
+In React and Preact, `useQueries` skips `combine` when a query error needs to reach the error boundary.

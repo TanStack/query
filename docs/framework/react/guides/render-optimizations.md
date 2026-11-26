@@ -34,9 +34,9 @@ The top level object returned from `useQuery`, `useInfiniteQuery`, `useMutation`
 
 ## tracked properties
 
-React Query will only trigger a re-render if one of the properties returned from `useQuery` is actually "used". This is done by using [Proxy object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). This avoids a lot of unnecessary re-renders, e.g. because properties like `isFetching` or `isStale` might change often, but are not used in the component.
+React Query tracks which `useQuery` result properties the component reads with a [Proxy object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). This avoids re-renders when unused properties such as `isFetching` or `isStale` change.
 
-Set `notifyOnChangeProps: 'all'` to notify the component whenever the query result changes. Set `notifyOnChangeProps: 'none'` to suppress these notifications while the query can still fetch. If you set `throwOnError`, changes to the error still notify the component. You can set these options in the query defaults or on individual queries.
+Changes to the query error notify the component even if it does not read `error`. Set `notifyOnChangeProps: 'all'` to receive every result change. Set `notifyOnChangeProps: 'none'` to suppress result notifications and disable `throwOnError` for that observer. The query can still fetch. You can set these options in the query defaults or on individual queries.
 
 > Note: The get trap of a proxy is invoked by accessing a property, either via destructuring or by accessing it directly. If you use object rest destructuring, you will disable this optimization. We have a [lint rule](../../../eslint/no-rest-destructuring.md) to guard against this pitfall.
 

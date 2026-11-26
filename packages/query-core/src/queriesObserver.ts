@@ -466,21 +466,13 @@ export class QueriesObserver<
 
     const index = this.#observers.indexOf(observer)
     if (index !== -1) {
-      const previous = this.#result[index]
-      const hasNewError =
-        result.isError &&
-        !result.isFetching &&
-        (!previous?.isError ||
-          previous.error !== result.error ||
-          previous.isFetching)
-
       this.#result = this.#result.slice()
       this.#result[index] = result
-      this.#notify(hasNewError)
+      this.#notify()
     }
   }
 
-  #notify(hasNewError = false): void {
+  #notify(): void {
     if (this.hasListeners()) {
       const shouldSkipCombine = this.#shouldSkipCombine()
       const previousResult = this.#combinedResult
@@ -495,7 +487,7 @@ export class QueriesObserver<
           )
 
       this.#combinedResult = newResult
-      if (hasNewError || shouldSkipCombine || previousResult !== newResult) {
+      if (shouldSkipCombine || previousResult !== newResult) {
         notifyManager.batch(() => {
           this.listeners.forEach((listener) => {
             listener(this.#result)

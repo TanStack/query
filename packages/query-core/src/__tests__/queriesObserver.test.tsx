@@ -836,6 +836,39 @@ describe('queriesObserver', () => {
     unsubscribe()
   })
 
+  it('keeps subscribers quiet when a selector fails and the combined value stays the same', () => {
+    const queryKey = createKey()
+    const error = new Error('select failed')
+    queryClient.setQueryData(queryKey, 'good')
+    const query = {
+      queryKey,
+      queryFn: defaultQueryFn,
+      enabled: false,
+      select: (data: string) => {
+        if (data === 'bad') {
+          throw error
+        }
+        return data
+      },
+    } as const
+    const combine = (results: Array<QueryObserverResult>) => results[0]!.data
+    const observer = new QueriesObserver<unknown>(queryClient, [query])
+    const reader = observer.createResultReader([query], { combine })
+    expect(reader.combineResult(reader.getSnapshot())).toBe('good')
+    reader.commit()
+    const listener = vi.fn<() => void>()
+    const unsubscribe = observer.subscribe(listener)
+
+    queryClient.setQueryData(queryKey, 'bad')
+
+    expect(observer.getCurrentResult()[0]).toMatchObject({
+      data: 'good',
+      error,
+    })
+    expect(listener).not.toHaveBeenCalled()
+    unsubscribe()
+  })
+
   it('should handle queries being removed with stable combine reference', () => {
     const combine = vi.fn<
       (results: Array<QueryObserverResult>) => {

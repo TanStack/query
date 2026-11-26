@@ -17,6 +17,7 @@ import type {
   QueryClient,
   QueryFunction,
   QueryKey,
+  QueryObserverResult,
 } from '@tanstack/query-core'
 import type { suspenseQueriesPolicy } from './suspense'
 import type {
@@ -439,10 +440,30 @@ export function useBaseQueries<
       ),
   )
 
+  const findErrorResult = (results: Array<QueryObserverResult>) =>
+    results.find((result, index) => {
+      const query = defaultedQueries[index]
+      return (
+        result.isError &&
+        query &&
+        getHasError({
+          result,
+          errorResetBoundary,
+          throwOnError: query.throwOnError,
+          query: client.getQueryCache().get(query.queryHash),
+          suspense: !!suspense,
+        })
+      )
+    })
+
   const reader = observer.createResultReader(
     defaultedQueries,
     observerOptions,
-    suspense,
+    {
+      canFetchOnQueryChange: suspense?.canFetchOnQueryChange,
+      canCombine: (results) =>
+        suspense?.canCombine(results) !== false && !findErrorResult(results),
+    },
   )
   suspense?.readQueries(defaultedQueries, reader, client, errorResetBoundary)
 
@@ -471,20 +492,7 @@ export function useBaseQueries<
     reader.getSnapshot,
   )
 
-  const firstErrorResult = results.find((result, index) => {
-    const query = defaultedQueries[index]
-    return (
-      query &&
-      getHasError({
-        result,
-        errorResetBoundary,
-        throwOnError: query.throwOnError,
-        query: client.getQueryCache().get(query.queryHash),
-        suspense: !!suspense,
-      })
-    )
-  })
-
+  const firstErrorResult = findErrorResult(results)
   if (firstErrorResult) {
     throw firstErrorResult.error
   }
