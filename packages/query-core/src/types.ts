@@ -3,7 +3,7 @@
 import type { DehydrateOptions, HydrateOptions } from './hydration'
 import type { MutationState } from './mutation'
 import type { MutationCache } from './mutationCache'
-import type { Query, QueryBehavior } from './query'
+import type { Query } from './query'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type { RetryDelayValue, RetryValue } from './retryer'
@@ -448,8 +448,6 @@ export interface QueryOptions<
    * If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
    */
   initialDataUpdatedAt?: number | (() => number | undefined)
-  /** @internal */
-  behavior?: QueryBehavior<TQueryFnData, TError, TData, TQueryKey>
   /**
    * Set this to `false` to disable structural sharing between query results.
    * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
