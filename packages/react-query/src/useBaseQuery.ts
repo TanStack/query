@@ -67,7 +67,7 @@ export function useBaseQuery<
     TData,
     TQueryData,
     TQueryKey
-  > = client.defaultQueryOptions(options._defaulted ? { ...options } : options)
+  > = client.defaultQueryOptions({ ...options })
 
   const query = client
     .getQueryCache()
