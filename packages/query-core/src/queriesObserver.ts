@@ -4,8 +4,8 @@ import { Subscribable } from './subscribable'
 import { replaceEqualDeep, shallowEqualObjects } from './utils'
 import type { QueryClient } from './queryClient'
 import type {
+  CanFetchOnQueryChange,
   ObserverOptionsInput,
-  QueryObserverReaderPolicy,
   QueryObserverResultReader,
 } from './queryObserver'
 import type {
@@ -83,7 +83,9 @@ export interface QueriesObserverOptions<
  * Controls automatic fetches and combining for a group of queries.
  * @internal
  */
-export interface QueriesObserverReaderPolicy extends QueryObserverReaderPolicy {
+export interface QueriesObserverReaderPolicy {
+  /** Controls automatic fetches when switching or enabling a query. */
+  canFetchOnQueryChange?: CanFetchOnQueryChange
   /** Return false to notify with raw results and keep the last combined value. */
   canCombine?: (results: Array<QueryObserverResult>) => boolean
 }
@@ -307,7 +309,7 @@ export class QueriesObserver<
       ...match,
       reader: match.observer.createResultReader(
         match.defaultedQueryOptions,
-        policy,
+        policy?.canFetchOnQueryChange,
       ),
     }))
     const queryHashes = matches.map(

@@ -143,9 +143,10 @@ describe('query observer result readers', () => {
       staleTime: Infinity,
     })
     const unsubscribe = observer.subscribe(vi.fn<() => void>())
-    const reader = observer.createResultReader(failedOptions, {
-      canFetchOnQueryChange: (query) => query.state.status !== 'error',
-    })
+    const reader = observer.createResultReader(
+      failedOptions,
+      (query) => query.state.status !== 'error',
+    )
 
     expect(reader.getSnapshot()).toMatchObject({ error, fetchStatus: 'idle' })
     reader.commit()
