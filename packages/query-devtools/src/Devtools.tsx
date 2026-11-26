@@ -2225,15 +2225,12 @@ const setupQueryCacheSubscription = () => {
         updates.forEach((update) => update())
       })
     }
+    const schedule = (update: () => void, id: symbol) => {
+      if (!pendingUpdates.size) queueMicrotask(flush)
+      pendingUpdates.set(id, update)
+    }
     const unsubscribe = cache.subscribe((event) => {
-      queryCacheSubscriptions.notify(
-        () => cache,
-        event,
-        (update, id) => {
-          if (!pendingUpdates.size) queueMicrotask(flush)
-          pendingUpdates.set(id, update)
-        },
-      )
+      queryCacheSubscriptions.notify(() => cache, event, schedule)
     })
     onCleanup(() => {
       active = false
