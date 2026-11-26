@@ -184,7 +184,7 @@ describe('Devtools', () => {
       }
     }
 
-    it('keeps selected query details updating when its row is offscreen', () => {
+    it('keeps selected query details updating when its row is offscreen', async () => {
       seedQueries()
       const rendered = renderDevtools(
         { initialIsOpen: true },
@@ -199,13 +199,14 @@ describe('Devtools', () => {
       expect(rendered.getByLabelText('Query key ["query-0999"]')).toBeVisible()
 
       queryClient.setQueryData(['query-0000'], 'updated-selected-data')
+      await vi.advanceTimersByTimeAsync(0)
       expect(rendered.getByDisplayValue('updated-selected-data')).toBeVisible()
       viewport.scrollTo({ top: 0 })
       expect(rendered.getByLabelText('Query key ["query-0000"]')).toBeVisible()
       expect(rendered.getByText('Query Details')).toBeVisible()
     })
 
-    it('filters, clears, and restores queries after distant scrolling', () => {
+    it('filters, clears, and restores queries after distant scrolling', async () => {
       seedQueries()
       const rendered = renderDevtools({ initialIsOpen: true })
       const viewport = getViewport(rendered.container, 'queries')
@@ -222,13 +223,15 @@ describe('Devtools', () => {
       expect(rendered.getAllByLabelText(/^Query key /).length).toBeLessThan(100)
       viewport.scrollTo({ top: viewport.scrollHeight })
       fireEvent.click(rendered.getByLabelText('Clear query cache'))
+      await vi.advanceTimersByTimeAsync(0)
       expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
       queryClient.setQueryData(['after-clear'], 'restored')
+      await vi.advanceTimersByTimeAsync(0)
       viewport.scrollTo({ top: viewport.scrollTop })
       expect(rendered.getByLabelText('Query key ["after-clear"]')).toBeVisible()
     })
 
-    it('should update the query list once when clearing the query cache', () => {
+    it('should update the query list once when clearing the query cache', async () => {
       seedQueries()
       const rendered = renderDevtools({ initialIsOpen: true })
       const content = getViewport(
@@ -236,15 +239,73 @@ describe('Devtools', () => {
         'queries',
       ).firstElementChild
       assert(content)
-      const observer = new MutationObserver(noop)
+      const records: Array<MutationRecord> = []
+      const observer = new MutationObserver((mutations) => {
+        records.push(...mutations)
+      })
       observer.observe(content, { attributeFilter: ['style'] })
 
       fireEvent.click(rendered.getByLabelText('Clear query cache'))
+      await vi.advanceTimersByTimeAsync(0)
 
-      const records = observer.takeRecords()
+      records.push(...observer.takeRecords())
       observer.disconnect()
       expect(records).toHaveLength(1)
       expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
+    })
+
+    it('should update the query list once when the query client clears the cache', async () => {
+      seedQueries()
+      const rendered = renderDevtools({ initialIsOpen: true })
+      const content = getViewport(
+        rendered.container,
+        'queries',
+      ).firstElementChild
+      assert(content)
+      const records: Array<MutationRecord> = []
+      const observer = new MutationObserver((mutations) => {
+        records.push(...mutations)
+      })
+      observer.observe(content, { attributeFilter: ['style'] })
+
+      queryClient.clear()
+      await vi.advanceTimersByTimeAsync(0)
+
+      records.push(...observer.takeRecords())
+      observer.disconnect()
+      expect(records).toHaveLength(1)
+      expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
+    })
+
+    it('should update the query list once when the query client removes queries', async () => {
+      seedQueries()
+      const rendered = renderDevtools(
+        { initialIsOpen: true },
+        { 'TanstackQueryDevtools.sort': 'query hash' },
+      )
+      const content = getViewport(
+        rendered.container,
+        'queries',
+      ).firstElementChild
+      assert(content)
+      const records: Array<MutationRecord> = []
+      const observer = new MutationObserver((mutations) => {
+        records.push(...mutations)
+      })
+      observer.observe(content, { attributeFilter: ['style'] })
+
+      queryClient.removeQueries({
+        predicate: (query) => String(query.queryKey[0]) < 'query-0500',
+      })
+      await vi.advanceTimersByTimeAsync(0)
+
+      records.push(...observer.takeRecords())
+      observer.disconnect()
+      expect(records).toHaveLength(1)
+      expect(
+        rendered.queryByLabelText('Query key ["query-0499"]'),
+      ).not.toBeInTheDocument()
+      expect(rendered.getByLabelText('Query key ["query-0500"]')).toBeVisible()
     })
 
     it('keeps query clicks aligned after a same-count sort change', () => {
@@ -399,7 +460,7 @@ describe('Devtools', () => {
             ))
       }
 
-      it('should keep cache notifications and cleanup independent for the same query key', () => {
+      it('should keep cache notifications and cleanup independent for the same query key', async () => {
         const secondClient = new QueryClient()
         queryClient.setQueryData(['shared-key'], 'first-data')
         secondClient.setQueryData(['shared-key'], 'second-data')
@@ -411,6 +472,7 @@ describe('Devtools', () => {
         fireEvent.click(second.getByLabelText('Query key ["shared-key"]'))
 
         secondClient.setQueryData(['shared-key'], 'updated-second')
+        await vi.advanceTimersByTimeAsync(0)
         expect(first.getByDisplayValue('first-data')).toBeInTheDocument()
         expect(
           first.queryByDisplayValue('updated-second'),
@@ -419,6 +481,7 @@ describe('Devtools', () => {
 
         secondRender.unmount()
         queryClient.setQueryData(['shared-key'], 'updated-first')
+        await vi.advanceTimersByTimeAsync(0)
         expect(first.getByDisplayValue('updated-first')).toBeInTheDocument()
         secondClient.clear()
       })
@@ -507,7 +570,7 @@ describe('Devtools', () => {
         )
       })
 
-      it('should switch cache subscriptions when the client changes', () => {
+      it('should switch cache subscriptions when the client changes', async () => {
         const secondClient = new QueryClient()
         queryClient.setQueryData(['switch-key'], 'old-client')
         secondClient.setQueryData(['switch-key'], 'new-client')
@@ -529,8 +592,10 @@ describe('Devtools', () => {
         setClient(secondClient)
         expect(panel.getByDisplayValue('new-client')).toBeInTheDocument()
         secondClient.setQueryData(['switch-key'], 'new-update')
+        await vi.advanceTimersByTimeAsync(0)
         expect(panel.getByDisplayValue('new-update')).toBeInTheDocument()
         queryClient.setQueryData(['switch-key'], 'old-update')
+        await vi.advanceTimersByTimeAsync(0)
         expect(panel.getByDisplayValue('new-update')).toBeInTheDocument()
         rendered.unmount()
         secondClient.clear()
@@ -748,7 +813,7 @@ describe('Devtools', () => {
       ).toBeInTheDocument()
     })
 
-    it('should reflect a newly added query reactively', () => {
+    it('should reflect a newly added query reactively', async () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       expect(
@@ -756,6 +821,7 @@ describe('Devtools', () => {
       ).not.toBeInTheDocument()
 
       queryClient.setQueryData(['new'], 'hello')
+      await vi.advanceTimersByTimeAsync(0)
 
       expect(rendered.getByLabelText(/Query key \["new"\]/)).toBeInTheDocument()
     })
@@ -915,12 +981,13 @@ describe('Devtools', () => {
       ])
     })
 
-    it('should clear all queries when the clear cache button is clicked', () => {
+    it('should clear all queries when the clear cache button is clicked', async () => {
       queryClient.setQueryData(['posts'], [])
       queryClient.setQueryData(['users'], [])
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText('Clear query cache'))
+      await vi.advanceTimersByTimeAsync(0)
       expect(
         rendered.queryByLabelText(/Query key \["posts"\]/),
       ).not.toBeInTheDocument()
@@ -1200,12 +1267,13 @@ describe('Devtools', () => {
       expect(rendered.getByLabelText(/Inactive: \d+/)).toBeInTheDocument()
     })
 
-    it('should reflect the inactive count when a query is added without observers', () => {
+    it('should reflect the inactive count when a query is added without observers', async () => {
       const rendered = renderDevtools({ initialIsOpen: true })
 
       expect(rendered.getByLabelText('Inactive: 0')).toBeInTheDocument()
 
       queryClient.setQueryData(['posts'], [{ id: 1 }])
+      await vi.advanceTimersByTimeAsync(0)
 
       expect(rendered.getByLabelText('Inactive: 1')).toBeInTheDocument()
     })
@@ -1289,7 +1357,7 @@ describe('Devtools', () => {
   })
 
   describe('Data Explorer search', () => {
-    it('searches only query Data and resets search when the selection changes', () => {
+    it('searches only query Data and resets search when the selection changes', async () => {
       queryClient.setQueryData(['search-first'], {
         nested: { name: 'first needle' },
       })
@@ -1315,6 +1383,7 @@ describe('Devtools', () => {
       queryClient.setQueryData(['search-first'], {
         nested: { name: 'updated needle' },
       })
+      await vi.advanceTimersByTimeAsync(0)
       expect(data.getByLabelText('name:')).toHaveValue('updated needle')
       fireEvent.click(rendered.getByLabelText('Query key ["search-second"]'))
       expect(rendered.getByLabelText('Search data')).toHaveValue('')
@@ -1464,12 +1533,13 @@ describe('Devtools', () => {
   })
 
   describe('query actions', () => {
-    it('should remove the query when the "Remove" button is clicked', () => {
+    it('should remove the query when the "Remove" button is clicked', async () => {
       queryClient.setQueryData(['action-remove'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["action-remove"\]/))
       fireEvent.click(rendered.getByText('Remove'))
+      await vi.advanceTimersByTimeAsync(0)
       expect(
         rendered.queryByLabelText(/Query key \["action-remove"\]/),
       ).not.toBeInTheDocument()
@@ -1528,7 +1598,7 @@ describe('Devtools', () => {
       expect(queryClient.getQueryState(['action-error'])?.status).toBe('error')
     })
 
-    it('should restore the query status when "Restore Error" is clicked after "Trigger Error"', () => {
+    it('should restore the query status when "Restore Error" is clicked after "Trigger Error"', async () => {
       queryClient.setQueryData(['action-restore-error'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
@@ -1536,6 +1606,7 @@ describe('Devtools', () => {
         rendered.getByLabelText(/Query key \["action-restore-error"\]/),
       )
       fireEvent.click(rendered.getByText('Trigger Error'))
+      await vi.advanceTimersByTimeAsync(0)
       fireEvent.click(rendered.getByText('Restore Error'))
       expect(queryClient.getQueryState(['action-restore-error'])?.status).toBe(
         'pending',
@@ -1564,6 +1635,7 @@ describe('Devtools', () => {
       // First click puts the query into a pending state with `data: undefined`
       // and stashes the original options in `fetchMeta.__previousQueryOptions`.
       fireEvent.click(rendered.getByText('Trigger Loading'))
+      await vi.advanceTimersByTimeAsync(0)
       expect(
         queryClient.getQueryState(['action-restore-loading'])?.status,
       ).toBe('pending')

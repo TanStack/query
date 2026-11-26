@@ -2215,12 +2215,30 @@ const setupQueryCacheSubscription = () => {
 
   createEffect(() => {
     const cache = queryCache()
-    const unsubscribe = cache.subscribe((event) => {
+    let active = true
+    const pendingUpdates = new Map<symbol, () => void>()
+    const flush = () => {
+      if (!active) return
+      const updates = [...pendingUpdates.values()]
+      pendingUpdates.clear()
       batch(() => {
-        queryCacheSubscriptions.notify(() => cache, event)
+        updates.forEach((update) => update())
       })
+    }
+    const unsubscribe = cache.subscribe((event) => {
+      queryCacheSubscriptions.notify(
+        () => cache,
+        event,
+        (update, id) => {
+          if (!pendingUpdates.size) queueMicrotask(flush)
+          pendingUpdates.set(id, update)
+        },
+      )
     })
-    onCleanup(unsubscribe)
+    onCleanup(() => {
+      active = false
+      unsubscribe()
+    })
   })
 }
 
