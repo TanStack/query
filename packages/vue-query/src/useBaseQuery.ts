@@ -165,7 +165,6 @@ export function useBaseQuery<
       ShallowOption & {
         throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
       } = client.defaultQueryOptions(clonedOptions)
-    defaulted._notifyOnError = !!defaulted.throwOnError
 
     defaulted._optimisticResults = client.isRestoring?.value
       ? 'isRestoring'

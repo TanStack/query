@@ -13,7 +13,6 @@ import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type {
   DefaultError,
-  DefaultedQueryObserverOptions,
   DefinedQueryObserverResult,
   QueriesObserverOptions,
   QueryFunction,
@@ -406,10 +405,7 @@ export function useQueries<
         clonedOptions.enabled = clonedOptions.enabled()
       }
 
-      const defaulted: DefaultedQueryObserverOptions & {
-        throwOnError?: ThrowOnError<unknown, DefaultError, unknown, QueryKey>
-      } = client.defaultQueryOptions(clonedOptions)
-      defaulted._notifyOnError = !!defaulted.throwOnError
+      const defaulted = client.defaultQueryOptions(clonedOptions)
       defaulted._optimisticResults = client.isRestoring?.value
         ? 'isRestoring'
         : 'optimistic'

@@ -7,8 +7,7 @@ import type { DefaultedQueryOptions, ThrowOnError } from './types'
 /**
  * Turns off `retryOnMount` for a query that throws its errors (with `suspense` or `throwOnError`),
  * unless the error boundary has been reset, so a remount doesn't retry the failed query before the
- * user resets the boundary. Enables error notifications for queries with `throwOnError`.
- * Mutates the options.
+ * user resets the boundary. Mutates the options.
  * @param options - The defaulted query options to adjust.
  * @param errorResetBoundary - The value of the nearest `QueryErrorResetBoundary`.
  * @param query - The query, used to evaluate a `throwOnError` function against its error.
@@ -30,7 +29,6 @@ export const prepareErrorBoundaryOptions = <
   errorResetBoundary: QueryErrorResetBoundaryValue,
   query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
 ) => {
-  options._notifyOnError = !!options.throwOnError
   const throwOnError =
     query?.state.status === 'error' &&
     typeof options.throwOnError === 'function'
