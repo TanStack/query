@@ -376,10 +376,7 @@ export function useBaseQueries<
 
   useClearResetErrorBoundary(errorResetBoundary)
 
-  const observerOptions = {
-    ...options,
-    _combineWhenReady: !!suspense,
-  } as QueriesObserverOptions<TCombinedResult>
+  const observerOptions = options as QueriesObserverOptions<TCombinedResult>
 
   const [observer] = useState(
     () =>
@@ -390,7 +387,11 @@ export function useBaseQueries<
       ),
   )
 
-  const reader = observer.createResultReader(defaultedQueries, observerOptions)
+  const reader = observer.createResultReader(
+    defaultedQueries,
+    observerOptions,
+    suspense,
+  )
   suspense?.readQueries(defaultedQueries, reader, client, errorResetBoundary)
 
   // Commit the combine cache before subscription can start a fetch.

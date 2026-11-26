@@ -628,13 +628,6 @@ export interface QueryObserverOptionsBase<
         TQueryKey
       >
 
-  /**
-   * Set to `false` to skip automatic retries when switching to a failed query
-   * or enabling a failed query.
-   * @internal
-   */
-  _retryOnQueryChange?: boolean
-
   /** @internal */
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }

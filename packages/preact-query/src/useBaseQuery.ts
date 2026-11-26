@@ -110,7 +110,7 @@ export function useBaseQuery<
       ),
   )
 
-  const reader = observer.createResultReader(defaultedOptions)
+  const reader = observer.createResultReader(defaultedOptions, suspense)
 
   suspense?.readQuery(
     defaultedOptions,

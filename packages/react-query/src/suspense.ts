@@ -40,15 +40,12 @@ export const defaultThrowOnError = <
 /**
  * Raises `staleTime` and a numeric `gcTime` to at least 1000ms when `suspense` is enabled, so a
  * component that remounts after suspending doesn't refetch right away or find the query garbage
- * collected. A `'static'` `staleTime` is kept as is. Also prevents automatic retries when
- * switching to a failed query. Mutates the options.
+ * collected. A `'static'` `staleTime` is kept as is. Mutates the options.
  * @param defaultedOptions - The defaulted query options to adjust.
  */
 export const prepareSuspenseOptions = (
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
 ) => {
-  defaultedOptions._retryOnQueryChange = false
-
   // Handle staleTime to ensure minimum 1000ms in Suspense mode
   // This prevents unnecessary refetching when components remount after suspending
   const MIN_SUSPENSE_TIME_MS = 1000
@@ -159,9 +156,13 @@ const useReadSuspenseQuery = (
   }
 }
 
+const canFetchOnQueryChange = (query: Query<any, any, any, any>) =>
+  query.state.status !== 'error'
+
 /** Supplies Suspense behavior for one query. */
 export const suspenseQueryPolicy = {
   prepare: prepareSuspenseOptions,
+  canFetchOnQueryChange,
   readQuery: useReadSuspenseQuery,
 }
 
@@ -209,5 +210,8 @@ const useReadSuspenseQueries = (
 /** Supplies Suspense behavior for parallel queries. */
 export const suspenseQueriesPolicy = {
   prepare: prepareSuspenseOptions,
+  canFetchOnQueryChange,
   readQueries: useReadSuspenseQueries,
+  canCombine: (results: Array<SuspenseResult>) =>
+    results.every((result) => result.data !== undefined),
 }

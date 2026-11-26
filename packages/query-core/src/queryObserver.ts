@@ -28,6 +28,15 @@ import type {
   RefetchOptions,
 } from './types'
 
+/**
+ * Controls fetches caused by changes to the observed query.
+ * @internal
+ */
+export interface QueryObserverReaderPolicy {
+  /** Return false to skip the automatic fetch when switching or enabling a query. */
+  canFetchOnQueryChange?: (query: Query<any, any, any, any>) => boolean
+}
+
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>,
 ) => void
@@ -268,6 +277,7 @@ export class QueryObserver<
    * refetch-interval timers as needed.
    * @param options - The new observer options. They are defaulted with {@link
    * QueryClient#defaultQueryOptions} before being applied.
+   * @param policy - The fetch policy for the options update.
    * @throws {Error} If `enabled` is neither a boolean nor a function.
    * @example
    * ```ts
@@ -284,6 +294,7 @@ export class QueryObserver<
       TQueryData,
       TQueryKey
     >,
+    policy?: QueryObserverReaderPolicy,
   ): void {
     const prevOptions = this.options
     const prevQuery = this.#currentQuery
@@ -326,6 +337,7 @@ export class QueryObserver<
         prevQuery,
         this.options,
         prevOptions,
+        policy,
       )
     ) {
       this.#executeFetch()
@@ -368,6 +380,7 @@ export class QueryObserver<
    * Call `commit` after the render commits to apply the options and reuse the
    * reader's computation. An abandoned reader needs no cleanup.
    * @param options - The defaulted options used to read and commit the query result.
+   * @param policy - The fetch policy for this read and commit.
    * @returns A reader with local snapshot and computation caches.
    */
   createResultReader(
@@ -378,6 +391,7 @@ export class QueryObserver<
       TQueryData,
       TQueryKey
     >,
+    policy?: QueryObserverReaderPolicy,
   ): QueryObserverResultReader<QueryObserverResult<TData, TError>> {
     const readerOptions = { ...options }
     const { select, structuralSharing } = readerOptions
@@ -409,6 +423,7 @@ export class QueryObserver<
         readerOptions,
         context,
         result,
+        policy,
       )
       if (!shallowEqualObjects(nextResult, result)) {
         result = nextResult
@@ -422,7 +437,7 @@ export class QueryObserver<
         // Reuse selections computed since the last read.
         getSnapshot()
         this.#resultContext = { ...context }
-        this.setOptions(readerOptions)
+        this.setOptions(readerOptions, policy)
       },
     }
   }
@@ -756,6 +771,7 @@ export class QueryObserver<
    * @param options - The observer options to compute the result with.
    * @param context - The selection and placeholder state reused between computations.
    * @param prevResult - The previous result used for structural sharing.
+   * @param policy - The fetch policy for this read.
    * @returns The computed result.
    */
   protected createResult(
@@ -771,6 +787,7 @@ export class QueryObserver<
     prevResult = this.#currentResult as
       | QueryObserverResult<TData, TError>
       | undefined,
+    policy?: QueryObserverReaderPolicy,
   ): QueryObserverResult<TData, TError> {
     const prevQuery = this.#currentQuery
     const prevOptions = this.options
@@ -783,7 +800,7 @@ export class QueryObserver<
     const fetchOptimistically =
       options._optimisticResults &&
       (this.hasListeners()
-        ? shouldFetchOptionally(query, prevQuery, options, prevOptions)
+        ? shouldFetchOptionally(query, prevQuery, options, prevOptions, policy)
         : shouldFetchOnMount(query, options))
     const newState = fetchOptimistically
       ? { ...state, ...fetchState(state.data, query.options) }
@@ -1068,6 +1085,7 @@ function shouldFetchOn(
  * @param prevQuery - The query observed with the previous options.
  * @param options - The new observer options.
  * @param prevOptions - The previous observer options.
+ * @param policy - The fetch policy for this transition.
  * @returns `true` if the query changed or was disabled before, retries on this transition
  * are allowed, and the query is stale.
  */
@@ -1076,11 +1094,12 @@ function shouldFetchOptionally(
   prevQuery: Query<any, any, any, any>,
   options: QueryObserverOptionsBase<any, any, any, any, any>,
   prevOptions: QueryObserverOptionsBase<any, any, any, any, any>,
+  policy?: QueryObserverReaderPolicy,
 ): boolean {
   return (
     (query !== prevQuery ||
       resolveQueryValue(prevOptions.enabled, query) === false) &&
-    (options._retryOnQueryChange !== false || query.state.status !== 'error') &&
+    policy?.canFetchOnQueryChange?.(query) !== false &&
     isStale(query, options)
   )
 }

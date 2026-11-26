@@ -3,6 +3,7 @@ import { QueryObserver } from './queryObserver'
 import type { Query } from './query'
 import type { QueryClient } from './queryClient'
 import type {
+  QueryObserverReaderPolicy,
   QueryObserverResultContext,
   QueryObserverResultReader,
 } from './queryObserver'
@@ -131,6 +132,7 @@ export class InfiniteQueryObserver<
    * belonging to an infinite query before delegating to the base
    * implementation.
    * @param options - The new infinite query observer options.
+   * @param policy - The fetch policy for the options update.
    */
   override setOptions(
     options: InfiniteObserverOptionsInput<
@@ -140,14 +142,16 @@ export class InfiniteQueryObserver<
       TQueryKey,
       TPageParam
     >,
+    policy?: QueryObserverReaderPolicy,
   ): void {
     options._type = 'infinite'
-    super.setOptions(options)
+    super.setOptions(options, policy)
   }
 
   /**
    * Creates a cached snapshot reader for an infinite query.
    * @param options - The defaulted options used to read and commit the query result.
+   * @param policy - The fetch policy for this read and commit.
    * @returns A reader that keeps its result and computation state until commit.
    */
   override createResultReader(
@@ -158,11 +162,15 @@ export class InfiniteQueryObserver<
       TQueryKey,
       TPageParam
     >,
+    policy?: QueryObserverReaderPolicy,
   ): QueryObserverResultReader<InfiniteQueryObserverResult<TData, TError>> {
-    return super.createResultReader({
-      ...options,
-      _type: 'infinite',
-    }) as QueryObserverResultReader<InfiniteQueryObserverResult<TData, TError>>
+    return super.createResultReader(
+      {
+        ...options,
+        _type: 'infinite',
+      },
+      policy,
+    ) as QueryObserverResultReader<InfiniteQueryObserverResult<TData, TError>>
   }
 
   /**
@@ -249,9 +257,16 @@ export class InfiniteQueryObserver<
       TQueryKey
     >,
     prevResult?: QueryObserverResult<TData, TError>,
+    policy?: QueryObserverReaderPolicy,
   ): InfiniteQueryObserverResult<TData, TError> {
     const { state } = query
-    const parentResult = super.createResult(query, options, context, prevResult)
+    const parentResult = super.createResult(
+      query,
+      options,
+      context,
+      prevResult,
+      policy,
+    )
 
     const { isFetching, isRefetching, isError, isRefetchError } = parentResult
     const fetchDirection = state.fetchMeta?.fetchMore?.direction

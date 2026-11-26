@@ -738,7 +738,7 @@ describe('queriesObserver', () => {
     expect(newCombined.count).toBe(2)
   })
 
-  it('should skip combine notifications while results have no data', () => {
+  it('preserves the last combined value while notifying subscribers about missing data', async () => {
     const key = createKey()
     const combine = vi.fn<
       (results: Array<QueryObserverResult>) => Array<unknown>
@@ -757,19 +757,35 @@ describe('queriesObserver', () => {
       combine,
     })
 
-    const combinedResultReader = observer.createResultReader([query], {
-      combine,
-      _combineWhenReady: true,
-    })
+    const combinedResultReader = observer.createResultReader(
+      [query],
+      { combine },
+      {
+        canCombine: (results) =>
+          results.every((result) => result.data !== undefined),
+      },
+    )
     const rawResult = combinedResultReader.getSnapshot()
     const getCombinedResult = combinedResultReader.combineResult
-    expect(getCombinedResult(rawResult)).toStrictEqual(['data'])
+    const initialCombined = getCombinedResult(rawResult)
+    expect(initialCombined).toStrictEqual(['data'])
+    combinedResultReader.commit()
     expect(combine).toHaveBeenCalledTimes(1)
 
-    const unsubscribe = observer.subscribe(() => undefined)
+    const listener = vi.fn<(results: Array<QueryObserverResult>) => void>()
+    const unsubscribe = observer.subscribe(listener)
 
-    void queryClient.resetQueries({ queryKey: key })
+    const reset = queryClient.resetQueries({ queryKey: key })
+    expect(listener).toHaveBeenLastCalledWith([
+      expect.objectContaining({ data: undefined }),
+    ])
     expect(combine).toHaveBeenCalledTimes(1)
+
+    await vi.advanceTimersByTimeAsync(10)
+    await reset
+    expect(getCombinedResult(combinedResultReader.getSnapshot())).toBe(
+      initialCombined,
+    )
 
     unsubscribe()
   })
@@ -803,10 +819,16 @@ describe('queriesObserver', () => {
 
     const unsubscribe = observer.subscribe(() => undefined)
 
-    observer.setQueries([query], {
-      combine,
-      _combineWhenReady: true,
-    })
+    observer
+      .createResultReader(
+        [query],
+        { combine },
+        {
+          canCombine: (results) =>
+            results.every((result) => result.data !== undefined),
+        },
+      )
+      .commit()
 
     void queryClient.resetQueries({ queryKey: key })
     expect(combine).toHaveBeenCalledTimes(1)

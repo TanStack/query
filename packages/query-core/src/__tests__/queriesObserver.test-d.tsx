@@ -100,9 +100,9 @@ describe('queriesObserver', () => {
         select: (results: Array<QueryObserverResult>) => results,
       })
 
-      expectTypeOf<keyof QueriesObserverOptions<number>>().toEqualTypeOf<
-        'combine' | '_combineWhenReady'
-      >()
+      expectTypeOf<
+        keyof QueriesObserverOptions<number>
+      >().toEqualTypeOf<'combine'>()
     })
 
     it('should make the options argument optional', () => {
