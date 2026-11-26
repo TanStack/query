@@ -349,7 +349,7 @@ export function useBaseQueries<
     () =>
       queries.map((opts) => {
         const defaultedOptions: DefaultedQueryOptions =
-          client.defaultQueryOptions({ ...opts })
+          client.defaultQueryOptions(opts._defaulted ? { ...opts } : opts)
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
