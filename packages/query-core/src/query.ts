@@ -461,6 +461,11 @@ export class Query<
   reset(): void {
     this.destroy()
     this.setState(this.resetState)
+
+    // destroy() cleared the GC timeout, but a reset query stays in the cache
+    if (!this.observers.length) {
+      this.#scheduleGcIfCached()
+    }
   }
 
   /**
