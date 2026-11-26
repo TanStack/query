@@ -1,10 +1,10 @@
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type {
+  InfiniteQueryObserverOptions as CoreInfiniteQueryObserverOptions,
   DefaultError,
   DefinedInfiniteQueryObserverResult,
   InfiniteData,
-  InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   QueryKey,
   QueryObserver,
@@ -21,8 +21,35 @@ import type {
   MaybeRefDeep,
   MaybeRefOrGetter,
   ShallowOption,
+  ThrowOnError,
 } from './types'
 import type { UseBaseQueryReturnType } from './useBaseQuery'
+
+type InfiniteQueryObserverOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey,
+  TPageParam,
+> = CoreInfiniteQueryObserverOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+> & {
+  /**
+   * Set to `true` to send query errors to Vue's error handler.
+   * A predicate receives the error and query and decides whether to throw.
+   * @defaultValue false
+   */
+  throwOnError?: ThrowOnError<
+    TQueryFnData,
+    TError,
+    InfiniteData<TQueryFnData, TPageParam>,
+    TQueryKey
+  >
+}
 
 /**
  * The options accepted by `useInfiniteQuery`. Extends {@link InfiniteQueryObserverOptions} from

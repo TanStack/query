@@ -19,7 +19,6 @@ import {
   replaceEqualDeep,
   resolveQueryValue,
   shallowEqualObjects,
-  shouldThrowError,
   skipToken,
   sleep,
   timeUntilStale,
@@ -775,46 +774,6 @@ describe('ensureQueryFn', () => {
         | DefaultQueryFn
       queryHash?: string
     }>()
-  })
-})
-
-describe('shouldThrowError', () => {
-  it('should tie params to the parameters of the throwOnError function', () => {
-    type ThrowOnError = (error: CustomError, query: Query) => boolean
-
-    expectTypeOf(shouldThrowError<ThrowOnError>)
-      .parameter(1)
-      .toEqualTypeOf<[error: CustomError, query: Query]>()
-
-    expectTypeOf(
-      shouldThrowError<ThrowOnError>,
-    ).returns.toEqualTypeOf<boolean>()
-  })
-
-  it('should constrain the throwOnError function to one returning a boolean', () => {
-    expectTypeOf(
-      shouldThrowError<(error: CustomError) => boolean>(
-        (_error) => true,
-        [new CustomError()],
-      ),
-    ).toEqualTypeOf<boolean>()
-
-    shouldThrowError<
-      // @ts-expect-error a throwOnError function has to return a boolean
-      (error: CustomError) => unknown
-    >((_error) => undefined, [new CustomError()])
-  })
-
-  it('should accept a boolean or undefined as throwOnError', () => {
-    type ThrowOnError = (error: CustomError) => boolean
-
-    expectTypeOf(shouldThrowError<ThrowOnError>)
-      .parameter(0)
-      .toEqualTypeOf<boolean | ThrowOnError | undefined>()
-
-    expectTypeOf(
-      shouldThrowError<ThrowOnError>(true, [new CustomError()]),
-    ).toEqualTypeOf<boolean>()
   })
 })
 

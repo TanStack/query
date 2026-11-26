@@ -8,9 +8,12 @@ import type {
   QueryClient,
   QueryFunction,
   QueryKey,
-  ThrowOnError,
 } from '@tanstack/query-core'
-import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
+import type {
+  ThrowOnError,
+  UseSuspenseQueryOptions,
+  UseSuspenseQueryResult,
+} from './types'
 
 // `placeholderData` functions in useQueries never receive previous query data.
 type UseSuspenseQueryOptionsForUseSuspenseQueries<

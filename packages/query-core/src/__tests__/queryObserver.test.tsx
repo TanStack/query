@@ -1013,13 +1013,13 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it('notifies listeners of errors with notifyOnChangeProps set to none and throwOnError enabled', async () => {
+  it('notifies listeners of errors with notifyOnChangeProps set to none and unconditional error notifications', async () => {
     const error = new Error('fetch failed')
     const observer = new QueryObserver(queryClient, {
       queryKey: createKey(),
       queryFn: () => Promise.reject(error),
       notifyOnChangeProps: 'none',
-      throwOnError: true,
+      _notifyOnError: true,
       retry: false,
     })
     const listener = vi.fn<(result: QueryObserverResult) => void>()
@@ -1724,27 +1724,26 @@ describe('queryObserver', () => {
     expect(queryClient.getQueryState(key)?.fetchStatus).toBe('idle')
   })
 
-  it('should track error prop when throwOnError is true', async () => {
+  it('should notify when an unconditionally observed property changes', async () => {
     const key = createKey()
     const results: Array<QueryObserverResult> = []
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => Promise.reject('error'),
       retry: false,
-      throwOnError: true,
+      _notifyOnError: true,
     })
 
     const trackedResult = observer.trackResult(
       observer.getCurrentResult(),
       (prop) => {
-        if (prop === 'data' || prop === 'status') {
+        if (prop === 'data') {
           observer.trackProp(prop)
         }
       },
     )
 
     trackedResult.data
-    trackedResult.status
 
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -1762,7 +1761,7 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it('should not track error prop when throwOnError is not set', async () => {
+  it('should not notify when only untracked properties change', async () => {
     const key = createKey()
     const results: Array<QueryObserverResult> = []
     const observer = new QueryObserver(queryClient, {
@@ -1787,7 +1786,6 @@ describe('queryObserver', () => {
     })
     await vi.advanceTimersByTimeAsync(0)
 
-    // Without throwOnError, `error` is not auto-added to trackedProps.
     // Since only `data` is tracked and it did not change (stayed undefined),
     // the listener is not invoked even though `error` prop changed.
     expect(results).toHaveLength(0)

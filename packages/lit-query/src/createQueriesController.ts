@@ -13,7 +13,6 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  ThrowOnError,
 } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
 import type { Accessor, ValueAccessor } from './accessor.js'
@@ -63,7 +62,10 @@ type GetCreateQueriesInput<T> = T extends {
                     | QueryFunction<infer TQueryFnData, infer TQueryKey>
                     | SkipTokenForCreateQueries
                   select?: (data: any) => infer TData
-                  throwOnError?: ThrowOnError<any, infer TError, any, any>
+                  retry?:
+                    | boolean
+                    | number
+                    | ((failureCount: number, error: infer TError) => boolean)
                 }
               ? CreateQueriesInputForController<
                   TQueryFnData,
@@ -114,7 +116,10 @@ type GetCreateQueriesResult<T> = T extends {
                     | QueryFunction<infer TQueryFnData, any>
                     | SkipTokenForCreateQueries
                   select?: (data: any) => infer TData
-                  throwOnError?: ThrowOnError<any, infer TError, any, any>
+                  retry?:
+                    | boolean
+                    | number
+                    | ((failureCount: number, error: infer TError) => boolean)
                 }
               ? GetDefinedOrUndefinedCreateQueriesResult<
                   T,

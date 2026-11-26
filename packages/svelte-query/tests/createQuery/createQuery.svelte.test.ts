@@ -1536,26 +1536,6 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('error')).toHaveTextContent('Error test')
   })
 
-  it('should set status to error instead of throwing when error should not be thrown', async () => {
-    const key = createKey()
-
-    const rendered = render(Base, {
-      props: {
-        queryClient,
-        options: () => ({
-          queryKey: key,
-          queryFn: () => Promise.reject(new Error('Local Error')),
-          retry: false,
-          throwOnError: (err: Error) => err.message !== 'Local Error',
-        }),
-      },
-    })
-
-    await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.getByTestId('status')).toHaveTextContent('error')
-    expect(rendered.getByTestId('error')).toHaveTextContent('Local Error')
-  })
-
   it(
     'should support changing provided query client',
     withEffectRoot(() => {

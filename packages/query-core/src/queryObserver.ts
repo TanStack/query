@@ -933,7 +933,7 @@ export class QueryObserver<
       }
 
       if (
-        this.options.throwOnError &&
+        this.options._notifyOnError &&
         this.#currentResult.error !== prevResult.error
       ) {
         return true

@@ -16,7 +16,6 @@ import {
   partialMatchKey,
   replaceEqualDeep,
   shallowEqualObjects,
-  shouldThrowError,
   skipToken,
 } from '../utils'
 import type { QueryFunctionContext } from '..'
@@ -758,24 +757,6 @@ describe('core/utils', () => {
       await expect(resolved(context)).rejects.toThrow(
         'Missing queryFn: \'["skip"]\'',
       )
-    })
-  })
-
-  describe('shouldThrowError', () => {
-    it('should return the result of executing throwOnError if throwOnError parameter is a function', () => {
-      const throwOnError = (error: Error) => error.message === 'test error'
-      expect(shouldThrowError(throwOnError, [new Error('test error')])).toBe(
-        true,
-      )
-      expect(shouldThrowError(throwOnError, [new Error('other error')])).toBe(
-        false,
-      )
-    })
-
-    it('should return throwOnError parameter itself if throwOnError is not a function', () => {
-      expect(shouldThrowError(true, [new Error('test error')])).toBe(true)
-      expect(shouldThrowError(false, [new Error('test error')])).toBe(false)
-      expect(shouldThrowError(undefined, [new Error('test error')])).toBe(false)
     })
   })
 

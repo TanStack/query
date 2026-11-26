@@ -1,7 +1,7 @@
 // Had to disable the lint rule because isServer type is defined as false
 // in solid-js/web package. I'll create a GitHub issue with them to see
 // why that happens.
-import { hydrate, notifyManager, shouldThrowError } from '@tanstack/query-core'
+import { hydrate, notifyManager } from '@tanstack/query-core'
 import {
   createComputed,
   createMemo,
@@ -14,7 +14,9 @@ import { createStore, reconcile, unwrap } from 'solid-js/store'
 import { isServer } from 'solid-js/web'
 import { useQueryClientResolver } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
+import { shouldThrowError } from './utils'
 import type {
+  DefaultedQueryObserverOptions,
   Query,
   QueryKey,
   QueryObserver,
@@ -22,7 +24,7 @@ import type {
 } from '@tanstack/query-core'
 import type { Accessor, Signal } from 'solid-js'
 import type { QueryClient } from './QueryClient'
-import type { UseBaseQueryOptions } from './types'
+import type { ThrowOnError, UseBaseQueryOptions } from './types'
 
 /**
  * Applies the `reconcile` option when writing a new observer result into the store.
@@ -146,7 +148,15 @@ export function useBaseQuery<
   let unsubscribeQueued = false
 
   const defaultedOptions = createMemo(() => {
-    const defaultOptions = client().defaultQueryOptions(options())
+    const defaultOptions: DefaultedQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    > & {
+      throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
+    } = client().defaultQueryOptions(options())
     defaultOptions._optimisticResults = isRestoring()
       ? 'isRestoring'
       : 'optimistic'
@@ -155,6 +165,7 @@ export function useBaseQuery<
       defaultOptions.retry = false
       defaultOptions.throwOnError = true
     }
+    defaultOptions._notifyOnError = !!defaultOptions.throwOnError
     return defaultOptions
   })
   const initialOptions = defaultedOptions()
@@ -277,12 +288,14 @@ export function useBaseQuery<
           unsubscribe = createClientSubscriber()
         }
         obs.updateResult()
+        const observerOptions: typeof obs.options &
+          Pick<typeof initialOptions, 'throwOnError'> = obs.options
 
         if (
           observerResult.isError &&
           !observerResult.isFetching &&
           !isRestoring() &&
-          shouldThrowError(obs.options.throwOnError, [
+          shouldThrowError(observerOptions.throwOnError, [
             observerResult.error,
             obs.getCurrentQuery(),
           ])

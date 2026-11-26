@@ -10,6 +10,7 @@ import type {
   MutationObserverResult,
   OmitKeyof,
   Override,
+  Query,
   QueryKey,
   QueryObserverResult,
 } from '@tanstack/query-core'
@@ -236,7 +237,14 @@ export interface MutationOptions<
 > extends OmitKeyof<
   MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
   '_defaulted'
-> {}
+> {
+  /**
+   * Set to `true` to throw mutation errors to the nearest error boundary.
+   * A predicate receives the error and decides whether to throw.
+   * @defaultValue false
+   */
+  throwOnError?: boolean | ((error: TError) => boolean)
+}
 
 /**
  * The accessor `useMutation` expects as its first argument — Solid re-evaluates it reactively, so callbacks
@@ -334,3 +342,16 @@ export type UseMutationResult<
   TVariables = unknown,
   TOnMutateResult = unknown,
 > = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>
+
+/** A boolean or predicate that sends query errors to the nearest error boundary. */
+export type ThrowOnError<
+  TQueryFnData,
+  TError,
+  TQueryData,
+  TQueryKey extends QueryKey,
+> =
+  | boolean
+  | ((
+      error: TError,
+      query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+    ) => boolean)

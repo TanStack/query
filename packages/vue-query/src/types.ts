@@ -6,7 +6,9 @@ import type {
   MutationCache,
   MutationObserverOptions,
   OmitKeyof,
+  Query,
   QueryCache,
+  QueryKey,
 } from '@tanstack/query-core'
 import type { ComputedRef, Ref, UnwrapRef } from 'vue'
 
@@ -106,7 +108,14 @@ export type MutationOptions<
   MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
   '_defaulted'
 > &
-  ShallowOption
+  ShallowOption & {
+    /**
+     * Set to `true` to throw mutation errors to the nearest error boundary.
+     * A predicate receives the error and decides whether to throw.
+     * @defaultValue false
+     */
+    throwOnError?: boolean | ((error: TError) => boolean)
+  }
 
 /**
  * The default options of a `QueryClient`, applied to every query (`queries`), mutation
@@ -118,13 +127,15 @@ export interface DefaultOptions<TError = DefaultError> {
    * Default options applied to every query, unless overridden per-query. Also accepts the
    * `shallow` option.
    */
-  queries?: CoreDefaultOptions<TError>['queries'] & ShallowOption
+  queries?: CoreDefaultOptions<TError>['queries'] &
+    ShallowOption & {
+      throwOnError?: ThrowOnError<unknown, TError, unknown, QueryKey>
+    }
   /**
    * Default options applied to every mutation, unless overridden per-mutation. Also accepts the
    * `shallow` option.
    */
-  mutations?: MutationObserverOptions<unknown, TError, unknown, unknown> &
-    ShallowOption
+  mutations?: MutationOptions<unknown, TError, unknown, unknown>
   /**
    * Default options used when hydrating queries and mutations; see {@link HydrateOptions}.
    */
@@ -153,3 +164,16 @@ export interface QueryClientConfig {
    */
   defaultOptions?: DefaultOptions
 }
+
+/** A boolean or predicate that sends query errors to the nearest error boundary. */
+export type ThrowOnError<
+  TQueryFnData,
+  TError,
+  TQueryData,
+  TQueryKey extends QueryKey,
+> =
+  | boolean
+  | ((
+      error: TError,
+      query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+    ) => boolean)

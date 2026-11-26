@@ -1,4 +1,3 @@
-import { shouldThrowError } from '@tanstack/query-core'
 import {
   computed,
   getCurrentScope,
@@ -11,7 +10,7 @@ import {
   watch,
 } from 'vue'
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, updateState } from './utils'
+import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
 import type {
   DefaultedQueryObserverOptions,
   QueryKey,
@@ -21,7 +20,7 @@ import type {
 import type { Ref } from 'vue'
 import type { QueryClient } from './queryClient'
 import type { UseQueryOptions } from './queryOptions'
-import type { MaybeRefOrGetter } from './types'
+import type { MaybeRefOrGetter, ShallowOption, ThrowOnError } from './types'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 
 /**
@@ -162,7 +161,11 @@ export function useBaseQuery<
       TData,
       TQueryData,
       TQueryKey
-    > = client.defaultQueryOptions(clonedOptions)
+    > &
+      ShallowOption & {
+        throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
+      } = client.defaultQueryOptions(clonedOptions)
+    defaulted._notifyOnError = !!defaulted.throwOnError
 
     defaulted._optimisticResults = client.isRestoring?.value
       ? 'isRestoring'
@@ -172,7 +175,6 @@ export function useBaseQuery<
   })
 
   const observer = new Observer(client, defaultedOptions.value)
-  // @ts-expect-error
   const state = defaultedOptions.value.shallow
     ? shallowReactive(observer.getCurrentResult())
     : reactive(observer.getCurrentResult())
@@ -287,7 +289,6 @@ export function useBaseQuery<
     },
   )
 
-  // @ts-expect-error
   const readonlyState = defaultedOptions.value.shallow
     ? shallowReadonly(state)
     : readonly(state)

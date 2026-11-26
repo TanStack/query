@@ -408,7 +408,6 @@ describe('query observer result readers', () => {
     > = {
       queryKey: key,
       queryHash: JSON.stringify(key),
-      throwOnError: false,
       refetchOnReconnect: true,
       queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
       _optimisticResults: 'optimistic' as const,

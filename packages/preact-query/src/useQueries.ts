@@ -4,8 +4,8 @@ import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
-  ensurePreventErrorBoundaryRetry,
   getHasError,
+  prepareErrorBoundaryOptions,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
 import { useSyncExternalStore } from './utils'
@@ -17,12 +17,12 @@ import type {
   QueryClient,
   QueryFunction,
   QueryKey,
-  QueryObserverOptions,
-  ThrowOnError,
 } from '@tanstack/query-core'
 import type { suspenseQueriesPolicy } from './suspense'
 import type {
+  DefaultedQueryOptions,
   DefinedUseQueryResult,
+  ThrowOnError,
   UseQueryOptions,
   UseQueryResult,
 } from './types'
@@ -348,10 +348,8 @@ export function useBaseQueries<
   const defaultedQueries = useMemo(
     () =>
       queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions({
-          ...opts,
-          suspense: !!suspense,
-        } as QueryObserverOptions)
+        const defaultedOptions: DefaultedQueryOptions =
+          client.defaultQueryOptions({ ...opts, suspense: !!suspense })
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
@@ -368,24 +366,23 @@ export function useBaseQueries<
   defaultedQueries.forEach((queryOptions) => {
     suspense?.prepare(queryOptions)
     const query = client.getQueryCache().get(queryOptions.queryHash)
-    ensurePreventErrorBoundaryRetry(queryOptions, errorResetBoundary, query)
+    prepareErrorBoundaryOptions(queryOptions, errorResetBoundary, query)
   })
 
   useClearResetErrorBoundary(errorResetBoundary)
+
+  const observerOptions = options as QueriesObserverOptions<TCombinedResult>
 
   const [observer] = useState(
     () =>
       new QueriesObserver<TCombinedResult>(
         client,
         defaultedQueries,
-        options as QueriesObserverOptions<TCombinedResult>,
+        observerOptions,
       ),
   )
 
-  const reader = observer.createResultReader(
-    defaultedQueries,
-    options as QueriesObserverOptions<TCombinedResult>,
-  )
+  const reader = observer.createResultReader(defaultedQueries, observerOptions)
   suspense?.readQueries(defaultedQueries, reader, client, errorResetBoundary)
 
   // Commit the combine cache before subscription can start a fetch.

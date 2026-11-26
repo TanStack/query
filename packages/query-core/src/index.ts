@@ -39,7 +39,6 @@ export {
   noop,
   partialMatchKey,
   replaceEqualDeep,
-  shouldThrowError,
   defaultQueryFn,
   skipToken,
 } from './utils'
@@ -105,7 +104,6 @@ export type {
   QueryOptions,
   InitialPageParam,
   InfiniteQueryPageParamsOptions,
-  ThrowOnError,
   QueryObserverOptions,
   WithRequired,
   DefaultedQueryObserverOptions,

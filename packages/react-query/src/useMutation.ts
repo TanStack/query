@@ -1,12 +1,8 @@
 'use client'
-import {
-  MutationObserver,
-  noop,
-  notifyManager,
-  shouldThrowError,
-} from '@tanstack/query-core'
+import { MutationObserver, noop, notifyManager } from '@tanstack/query-core'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
+import { shouldThrowError } from './utils'
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
 import type {
   UseMutateFunction,
@@ -230,9 +226,15 @@ export function useMutation<
     [observer],
   )
 
+  const observerOptions: UseMutationOptions<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  > = observer.options
   if (
     result.error &&
-    shouldThrowError(observer.options.throwOnError, [result.error])
+    shouldThrowError(observerOptions.throwOnError, [result.error])
   ) {
     throw result.error
   }

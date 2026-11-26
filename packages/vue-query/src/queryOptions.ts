@@ -1,11 +1,11 @@
 import type {
+  QueryObserverOptions as CoreQueryObserverOptions,
   DefaultError,
   InitialDataFunction,
   NonUndefinedGuard,
   QueryBooleanOption,
   QueryKey,
   QueryKeyWithDataTag,
-  QueryObserverOptions,
 } from '@tanstack/query-core'
 import type {
   DeepUnwrapRef,
@@ -13,7 +13,29 @@ import type {
   MaybeRefDeep,
   MaybeRefOrGetter,
   ShallowOption,
+  ThrowOnError,
 } from './types'
+
+type QueryObserverOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey extends QueryKey,
+> = CoreQueryObserverOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey
+> & {
+  /**
+   * Set to `true` to send query errors to Vue's error handler.
+   * A predicate receives the error and query and decides whether to throw.
+   * @defaultValue false
+   */
+  throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
+}
 
 /**
  * `enabled` for Vue Query. A `ref` or `computed` is reactive, while a plain boolean isn't tracked on its own. A

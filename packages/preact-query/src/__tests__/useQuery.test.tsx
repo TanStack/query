@@ -2655,36 +2655,40 @@ describe('useQuery', () => {
     expect(rendered.getByText('Error test')).toBeInTheDocument()
   })
 
-  it('should throw error if queryFn throws and throwOnError is in use', async () => {
-    vi.spyOn(console, 'error').mockReturnValue(undefined)
-    const key = createKey()
+  it.each([undefined, 'none'] as const)(
+    'sends query errors to the boundary with notifyOnChangeProps set to %s',
+    async (notifyOnChangeProps) => {
+      vi.spyOn(console, 'error').mockReturnValue(undefined)
+      const key = createKey()
+      queryClient.setQueryDefaults(key, { throwOnError: true })
 
-    function Page() {
-      const { status, error } = useQuery<unknown, string>({
-        queryKey: key,
-        queryFn: () => Promise.reject(new Error('Error test')),
-        retry: false,
-        throwOnError: true,
-      })
+      function Page() {
+        const { status, error } = useQuery<unknown, string>({
+          queryKey: key,
+          queryFn: () => Promise.reject(new Error('Error test')),
+          retry: false,
+          notifyOnChangeProps,
+        })
 
-      return (
-        <div>
-          <h1>{status}</h1>
-          <h2>{error}</h2>
-        </div>
+        return (
+          <div>
+            <h1>{status}</h1>
+            <h2>{error}</h2>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+          <Page />
+        </ErrorBoundary>,
       )
-    }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-        <Page />
-      </ErrorBoundary>,
-    )
-
-    await vi.advanceTimersByTimeAsync(0)
-    expect(rendered.getByText('error boundary')).toBeInTheDocument()
-  })
+      await vi.advanceTimersByTimeAsync(0)
+      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+    },
+  )
 
   it('should throw error if queryFn rejects with a falsy error and throwOnError is in use', async () => {
     vi.spyOn(console, 'error').mockReturnValue(undefined)

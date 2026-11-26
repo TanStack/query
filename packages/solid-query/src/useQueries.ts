@@ -15,6 +15,7 @@ import { useQueryClientResolver } from './QueryClientProvider'
 import { useIsRestoring } from './isRestoring'
 import type {
   DefaultError,
+  DefaultedQueryObserverOptions,
   OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
@@ -22,11 +23,10 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  ThrowOnError,
 } from '@tanstack/query-core'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
-import type { QueryOptions, UseQueryResult } from './types'
+import type { QueryOptions, ThrowOnError, UseQueryResult } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter
@@ -279,16 +279,17 @@ export function useQueries<
   const isRestoring = useIsRestoring()
 
   const defaultedQueries = createMemo(() =>
-    queriesOptions().queries.map((options) =>
-      mergeProps(
-        client().defaultQueryOptions(options as QueryObserverOptions),
-        {
-          get _optimisticResults() {
-            return isRestoring() ? 'isRestoring' : 'optimistic'
-          },
+    queriesOptions().queries.map((options) => {
+      const defaulted: DefaultedQueryObserverOptions & {
+        throwOnError?: ThrowOnError<any, any, any, any>
+      } = client().defaultQueryOptions(options as QueryObserverOptions)
+      defaulted._notifyOnError = !!defaulted.throwOnError
+      return mergeProps(defaulted, {
+        get _optimisticResults() {
+          return isRestoring() ? 'isRestoring' : 'optimistic'
         },
-      ),
-    ),
+      })
+    }),
   )
 
   const observer = new QueriesObserver<TCombinedResult>(

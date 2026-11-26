@@ -3,6 +3,9 @@
 // Re-export core
 // oxlint-disable-next-line tanstack-query/no-restricted-syntax
 export * from '@tanstack/query-core'
+export { QueryClient } from './QueryClient'
+export type { DefaultOptions, QueryClientConfig } from './QueryClient'
+export type { ThrowOnError } from './types'
 
 // React Query
 export type {

@@ -1,7 +1,8 @@
-import { MutationObserver, noop, shouldThrowError } from '@tanstack/query-core'
+import { MutationObserver, noop } from '@tanstack/query-core'
 import { createComputed, createMemo, on, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { useQueryClientResolver } from './QueryClientProvider'
+import { shouldThrowError } from './utils'
 import type { DefaultError } from '@tanstack/query-core'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
@@ -211,9 +212,10 @@ export function useMutation<
     on(
       () => state.status,
       () => {
+        const observerOptions: ReturnType<typeof options> = observer.options
         if (
           state.isError &&
-          shouldThrowError(observer.options.throwOnError, [state.error])
+          shouldThrowError(observerOptions.throwOnError, [state.error])
         ) {
           throw state.error
         }
