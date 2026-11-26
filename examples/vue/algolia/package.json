@@ -12,13 +12,13 @@
   "dependencies": {
     "@algolia/client-search": "5.59.0",
     "@tanstack/vue-pacer": "^0.2.0",
-    "@tanstack/vue-query": "^5.108.3",
-    "@tanstack/vue-query-devtools": "^6.4.6",
+    "@tanstack/vue-query": "^5.108.4",
+    "@tanstack/vue-query-devtools": "^6.4.7",
     "vue": "^3.5.44"
   },
   "devDependencies": {
     "@tanstack/eslint-config": "^0.5.0",
-    "@tanstack/eslint-plugin-query": "^5.108.3",
+    "@tanstack/eslint-plugin-query": "^5.108.4",
     "@vitejs/plugin-vue": "^6.0.9",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",

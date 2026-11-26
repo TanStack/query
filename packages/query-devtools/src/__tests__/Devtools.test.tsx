@@ -230,6 +230,25 @@ describe('Devtools', () => {
       expect(rendered.getByLabelText('Query key ["after-clear"]')).toBeVisible()
     })
 
+    it('should update the query list once when clearing the query cache', () => {
+      seedQueries()
+      const rendered = renderDevtools({ initialIsOpen: true })
+      const content = getViewport(
+        rendered.container,
+        'queries',
+      ).firstElementChild
+      assert(content)
+      const observer = new MutationObserver(noop)
+      observer.observe(content, { attributeFilter: ['style'] })
+
+      fireEvent.click(rendered.getByLabelText('Clear query cache'))
+
+      const records = observer.takeRecords()
+      observer.disconnect()
+      expect(records).toHaveLength(1)
+      expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
+    })
+
     it('keeps query clicks aligned after a same-count sort change', () => {
       seedQueries()
       const rendered = renderDevtools(
