@@ -355,6 +355,7 @@ export class QueriesObserver<
         return (
           (observer.options.suspense && result?.data === undefined) ||
           (!!result?.isError &&
+            !result.isFetching &&
             shouldThrowError(observer.options.throwOnError, [
               result.error,
               observer.getCurrentQuery(),

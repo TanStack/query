@@ -703,6 +703,68 @@ describe('queriesObserver', () => {
     unsubscribe()
   })
 
+  it('should not notify listeners while a query with throwOnError refetches after failing without changing the combined result', async () => {
+    const key = createKey()
+    const combine = (results: Array<QueryObserverResult>) =>
+      results.map((result) => result.data)
+    let count = 0
+    const query = {
+      queryKey: key,
+      queryFn: () =>
+        sleep(10).then(() =>
+          count++ === 0 ? 'data' : Promise.reject(new Error('error')),
+        ),
+      retry: false,
+      throwOnError: true,
+      notifyOnChangeProps: 'all' as const,
+    }
+
+    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query])
+    observer.setQueries([query], { combine })
+
+    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
+      [query],
+      combine,
+    )
+    expect(getCombinedResult(rawResult)).toStrictEqual([undefined])
+
+    const listener = vi.fn<(result: Array<QueryObserverResult>) => void>()
+    const unsubscribe = observer.subscribe(listener)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).toHaveBeenCalledTimes(1)
+    expect(listener).toHaveBeenLastCalledWith([
+      expect.objectContaining({ status: 'success', data: 'data' }),
+    ])
+
+    void queryClient.refetchQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).toHaveBeenCalledTimes(2)
+    expect(listener).toHaveBeenLastCalledWith([
+      expect.objectContaining({
+        status: 'error',
+        fetchStatus: 'idle',
+        data: 'data',
+      }),
+    ])
+
+    void queryClient.refetchQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(observer.getCurrentResult()[0]).toMatchObject({
+      status: 'error',
+      fetchStatus: 'fetching',
+    })
+    expect(listener).toHaveBeenCalledTimes(2)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).toHaveBeenCalledTimes(3)
+    expect(listener).toHaveBeenLastCalledWith([
+      expect.objectContaining({ status: 'error', fetchStatus: 'idle' }),
+    ])
+
+    unsubscribe()
+  })
+
   it('should handle queries being removed with stable combine reference', () => {
     const combine = vi.fn<
       (results: Array<QueryObserverResult>) => {
