@@ -442,6 +442,40 @@ describe('useQueries', () => {
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
   })
 
+  it('sends an error to the boundary when combined data stays the same', async () => {
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const queryKey = createKey()
+
+    function Page() {
+      const data = useQueries({
+        queries: [
+          {
+            queryKey,
+            queryFn: () =>
+              sleep(10).then(() => {
+                throw new Error('query failed')
+              }),
+            retry: false,
+            throwOnError: true,
+          },
+        ],
+        combine: (results) => results.map((result) => result.data),
+      })
+      return <div>data: {String(data[0])}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={({ error }) => <div>{error.message}</div>}>
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    expect(rendered.getByText('data: undefined')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('query failed')).toBeInTheDocument()
+  })
+
   it('should use provided custom queryClient', async () => {
     const key = createKey()
     const queryFn = async () => {
