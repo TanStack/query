@@ -93,9 +93,22 @@ describe('PiPContext', () => {
 
       expect(open).toHaveBeenCalledWith(
         '',
-        'TSQD-Devtools-Panel',
+        `TSQD-Devtools-Panel-${window.location.origin}`,
         'width=640,height=480,popup',
       )
+    })
+
+    it('should use a window name that is specific to the current origin', () => {
+      const { open } = stubPipWindow()
+      vi.stubGlobal('location', { ...window.location, origin: 'http://a.test' })
+      renderAndAct((pip) => pip().requestPipWindow(640, 480))
+      vi.stubGlobal('location', { ...window.location, origin: 'http://b.test' })
+      renderAndAct((pip) => pip().requestPipWindow(640, 480))
+
+      expect(open.mock.calls.map(([, name]) => name)).toStrictEqual([
+        'TSQD-Devtools-Panel-http://a.test',
+        'TSQD-Devtools-Panel-http://b.test',
+      ])
     })
 
     it('should set the "pipWindow" signal to the opened window', () => {
@@ -327,7 +340,7 @@ describe('PiPContext', () => {
 
       expect(open).toHaveBeenCalledWith(
         '',
-        'TSQD-Devtools-Panel',
+        `TSQD-Devtools-Panel-${window.location.origin}`,
         'width=1024,height=500,popup',
       )
     })

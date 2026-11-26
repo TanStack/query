@@ -60,9 +60,11 @@ export const PiPProvider = (props: PiPProviderProps) => {
       return
     }
 
+    // The name includes the origin so that a popup opened by another origin
+    // is never reused, as accessing its `document` would throw.
     const pip = window.open(
       '',
-      'TSQD-Devtools-Panel',
+      `TSQD-Devtools-Panel-${window.location.origin}`,
       `width=${width},height=${height},popup`,
     )
 
