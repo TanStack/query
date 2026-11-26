@@ -752,6 +752,10 @@
               "to": "framework/angular/guides/window-focus-refetching"
             },
             {
+              "label": "Polling",
+              "to": "framework/angular/guides/polling"
+            },
+            {
               "label": "Disabling/Pausing Queries",
               "to": "framework/angular/guides/disabling-queries"
             },

@@ -105,9 +105,11 @@ QueryCoreClient.cancelQueries
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/queryClient.ts:1173](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1173)
+Defined in: [packages/query-core/src/queryClient.ts:1175](https://github.com/TanStack/query/blob/main/packages/query-core/src/queryClient.ts#L1175)
 
 Clears both the query cache and the mutation cache this client is connected to.
+This clears their garbage collection timers and cancels in-flight query fetches.
+Running mutations continue to execute.
 
 #### Returns
 

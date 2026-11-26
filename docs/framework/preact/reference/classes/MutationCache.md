@@ -69,9 +69,10 @@ Defined in: [packages/query-core/src/mutationCache.ts:128](https://github.com/Ta
 clear(): void;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:262](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L262)
+Defined in: [packages/query-core/src/mutationCache.ts:274](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L274)
 
-Removes all mutations from the cache.
+Removes all mutations and clears their garbage collection timers.
+Mutations that are already running continue to execute.
 
 #### Returns
 
@@ -95,7 +96,7 @@ find<TData = unknown, TError = Error, TVariables = any, TOnMutateResult = unknow
   | undefined;
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:306](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L306)
+Defined in: [packages/query-core/src/mutationCache.ts:319](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L319)
 
 A slightly more advanced method that can be used to get an existing mutation instance from
 the cache. If the mutation does not exist, `undefined` is returned.
@@ -156,7 +157,7 @@ const mutation = mutationCache.find({ mutationKey: ['addPost'] })
 findAll(filters?: MutationFilters): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:337](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L337)
+Defined in: [packages/query-core/src/mutationCache.ts:350](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L350)
 
 An even more advanced method that can be used to get existing mutation instances from the
 cache that match the given filters. If no mutations match, an empty array is returned.
@@ -198,7 +199,7 @@ const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
 getAll(): Mutation<unknown, Error, unknown, unknown>[];
 ```
 
-Defined in: [packages/query-core/src/mutationCache.ts:286](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L286)
+Defined in: [packages/query-core/src/mutationCache.ts:299](https://github.com/TanStack/query/blob/main/packages/query-core/src/mutationCache.ts#L299)
 
 Returns all mutations within the cache.
 

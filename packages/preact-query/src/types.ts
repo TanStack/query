@@ -46,6 +46,7 @@ interface QueryErrorOptions<
   /**
    * Set to `true` to throw query errors to the nearest error boundary.
    * A predicate receives the error and query and decides whether to throw.
+   * This option is ignored when `notifyOnChangeProps` is `'none'`.
    * @defaultValue false
    */
   throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>

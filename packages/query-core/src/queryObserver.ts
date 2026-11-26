@@ -925,22 +925,16 @@ export class QueryObserver<
 
       const { notifyOnChangeProps } = this.options
 
-      if (
-        notifyOnChangeProps === 'all' ||
-        (notifyOnChangeProps !== 'none' && !this.#trackedProps.size)
-      ) {
-        return true
+      if (notifyOnChangeProps === 'none') {
+        return false
       }
 
       if (
-        this.options._notifyOnError &&
+        notifyOnChangeProps === 'all' ||
+        !this.#trackedProps.size ||
         this.#currentResult.error !== prevResult.error
       ) {
         return true
-      }
-
-      if (notifyOnChangeProps === 'none') {
-        return false
       }
 
       for (const key of this.#trackedProps) {

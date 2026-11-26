@@ -41,6 +41,7 @@ type InfiniteQueryObserverOptions<
   /**
    * Set to `true` to send query errors to Vue's error handler.
    * A predicate receives the error and query and decides whether to throw.
+   * With `notifyOnChangeProps: 'none'`, errors are not sent to the Vue error handler.
    * @defaultValue false
    */
   throwOnError?: ThrowOnError<

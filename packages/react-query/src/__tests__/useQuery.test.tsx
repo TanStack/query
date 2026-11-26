@@ -2737,27 +2737,31 @@ describe('useQuery', () => {
     expect(rendered.getByText('Error test')).toBeInTheDocument()
   })
 
-  it.each([undefined, 'none'] as const)(
-    'sends query errors to the boundary with notifyOnChangeProps set to %s',
-    async (notifyOnChangeProps) => {
+  it.each([
+    { notifyOnChangeProps: undefined, expected: 'error boundary' },
+    { notifyOnChangeProps: 'none', expected: 'Error test' },
+  ] as const)(
+    'shows $expected with notifyOnChangeProps set to $notifyOnChangeProps',
+    async ({ notifyOnChangeProps, expected }) => {
       vi.spyOn(console, 'error').mockReturnValue(undefined)
       const key = createKey()
-      queryClient.setQueryDefaults(key, { throwOnError: true })
+      const throwOnError = vi.fn<() => boolean>(() => true)
+      const queryFn = async () => {
+        throw new Error('Error test')
+      }
+      queryClient.setQueryDefaults(key, { throwOnError })
+      await expect(
+        queryClient.query({ queryKey: key, queryFn, retry: false }),
+      ).rejects.toThrow('Error test')
 
       function Page() {
-        const { status, error } = useQuery<unknown, string>({
+        const { error } = useQuery({
           queryKey: key,
-          queryFn: () => Promise.reject(new Error('Error test')),
-          retry: false,
+          queryFn,
+          enabled: false,
           notifyOnChangeProps,
         })
-
-        return (
-          <div>
-            <h1>{status}</h1>
-            <h2>{error}</h2>
-          </div>
-        )
+        return <div>{error?.message}</div>
       }
 
       const rendered = renderWithClient(
@@ -2767,8 +2771,10 @@ describe('useQuery', () => {
         </ErrorBoundary>,
       )
 
-      await vi.advanceTimersByTimeAsync(0)
-      expect(rendered.getByText('error boundary')).toBeInTheDocument()
+      expect(rendered.getByText(expected)).toBeInTheDocument()
+      expect(throwOnError.mock.calls.length === 0).toBe(
+        notifyOnChangeProps === 'none',
+      )
     },
   )
 

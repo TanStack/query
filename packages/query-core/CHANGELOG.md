@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.108.4
+
+### Patch Changes
+
+- [#12683](https://github.com/TanStack/query/pull/12683) [`89bb082`](https://github.com/TanStack/query/commit/89bb0820d8cf4b0ffd4819af6534c8c4057607db) - Clear garbage collection timers when cache entries are removed and prevent later fetch or observer cleanup from starting new timers for those entries.
+
 ## 5.108.3
 
 ### Patch Changes

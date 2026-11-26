@@ -1013,13 +1013,15 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it('notifies listeners of errors with notifyOnChangeProps set to none and unconditional error notifications', async () => {
+  it('suppresses notifications when an error appears or clears with notifyOnChangeProps set to none', async () => {
     const error = new Error('fetch failed')
     const observer = new QueryObserver(queryClient, {
       queryKey: createKey(),
-      queryFn: () => Promise.reject(error),
+      queryFn: vi
+        .fn<() => Promise<string>>()
+        .mockRejectedValueOnce(error)
+        .mockResolvedValueOnce('data'),
       notifyOnChangeProps: 'none',
-      _notifyOnError: true,
       retry: false,
     })
     const listener = vi.fn<(result: QueryObserverResult) => void>()
@@ -1027,9 +1029,13 @@ describe('queryObserver', () => {
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(listener).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ error }),
-    )
+    expect(observer.getCurrentResult().error).toBe(error)
+    expect(listener).not.toHaveBeenCalled()
+
+    await observer.refetch()
+
+    expect(observer.getCurrentResult().error).toBeNull()
+    expect(listener).not.toHaveBeenCalled()
 
     unsubscribe()
   })
@@ -1724,14 +1730,13 @@ describe('queryObserver', () => {
     expect(queryClient.getQueryState(key)?.fetchStatus).toBe('idle')
   })
 
-  it('should notify when an unconditionally observed property changes', async () => {
+  it('notifies listeners of errors when only data is tracked', async () => {
     const key = createKey()
     const results: Array<QueryObserverResult> = []
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => Promise.reject('error'),
       retry: false,
-      _notifyOnError: true,
     })
 
     const trackedResult = observer.trackResult(
@@ -1757,38 +1762,6 @@ describe('queryObserver', () => {
       status: 'error',
       error: 'error',
     })
-
-    unsubscribe()
-  })
-
-  it('should not notify when only untracked properties change', async () => {
-    const key = createKey()
-    const results: Array<QueryObserverResult> = []
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => Promise.reject('error'),
-      retry: false,
-    })
-
-    const trackedResult = observer.trackResult(
-      observer.getCurrentResult(),
-      (prop) => {
-        if (prop === 'data') {
-          observer.trackProp(prop)
-        }
-      },
-    )
-
-    trackedResult.data
-
-    const unsubscribe = observer.subscribe((result) => {
-      results.push(result)
-    })
-    await vi.advanceTimersByTimeAsync(0)
-
-    // Since only `data` is tracked and it did not change (stayed undefined),
-    // the listener is not invoked even though `error` prop changed.
-    expect(results).toHaveLength(0)
 
     unsubscribe()
   })

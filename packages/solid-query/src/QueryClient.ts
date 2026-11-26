@@ -40,7 +40,11 @@ export interface QueryObserverOptions<
   >,
   'structuralSharing'
 > {
-  /** A boolean or predicate that sends errors to the nearest error boundary. Defaults to false. */
+  /**
+   * A boolean or predicate that sends errors to the nearest error boundary.
+   * This option is ignored when `notifyOnChangeProps` is `'none'`.
+   * @defaultValue false
+   */
   throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * Set this to a reconciliation key to enable reconciliation between query results.
@@ -78,7 +82,11 @@ export interface InfiniteQueryObserverOptions<
   >,
   'structuralSharing'
 > {
-  /** A boolean or predicate that sends errors to the nearest error boundary. Defaults to false. */
+  /**
+   * A boolean or predicate that sends errors to the nearest error boundary.
+   * This option is ignored when `notifyOnChangeProps` is `'none'`.
+   * @defaultValue false
+   */
   throwOnError?: ThrowOnError<
     TQueryFnData,
     TError,

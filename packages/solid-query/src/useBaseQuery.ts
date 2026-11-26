@@ -165,7 +165,6 @@ export function useBaseQuery<
       defaultOptions.retry = false
       defaultOptions.throwOnError = true
     }
-    defaultOptions._notifyOnError = !!defaultOptions.throwOnError
     return defaultOptions
   })
   const initialOptions = defaultedOptions()
@@ -295,6 +294,7 @@ export function useBaseQuery<
           observerResult.isError &&
           !observerResult.isFetching &&
           !isRestoring() &&
+          observerOptions.notifyOnChangeProps !== 'none' &&
           shouldThrowError(observerOptions.throwOnError, [
             observerResult.error,
             obs.getCurrentQuery(),
