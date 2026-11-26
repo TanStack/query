@@ -633,8 +633,12 @@ export interface QueryObserverOptionsBase<
    */
   _notifyOnError?: boolean
 
-  /** Set to `true` to use Suspense fetch behavior. */
-  suspense?: boolean
+  /**
+   * Set to `false` to skip automatic retries when switching to a failed query
+   * or enabling a failed query.
+   * @internal
+   */
+  _retryOnQueryChange?: boolean
 
   /** @internal */
   _optimisticResults?: 'optimistic' | 'isRestoring'
@@ -2307,10 +2311,7 @@ export interface QueryClientConfig {
  */
 export interface DefaultOptions<TError = DefaultError> {
   /** Default options applied to every query, unless overridden per-query. */
-  queries?: OmitKeyof<
-    QueryObserverOptionsBase<unknown, TError>,
-    'suspense' | 'queryKey'
-  >
+  queries?: OmitKeyof<QueryObserverOptionsBase<unknown, TError>, 'queryKey'>
   /** Default options applied to every mutation, unless overridden per-mutation. */
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
   /** Default options used when hydrating queries and mutations; see {@link HydrateOptions}. */

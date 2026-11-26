@@ -38,7 +38,7 @@ export interface QueryObserverOptions<
     TQueryKey,
     TPageParam
   >,
-  'structuralSharing' | 'suspense'
+  'structuralSharing'
 > {
   /** A boolean or predicate that sends errors to the nearest error boundary. Defaults to false. */
   throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
@@ -76,7 +76,7 @@ export interface InfiniteQueryObserverOptions<
     TQueryKey,
     TPageParam
   >,
-  'structuralSharing' | 'suspense'
+  'structuralSharing'
 > {
   /** A boolean or predicate that sends errors to the nearest error boundary. Defaults to false. */
   throwOnError?: ThrowOnError<

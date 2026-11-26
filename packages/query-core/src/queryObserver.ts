@@ -1074,8 +1074,8 @@ function shouldFetchOn(
  * @param prevQuery - The query observed with the previous options.
  * @param options - The new observer options.
  * @param prevOptions - The previous observer options.
- * @returns `true` if the query changed or was disabled before, it isn't a suspense query in an
- * error state, and it is stale.
+ * @returns `true` if the query changed or was disabled before, retries on this transition
+ * are allowed, and the query is stale.
  */
 function shouldFetchOptionally(
   query: Query<any, any, any, any>,
@@ -1086,7 +1086,7 @@ function shouldFetchOptionally(
   return (
     (query !== prevQuery ||
       resolveQueryValue(prevOptions.enabled, query) === false) &&
-    (!options.suspense || query.state.status !== 'error') &&
+    (options._retryOnQueryChange !== false || query.state.status !== 'error') &&
     isStale(query, options)
   )
 }

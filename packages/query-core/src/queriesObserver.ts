@@ -76,6 +76,12 @@ export interface QueriesObserverOptions<
    * Defaults to returning the array of `QueryObserverResult`s unchanged.
    */
   combine?: CombineFn<TCombinedResult>
+
+  /**
+   * Defer `combine` during notification until all results have defined data.
+   * @internal
+   */
+  _combineWhenReady?: boolean
 }
 
 /**
@@ -295,7 +301,7 @@ export class QueriesObserver<
     const queryHashes = matches.map(
       (match) => match.defaultedQueryOptions.queryHash,
     )
-    const combine = options?.combine
+    const { combine, _combineWhenReady } = options ?? {}
     const context = { ...this.#combineContext }
     let result = this.#result
 
@@ -329,7 +335,7 @@ export class QueriesObserver<
       },
       commit: () => {
         this.#combineContext = { ...context }
-        this.#setQueries(matches, { combine })
+        this.#setQueries(matches, { combine, _combineWhenReady })
         if (
           this.#options?.combine === combine &&
           equalResults(this.#result, context.result)
@@ -396,11 +402,8 @@ export class QueriesObserver<
   #shouldSkipCombine(): boolean {
     return (
       !this.#options?.combine ||
-      this.#observers.some((observer, index) => {
-        return (
-          observer.options.suspense && this.#result[index]?.data === undefined
-        )
-      })
+      (!!this.#options._combineWhenReady &&
+        this.#result.some((result) => result.data === undefined))
     )
   }
 

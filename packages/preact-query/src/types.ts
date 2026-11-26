@@ -202,9 +202,12 @@ export interface UseQueryOptions<
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends OmitKeyof<
-  UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
-  'suspense'
+> extends UseBaseQueryOptions<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryFnData,
+  TQueryKey
 > {}
 
 /**
@@ -274,15 +277,12 @@ export interface UseInfiniteQueryOptions<
   TPageParam = unknown,
 >
   extends
-    OmitKeyof<
-      InfiniteQueryObserverOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam
-      >,
-      'suspense'
+    InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
     >,
     QueryErrorOptions<
       TQueryFnData,

@@ -646,14 +646,6 @@ describe('queryObserver', () => {
       })
     })
 
-    describe('suspense', () => {
-      it('should type suspense as a boolean', () => {
-        expectTypeOf<QueryObserverOptions['suspense']>().toEqualTypeOf<
-          boolean | undefined
-        >()
-      })
-    })
-
     describe('refetchIntervalInBackground', () => {
       it('should type refetchIntervalInBackground as a boolean', () => {
         expectTypeOf<

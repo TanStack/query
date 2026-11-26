@@ -738,7 +738,7 @@ describe('queriesObserver', () => {
     expect(newCombined.count).toBe(2)
   })
 
-  it('should skip combine notifications while suspense queries have no data', () => {
+  it('should skip combine notifications while results have no data', () => {
     const key = createKey()
     const combine = vi.fn<
       (results: Array<QueryObserverResult>) => Array<unknown>
@@ -749,7 +749,6 @@ describe('queriesObserver', () => {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
       staleTime: Infinity,
-      suspense: true,
     }
 
     queryClient.setQueryData(key, 'data')
@@ -760,6 +759,7 @@ describe('queriesObserver', () => {
 
     const combinedResultReader = observer.createResultReader([query], {
       combine,
+      _combineWhenReady: true,
     })
     const rawResult = combinedResultReader.getSnapshot()
     const getCombinedResult = combinedResultReader.combineResult
@@ -774,7 +774,7 @@ describe('queriesObserver', () => {
     unsubscribe()
   })
 
-  it('should skip combine notifications after suspense is enabled without structural changes', () => {
+  it('should skip combine notifications after combine readiness is enabled without structural changes', () => {
     const key = createKey()
     const combine = vi.fn<
       (results: Array<QueryObserverResult>) => Array<unknown>
@@ -785,7 +785,6 @@ describe('queriesObserver', () => {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
       staleTime: Infinity,
-      suspense: false,
     }
 
     queryClient.setQueryData(key, 'data')
@@ -804,15 +803,10 @@ describe('queriesObserver', () => {
 
     const unsubscribe = observer.subscribe(() => undefined)
 
-    observer.setQueries(
-      [
-        {
-          ...query,
-          suspense: true,
-        },
-      ],
-      { combine },
-    )
+    observer.setQueries([query], {
+      combine,
+      _combineWhenReady: true,
+    })
 
     void queryClient.resetQueries({ queryKey: key })
     expect(combine).toHaveBeenCalledTimes(1)

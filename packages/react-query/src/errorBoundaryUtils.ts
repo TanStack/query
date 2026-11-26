@@ -13,6 +13,7 @@ import type { DefaultedQueryOptions, ThrowOnError } from './types'
  * @param options - The defaulted query options to adjust.
  * @param errorResetBoundary - The value of the nearest `QueryErrorResetBoundary`.
  * @param query - The query, used to evaluate a `throwOnError` function against its error.
+ * @param suspense - Whether the hook uses Suspense.
  */
 export const prepareErrorBoundaryOptions = <
   TQueryFnData,
@@ -30,6 +31,7 @@ export const prepareErrorBoundaryOptions = <
   >,
   errorResetBoundary: QueryErrorResetBoundaryValue,
   query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
+  suspense: boolean,
 ) => {
   options._notifyOnError = !!options.throwOnError
   const throwOnError =
@@ -41,7 +43,7 @@ export const prepareErrorBoundaryOptions = <
         ])
       : options.throwOnError
 
-  if (options.suspense || throwOnError) {
+  if (suspense || throwOnError) {
     // Prevent retrying failed query if the error boundary has not been reset yet
     if (!errorResetBoundary.isReset()) {
       options.retryOnMount = false

@@ -49,7 +49,9 @@ describe('queriesObserver', () => {
 
     describe('combine', () => {
       it('should be optional', () => {
-        expectTypeOf<QueriesObserverOptions<number>>().toEqualTypeOf<{
+        expectTypeOf<
+          Pick<QueriesObserverOptions<number>, 'combine'>
+        >().toEqualTypeOf<{
           combine?: (result: Array<QueryObserverResult>) => number
         }>()
       })
@@ -94,13 +96,13 @@ describe('queriesObserver', () => {
 
     it('should reject an option it does not declare', () => {
       new QueriesObserver(queryClient, [], {
-        // @ts-expect-error combine is the only option
+        // @ts-expect-error select is not a queries observer option
         select: (results: Array<QueryObserverResult>) => results,
       })
 
-      expectTypeOf<
-        keyof QueriesObserverOptions<number>
-      >().toEqualTypeOf<'combine'>()
+      expectTypeOf<keyof QueriesObserverOptions<number>>().toEqualTypeOf<
+        'combine' | '_combineWhenReady'
+      >()
     })
 
     it('should make the options argument optional', () => {

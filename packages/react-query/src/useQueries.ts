@@ -401,7 +401,7 @@ export function useBaseQueries<
     () =>
       queries.map((opts) => {
         const defaultedOptions: DefaultedQueryOptions =
-          client.defaultQueryOptions({ ...opts, suspense: !!suspense })
+          client.defaultQueryOptions({ ...opts })
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions._optimisticResults = isRestoring
@@ -410,20 +410,28 @@ export function useBaseQueries<
             ? 'optimistic'
             : undefined
 
+        suspense?.prepare(defaultedOptions)
         return defaultedOptions
       }),
     [queries, client, isRestoring, subscribed, suspense],
   )
 
   defaultedQueries.forEach((queryOptions) => {
-    suspense?.prepare(queryOptions)
     const query = client.getQueryCache().get(queryOptions.queryHash)
-    prepareErrorBoundaryOptions(queryOptions, errorResetBoundary, query)
+    prepareErrorBoundaryOptions(
+      queryOptions,
+      errorResetBoundary,
+      query,
+      !!suspense,
+    )
   })
 
   useClearResetErrorBoundary(errorResetBoundary)
 
-  const observerOptions = options as QueriesObserverOptions<TCombinedResult>
+  const observerOptions = {
+    ...options,
+    _combineWhenReady: !!suspense,
+  } as QueriesObserverOptions<TCombinedResult>
 
   const [observer] = React.useState(
     () =>
@@ -471,7 +479,7 @@ export function useBaseQueries<
         errorResetBoundary,
         throwOnError: query.throwOnError,
         query: client.getQueryCache().get(query.queryHash),
-        suspense: query.suspense,
+        suspense: !!suspense,
       })
     )
   })

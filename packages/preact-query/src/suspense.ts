@@ -35,49 +35,37 @@ export const defaultThrowOnError = <
 /**
  * Raises `staleTime` and a numeric `gcTime` to at least 1000ms when `suspense` is enabled, so a
  * component that remounts after suspending doesn't refetch right away or find the query garbage
- * collected. A `'static'` `staleTime` is kept as is. Mutates the options.
+ * collected. A `'static'` `staleTime` is kept as is. Also prevents automatic retries when
+ * switching to a failed query. Mutates the options.
  * @param defaultedOptions - The defaulted query options to adjust.
  */
-export const ensureSuspenseTimers = (
+export const prepareSuspenseOptions = (
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
 ) => {
-  if (defaultedOptions.suspense) {
-    // Handle staleTime to ensure minimum 1000ms in Suspense mode
-    // This prevents unnecessary refetching when components remount after suspending
-    const MIN_SUSPENSE_TIME_MS = 1000
+  defaultedOptions._retryOnQueryChange = false
 
-    const clamp = (value: number | 'static' | undefined) =>
-      value === 'static'
-        ? value
-        : Math.max(value ?? MIN_SUSPENSE_TIME_MS, MIN_SUSPENSE_TIME_MS)
+  // Handle staleTime to ensure minimum 1000ms in Suspense mode
+  // This prevents unnecessary refetching when components remount after suspending
+  const MIN_SUSPENSE_TIME_MS = 1000
 
-    const originalStaleTime = defaultedOptions.staleTime
-    defaultedOptions.staleTime =
-      typeof originalStaleTime === 'function'
-        ? (...args) => clamp(originalStaleTime(...args))
-        : clamp(originalStaleTime)
+  const clamp = (value: number | 'static' | undefined) =>
+    value === 'static'
+      ? value
+      : Math.max(value ?? MIN_SUSPENSE_TIME_MS, MIN_SUSPENSE_TIME_MS)
 
-    if (typeof defaultedOptions.gcTime === 'number') {
-      defaultedOptions.gcTime = Math.max(
-        defaultedOptions.gcTime,
-        MIN_SUSPENSE_TIME_MS,
-      )
-    }
+  const originalStaleTime = defaultedOptions.staleTime
+  defaultedOptions.staleTime =
+    typeof originalStaleTime === 'function'
+      ? (...args) => clamp(originalStaleTime(...args))
+      : clamp(originalStaleTime)
+
+  if (typeof defaultedOptions.gcTime === 'number') {
+    defaultedOptions.gcTime = Math.max(
+      defaultedOptions.gcTime,
+      MIN_SUSPENSE_TIME_MS,
+    )
   }
 }
-
-/**
- * Checks whether a query should suspend: `suspense` is enabled and the result is still `pending`.
- * @param defaultedOptions - The defaulted query options, if any.
- * @param result - The current result of the observer.
- * @returns `true` if the component should suspend.
- */
-export const shouldSuspend = (
-  defaultedOptions:
-    | DefaultedQueryObserverOptions<any, any, any, any, any>
-    | undefined,
-  result: QueryObserverResult<any, any>,
-) => defaultedOptions?.suspense && result.isPending
 
 const shouldFetchInBackground = (result: QueryObserverResult<any, any>) =>
   result.isFetching && result.isPlaceholderData
@@ -138,10 +126,8 @@ const useReadSuspenseQuery = (
   client: QueryClient,
   errorResetBoundary: QueryErrorResetBoundaryValue,
 ) => {
-  if (!defaultedOptions.suspense) return
-
   const result = reader.getSnapshot()
-  const suspend = shouldSuspend(defaultedOptions, result)
+  const suspend = result.isPending
   if (!suspend && !shouldFetchInBackground(result)) return
 
   const query = client.getQueryCache().build(client, defaultedOptions)
@@ -156,7 +142,7 @@ const useReadSuspenseQuery = (
 
 /** Supplies Suspense behavior for one query. */
 export const suspenseQueryPolicy = {
-  prepare: ensureSuspenseTimers,
+  prepare: prepareSuspenseOptions,
   readQuery: useReadSuspenseQuery,
 }
 
@@ -168,9 +154,9 @@ const useReadSuspenseQueries = (
 ) => {
   const suspensePromises = reader.getSnapshot().flatMap((result, index) => {
     const options = defaultedQueries[index]
-    if (!options?.suspense) return []
+    if (!options) return []
 
-    const suspend = shouldSuspend(options, result)
+    const suspend = result.isPending
     if (!suspend && !shouldFetchInBackground(result)) return []
 
     const observer = new QueryObserver(client, options)
@@ -191,6 +177,6 @@ const useReadSuspenseQueries = (
 
 /** Supplies Suspense behavior for parallel queries. */
 export const suspenseQueriesPolicy = {
-  prepare: ensureSuspenseTimers,
+  prepare: prepareSuspenseOptions,
   readQueries: useReadSuspenseQueries,
 }
