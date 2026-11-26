@@ -294,6 +294,7 @@ export function useBaseQuery<
           observerResult.isError &&
           !observerResult.isFetching &&
           !isRestoring() &&
+          observerOptions.notifyOnChangeProps !== 'none' &&
           shouldThrowError(observerOptions.throwOnError, [
             observerResult.error,
             obs.getCurrentQuery(),

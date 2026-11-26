@@ -11,4 +11,4 @@
 
 Move error boundary options out of query-core. React, Preact, Solid, and Vue still accept `throwOnError` in their adapter options and client defaults. Import `QueryClient` from the adapter to configure those defaults. Imperative refetch methods still accept `throwOnError` to control promise rejection.
 
-Query observers now notify listeners whenever the result's error changes, even when `notifyOnChangeProps` is `'none'` or the component does not track `error`.
+Query observers now notify listeners when the result's error changes, even when the component does not track `error`. Set `notifyOnChangeProps: 'none'` to suppress all notifications and opt out of the query's `throwOnError` boundary handling.

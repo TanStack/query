@@ -1013,7 +1013,7 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it('notifies listeners when an error appears or clears with notifyOnChangeProps set to none', async () => {
+  it('suppresses notifications when an error appears or clears with notifyOnChangeProps set to none', async () => {
     const error = new Error('fetch failed')
     const observer = new QueryObserver(queryClient, {
       queryKey: createKey(),
@@ -1029,16 +1029,13 @@ describe('queryObserver', () => {
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(listener).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ error }),
-    )
+    expect(observer.getCurrentResult().error).toBe(error)
+    expect(listener).not.toHaveBeenCalled()
 
     await observer.refetch()
 
-    expect(listener).toHaveBeenCalledTimes(2)
-    expect(listener).toHaveBeenLastCalledWith(
-      expect.objectContaining({ error: null }),
-    )
+    expect(observer.getCurrentResult().error).toBeNull()
+    expect(listener).not.toHaveBeenCalled()
 
     unsubscribe()
   })

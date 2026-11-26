@@ -601,7 +601,7 @@ export interface QueryObserverOptionsBase<
    * Controls when changes to the query result notify this observer's listeners.
    * Use `'all'` to notify on every result change.
    * Use `'none'` to suppress notifications while the query remains subscribed and can fetch.
-   * Changes to `error` always notify listeners.
+   * Changes to `error` notify listeners unless this is set to `'none'`.
    *
    * By default, adapters that track property reads notify listeners when a tracked property changes.
    * If no properties are tracked, every result change notifies listeners.

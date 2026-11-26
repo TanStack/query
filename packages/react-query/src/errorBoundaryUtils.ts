@@ -30,6 +30,10 @@ export const prepareErrorBoundaryOptions = <
   errorResetBoundary: QueryErrorResetBoundaryValue,
   query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
 ) => {
+  if (options.notifyOnChangeProps === 'none') {
+    options.throwOnError = false
+  }
+
   const throwOnError =
     query?.state.status === 'error' &&
     typeof options.throwOnError === 'function'
