@@ -1058,7 +1058,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               onClick={() => {
                 if (selectedView() === 'queries') {
                   sendDevToolsEvent({ type: 'CLEAR_QUERY_CACHE' })
-                  batch(() => query_cache().clear())
+                  query_cache().clear()
                 } else {
                   sendDevToolsEvent({ type: 'CLEAR_MUTATION_CACHE' })
                   mutation_cache().clear()
