@@ -1,4 +1,9 @@
-import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
+import {
+  QueryClient,
+  queryOptions as coreQueryOptions,
+  dataTagSymbol,
+  skipToken,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { defaultQueryFn } from '..'
@@ -22,6 +27,29 @@ export const exportedQueryOptions = queryOptions({
 })
 
 describe('queryOptions', () => {
+  it('should work when core queryOptions are passed to useQuery', () => {
+    const options = coreQueryOptions({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve({ id: '1', title: 'Do Laundry' }),
+    })
+
+    const { data } = useQuery(options)
+    expectTypeOf(data).toEqualTypeOf<
+      { id: string; title: string } | undefined
+    >()
+  })
+
+  it('should accept core queryOptions with optional initialData in useSuspenseQuery', () => {
+    const options = coreQueryOptions({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve(42),
+      initialData: Math.random() > 0.5 ? 1 : undefined,
+    })
+
+    const { data } = useSuspenseQuery(options)
+    expectTypeOf(data).toEqualTypeOf<number>()
+  })
+
   it('should not allow excess properties', () => {
     assertType(
       queryOptions({

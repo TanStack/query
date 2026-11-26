@@ -52,6 +52,12 @@ export type {
 } from './utils'
 
 export { streamedQuery } from './streamedQuery'
+export { queryOptions } from './queryOptions'
+export type { CoreQueryOptions } from './queryOptions'
+export { infiniteQueryOptions } from './infiniteQueryOptions'
+export type { CoreInfiniteQueryOptions } from './infiniteQueryOptions'
+export { mutationOptions } from './mutationOptions'
+export type { CoreMutationOptions } from './mutationOptions'
 
 // Types
 export type {

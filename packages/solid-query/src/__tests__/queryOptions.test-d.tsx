@@ -1,5 +1,6 @@
 import {
   QueryClient,
+  queryOptions as coreQueryOptions,
   dataTagErrorSymbol,
   dataTagSymbol,
   skipToken,
@@ -20,6 +21,18 @@ export const exportedQueryOptions = queryOptions({
 })
 
 describe('queryOptions', () => {
+  it('should work when core queryOptions are passed to useQuery', () => {
+    const options = coreQueryOptions({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve({ id: '1', title: 'Do Laundry' }),
+    })
+
+    const { data } = useQuery(() => options)
+    expectTypeOf(data).toEqualTypeOf<
+      { id: string; title: string } | undefined
+    >()
+  })
+
   it('should not allow excess properties', () => {
     assertType(
       queryOptions({

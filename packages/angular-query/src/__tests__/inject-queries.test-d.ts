@@ -1,4 +1,5 @@
 import { computed } from '@angular/core'
+import { queryOptions as coreQueryOptions } from '@tanstack/query-core'
 import { describe, expectTypeOf, it } from 'vitest'
 import { injectQueries, skipToken, toResource } from '..'
 import { queryOptions } from '../query-options'
@@ -6,6 +7,47 @@ import type { Resource, Signal } from '@angular/core'
 import type { CreateQueryOptions, CreateQueryResult, OmitKeyof } from '..'
 
 describe('InjectQueries config object overload', () => {
+  it('should infer tuple data and initialData from core queryOptions', () => {
+    const numberOptions = coreQueryOptions({
+      queryKey: ['number'],
+      queryFn: () => Promise.resolve(1),
+    })
+    const stringOptions = coreQueryOptions({
+      queryKey: ['string'],
+      queryFn: () => Promise.resolve('one'),
+      initialData: 'initial',
+    })
+    const results = injectQueries(() => ({
+      queries: [numberOptions, stringOptions],
+    }))
+
+    expectTypeOf(results()[0].data()).toEqualTypeOf<number | undefined>()
+    expectTypeOf(results()[1].data()).toEqualTypeOf<string>()
+  })
+
+  it('should infer selected data and custom errors from core queryOptions in combine', () => {
+    class CustomError extends Error {
+      detail = 'detail'
+    }
+    const options = coreQueryOptions<number, CustomError, string>({
+      queryKey: ['selected'],
+      queryFn: () => Promise.resolve(1),
+      select: (data) => data.toString(),
+    })
+    const results = injectQueries(() => ({ queries: [options] }))
+    expectTypeOf(results()[0].data()).toEqualTypeOf<string | undefined>()
+    expectTypeOf(results()[0].error()).toEqualTypeOf<CustomError | null>()
+
+    const combined = injectQueries(() => ({
+      queries: [options],
+      combine: ([result]) => ({ data: result.data, error: result.error }),
+    }))
+    expectTypeOf(combined()).toEqualTypeOf<{
+      data: string | undefined
+      error: CustomError | null
+    }>()
+  })
+
   it('keeps optional initial data in service queryOptions results undefined-capable', () => {
     const service = {
       options: () => queryOptions({ queryKey: ['service'], queryFn: () => 1 }),
