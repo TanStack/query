@@ -125,6 +125,40 @@ describe('query observer result readers', () => {
     unsubscribe()
   })
 
+  it('honors the fetch policy when reading and committing a switch to a failed query', async () => {
+    const error = new Error('fetch failed')
+    const queryFn = vi.fn<() => Promise<string>>().mockRejectedValue(error)
+    const failedOptions = client.defaultQueryOptions({
+      queryKey: createKey(),
+      queryFn,
+      retry: false,
+      _optimisticResults: 'optimistic',
+    })
+    await expect(client.query(failedOptions)).rejects.toBe(error)
+
+    const observer = new QueryObserver(client, {
+      queryKey: createKey(),
+      queryFn,
+      initialData: 'data',
+      staleTime: Infinity,
+    })
+    const unsubscribe = observer.subscribe(vi.fn<() => void>())
+    const reader = observer.createResultReader(
+      failedOptions,
+      (query) => query.state.status !== 'error',
+    )
+
+    expect(reader.getSnapshot()).toMatchObject({ error, fetchStatus: 'idle' })
+    reader.commit()
+    expect(observer.getCurrentResult()).toMatchObject({
+      error,
+      fetchStatus: 'idle',
+    })
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    unsubscribe()
+  })
+
   it('exposes retry failures, terminal errors, and recovery', async () => {
     const error = new Error('fetch failed')
     let attempts = 0

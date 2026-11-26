@@ -67,7 +67,7 @@ export function useBaseQuery<
     TData,
     TQueryData,
     TQueryKey
-  > = client.defaultQueryOptions({ ...options, suspense: !!suspense })
+  > = client.defaultQueryOptions({ ...options })
 
   const query = client
     .getQueryCache()
@@ -93,7 +93,12 @@ export function useBaseQuery<
       : undefined
 
   suspense?.prepare(defaultedOptions)
-  prepareErrorBoundaryOptions(defaultedOptions, errorResetBoundary, query)
+  prepareErrorBoundaryOptions(
+    defaultedOptions,
+    errorResetBoundary,
+    query,
+    !!suspense,
+  )
   useClearResetErrorBoundary(errorResetBoundary)
 
   const [observer] = React.useState(
@@ -104,7 +109,10 @@ export function useBaseQuery<
       ),
   )
 
-  const reader = observer.createResultReader(defaultedOptions)
+  const reader = observer.createResultReader(
+    defaultedOptions,
+    suspense?.canFetchOnQueryChange,
+  )
 
   suspense?.readQuery(
     defaultedOptions,
@@ -145,7 +153,7 @@ export function useBaseQuery<
       errorResetBoundary,
       throwOnError: defaultedOptions.throwOnError,
       query,
-      suspense: defaultedOptions.suspense,
+      suspense: !!suspense,
     })
   ) {
     throw result.error

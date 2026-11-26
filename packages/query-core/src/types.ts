@@ -628,9 +628,6 @@ export interface QueryObserverOptionsBase<
         TQueryKey
       >
 
-  /** Set to `true` to use Suspense fetch behavior. */
-  suspense?: boolean
-
   /** @internal */
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }
@@ -2302,10 +2299,7 @@ export interface QueryClientConfig {
  */
 export interface DefaultOptions<TError = DefaultError> {
   /** Default options applied to every query, unless overridden per-query. */
-  queries?: OmitKeyof<
-    QueryObserverOptionsBase<unknown, TError>,
-    'suspense' | 'queryKey'
-  >
+  queries?: OmitKeyof<QueryObserverOptionsBase<unknown, TError>, 'queryKey'>
   /** Default options applied to every mutation, unless overridden per-mutation. */
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
   /** Default options used when hydrating queries and mutations; see {@link HydrateOptions}. */

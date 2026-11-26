@@ -28,6 +28,14 @@ import type {
   RefetchOptions,
 } from './types'
 
+/**
+ * Controls fetches caused by changes to the observed query.
+ * @internal
+ */
+export type CanFetchOnQueryChange = (
+  query: Query<any, any, any, any>,
+) => boolean
+
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>,
 ) => void
@@ -268,6 +276,7 @@ export class QueryObserver<
    * refetch-interval timers as needed.
    * @param options - The new observer options. They are defaulted with {@link
    * QueryClient#defaultQueryOptions} before being applied.
+   * @param canFetch - The fetch predicate for the options update.
    * @throws {Error} If `enabled` is neither a boolean nor a function.
    * @example
    * ```ts
@@ -284,6 +293,7 @@ export class QueryObserver<
       TQueryData,
       TQueryKey
     >,
+    canFetch?: CanFetchOnQueryChange,
   ): void {
     const prevOptions = this.options
     const prevQuery = this.#currentQuery
@@ -326,6 +336,7 @@ export class QueryObserver<
         prevQuery,
         this.options,
         prevOptions,
+        canFetch,
       )
     ) {
       this.#executeFetch()
@@ -368,6 +379,7 @@ export class QueryObserver<
    * Call `commit` after the render commits to apply the options and reuse the
    * reader's computation. An abandoned reader needs no cleanup.
    * @param options - The defaulted options used to read and commit the query result.
+   * @param canFetch - The fetch predicate for this read and commit.
    * @returns A reader with local snapshot and computation caches.
    */
   createResultReader(
@@ -378,6 +390,7 @@ export class QueryObserver<
       TQueryData,
       TQueryKey
     >,
+    canFetch?: CanFetchOnQueryChange,
   ): QueryObserverResultReader<QueryObserverResult<TData, TError>> {
     const readerOptions = { ...options }
     const { select, structuralSharing } = readerOptions
@@ -409,6 +422,7 @@ export class QueryObserver<
         readerOptions,
         context,
         result,
+        canFetch,
       )
       if (!shallowEqualObjects(nextResult, result)) {
         result = nextResult
@@ -422,7 +436,7 @@ export class QueryObserver<
         // Reuse selections computed since the last read.
         getSnapshot()
         this.#resultContext = { ...context }
-        this.setOptions(readerOptions)
+        this.setOptions(readerOptions, canFetch)
       },
     }
   }
@@ -756,6 +770,7 @@ export class QueryObserver<
    * @param options - The observer options to compute the result with.
    * @param context - The selection and placeholder state reused between computations.
    * @param prevResult - The previous result used for structural sharing.
+   * @param canFetch - The fetch predicate for this read.
    * @returns The computed result.
    */
   protected createResult(
@@ -771,6 +786,7 @@ export class QueryObserver<
     prevResult = this.#currentResult as
       | QueryObserverResult<TData, TError>
       | undefined,
+    canFetch?: CanFetchOnQueryChange,
   ): QueryObserverResult<TData, TError> {
     const prevQuery = this.#currentQuery
     const prevOptions = this.options
@@ -783,7 +799,13 @@ export class QueryObserver<
     const fetchOptimistically =
       options._optimisticResults &&
       (this.hasListeners()
-        ? shouldFetchOptionally(query, prevQuery, options, prevOptions)
+        ? shouldFetchOptionally(
+            query,
+            prevQuery,
+            options,
+            prevOptions,
+            canFetch,
+          )
         : shouldFetchOnMount(query, options))
     const newState = fetchOptimistically
       ? { ...state, ...fetchState(state.data, query.options) }
@@ -1068,19 +1090,21 @@ function shouldFetchOn(
  * @param prevQuery - The query observed with the previous options.
  * @param options - The new observer options.
  * @param prevOptions - The previous observer options.
- * @returns `true` if the query changed or was disabled before, it isn't a suspense query in an
- * error state, and it is stale.
+ * @param canFetch - The fetch predicate for this transition.
+ * @returns `true` if the query changed or was disabled before, retries on this transition
+ * are allowed, and the query is stale.
  */
 function shouldFetchOptionally(
   query: Query<any, any, any, any>,
   prevQuery: Query<any, any, any, any>,
   options: QueryObserverOptionsBase<any, any, any, any, any>,
   prevOptions: QueryObserverOptionsBase<any, any, any, any, any>,
+  canFetch?: CanFetchOnQueryChange,
 ): boolean {
   return (
     (query !== prevQuery ||
       resolveQueryValue(prevOptions.enabled, query) === false) &&
-    (!options.suspense || query.state.status !== 'error') &&
+    canFetch?.(query) !== false &&
     isStale(query, options)
   )
 }
