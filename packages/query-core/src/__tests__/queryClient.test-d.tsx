@@ -1,12 +1,12 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
+import type { DataTag, UnsetMarker } from '..'
 import type { Mutation } from '../mutation'
 import type { MutationCache } from '../mutationCache'
 import type { Query, QueryState } from '../query'
 import type { QueryCache } from '../queryCache'
 import type {
-  DataTag,
   DefaultError,
   DefaultOptions,
   DefaultedQueryObserverOptions,
@@ -23,7 +23,6 @@ import type {
   QueryKey,
   QueryObserverOptionsBase,
   SetDataOptions,
-  UnsetMarker,
 } from '../types'
 import type { MutationFilters, QueryFilters, Updater } from '../utils'
 
