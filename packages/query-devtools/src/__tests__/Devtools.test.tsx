@@ -308,6 +308,38 @@ describe('Devtools', () => {
       expect(rendered.getByLabelText('Query key ["query-0500"]')).toBeVisible()
     })
 
+    it('should read the mutation cache as often for clearing many mutations as for clearing one', async () => {
+      const mutationCache = queryClient.getMutationCache()
+      const buildMutations = (count: number) => {
+        for (let index = 0; index < count; index++) {
+          mutationCache.build(queryClient, {
+            mutationKey: [`mutation-${index}`],
+          })
+        }
+      }
+      const rendered = renderDevtools({ initialIsOpen: true })
+      fireEvent.click(rendered.getByText('Mutations'))
+      const getAll = vi.spyOn(mutationCache, 'getAll')
+
+      buildMutations(1)
+      await vi.advanceTimersByTimeAsync(0)
+      getAll.mockClear()
+      mutationCache.clear()
+      await vi.advanceTimersByTimeAsync(0)
+      const readsForOne = getAll.mock.calls.length
+
+      buildMutations(1000)
+      await vi.advanceTimersByTimeAsync(0)
+      getAll.mockClear()
+      mutationCache.clear()
+      await vi.advanceTimersByTimeAsync(0)
+
+      expect(getAll).toHaveBeenCalledTimes(readsForOne)
+      expect(
+        rendered.queryAllByLabelText(/^Mutation submitted at /),
+      ).toHaveLength(0)
+    })
+
     it('keeps query clicks aligned after a same-count sort change', () => {
       seedQueries()
       const rendered = renderDevtools(
