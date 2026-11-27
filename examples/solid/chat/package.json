@@ -10,14 +10,14 @@
     "test:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@tanstack/solid-query": "^5.108.4",
-    "@tanstack/solid-query-devtools": "^5.108.4",
+    "@tanstack/solid-query": "^5.108.5",
+    "@tanstack/solid-query-devtools": "^5.108.5",
     "solid-js": "^1.9.18"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/eslint-config": "^0.5.0",
-    "@tanstack/eslint-plugin-query": "^5.108.4",
+    "@tanstack/eslint-plugin-query": "^5.108.5",
     "eslint": "^9.39.5",
     "eslint-plugin-solid": "^0.18.1",
     "tailwindcss": "^4.3.3",
