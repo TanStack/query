@@ -65,7 +65,6 @@
     "@testing-library/react": "catalog:",
     "@types/react": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "eslint-plugin-react-hooks": "catalog:",
     "react": "catalog:",
     "typescript": "catalog:"
   },

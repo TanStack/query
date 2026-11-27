@@ -73,7 +73,6 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
-    "eslint-plugin-react-hooks": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-error-boundary": "^4.1.2",

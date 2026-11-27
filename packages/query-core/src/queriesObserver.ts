@@ -1,7 +1,11 @@
 import { notifyManager } from './notifyManager'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
-import { replaceEqualDeep, shallowEqualObjects } from './utils'
+import {
+  replaceEqualDeep,
+  shallowEqualObjects,
+  shouldThrowError,
+} from './utils'
 import type { QueryClient } from './queryClient'
 import type {
   DefaultedQueryObserverOptions,
@@ -347,8 +351,15 @@ export class QueriesObserver<
     return (
       !this.#options?.combine ||
       this.#observers.some((observer, index) => {
+        const result = this.#result[index]
         return (
-          observer.options.suspense && this.#result[index]?.data === undefined
+          (observer.options.suspense && result?.data === undefined) ||
+          (!!result?.isError &&
+            !result.isFetching &&
+            shouldThrowError(observer.options.throwOnError, [
+              result.error,
+              observer.getCurrentQuery(),
+            ]))
         )
       })
     )

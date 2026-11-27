@@ -1,32 +1,31 @@
 import pluginReact from '@eslint-react/eslint-plugin'
-import reactHooks from 'eslint-plugin-react-hooks'
 import { defineConfig } from 'oxlint'
 import rootConfig from './root.oxlint.config.ts'
 
 export default defineConfig({
   extends: [rootConfig],
   settings: rootConfig.settings,
-  jsPlugins: [
-    // 'react-hooks' is reserved for Oxlint's native plugin, which lacks the React Compiler rules
-    { name: 'react-hooks-js', specifier: 'eslint-plugin-react-hooks' },
-    '@eslint-react/eslint-plugin',
-  ],
+  plugins: ['react'],
+  jsPlugins: ['@eslint-react/eslint-plugin'],
   rules: {
-    ...Object.fromEntries(
-      Object.entries(reactHooks.configs.flat.recommended.rules).map(
-        ([name, value]) => [
-          name.replace(/^react-hooks\//, 'react-hooks-js/'),
-          value,
-        ],
-      ),
-    ),
+    'react/error-boundaries': 'error',
+    'react/exhaustive-deps': 'error',
+    'react/globals': 'error',
+    'react/immutability': 'error',
+    'react/incompatible-library': 'error',
+    'react/preserve-manual-memoization': 'error',
+    'react/purity': 'error',
+    'react/refs': 'error',
+    'react/rules-of-hooks': 'error',
+    'react/set-state-in-effect': 'error',
+    'react/set-state-in-render': 'error',
+    'react/static-components': 'error',
+    'react/unsupported-syntax': 'error',
+    'react/use-memo': 'error',
     ...pluginReact.configs.recommended.rules,
-    'react-hooks-js/exhaustive-deps': 'error',
-    'react-hooks-js/unsupported-syntax': 'error',
-    'react-hooks-js/incompatible-library': 'error',
     '@eslint-react/no-context-provider': 'off', // We need to be React 18 compatible
     '@eslint-react/no-use-context': 'off', // We need to be React 18 compatible
-    // Covered by 'eslint-plugin-react-hooks'
+    // Covered by Oxlint's native 'react' plugin
     '@eslint-react/error-boundaries': 'off',
     '@eslint-react/exhaustive-deps': 'off',
     '@eslint-react/globals': 'off',

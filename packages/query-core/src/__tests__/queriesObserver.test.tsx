@@ -572,6 +572,199 @@ describe('queriesObserver', () => {
     unsubscribe()
   })
 
+  it('should notify listeners when a query with throwOnError fails without changing the combined result', async () => {
+    const key = createKey()
+    const combine = (results: Array<QueryObserverResult>) =>
+      results.map((result) => result.data)
+    const query = {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
+      retry: false,
+      throwOnError: true,
+    }
+
+    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query])
+    observer.setQueries([query], { combine })
+
+    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
+      [query],
+      combine,
+    )
+    expect(getCombinedResult(rawResult)).toStrictEqual([undefined])
+
+    const results: Array<Array<QueryObserverResult>> = []
+    const unsubscribe = observer.subscribe((result) => {
+      results.push(result)
+    })
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(results).toHaveLength(1)
+    expect(results[0]?.[0]).toMatchObject({
+      status: 'error',
+      error: new Error('error'),
+    })
+
+    unsubscribe()
+  })
+
+  it('should not notify listeners when a query without throwOnError fails without changing the combined result', async () => {
+    const key = createKey()
+    const combine = (results: Array<QueryObserverResult>) =>
+      results.map((result) => result.data)
+    const query = {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
+      retry: false,
+    }
+
+    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query])
+    observer.setQueries([query], { combine })
+
+    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
+      [query],
+      combine,
+    )
+    expect(getCombinedResult(rawResult)).toStrictEqual([undefined])
+
+    const listener = vi.fn<(result: Array<QueryObserverResult>) => void>()
+    const unsubscribe = observer.subscribe(listener)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).not.toHaveBeenCalled()
+
+    unsubscribe()
+  })
+
+  it('should notify listeners when a query with throwOnError function returning true fails without changing the combined result', async () => {
+    const key = createKey()
+    const combine = (results: Array<QueryObserverResult>) =>
+      results.map((result) => result.data)
+    const throwOnError = vi.fn<() => boolean>(() => true)
+    const query = {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
+      retry: false,
+      throwOnError,
+    }
+
+    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query])
+    observer.setQueries([query], { combine })
+
+    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
+      [query],
+      combine,
+    )
+    expect(getCombinedResult(rawResult)).toStrictEqual([undefined])
+
+    const listener = vi.fn<(result: Array<QueryObserverResult>) => void>()
+    const unsubscribe = observer.subscribe(listener)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).toHaveBeenCalledTimes(1)
+    expect(throwOnError).toHaveBeenCalledWith(
+      new Error('error'),
+      queryClient.getQueryCache().find({ queryKey: key }),
+    )
+
+    unsubscribe()
+  })
+
+  it('should not notify listeners when a query with throwOnError function returning false fails without changing the combined result', async () => {
+    const key = createKey()
+    const combine = (results: Array<QueryObserverResult>) =>
+      results.map((result) => result.data)
+    const throwOnError = vi.fn<() => boolean>(() => false)
+    const query = {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => Promise.reject(new Error('error'))),
+      retry: false,
+      throwOnError,
+    }
+
+    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query])
+    observer.setQueries([query], { combine })
+
+    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
+      [query],
+      combine,
+    )
+    expect(getCombinedResult(rawResult)).toStrictEqual([undefined])
+
+    const listener = vi.fn<(result: Array<QueryObserverResult>) => void>()
+    const unsubscribe = observer.subscribe(listener)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).not.toHaveBeenCalled()
+    expect(throwOnError).toHaveBeenCalledWith(
+      new Error('error'),
+      queryClient.getQueryCache().find({ queryKey: key }),
+    )
+
+    unsubscribe()
+  })
+
+  it('should not notify listeners while a query with throwOnError refetches after failing without changing the combined result', async () => {
+    const key = createKey()
+    const combine = (results: Array<QueryObserverResult>) =>
+      results.map((result) => result.data)
+    let count = 0
+    const query = {
+      queryKey: key,
+      queryFn: () =>
+        sleep(10).then(() =>
+          count++ === 0 ? 'data' : Promise.reject(new Error('error')),
+        ),
+      retry: false,
+      throwOnError: true,
+      notifyOnChangeProps: 'all' as const,
+    }
+
+    const observer = new QueriesObserver<Array<unknown>>(queryClient, [query])
+    observer.setQueries([query], { combine })
+
+    const [rawResult, getCombinedResult] = observer.getOptimisticResult(
+      [query],
+      combine,
+    )
+    expect(getCombinedResult(rawResult)).toStrictEqual([undefined])
+
+    const listener = vi.fn<(result: Array<QueryObserverResult>) => void>()
+    const unsubscribe = observer.subscribe(listener)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).toHaveBeenCalledTimes(1)
+    expect(listener).toHaveBeenLastCalledWith([
+      expect.objectContaining({ status: 'success', data: 'data' }),
+    ])
+
+    void queryClient.refetchQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).toHaveBeenCalledTimes(2)
+    expect(listener).toHaveBeenLastCalledWith([
+      expect.objectContaining({
+        status: 'error',
+        fetchStatus: 'idle',
+        data: 'data',
+      }),
+    ])
+
+    void queryClient.refetchQueries({ queryKey: key })
+    await vi.advanceTimersByTimeAsync(0)
+    expect(observer.getCurrentResult()[0]).toMatchObject({
+      status: 'error',
+      fetchStatus: 'fetching',
+    })
+    expect(listener).toHaveBeenCalledTimes(2)
+
+    await vi.advanceTimersByTimeAsync(10)
+    expect(listener).toHaveBeenCalledTimes(3)
+    expect(listener).toHaveBeenLastCalledWith([
+      expect.objectContaining({ status: 'error', fetchStatus: 'idle' }),
+    ])
+
+    unsubscribe()
+  })
+
   it('should handle queries being removed with stable combine reference', () => {
     const combine = vi.fn<
       (results: Array<QueryObserverResult>) => {
