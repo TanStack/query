@@ -371,7 +371,7 @@ export interface QueryOptions<
    * If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number.
    * If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false.
    *
-   * Defaults to `3` for observed queries in the browser and `0` on the server.
+   * Defaults to `3` for observed queries and `0` for imperative queries.
    * Server retries require a custom provider installed with `timeoutManager.setTimeoutProvider`.
    */
   retry?: RetryValue<TError>
@@ -400,7 +400,7 @@ export interface QueryOptions<
    * When different garbage collection times are specified, the longest one will be used.
    * Setting it to `Infinity` will disable garbage collection.
    *
-   * Defaults to `5 * 60 * 1000` (5 minutes) in the browser and `Infinity` on the server.
+   * Defaults to `5 * 60 * 1000` (5 minutes).
    * A finite value only schedules garbage collection on the server if an app installs a
    * custom provider with `timeoutManager.setTimeoutProvider`.
    *
@@ -1930,7 +1930,8 @@ export interface MutationOptions<
    * The time in milliseconds that an unused/inactive mutation remains in memory before it is
    * garbage collected.
    *
-   * Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR.
+   * Defaults to `5 * 60 * 1000` (5 minutes). A finite value only schedules garbage
+   * collection on the server if an app installs a custom timeout provider.
    */
   gcTime?: number
   /** @internal */

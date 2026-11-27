@@ -1043,7 +1043,7 @@ describe('query', () => {
     resetIsServer()
   })
 
-  it('should use an infinite garbage collection time on the server', () => {
+  it('should default to a five-minute garbage collection time on the server', () => {
     const resetIsServer = setIsServer(true)
 
     try {
@@ -1052,7 +1052,7 @@ describe('query', () => {
         queryFn: () => 'data',
       })
 
-      expect(query.gcTime).toBe(Infinity)
+      expect(query.gcTime).toBe(5 * 60 * 1000)
     } finally {
       resetIsServer()
     }

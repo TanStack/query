@@ -15,8 +15,8 @@ export const isServer = (): boolean => isServerFn()
 
 /**
  * Manages how TanStack Query detects whether the current runtime should be treated as
- * server-side, which disables Query timers unless a custom timeout provider is installed and
- * changes the default `retry` count and `gcTime`. By default, a missing `window` or the
+ * server-side. The default timeout provider skips timers on the server.
+ * By default, a missing `window` or the
  * presence of a `Deno` global indicates a server environment.
  *
  * Override this for runtimes where that default detection would give the wrong answer — for

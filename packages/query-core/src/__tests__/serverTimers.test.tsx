@@ -30,21 +30,24 @@ describe.each([false, true])(
       resetIsServer()
     })
 
-    it('controls GC for unused queries and mutations', async () => {
-      const queryKey = ['server-gc']
-      await client.query({
-        queryKey,
-        queryFn: () => Promise.resolve('data'),
-        gcTime: 100,
-      })
-      Mutation.build(client, { gcTime: 100 })
+    it.each([undefined, 100])(
+      'controls GC for unused queries and mutations with gcTime = %s',
+      async (gcTime) => {
+        const queryKey = ['server-gc']
+        await client.query({
+          queryKey,
+          queryFn: () => Promise.resolve('data'),
+          gcTime,
+        })
+        Mutation.build(client, { gcTime })
 
-      expect(vi.getTimerCount()).toBe(optIn ? 2 : 0)
-      await vi.advanceTimersByTimeAsync(100)
+        expect(vi.getTimerCount()).toBe(optIn ? 2 : 0)
+        await vi.advanceTimersByTimeAsync(gcTime ?? 5 * 60 * 1000)
 
-      expect(client.getQueryData(queryKey)).toBe(optIn ? undefined : 'data')
-      expect(client.getMutationCache().getAll()).toHaveLength(optIn ? 0 : 1)
-    })
+        expect(client.getQueryData(queryKey)).toBe(optIn ? undefined : 'data')
+        expect(client.getMutationCache().getAll()).toHaveLength(optIn ? 0 : 1)
+      },
+    )
 
     it('controls stale notifications and polling for subscribed observers', async () => {
       const queryFn = vi.fn<() => Promise<string>>().mockResolvedValue('data')
@@ -63,6 +66,25 @@ describe.each([false, true])(
         expect(observer.getCurrentResult().isStale).toBe(optIn)
         await vi.advanceTimersByTimeAsync(89)
         expect(queryFn).toHaveBeenCalledTimes(optIn ? 1 : 0)
+      } finally {
+        unsubscribe()
+      }
+    })
+
+    it('uses the default retry count for observed queries when the provider schedules retries', async () => {
+      const error = new Error('request failed')
+      const queryFn = vi.fn<() => Promise<string>>().mockRejectedValue(error)
+      const observer = new QueryObserver(client, {
+        queryKey: ['observed-server-retry'],
+        queryFn,
+        retryDelay: 10,
+      })
+      const unsubscribe = observer.subscribe(() => {})
+
+      try {
+        await vi.advanceTimersByTimeAsync(30)
+        expect(queryFn).toHaveBeenCalledTimes(optIn ? 4 : 1)
+        expect(observer.getCurrentResult().error).toBe(error)
       } finally {
         unsubscribe()
       }

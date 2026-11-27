@@ -572,7 +572,7 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 Create a `QueryClient` per request so each request has its own cache. By default, Query skips garbage collection timers on the server, even when shared query options set a finite `gcTime`. Query also skips stale notifications, polling, and retries on the server by default.
 
-If you intentionally keep a cache across requests, install a timeout provider once at server startup with `timeoutManager.setTimeoutProvider()`. Then set a finite `gcTime` for entries that should expire. The server default for `gcTime` is still `Infinity`. The provider also enables stale notifications, polling, and explicitly configured retries.
+If you intentionally keep a cache across requests, install a timeout provider once at server startup with `timeoutManager.setTimeoutProvider()`. Unused entries expire after five minutes by default. Set `gcTime` to change that duration. The provider also enables stale notifications, polling, and retries. Observed queries retry up to three times by default.
 
 ```tsx
 import { QueryClient, timeoutManager } from '@tanstack/react-query'

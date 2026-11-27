@@ -85,14 +85,14 @@ describe('Removable', () => {
       expect(removable.gcTime).toBe(10 * 60 * 1000)
     })
 
-    it('should default to Infinity on the server', () => {
+    it('should default to 5 minutes on the server', () => {
       const resetIsServer = setIsServer(true)
       try {
         const removable = new RemovableTest()
 
         removable.callUpdateGcTime(undefined)
 
-        expect(removable.gcTime).toBe(Infinity)
+        expect(removable.gcTime).toBe(5 * 60 * 1000)
       } finally {
         resetIsServer()
       }

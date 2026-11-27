@@ -491,4 +491,4 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 Use a request-scoped `QueryClient` for SSR. By default, Query skips garbage collection timers on the server, even when a query sets a finite `gcTime`.
 
-If you keep a cache across requests, install a custom timeout provider with `timeoutManager.setTimeoutProvider()` and set a finite `gcTime` for entries that should expire. The provider applies to all clients that use that manager. See [server timer configuration](../../react/guides/ssr.md#high-memory-consumption-on-server).
+If you keep a cache across requests, install a custom timeout provider with `timeoutManager.setTimeoutProvider()` to enable garbage collection. Unused entries expire after five minutes by default. The provider applies to all clients that use that manager. See [server timer configuration](../../react/guides/ssr.md#high-memory-consumption-on-server).
