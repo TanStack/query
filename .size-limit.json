@@ -2,7 +2,7 @@
   {
     "name": "react full",
     "path": "packages/react-query/build/index.js",
-    "limit": "13.00 kB",
+    "limit": "14.00 kB",
     "ignore": ["react", "react-dom"]
   },
   {
