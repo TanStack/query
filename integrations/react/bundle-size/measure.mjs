@@ -333,19 +333,6 @@ function retainedExports(modules) {
   )
 }
 
-function sizesOf(chunks) {
-  const sizes = { raw: 0, gzip: 0, brotli: 0 }
-  for (const chunk of chunks) {
-    const js = Buffer.from(chunk.code)
-    sizes.raw += js.length
-    sizes.gzip += gzipSync(js, { level: 9 }).length
-    sizes.brotli += brotliCompressSync(js, {
-      params: { [constants.BROTLI_PARAM_QUALITY]: 11 },
-    }).length
-  }
-  return sizes
-}
-
 async function measure(packageName, screen) {
   const app = await buildApp(packageName, screen)
   checkApp(app, packageName, screen)
@@ -405,7 +392,17 @@ async function measure(packageName, screen) {
     .map(([id]) =>
       normalizePath(path.relative(path.join(source, 'packages'), id)),
     )
-  return { library: sizesOf(library), app: sizesOf(app), largestModules }
+  const js = Buffer.from(library[0].code)
+  return {
+    library: {
+      raw: js.length,
+      gzip: gzipSync(js, { level: 9 }).length,
+      brotli: brotliCompressSync(js, {
+        params: { [constants.BROTLI_PARAM_QUALITY]: 11 },
+      }).length,
+    },
+    largestModules,
+  }
 }
 
 // A combined app cannot tell whether each projection pulls in its sibling,
@@ -663,53 +660,34 @@ lines.push(
   '',
   `Baseline adapter and core at \`${base}\` (${baseCheckout ? 'base checkout' : 'current checkout'}). Pluggable adapter, core and fixture at \`${head}\`.`,
 )
-function addTable(key, heading, description) {
-  lines.push(
-    '',
-    '<details>',
-    `<summary>${heading}</summary>`,
-    '',
-    description,
-    '',
-    '| Workload | Package | Minified JS | Gzip | Brotli |',
-    '| --- | --- | ---: | ---: | ---: |',
-  )
-  for (const { title, rows } of results) {
-    const baselineSizes = rows[0][key]
-    for (const row of rows) {
-      const cells = Object.entries(row[key]).map(([metric, value]) =>
-        formatSize(value, baselineSizes[metric], row.name === baseline),
-      )
-      lines.push(`| ${title} | \`${row.name}\` | ${cells.join(' | ')} |`)
-    }
-  }
-  if (key === 'library') {
-    const readOnly = results
-      .find(({ screen }) => screen === 'query')
-      .rows.find(({ name }) => name === pluggable)
-    lines.push(
-      '',
-      `Largest modules in the read-only pluggable chunk, by rendered size before minification: ${readOnly.largestModules.map((name) => `\`${name}\``).join(', ')}.`,
+lines.push(
+  '',
+  '<details>',
+  '<summary>Query runtime sizes · minified JS, gzip and Brotli</summary>',
+  '',
+  'The app entry drives tree-shaking. Each isolated ESM chunk includes the React adapter and its matching core. React and React DOM are external. Sizes are bytes of the Query chunk measured directly, with gzip level 9 and Brotli quality 11.',
+  '',
+  '| Workload | Package | Minified JS | Gzip | Brotli |',
+  '| --- | --- | ---: | ---: | ---: |',
+)
+for (const { title, rows } of results) {
+  const baselineSizes = rows[0].library
+  for (const row of rows) {
+    const cells = Object.entries(row.library).map(([metric, value]) =>
+      formatSize(value, baselineSizes[metric], row.name === baseline),
     )
+    lines.push(`| ${title} | \`${row.name}\` | ${cells.join(' | ')} |`)
   }
-  lines.push('', '</details>')
 }
-addTable(
-  'library',
-  'Query runtime sizes · minified JS, gzip and Brotli',
-  'The app entry drives tree-shaking. Each isolated ESM chunk includes the React adapter and its matching core: `react-query` with `query-core` or `react-query-pluggable` with `query-core-pluggable`. React and React DOM are external. Each cell measures the chunk directly.',
-)
-addTable(
-  'app',
-  'Whole production app sizes · minified JS, gzip and Brotli',
-  'Each build includes the app, React, React DOM and Query. This measures the JavaScript delivered to the browser.',
-)
+const readOnly = results
+  .find(({ screen }) => screen === 'query')
+  .rows.find(({ name }) => name === pluggable)
 lines.push(
   '',
-  'All sizes are bytes. Each JavaScript chunk is compressed separately with gzip level 9 and Brotli quality 11, then summed.',
+  `Largest modules in the read-only pluggable chunk, by rendered size before minification: ${readOnly.largestModules.map((name) => `\`${name}\``).join(', ')}.`,
   '',
-)
-lines.push(
+  '</details>',
+  '',
   await measureMicrofrontends({
     root,
     checkout,
