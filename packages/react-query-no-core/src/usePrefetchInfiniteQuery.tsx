@@ -1,11 +1,11 @@
 import { useQueryClient } from './QueryClientProvider'
-import { noop } from './runtime'
+import { noop } from './runtime/utils'
 import type {
   DefaultError,
   InfiniteData,
-  QueryClient,
   QueryKey,
-} from './runtime'
+} from '@tanstack/query-types/bindings'
+import type { QueryClient } from './runtime/queryClient'
 import type { UsePrefetchInfiniteQueryOptions } from './types'
 
 /**

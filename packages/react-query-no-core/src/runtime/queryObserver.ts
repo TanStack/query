@@ -404,9 +404,9 @@ export class QueryObserver<
 
   /**
    * Records that the given `QueryObserverResult` property was read, so a subsequent update only
-   * notifies this observer if a tracked property actually changed. Normally called indirectly via
-   * {@link QueryObserver#trackResult}'s proxy; exposed directly for adapters that track property
-   * access themselves (e.g. through their own reactivity system) instead of via the proxy.
+   * notifies this observer if a tracked property actually changed. The proxy returned by
+   * {@link QueryObserver#trackResult} records reads on this observer. For `useQueries`,
+   * `QueriesObserver` records the same read on every observer in the group.
    * @param key - The name of the property that was read.
    */
   trackProp(key: keyof QueryObserverResult) {

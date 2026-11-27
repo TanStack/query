@@ -1,8 +1,9 @@
 'use client'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
-import { notifyManager } from './runtime'
-import type { QueryClient, QueryFilters } from './runtime'
+import { notifyManager } from './runtime/notifyManager'
+import type { QueryClient } from './runtime/queryClient'
+import type { QueryFilters } from './runtime/utils'
 
 /**
  * The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching in

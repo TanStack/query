@@ -84,7 +84,9 @@ describe('queriesObserver', () => {
       listener.mockClear()
       readerB.commit()
       expect(listener).toHaveBeenCalledTimes(1)
-      expect(observer.getQueries()[0]!.queryKey).toStrictEqual(keyB)
+      expect(
+        observer.getObservers()[0]!.getCurrentQuery().queryKey,
+      ).toStrictEqual(keyB)
       listener.mockClear()
       queryClient.setQueryData(keyA, 3)
       expect(listener).not.toHaveBeenCalled()
@@ -144,7 +146,9 @@ describe('queriesObserver', () => {
       expect(select).toHaveBeenCalledTimes(1)
       expect(observer.getCurrentResult()[0]!.data).toBe(snapshot[0]!.data)
       expect(
-        observer.getQueries().map((query) => query.queryKey),
+        observer
+          .getObservers()
+          .map((entry) => entry.getCurrentQuery().queryKey),
       ).toStrictEqual([keyB, keyA])
       unsubscribe()
     })
@@ -296,27 +300,6 @@ describe('queriesObserver', () => {
 
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
-  })
-
-  it('should return current queries via getQueries', async () => {
-    const key1 = createKey()
-    const key2 = createKey()
-    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
-    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
-    const observer = new QueriesObserver(queryClient, [
-      { queryKey: key1, queryFn: queryFn1 },
-      { queryKey: key2, queryFn: queryFn2 },
-    ])
-    const unsubscribe = observer.subscribe(() => undefined)
-    await vi.advanceTimersByTimeAsync(0)
-
-    const queries = observer.getQueries()
-
-    expect(queries).toHaveLength(2)
-    expect(queries[0]?.queryKey).toStrictEqual(key1)
-    expect(queries[1]?.queryKey).toStrictEqual(key2)
-
-    unsubscribe()
   })
 
   it('should update when a query updates', async () => {

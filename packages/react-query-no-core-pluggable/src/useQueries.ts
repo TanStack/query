@@ -15,12 +15,14 @@ import type {
   OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
-  QueryClient,
-  QueryFunction,
   QueryKey,
+} from '@tanstack/query-types/bindings'
+import type { QueryClient } from './runtime/queryClient'
+import type {
+  QueryFunction,
   QueryObserverOptions,
   ThrowOnError,
-} from './runtime'
+} from './runtime/types'
 import type { suspenseQueriesPolicy } from './suspense'
 import type {
   DefinedUseQueryResult,

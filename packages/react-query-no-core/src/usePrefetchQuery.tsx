@@ -1,6 +1,7 @@
 import { useQueryClient } from './QueryClientProvider'
-import { noop } from './runtime'
-import type { DefaultError, QueryClient, QueryKey } from './runtime'
+import { noop } from './runtime/utils'
+import type { DefaultError, QueryKey } from '@tanstack/query-types/bindings'
+import type { QueryClient } from './runtime/queryClient'
 import type { UsePrefetchQueryOptions } from './types'
 
 /**

@@ -1,13 +1,10 @@
 'use client'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
-import { hydrate } from './runtime/index'
-import type {
-  DehydratedState,
-  HydrateOptions,
-  OmitKeyof,
-  QueryClient,
-} from './runtime/index'
+import { hydrate } from './runtime/hydration'
+import type { DehydratedState, OmitKeyof } from '@tanstack/query-types/bindings'
+import type { HydrateOptions } from './runtime/hydration'
+import type { QueryClient } from './runtime/queryClient'
 
 /**
  * The props accepted by `HydrationBoundary`.

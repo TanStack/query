@@ -14,7 +14,7 @@ export default defineConfig({
   resolve: {
     ...base.resolve,
     alias: {
-      '@tanstack/query-core': join(adapter, 'src/runtime/index.ts'),
+      '@tanstack/query-core': join(adapter, 'src/index.ts'),
       ...(basename(adapter) === 'react-query-no-core-pluggable' && {
         '@tanstack/query-test-utils/polling': join(
           adapter,

@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react'
-import type { QueryClient } from './runtime/index'
+import type { QueryClient } from './runtime/queryClient'
 
 /**
  * The context that `useQueryClient` reads from. `QueryClientProvider` is the normal way to set it.

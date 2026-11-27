@@ -1,5 +1,5 @@
 import { identity } from './runtime/identity'
-import type { DefaultError, WithRequired } from './runtime'
+import type { DefaultError, WithRequired } from '@tanstack/query-types/bindings'
 import type { UseMutationOptions } from './types'
 
 type MutationOptionsFn = {

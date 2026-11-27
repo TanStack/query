@@ -1,6 +1,5 @@
 import type {
   BatchCallsCallback,
-  BatchNotifyFunction,
   NotifyCallback,
   NotifyFunction,
   ScheduleFunction,
@@ -23,9 +22,6 @@ export function createNotifyManager() {
   let notifyFn: NotifyFunction = (callback) => {
     callback()
   }
-  let batchNotifyFn: BatchNotifyFunction = (callback: () => void) => {
-    callback()
-  }
   let scheduleFn = defaultScheduler
 
   const schedule = (callback: NotifyCallback): void => {
@@ -42,10 +38,8 @@ export function createNotifyManager() {
     queue = []
     if (originalQueue.length) {
       scheduleFn(() => {
-        batchNotifyFn(() => {
-          originalQueue.forEach((callback) => {
-            notifyFn(callback)
-          })
+        originalQueue.forEach((callback) => {
+          notifyFn(callback)
         })
       })
     }
@@ -99,22 +93,6 @@ export function createNotifyManager() {
      */
     setNotifyFunction: (fn: NotifyFunction) => {
       notifyFn = fn
-    },
-    /**
-     * Use this method to set a custom function to batch notifications together into a single tick.
-     * Framework adapters use this to plug in their own batching primitive, so that a single query
-     * update only triggers one re-render instead of one per subscriber.
-     * @param fn - Receives a function that runs a batch of notifications and must call it.
-     * @example
-     * ```ts
-     * import { notifyManager } from '@tanstack/react-query-no-core'
-     * import { batch } from 'solid-js'
-     *
-     * notifyManager.setBatchNotifyFunction(batch)
-     * ```
-     */
-    setBatchNotifyFunction: (fn: BatchNotifyFunction) => {
-      batchNotifyFn = fn
     },
     /**
      * Configures a custom callback that schedules when the next batch runs.

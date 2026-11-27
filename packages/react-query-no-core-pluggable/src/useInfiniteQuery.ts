@@ -1,17 +1,17 @@
 'use client'
-import { InfiniteQueryObserver } from './runtime/index'
+import { InfiniteQueryObserver } from './runtime/infiniteQueryObserver'
 import { useBaseQuery } from './useBaseQuery'
+import type {
+  DefaultError,
+  InfiniteData,
+  QueryKey,
+} from '@tanstack/query-types/bindings'
 import type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
-import type {
-  DefaultError,
-  InfiniteData,
-  QueryClient,
-  QueryKey,
-  QueryObserver,
-} from './runtime/index'
+import type { QueryClient } from './runtime/queryClient'
+import type { QueryObserver } from './runtime/queryObserver'
 import type {
   DefinedUseInfiniteQueryResult,
   UseInfiniteQueryOptions,

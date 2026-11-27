@@ -6,22 +6,24 @@ import type {
   DefinedQueryObserverResult,
   DistributiveOmit,
   InfiniteData,
-  InfiniteQueryExecuteOptions,
-  InfiniteQueryObserverOptions,
   InfiniteQueryObserverPlaceholderResult,
   InfiniteQueryObserverResult,
-  MutateFunction,
-  MutationObserverOptions,
-  MutationObserverResult,
   OmitKeyof,
   Override,
-  QueryExecuteOptions,
   QueryKey,
-  QueryObserverOptions,
   QueryObserverPlaceholderResult,
   QueryObserverResult,
   SkipToken,
-} from './runtime/index'
+} from '@tanstack/query-types/bindings'
+import type {
+  InfiniteQueryExecuteOptions,
+  InfiniteQueryObserverOptions,
+  MutateFunction,
+  MutationObserverOptions,
+  MutationObserverResult,
+  QueryExecuteOptions,
+  QueryObserverOptions,
+} from './runtime/types'
 
 /**
  * {@link UseBaseQueryOptions} with all type parameters set to `any`, useful when the specific types aren't

@@ -5,11 +5,11 @@ import type {
   InitialDataFunction,
   NonUndefinedGuard,
   OmitKeyof,
-  QueryFunction,
   QueryKey,
   QueryKeyWithDataTag,
   SkipToken,
-} from './runtime/index'
+} from '@tanstack/query-types/bindings'
+import type { QueryFunction } from './runtime/types'
 import type { UseQueryOptions } from './types'
 
 /**

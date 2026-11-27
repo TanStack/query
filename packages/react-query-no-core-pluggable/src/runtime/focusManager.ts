@@ -139,4 +139,4 @@ export class FocusManager extends Subscribable<Listener> {
 /**
  * Singleton instance of {@link FocusManager}, used to manage and observe the focus state within TanStack Query.
  */
-export const focusManager = /* @__PURE__ */ new FocusManager()
+export const focusManager = /* #__PURE__ */ new FocusManager()

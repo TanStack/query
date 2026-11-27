@@ -29,3 +29,5 @@ export function App() {
 ```
 
 The original adapter and both experimental adapters share their TypeScript definitions through `@tanstack/query-types`. Each React adapter owns its provider context and each client owns its caches.
+
+React batches subscriber updates. Use `notifyManager.setScheduler` to choose when notifications run, or `setNotifyFunction` to wrap them in `act` during tests. To inspect the queries in a `QueriesObserver`, call `observer.getObservers().map((item) => item.getCurrentQuery())`.

@@ -1,7 +1,9 @@
 import { isServer } from './environmentManager'
 import { focusManager } from './focusManager'
 import { timeoutManager } from './timeoutManager'
-import { isValidTimeout } from './utils'
+import { isValidTimeout, resolveQueryValue } from './utils'
+import type { QueryKey } from '@tanstack/query-types/bindings'
+import type { Query } from './query'
 
 interface PollingTimer {
   query: object
@@ -40,7 +42,7 @@ export function refetchInterval(value: Delay): RefetchInterval<object>
 export function refetchInterval<TQuery extends object>(
   value: Delay | ((query: TQuery) => Delay),
 ): RefetchInterval<TQuery>
-/* @__NO_SIDE_EFFECTS__ */
+/* #__NO_SIDE_EFFECTS__ */
 export function refetchInterval<TQuery extends object>(
   value: Delay | ((query: TQuery) => Delay),
 ): RefetchInterval<TQuery> {
@@ -55,24 +57,22 @@ export function refetchInterval<TQuery extends object>(
  * @param fetch - Refetches the observer's current query.
  * @returns The active timer and its cleanup, when polling is enabled.
  */
-function updatePolling<TQuery extends object>(
-  this: RefetchInterval<TQuery>,
-  observer: PollingObserver<TQuery>,
+function updatePolling<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
+  this: RefetchInterval<Query<TQueryFnData, TError, TData, TQueryKey>>,
+  observer: PollingObserver<Query<TQueryFnData, TError, TData, TQueryKey>>,
   current: PollingTimer | undefined,
   restart: boolean,
   fetch: () => void,
 ): PollingTimer | undefined {
   const query = observer.getCurrentQuery()
-  const { value } = this
-  const delay = typeof value === 'function' ? value(query) : value
+  const delay = resolveQueryValue(this.value, query)
   if (!observer.hasListeners()) return
 
-  const { enabled } = observer.options
   if (
     isServer() ||
     !isValidTimeout(delay) ||
     delay === 0 ||
-    (typeof enabled === 'function' ? enabled(query) : enabled) === false
+    resolveQueryValue(observer.options.enabled, query) === false
   ) {
     current?.stop()
     return

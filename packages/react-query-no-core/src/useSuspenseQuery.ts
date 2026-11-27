@@ -1,8 +1,14 @@
 'use client'
-import { QueryObserver, skipToken } from './runtime'
+import { QueryObserver } from './runtime/queryObserver'
+import { skipToken } from './runtime/utils'
 import { defaultThrowOnError, suspenseQueryPolicy } from './suspense'
 import { useBaseQuery } from './useBaseQuery'
-import type { DefaultError, OmitKeyof, QueryClient, QueryKey } from './runtime'
+import type {
+  DefaultError,
+  OmitKeyof,
+  QueryKey,
+} from '@tanstack/query-types/bindings'
+import type { QueryClient } from './runtime/queryClient'
 import type {
   UseQueryOptions,
   UseQueryResult,

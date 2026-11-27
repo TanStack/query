@@ -10,11 +10,11 @@ import {
 } from './errorBoundaryUtils'
 import { useObserverSnapshot } from './useObserverSnapshot'
 import type {
-  QueryClient,
   QueryKey,
-  QueryObserver,
   QueryObserverResult,
-} from './runtime'
+} from '@tanstack/query-types/bindings'
+import type { QueryClient } from './runtime/queryClient'
+import type { QueryObserver } from './runtime/queryObserver'
 import type { suspenseQueryPolicy } from './suspense'
 import type { UseBaseQueryOptions } from './types'
 

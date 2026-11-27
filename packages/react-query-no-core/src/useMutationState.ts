@@ -1,14 +1,13 @@
 'use client'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
-import { notifyManager, replaceEqualDeep } from './runtime'
-import type {
-  Mutation,
-  MutationCache,
-  MutationFilters,
-  MutationState,
-  QueryClient,
-} from './runtime'
+import { notifyManager } from './runtime/notifyManager'
+import { replaceEqualDeep } from './runtime/utils'
+import type { MutationState } from '@tanstack/query-types/bindings'
+import type { Mutation } from './runtime/mutation'
+import type { MutationCache } from './runtime/mutationCache'
+import type { QueryClient } from './runtime/queryClient'
+import type { MutationFilters } from './runtime/utils'
 
 /**
  * The `useIsMutating` hook returns the `number` of mutations that your application currently has `pending`

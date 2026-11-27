@@ -393,9 +393,9 @@ export class QueryObserver<
 
   /**
    * Records that the given `QueryObserverResult` property was read, so a subsequent update only
-   * notifies this observer if a tracked property actually changed. Normally called indirectly via
-   * {@link QueryObserver#trackResult}'s proxy; exposed directly for adapters that track property
-   * access themselves (e.g. through their own reactivity system) instead of via the proxy.
+   * notifies this observer if a tracked property actually changed. {@link QueryObserver#trackResult}
+   * calls this on property access. `useQueries` tracks the same property across its observers
+   * when computing a combined result.
    * @param key - The name of the property that was read.
    */
   trackProp(key: keyof QueryObserverResult) {
@@ -556,9 +556,10 @@ export class QueryObserver<
   }
 
   #updatePolling(restart = false): void {
-    const option = this.options.refetchInterval
-    const polling =
-      typeof option === 'function' ? option(this.#currentQuery) : option
+    const polling = resolveQueryValue(
+      this.options.refetchInterval,
+      this.#currentQuery,
+    )
     if (polling) {
       this.#polling = polling.update(this, this.#polling, restart, () =>
         this.#executeFetch(),

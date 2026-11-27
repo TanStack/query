@@ -8,7 +8,7 @@ import type {
   QueryKey,
   QueryKeyWithDataTag,
   SkipToken,
-} from './runtime'
+} from '@tanstack/query-types/bindings'
 import type { UseInfiniteQueryOptions } from './types'
 
 /**

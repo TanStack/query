@@ -1,14 +1,16 @@
 'use client'
 import * as React from 'react'
-import { shouldThrowError } from './runtime'
-import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
+import { shouldThrowError } from './runtime/utils'
 import type {
-  DefaultedQueryObserverOptions,
-  Query,
   QueryKey,
   QueryObserverResult,
+} from '@tanstack/query-types/bindings'
+import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
+import type { Query } from './runtime/query'
+import type {
+  DefaultedQueryObserverOptions,
   ThrowOnError,
-} from './runtime'
+} from './runtime/types'
 
 /**
  * Turns off `retryOnMount` for a query that throws its errors (with `suspense` or `throwOnError`),

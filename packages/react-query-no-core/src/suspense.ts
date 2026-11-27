@@ -1,14 +1,14 @@
 import { use } from 'react'
-import { QueryObserver } from './runtime'
-import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
+import { QueryObserver } from './runtime/queryObserver'
 import type {
   DefaultError,
-  DefaultedQueryObserverOptions,
-  Query,
-  QueryClient,
   QueryKey,
   QueryObserverResult,
-} from './runtime'
+} from '@tanstack/query-types/bindings'
+import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
+import type { Query } from './runtime/query'
+import type { QueryClient } from './runtime/queryClient'
+import type { DefaultedQueryObserverOptions } from './runtime/types'
 
 type SuspensePromiseEntry = {
   fetchPromise: Promise<unknown>

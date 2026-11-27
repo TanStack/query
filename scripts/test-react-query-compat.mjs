@@ -15,7 +15,7 @@ import { basename, join, relative, resolve, sep } from 'node:path'
 const adapter = process.cwd()
 const repository = resolve(import.meta.dirname, '..')
 const require = createRequire(import.meta.url)
-const core = join(adapter, 'src/runtime/index.ts')
+const entry = join(adapter, 'src/index.ts')
 const pluggable = basename(adapter) === 'react-query-no-core-pluggable'
 function importPath(from, to) {
   return './' + relative(from, to).split(sep).join('/')
@@ -34,12 +34,22 @@ for (const suite of ['query-core', 'react-query']) {
         : join(adapter, 'src')
     cpSync(join(upstream, 'src/__tests__'), join(source, '__tests__'), {
       recursive: true,
+      // Only query-core exposes the extension points for non-React adapters.
+      filter: (path) =>
+        suite !== 'query-core' || basename(path) !== 'frameworkAdapters',
     })
 
     for (const file of readdirSync(implementation, { withFileTypes: true })) {
       if (!file.isFile() || !/\.tsx?$/.test(file.name)) continue
       const target = importPath(source, join(implementation, file.name))
       writeFileSync(join(source, file.name), `export * from '${target}'\n`)
+    }
+    if (suite === 'query-core') {
+      // Upstream tests use ".." for the public package and "../foo" for internals.
+      writeFileSync(
+        join(source, 'index.ts'),
+        `export * from '${importPath(source, entry)}'\n`,
+      )
     }
 
     const setup = join(repository, 'packages/react-query/test-setup.ts')
@@ -52,7 +62,7 @@ for (const suite of ['query-core', 'react-query']) {
         emitDeclarationOnly: false,
         noEmit: true,
         paths: {
-          '@tanstack/query-core': [core],
+          '@tanstack/query-core': [entry],
           ...(pluggable && {
             '@tanstack/query-test-utils/polling': [
               join(adapter, 'tests/compat-polling.ts'),

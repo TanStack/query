@@ -1,11 +1,12 @@
 'use client'
-import { QueryObserver } from './runtime/index'
+import { QueryObserver } from './runtime/queryObserver'
 import { useBaseQuery } from './useBaseQuery'
+import type { DefaultError, QueryKey } from '@tanstack/query-types/bindings'
 import type {
   DefinedInitialDataOptions,
   UndefinedInitialDataOptions,
 } from './queryOptions'
-import type { DefaultError, QueryClient, QueryKey } from './runtime/index'
+import type { QueryClient } from './runtime/queryClient'
 import type {
   DefinedUseQueryResult,
   UseQueryOptions,

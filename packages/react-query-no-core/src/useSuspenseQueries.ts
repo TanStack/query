@@ -1,16 +1,15 @@
 'use client'
-import { skipToken } from './runtime'
+import { skipToken } from './runtime/utils'
 import { defaultThrowOnError, suspenseQueriesPolicy } from './suspense'
 import { useBaseQueries } from './useQueries'
 import type {
   DefaultError,
   OmitKeyof,
   QueriesPlaceholderDataFunction,
-  QueryClient,
-  QueryFunction,
   QueryKey,
-  ThrowOnError,
-} from './runtime'
+} from '@tanstack/query-types/bindings'
+import type { QueryClient } from './runtime/queryClient'
+import type { QueryFunction, ThrowOnError } from './runtime/types'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
 
 // `placeholderData` functions in useQueries never receive previous query data.

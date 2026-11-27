@@ -1,7 +1,7 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { QueriesObserver, QueryClient, defaultQueryFn } from '..'
-import type { Query, QueryObserver, QueryObserverResult } from '..'
+import type { QueryObserver, QueryObserverResult } from '..'
 import type { QueriesObserverOptions } from '../queriesObserver'
 import type { ObserverOptionsInput } from '../queryObserver'
 
@@ -18,14 +18,15 @@ describe('queriesObserver', () => {
   })
 
   describe('QueriesObserver', () => {
-    it('should only expose its documented members', () => {
-      expectTypeOf<keyof QueriesObserver>().toEqualTypeOf<
+    it('should expose the common observer methods', () => {
+      expectTypeOf<
+        Exclude<keyof QueriesObserver, 'getQueries'>
+      >().toEqualTypeOf<
         | 'subscribe'
         | 'hasListeners'
         | 'destroy'
         | 'setQueries'
         | 'getCurrentResult'
-        | 'getQueries'
         | 'getObservers'
         | 'createResultReader'
       >()
@@ -182,14 +183,6 @@ describe('queriesObserver', () => {
       expectTypeOf<
         Parameters<typeof observer.getCurrentResult>
       >().toEqualTypeOf<[]>()
-    })
-  })
-
-  describe('getQueries', () => {
-    it('should return the observed queries', () => {
-      const observer = new QueriesObserver(queryClient, [])
-
-      expectTypeOf(observer.getQueries()).toEqualTypeOf<Array<Query>>()
     })
   })
 

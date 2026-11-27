@@ -227,15 +227,6 @@ export class QueriesObserver<
   }
 
   /**
-   * Returns the underlying `Query` instances currently being observed, in
-   * the same order as the queries passed to the constructor or `setQueries`.
-   * @returns The observed queries.
-   */
-  getQueries() {
-    return this.#observers.map((observer) => observer.getCurrentQuery())
-  }
-
-  /**
    * Returns the underlying `QueryObserver` instances this observer manages,
    * in the same order as the queries passed to the constructor or
    * `setQueries`.
