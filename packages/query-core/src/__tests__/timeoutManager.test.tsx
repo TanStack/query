@@ -1,10 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import {
-  TimeoutManager,
-  defaultTimeoutProvider,
-  systemSetTimeoutZero,
-  timeoutManager,
-} from '../timeoutManager'
+import { TimeoutManager, timeoutManager } from '../timeoutManager'
 import type { MockInstance } from 'vitest'
 import type { TimeoutCallback, TimeoutProvider } from '../timeoutManager'
 
@@ -109,31 +104,6 @@ describe('timeoutManager', () => {
   describe('globalThis timeoutManager instance', () => {
     it('should be an instance of TimeoutManager', () => {
       expect(timeoutManager).toBeInstanceOf(TimeoutManager)
-    })
-  })
-
-  describe('exported functions', () => {
-    let provider: ReturnType<typeof createMockProvider>
-
-    beforeEach(() => {
-      provider = createMockProvider()
-      timeoutManager.setTimeoutProvider(provider)
-    })
-
-    afterEach(() => {
-      timeoutManager.setTimeoutProvider(defaultTimeoutProvider)
-    })
-
-    describe('systemSetTimeoutZero', () => {
-      it('should use globalThis setTimeout with 0 delay', () => {
-        const spy = vi.spyOn(globalThis, 'setTimeout')
-
-        const callback = vi.fn<TimeoutCallback>()
-        systemSetTimeoutZero(callback)
-
-        expect(spy).toHaveBeenCalledWith(callback, 0)
-        clearTimeout(spy.mock.results[0]?.value)
-      })
     })
   })
 })
