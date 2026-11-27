@@ -1,4 +1,5 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   CancelledError,
@@ -6,7 +7,7 @@ import {
   QueryClient,
   defaultQueryFn,
 } from '..'
-import { infiniteQueryBehavior } from '../infiniteQueryBehavior'
+import { prepareInfiniteFetch } from './infiniteFetch'
 import type {
   InfiniteData,
   InfiniteQueryObserverResult,
@@ -351,7 +352,6 @@ describe('InfiniteQueryBehavior', () => {
         return pageParam
       })
 
-    const behavior = infiniteQueryBehavior<number, Error, number, number>()
     const context = {
       client: queryClient,
       queryKey: key,
@@ -372,7 +372,10 @@ describe('InfiniteQueryBehavior', () => {
       signal: abortController.signal,
     }
 
-    behavior.onFetch(context as any, {} as any)
+    prepareInfiniteFetch<number, Error, number, number>(
+      context as any,
+      {} as any,
+    )
 
     await expect(context.fetchFn()).rejects.toBe(abortController.signal.reason)
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -486,13 +489,13 @@ describe('InfiniteQueryBehavior', () => {
       return String(pageParam)
     }
 
-    await queryClient.infiniteQuery({
+    await cacheOperations(queryClient).infiniteQuery({
       queryKey: key,
       queryFn,
       initialPageParam: null,
       getNextPageParam: () => undefined,
     })
-    await queryClient.infiniteQuery({
+    await cacheOperations(queryClient).infiniteQuery({
       queryKey: key,
       queryFn,
       initialPageParam: 'replacement',

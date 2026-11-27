@@ -21,6 +21,11 @@ const workloads = [
       'Paginated list with bookmarks · useQuery, useMutation, useInfiniteQuery',
   },
   {
+    screen: 'options',
+    title:
+      'Selected and placeholder data, serial bookmarks and cache invalidation',
+  },
+  {
     screen: 'polling',
     title: 'Polling with the four regular and suspense query hooks',
   },
@@ -63,6 +68,11 @@ async function measure(packageName, screen) {
           packageName === pluggable
             ? 'pluggable-interval.js'
             : 'numeric-interval.js',
+        ),
+        '#feature-options': path.join(
+          root,
+          'src',
+          packageName === pluggable ? 'pluggable-options.js' : 'v6-options.js',
         ),
         '#screen': path.join(root, 'src', `${screen}.jsx`),
       },
@@ -122,13 +132,23 @@ async function measure(packageName, screen) {
     }
   }
   if (packageName === pluggable) {
-    const includesPolling = modules.some((id) =>
-      id.endsWith('/runtime/refetchInterval.js'),
-    )
-    if (includesPolling !== (screen === 'polling')) {
-      throw new Error(
-        `Unexpected refetchInterval implementation in ${screen}: included=${includesPolling}`,
+    const features = {
+      refetchInterval: screen === 'polling',
+      infiniteQueryBehavior: screen === 'paginated' || screen === 'polling',
+      select: screen === 'options',
+      placeholderData: screen === 'options',
+      serialScope: screen === 'options',
+      cacheOperations: screen === 'options',
+    }
+    for (const [feature, expected] of Object.entries(features)) {
+      const included = modules.some((id) =>
+        id.endsWith(`/runtime/${feature}.js`),
       )
+      if (included !== expected) {
+        throw new Error(
+          `Unexpected ${feature} implementation in ${screen}: included=${included}`,
+        )
+      }
     }
   }
 
@@ -143,6 +163,77 @@ async function measure(packageName, screen) {
   }
   return sizes
 }
+
+// A combined app cannot tell whether each projection pulls in its sibling,
+// or whether rendering a boundary pulls in paused-mutation restoration.
+async function checkStandaloneExports() {
+  const expected = {
+    select: ['select', 'projectResult'],
+    placeholderData: ['placeholderData', 'projectResult'],
+    serialScope: ['serialScope'],
+    invalidateQueries: ['cacheOperations'],
+    HydrationBoundary: ['infiniteQueryBehavior'],
+    hydrate: ['infiniteQueryBehavior', 'mutation', 'serialScope'],
+  }
+  const features = new Set(Object.values(expected).flat())
+  const entry = path.join(root, 'public-export-probe.js')
+  for (const [name, required] of Object.entries(expected)) {
+    const results = await build({
+      root,
+      configFile: false,
+      logLevel: 'error',
+      plugins: [
+        {
+          name: 'import-one-public-export',
+          resolveId(id) {
+            if (id === entry) return id
+          },
+          load(id) {
+            if (id === entry) return `export { ${name} } from '${pluggable}'`
+          },
+        },
+      ],
+      build: {
+        write: false,
+        lib: { entry, formats: ['es'], fileName: 'probe' },
+        rolldownOptions: {
+          external: ['react', 'react/jsx-runtime'],
+          checks: { moduleLevelDirective: false },
+        },
+      },
+    })
+    const modules = results
+      .flatMap(({ output }) =>
+        output
+          .filter((file) => file.type === 'chunk')
+          .flatMap((chunk) => Object.entries(chunk.modules)),
+      )
+      .filter(([, module]) => module.renderedLength > 0)
+    for (const feature of features) {
+      const included = modules.some(([id]) =>
+        id.endsWith(`/runtime/${feature}.js`),
+      )
+      if (included !== required.includes(feature)) {
+        throw new Error(
+          `Importing ${name} unexpectedly ${included ? 'included' : 'excluded'} ${feature}`,
+        )
+      }
+    }
+    if (name === 'invalidateQueries') {
+      const [, operations] = modules.find(([id]) =>
+        id.endsWith('/runtime/cacheOperations.js'),
+      )
+      if (
+        operations.renderedExports.some(
+          (item) => !['invalidateQueries', 'refetchQueries'].includes(item),
+        )
+      ) {
+        throw new Error('Invalidation included unrelated bulk cache operations')
+      }
+    }
+  }
+}
+await checkStandaloneExports()
 
 const integer = new Intl.NumberFormat('en-US')
 function formatSize(bytes, baselineBytes, isBaseline) {
@@ -217,7 +308,7 @@ for (const { screen, title } of workloads) {
 }
 lines.push(
   '',
-  'Gzip level 9 and Brotli quality 11 are applied to each JavaScript chunk before summing. All workloads use the default client. Only the polling app imports the pluggable refetchInterval helper.',
+  'Gzip level 9 and Brotli quality 11 are applied to each JavaScript chunk before summing. All workloads use the default client. The polling workload imports the interval scheduler. The options workload imports selection, placeholder data, serial scopes and invalidation.',
   '',
 )
 const report = lines.join('\n')

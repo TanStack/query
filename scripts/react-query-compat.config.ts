@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { basename, join, resolve } from 'node:path'
 import { defineConfig } from 'vitest/config'
 import core from '../packages/query-core/vite.config.ts'
@@ -8,20 +9,17 @@ const suite = basename(resolve(process.cwd(), '../..'))
 const isReact = suite === 'react-query'
 
 const base = isReact ? react : core
+const { paths } = JSON.parse(readFileSync('tsconfig.json', 'utf8'))
+  .compilerOptions as { paths: Record<string, [string]> }
 
 export default defineConfig({
   ...base,
   resolve: {
     ...base.resolve,
-    alias: {
-      '@tanstack/query-core': join(adapter, 'src/index.ts'),
-      ...(basename(adapter) === 'react-query-no-core-pluggable' && {
-        '@tanstack/query-test-utils/polling': join(
-          adapter,
-          'tests/compat-polling.ts',
-        ),
-      }),
-    },
+    // Use the same entry points for test execution and type checking.
+    alias: Object.fromEntries(
+      Object.entries(paths).map(([name, [file]]) => [name, file]),
+    ),
   },
   test: {
     ...base.test,

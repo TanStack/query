@@ -1,4 +1,4 @@
-import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import { prepareInfiniteFetch } from './infiniteQueryBehavior'
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
 import { CancelledError, canFetch, createRetryer } from './retryer'
@@ -605,10 +605,13 @@ export class Query<
     addSignalProperty(context)
 
     if (this.#queryType === 'infinite') {
-      const behavior = infiniteQueryBehavior(
-        (this.options as { pages?: number }).pages,
-      ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>
-      behavior.onFetch(context, this as unknown as Query)
+      const prepare = prepareInfiniteFetch as QueryBehavior<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryKey
+      >['onFetch']
+      prepare(context, this as unknown as Query)
     }
 
     // Store state in case the current fetch needs to be reverted

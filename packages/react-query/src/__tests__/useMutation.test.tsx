@@ -1,4 +1,5 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -2314,7 +2315,7 @@ describe('useMutation', () => {
         mutationFn: () =>
           sleep(10).then(() => Promise.reject(new Error('Some error'))),
         onMutate: async (newTodo: string) => {
-          await queryClient.cancelQueries({ queryKey: key })
+          await cacheOperations(queryClient).cancelQueries({ queryKey: key })
           const previousTodos = queryClient.getQueryData<Array<string>>(key)
 
           queryClient.setQueryData<Array<string>>(key, (old) => [
@@ -2351,7 +2352,7 @@ describe('useMutation', () => {
       const { mutate } = useMutation({
         mutationFn: (newTodo: string) => sleep(10).then(() => newTodo),
         onMutate: async (newTodo: string) => {
-          await queryClient.cancelQueries({ queryKey: key })
+          await cacheOperations(queryClient).cancelQueries({ queryKey: key })
           const previousTodos = queryClient.getQueryData<Array<string>>(key)
 
           queryClient.setQueryData<Array<string>>(key, (old) => [
@@ -2610,7 +2611,7 @@ describe('useMutation', () => {
       const { mutate } = useMutation({
         mutationFn: () => sleep(10).then(() => 'mutated'),
         onSuccess: (_data, _variables, _onMutateResult, context) => {
-          context.client.invalidateQueries({ queryKey: key })
+          cacheOperations(context.client).invalidateQueries({ queryKey: key })
         },
       })
 

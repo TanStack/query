@@ -1,4 +1,5 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, QueryObserver, streamedQuery } from '..'
 
@@ -411,7 +412,7 @@ describe('streamedQuery', () => {
 
       const unsubscribe = observer.subscribe(vi.fn())
       await vi.advanceTimersByTimeAsync(50)
-      await queryClient.cancelQueries({ queryKey: key })
+      await cacheOperations(queryClient).cancelQueries({ queryKey: key })
       const cancelledData = queryClient.getQueryData(key)
       expect(cancelledData).toStrictEqual(
         refetchMode === 'append' ? [99, 0] : [99],
@@ -491,7 +492,7 @@ describe('streamedQuery', () => {
     const unsubscribe = observer.subscribe(vi.fn())
     await vi.advanceTimersByTimeAsync(0)
     resolveChunk({ done: false, value: 1 })
-    void queryClient.cancelQueries({ queryKey: key })
+    void cacheOperations(queryClient).cancelQueries({ queryKey: key })
     await vi.advanceTimersByTimeAsync(0)
 
     expect(queryClient.getQueryData(key)).toStrictEqual([99])
@@ -527,7 +528,7 @@ describe('streamedQuery', () => {
       })
 
       const unsubscribe = observer.subscribe(vi.fn())
-      await queryClient.cancelQueries({ queryKey: key })
+      await cacheOperations(queryClient).cancelQueries({ queryKey: key })
       queryClient.setQueryData(key, [100])
       await vi.advanceTimersByTimeAsync(100)
 

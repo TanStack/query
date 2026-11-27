@@ -3,6 +3,7 @@ import type { FetchOptions, QueryState } from './query'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
+  PlaceholderValue,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
@@ -65,14 +66,9 @@ export interface QueryObserverResultContext<
   /** The unselected placeholder or factory error. */
   placeholder?: {
     key: {
-      placeholderData: QueryObserverOptions<
-        TRuntime,
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryData,
-        TQueryKey
-      >['placeholderData']
+      placeholderData:
+        | PlaceholderValue<TRuntime, TQueryData, TError, TQueryKey>
+        | undefined
       structuralSharing: QueryOptions<
         TRuntime,
         TQueryFnData,

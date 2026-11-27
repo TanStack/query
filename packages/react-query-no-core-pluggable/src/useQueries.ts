@@ -17,6 +17,8 @@ import type {
   QueriesPlaceholderDataFunction,
   QueryKey,
 } from '@tanstack/query-types/bindings'
+import type { placeholderData } from './runtime/placeholderData'
+import type { Select } from './runtime/projectionTypes'
 import type { QueryClient } from './runtime/queryClient'
 import type {
   QueryFunction,
@@ -41,7 +43,10 @@ type UseQueryOptionsForUseQueries<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData' | 'subscribed'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?: readonly [
+    typeof placeholderData,
+    TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>,
+  ]
 }
 
 // Avoid TS depth-limit error in case of large array literal
@@ -74,7 +79,7 @@ type GetUseQueryOptionsForUseQueries<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
+                    select?: Select<any, infer TData>
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? UseQueryOptionsForUseQueries<
@@ -123,7 +128,7 @@ type GetUseQueryResult<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
+                    select?: Select<any, infer TData>
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? GetDefinedOrUndefinedQueryResult<
@@ -335,7 +340,7 @@ type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
  * `select` inline still falls back to `unknown` — wrap the spread in `queryOptions` again so the override is
  * resolved before it reaches `useQueries`:
  * ```tsx
- * import { queryOptions, useQueries } from '@tanstack/react-query-no-core-pluggable'
+ * import { queryOptions, select, useQueries } from '@tanstack/react-query-no-core-pluggable'
  *
  * const postOptions = (id: number) =>
  *   queryOptions({
@@ -349,7 +354,7 @@ type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
  *       {
  *         ...postOptions(id),
  *         // ❌ `data` is `unknown` here
- *         select: (data) => data.title,
+ *         select: [select, (data) => data.title],
  *       },
  *     ],
  *   })
@@ -359,7 +364,7 @@ type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
  *       queryOptions({
  *         ...postOptions(id),
  *         // ✅ `data` is `Post`
- *         select: (data) => data.title,
+ *         select: [select, (data) => data.title],
  *       }),
  *     ],
  *   })

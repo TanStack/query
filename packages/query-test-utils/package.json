@@ -24,7 +24,10 @@
       "default": "./src/index.ts"
     },
     "./package.json": "./package.json",
-    "./polling": "./src/polling.ts"
+    "./polling": "./src/polling.ts",
+    "./cacheOperations": "./src/cacheOperations.ts",
+    "./scope": "./src/scope.ts",
+    "./projection": "./src/projection.ts"
   },
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",

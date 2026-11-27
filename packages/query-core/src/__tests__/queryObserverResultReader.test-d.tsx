@@ -1,3 +1,4 @@
+import { selectOption } from '@tanstack/query-test-utils/projection'
 import { describe, expectTypeOf, it } from 'vitest'
 import { InfiniteQueryObserver, QueryClient, QueryObserver } from '..'
 import type {
@@ -23,7 +24,7 @@ describe('result reader types', () => {
     >({
       queryKey: ['value'],
       queryFn: () => 1,
-      select: String,
+      [selectOption]: String,
     })
     const observer = new QueryObserver(client, options)
     const reader = observer.createResultReader(options)
@@ -46,7 +47,7 @@ describe('result reader types', () => {
     > = {
       queryKey: ['value'],
       queryFn: ({ pageParam }) => pageParam,
-      select: (data) => data.pages.join(','),
+      [selectOption]: (data) => data.pages.join(','),
       initialPageParam: 0,
       getNextPageParam: (last) => last + 1,
       queryHash: 'value',

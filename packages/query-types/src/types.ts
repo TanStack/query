@@ -537,6 +537,28 @@ export type ThrowOnError<
       query: QueryOf<TRuntime, TQueryFnData, TError, TQueryData, TQueryKey>,
     ) => boolean)
 
+/** A raw placeholder value or the callback that supplies it for a query. */
+export type PlaceholderValue<
+  TRuntime extends RuntimeBinding,
+  TQueryData,
+  TError,
+  TQueryKey extends QueryKey,
+> =
+  | NonFunctionGuard<TQueryData>
+  | PlaceholderDataFunction<
+      TRuntime,
+      NonFunctionGuard<TQueryData>,
+      TError,
+      NonFunctionGuard<TQueryData>,
+      TQueryKey
+    >
+
+// An adapter can pair an option with its optional runtime implementation.
+type ProjectionOption<TRuntime, TFeature extends string, TValue> =
+  TRuntime extends Record<TFeature, infer TImplementation>
+    ? readonly [feature: TImplementation, value: TValue]
+    : TValue
+
 /**
  * Shared options for default resolution and resolved observer state.
  * @internal
@@ -687,7 +709,11 @@ export interface QueryObserverOptionsBase<
    * changes. To optimize, memoize the function so its reference stays stable across calls.
    * If the selector throws, the observer reports the error and can keep the last valid selection.
    */
-  select?: (data: TQueryData) => TData
+  select?: ProjectionOption<
+    TRuntime,
+    'selectFeature',
+    (data: TQueryData) => TData
+  >
   /**
    * If set to `true`, the query will suspend when `status === 'pending'`
    * and throw errors when `status === 'error'`.
@@ -698,15 +724,11 @@ export interface QueryObserverOptionsBase<
    * If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
    * If the placeholder function throws, the observer reports the error with no data. The query state in the cache is unaffected.
    */
-  placeholderData?:
-    | NonFunctionGuard<TQueryData>
-    | PlaceholderDataFunction<
-        TRuntime,
-        NonFunctionGuard<TQueryData>,
-        TError,
-        NonFunctionGuard<TQueryData>,
-        TQueryKey
-      >
+  placeholderData?: ProjectionOption<
+    TRuntime,
+    'placeholderFeature',
+    PlaceholderValue<TRuntime, TQueryData, TError, TQueryKey>
+  >
 
   /** @internal */
   _optimisticResults?: 'optimistic' | 'isRestoring'
@@ -849,7 +871,11 @@ export interface QueryExecuteOptions<
    * This option can be used to transform or select a part of the data returned by the query function. It affects
    * the value this call resolves with, but does not affect what gets stored in the query cache.
    */
-  select?: (data: TQueryData) => TData
+  select?: ProjectionOption<
+    TRuntime,
+    'selectFeature',
+    (data: TQueryData) => TData
+  >
   /**
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
@@ -2027,7 +2053,9 @@ export interface MutationOptions<
    * Mutations sharing the same `scope.id` run serially, in the order they were started.
    * Without a scope, a mutation runs as soon as it is triggered.
    */
-  scope?: MutationScope
+  scope?: TRuntime extends { mutationScope: infer TScope }
+    ? TScope
+    : MutationScope
 }
 
 /**

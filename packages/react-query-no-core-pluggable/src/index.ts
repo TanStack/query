@@ -11,6 +11,7 @@ export {
   dehydrateQuery,
   hydrate,
 } from './runtime/hydration'
+export { infiniteQuery } from './runtime/infiniteQuery'
 export { InfiniteQueryObserver } from './runtime/infiniteQueryObserver'
 export { MutationCache } from './runtime/mutationCache'
 export type {
@@ -28,7 +29,21 @@ export type {
   QueryCacheConfig,
 } from './runtime/queryCache'
 export { QueryClient } from './runtime/queryClient'
+export {
+  getQueriesData,
+  setQueriesData,
+  removeQueries,
+  resetQueries,
+  cancelQueries,
+  invalidateQueries,
+  refetchQueries,
+} from './runtime/cacheOperations'
 export type { QueryRuntime } from './runtime/runtimeBinding'
+export { serialScope } from './runtime/serialScope'
+export type { SerialScope } from './runtime/serialScope'
+export { select } from './runtime/select'
+export { placeholderData } from './runtime/placeholderData'
+export type { Select, PlaceholderData } from './runtime/projectionTypes'
 export { refetchInterval } from './runtime/refetchInterval'
 export type { RefetchInterval } from './runtime/refetchInterval'
 export { QueryObserver } from './runtime/queryObserver'

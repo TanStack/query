@@ -1,3 +1,4 @@
+import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import {
@@ -124,9 +125,10 @@ describe('QueryFilters', () => {
 
     const queryKey: Key = ['foo', 'bar'] as any as Key
 
-    expectTypeOf(new QueryClient().invalidateQueries).toBeCallableWith({
+    const result = cacheOperations(new QueryClient()).invalidateQueries({
       queryKey,
     })
+    expectTypeOf(result).toEqualTypeOf<Promise<void>>()
   })
 
   it('should error on invalid query keys', () => {

@@ -1,5 +1,9 @@
 import { keepPreviousData, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
+import {
+  placeholderOption,
+  selectOption,
+} from '@tanstack/query-test-utils/projection'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
@@ -26,7 +30,7 @@ describe('useSuspenseInfiniteQuery', () => {
           : ({ pageParam }) => pageParam.toFixed(),
       initialPageParam: 1,
       getNextPageParam: () => undefined,
-      select: (data) => data.pages,
+      [selectOption]: (data) => data.pages,
     })
 
     expectTypeOf(result.data).toEqualTypeOf<Array<string> | undefined>()
@@ -54,7 +58,7 @@ describe('useSuspenseInfiniteQuery', () => {
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
-      placeholderData: keepPreviousData,
+      [placeholderOption]: keepPreviousData,
     })
 
     expectTypeOf(query.data).toEqualTypeOf<InfiniteData<number, unknown>>()
@@ -65,13 +69,13 @@ describe('useSuspenseInfiniteQuery', () => {
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
-      placeholderData: (previousData) => {
+      [placeholderOption]: (previousData) => {
         expectTypeOf(previousData).toEqualTypeOf<
           InfiniteData<number, number> | undefined
         >()
         return previousData ?? { pages: [0], pageParams: [1] }
       },
-      select: (data) => data.pages.length,
+      [selectOption]: (data) => data.pages.length,
     })
 
     expectTypeOf(selected.data).toEqualTypeOf<number>()
@@ -84,7 +88,7 @@ describe('useSuspenseInfiniteQuery', () => {
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        placeholderData: { pages: [5], pageParams: [1] },
+        [placeholderOption]: { pages: [5], pageParams: [1] },
         // @ts-expect-error TS2345
         enabled: true,
       }),

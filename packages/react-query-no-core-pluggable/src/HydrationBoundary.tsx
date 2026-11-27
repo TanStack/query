@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
-import { hydrate } from './runtime/hydration'
+import { hydrateQueries } from './runtime/hydration'
 import type { DehydratedState, OmitKeyof } from '@tanstack/query-types/bindings'
 import type { HydrateOptions } from './runtime/hydration'
 import type { QueryClient } from './runtime/queryClient'
@@ -122,14 +122,14 @@ export const HydrationBoundary = ({
 
       if (newQueries.length > 0) {
         // oxlint-disable-next-line react-hooks-js/refs -- new queries are hydrated during render on purpose, and 'options' is read through a ref so that a new 'options' object does not rerun this memo
-        hydrate(client, { queries: newQueries }, optionsRef.current)
+        hydrateQueries(client, newQueries, optionsRef.current)
       }
       return existingQueries.length > 0 ? existingQueries : undefined
     }, [client, state])
 
   React.useEffect(() => {
     if (hydrationQueue) {
-      hydrate(client, { queries: hydrationQueue }, optionsRef.current)
+      hydrateQueries(client, hydrationQueue, optionsRef.current)
     }
   }, [client, hydrationQueue])
 

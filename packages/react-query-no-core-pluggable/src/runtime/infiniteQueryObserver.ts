@@ -1,4 +1,8 @@
-import { hasNextPage, hasPreviousPage } from './infiniteQueryBehavior'
+import {
+  hasNextPage,
+  hasPreviousPage,
+  infiniteFetchOptions,
+} from './infiniteQueryBehavior'
 import { QueryObserver } from './queryObserver'
 import type * as Shared from '@tanstack/query-types/bindings'
 import type {
@@ -135,8 +139,7 @@ export class InfiniteQueryObserver<
       TPageParam
     >,
   ): void {
-    options._type = 'infinite'
-    super.setOptions(options)
+    super.setOptions(infiniteFetchOptions(options))
   }
 
   /**
@@ -153,10 +156,9 @@ export class InfiniteQueryObserver<
       TPageParam
     >,
   ): QueryObserverResultReader<InfiniteQueryObserverResult<TData, TError>> {
-    return super.createResultReader({
-      ...options,
-      _type: 'infinite',
-    }) as QueryObserverResultReader<InfiniteQueryObserverResult<TData, TError>>
+    return super.createResultReader(
+      infiniteFetchOptions(options),
+    ) as QueryObserverResultReader<InfiniteQueryObserverResult<TData, TError>>
   }
 
   /**

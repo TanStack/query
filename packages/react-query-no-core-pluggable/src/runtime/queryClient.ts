@@ -1,13 +1,11 @@
 import { focusManager } from './focusManager'
 import { MutationCache } from './mutationCache'
-import { notifyManager } from './notifyManager'
 import { onlineManager } from './onlineManager'
 import { QueryCache } from './queryCache'
 import {
   defaultQueryFn,
   functionalUpdate,
   hashKeyByOptions,
-  noop,
   partialMatchKey,
   resolveQueryValue,
   skipToken,
@@ -16,16 +14,11 @@ import type { WithoutSkipToken } from '@tanstack/query-types/bindings'
 import type { QueryState } from './query'
 import type {
   CacheKeyConfig,
-  CancelOptions,
   DefaultError,
   DefaultOptions,
   DefaultedQueryObserverOptions,
   InferDataFromTag,
   InferErrorFromTag,
-  InfiniteData,
-  InfiniteQueryExecuteOptions,
-  InvalidateOptions,
-  InvalidateQueryFilters,
   MutationKey,
   MutationObserverOptions,
   MutationOptions,
@@ -35,9 +28,6 @@ import type {
   QueryKey,
   QueryObserverOptionsBase,
   QueryOptions,
-  RefetchOptions,
-  RefetchQueryFilters,
-  ResetOptions,
   SetDataOptions,
 } from './types'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
@@ -191,7 +181,7 @@ export class QueryClient {
    * Use `useQuery` to create a `QueryObserver` that subscribes to changes.
    * @param queryKey - The query key of the query to read.
    * @returns The cached data for the query, or `undefined` if no query with this key has been observed yet.
-   * @see {@link QueryClient#getQueriesData}
+   * @see {@link getQueriesData}
    */
   getQueryData<
     TQueryFnData = unknown,
@@ -205,38 +195,10 @@ export class QueryClient {
   }
 
   /**
-   * Imperative (non-reactive) way to retrieve the cached data of multiple queries at once.
-   * Only queries matching the given filters are returned; if none match, an empty array is
-   * returned.
-   *
-   * Because the matched queries can hold data of different shapes (e.g. a broad filter can match
-   * queries with unrelated data types), the `TQueryFnData` generic defaults to `unknown` rather
-   * than being inferred. Passing a more specific type is a convenience for call sites that know
-   * every matched query holds the same shape — it is not checked against the actual cache
-   * contents.
-   * @param filters - The filters that select which queries to read.
-   * @returns An array of query key and data pairs. The data is `undefined` for a query with no cached data.
-   * @see {@link QueryClient#getQueryData}
-   * @example
-   * ```ts
-   * const data = queryClient.getQueriesData({ queryKey: ['posts'] })
-   * ```
-   */
-  getQueriesData<
-    TQueryFnData = unknown,
-    TQueryFilters extends QueryFilters<any> = QueryFilters,
-  >(filters: TQueryFilters): Array<[QueryKey, TQueryFnData | undefined]> {
-    return this.#queryCache.findAll(filters).map(({ queryKey, state }) => {
-      const data = state.data as TQueryFnData | undefined
-      return [queryKey, data]
-    })
-  }
-
-  /**
    * Synchronous way to immediately update a query's cached data. If the updater (or the value
    * passed) resolves to `undefined`, the cache is left untouched and no query is created;
    * otherwise, if the query does not exist yet, it will be created. To update multiple queries
-   * at once by partially matching query keys, use {@link QueryClient#setQueriesData} instead.
+   * at once by partially matching query keys, import `setQueriesData`.
    *
    * Updates must be performed immutably: do not mutate `oldData`, or data previously retrieved
    * via {@link QueryClient#getQueryData}, in place.
@@ -290,45 +252,6 @@ export class QueryClient {
   }
 
   /**
-   * Synchronous way to immediately update the cached data of multiple queries at once, using
-   * filters or partial query key matching. Only queries that already exist and match the given
-   * filters are updated; no new cache entries are created. Internally this calls
-   * {@link QueryClient#setQueryData} for each matching query.
-   * @param filters - The filters that select which existing queries to update.
-   * @param updater - Either the new data, or a function that receives each matched query's current
-   * data (which may be `undefined`) and returns the new data.
-   * @param options - Set `updatedAt` to override the timestamp the written data is recorded with.
-   * @returns One `[queryKey, data]` tuple per matched query, in the same shape and with the same
-   * `undefined` case as {@link QueryClient#setQueryData}.
-   * @example
-   * ```ts
-   * queryClient.setQueriesData({ queryKey: ['posts'] }, (oldPosts) =>
-   *   oldPosts ? oldPosts.filter((post) => post.id !== deletedId) : oldPosts,
-   * )
-   * ```
-   */
-  setQueriesData<
-    TQueryFnData,
-    TQueryFilters extends QueryFilters<any> = QueryFilters,
-  >(
-    filters: TQueryFilters,
-    updater: Updater<
-      NoInfer<TQueryFnData> | undefined,
-      NoInfer<TQueryFnData> | undefined
-    >,
-    options?: SetDataOptions,
-  ): Array<[QueryKey, TQueryFnData | undefined]> {
-    return notifyManager.batch(() =>
-      this.#queryCache
-        .findAll(filters)
-        .map(({ queryKey }) => [
-          queryKey,
-          this.setQueryData<TQueryFnData>(queryKey, updater, options),
-        ]),
-    )
-  }
-
-  /**
    * Imperative (non-reactive) way to retrieve an existing query's state. If the query does not
    * exist, `undefined` is returned.
    * @param queryKey - The query key of the query to read.
@@ -352,185 +275,6 @@ export class QueryClient {
     return this.#queryCache.get<TInferredQueryFnData, TInferredError>(
       options.queryHash,
     )?.state
-  }
-
-  /**
-   * Removes queries from the cache that match the given filters. Unlike
-   * {@link QueryClient#invalidateQueries} or {@link QueryClient#refetchQueries}, this removes
-   * matching queries from the cache instead of refetching them. Without filters, every query in
-   * the cache is removed.
-   * @param filters - The filters that select which queries to remove. Without filters, every query
-   * is removed.
-   * @example
-   * ```ts
-   * queryClient.removeQueries({ queryKey: ['posts'], exact: true })
-   * ```
-   */
-  removeQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
-    filters?: QueryFilters<TTaggedQueryKey>,
-  ): void {
-    const queryCache = this.#queryCache
-    notifyManager.batch(() => {
-      queryCache.findAll(filters).forEach((query) => {
-        queryCache.remove(query)
-      })
-    })
-  }
-
-  /**
-   * Resets queries matching the given filters back to their initial state (e.g. any
-   * `initialData`), notifying subscribers rather than removing them. Active queries among the
-   * matched set are then refetched, and the returned promise resolves once that refetch settles.
-   * @param filters - The filters that select which queries to reset. Without filters, every query
-   * is reset.
-   * @param options - Passed to the refetch of the active matched queries, e.g. `cancelRefetch` and
-   * `throwOnError`.
-   * @returns A promise that resolves once the refetch of the active matched queries settles.
-   * @example
-   * ```ts
-   * await queryClient.resetQueries({ queryKey: ['posts'], exact: true })
-   * ```
-   */
-  resetQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
-    filters?: QueryFilters<TTaggedQueryKey>,
-    options?: ResetOptions,
-  ): Promise<void> {
-    const queryCache = this.#queryCache
-
-    return notifyManager.batch(() => {
-      const matched = queryCache.findAll(filters)
-      const queriesToRefetch = new Set(matched)
-      matched.forEach((query) => {
-        query.reset()
-      })
-      return this.refetchQueries(
-        {
-          type: 'active',
-          predicate: (query) => queriesToRefetch.has(query),
-        },
-        options,
-      )
-    })
-  }
-
-  /**
-   * Cancels outgoing fetches for queries matching the given filters. Most useful when performing
-   * optimistic updates, since any outgoing refetch that resolves afterwards would otherwise
-   * overwrite the optimistic update. By default (`revert: true`), a cancelled query's data is
-   * reverted to its state before the outgoing fetch started.
-   *
-   * The returned promise never rejects, even if individual cancellations fail.
-   * @param filters - The filters that select which queries to cancel. Without filters, every query
-   * is cancelled.
-   * @param cancelOptions - Passed to each matched query's cancellation. `revert` defaults to
-   * `true`.
-   * @returns A promise that resolves once every cancellation has settled.
-   * @example
-   * ```ts
-   * await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
-   * ```
-   */
-  cancelQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
-    filters?: QueryFilters<TTaggedQueryKey>,
-    cancelOptions: CancelOptions = {},
-  ): Promise<void> {
-    const defaultedCancelOptions = { revert: true, ...cancelOptions }
-
-    const promises = notifyManager.batch(() =>
-      this.#queryCache
-        .findAll(filters)
-        .map((query) => query.cancel(defaultedCancelOptions)),
-    )
-
-    return Promise.all(promises).then(noop, noop)
-  }
-
-  /**
-   * Marks queries matching the given filters as invalidated. Unlike
-   * {@link QueryClient#removeQueries}, invalidated queries stay in the cache.
-   *
-   * Unless `filters.refetchType` is `'none'`, matching queries are then refetched via
-   * {@link QueryClient#refetchQueries}, using `filters.refetchType` if set, otherwise
-   * `filters.type`, otherwise `'active'`.
-   * @param filters - The filters that select which queries to invalidate, plus `refetchType` to
-   * control which of them to refetch afterwards. Without filters, every query is invalidated.
-   * @param options - Passed to {@link QueryClient#refetchQueries}, e.g. `cancelRefetch` and
-   * `throwOnError`.
-   * @returns A promise that resolves once the refetch settles, or immediately if `refetchType` is
-   * `'none'`.
-   * @example
-   * ```ts
-   * await queryClient.invalidateQueries({ queryKey: ['posts'], refetchType: 'active' })
-   * ```
-   */
-  invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
-    filters?: InvalidateQueryFilters<TTaggedQueryKey>,
-    options: InvalidateOptions = {},
-  ): Promise<void> {
-    return notifyManager.batch(() => {
-      this.#queryCache.findAll(filters).forEach((query) => {
-        query.invalidate()
-      })
-
-      if (filters?.refetchType === 'none') {
-        return Promise.resolve()
-      }
-      return this.refetchQueries(
-        {
-          ...filters,
-          type: filters?.refetchType ?? filters?.type ?? 'active',
-        },
-        options,
-      )
-    })
-  }
-
-  /**
-   * Refetches queries matching the given filters, regardless of whether they are stale. Without
-   * filters, every query in the cache is refetched. Queries that are disabled, or static (only
-   * have observers with a static `staleTime`), are never refetched.
-   *
-   * By default (`cancelRefetch: true`), a currently running fetch is cancelled before the new
-   * one starts. The returned promise does not reject on individual query failures unless
-   * `throwOnError` is `true`.
-   *
-   * Initially paused fetches do not delay the returned promise. Their later errors are handled
-   * even when `throwOnError` is `true`.
-   * @param filters - The filters that select which queries to refetch. Without filters, every query
-   * in the cache is included.
-   * @param options - Set `cancelRefetch` to `false` to keep a running fetch instead of cancelling
-   * it, and `throwOnError` to `true` to reject when a refetch that was not initially paused fails.
-   * @returns A promise that resolves once all matching refetches that were not initially paused
-   * have settled.
-   * @example
-   * ```ts
-   * // refetch all active queries partially matching a query key:
-   * await queryClient.refetchQueries({ queryKey: ['posts'], type: 'active' })
-   * ```
-   */
-  refetchQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
-    filters?: RefetchQueryFilters<TTaggedQueryKey>,
-    options: RefetchOptions = {},
-  ): Promise<void> {
-    const fetchOptions = {
-      ...options,
-      cancelRefetch: options.cancelRefetch ?? true,
-    }
-    const promises = notifyManager.batch(() =>
-      this.#queryCache
-        .findAll(filters)
-        .filter((query) => !query.isDisabled() && !query.isStatic())
-        .map((query) => {
-          let promise = query.fetch(undefined, fetchOptions)
-          const isPaused = query.state.fetchStatus === 'paused'
-          if (!fetchOptions.throwOnError || isPaused) {
-            promise = promise.catch(noop)
-          }
-          return isPaused ? Promise.resolve() : promise
-        }),
-    )
-
-    return Promise.all(promises).then(noop)
   }
 
   /**
@@ -653,102 +397,10 @@ export class QueryClient {
     const select = defaultedOptions.select
 
     if (select) {
-      return select(queryData)
+      return select[1](queryData)
     }
 
     return queryData as unknown as TData
-  }
-
-  /**
-   * Asynchronous method to fetch and cache an infinite query, resolving with an
-   * {@link InfiniteData} object or throwing with the error.
-   *
-   * Requires `initialPageParam` and `getNextPageParam`. Use `pages` to specify how many
-   * pages to fetch. If you omit `pages`, the client fetches up to the number of cached
-   * pages, or one page if the cache has no pages.
-   * If shared infinite query options contain `skipToken` as their `queryFn`, the call skips fetching
-   * and resolves with existing data or `undefined` on a cache miss. Use {@link QueryClient#getQueryData}
-   * to read the cache directly.
-   * @param options - The query to fetch and the options that control which pages to fetch.
-   * @returns A promise that resolves to the {@link InfiniteData}, or to the result of `select` if
-   * provided. It rejects with the error from the fetch or from `select`.
-   * @example
-   * ```ts
-   * try {
-   *   const data = await queryClient.infiniteQuery({
-   *     queryKey,
-   *     queryFn,
-   *     initialPageParam: 0,
-   *     getNextPageParam: (lastPage) => lastPage.nextCursor,
-   *   })
-   *   console.log(data.pages)
-   * } catch (error) {
-   *   console.log(error)
-   * }
-   * ```
-   */
-  infiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = InfiniteData<TQueryFnData>,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: WithoutSkipToken<
-      InfiniteQueryExecuteOptions<
-        TQueryFnData,
-        TError,
-        TData,
-        TQueryKey,
-        TPageParam
-      >
-    >,
-  ): Promise<
-    Array<TData> extends Array<InfiniteData<TQueryFnData>>
-      ? InfiniteData<TQueryFnData, TPageParam>
-      : TData
-  >
-  infiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = InfiniteData<TQueryFnData>,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: InfiniteQueryExecuteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-  ): Promise<
-    | undefined
-    | (Array<TData> extends Array<InfiniteData<TQueryFnData>>
-        ? InfiniteData<TQueryFnData, TPageParam>
-        : TData)
-  >
-  infiniteQuery<
-    TQueryFnData,
-    TError = DefaultError,
-    TData = InfiniteData<TQueryFnData>,
-    TQueryKey extends QueryKey = QueryKey,
-    TPageParam = unknown,
-  >(
-    options: InfiniteQueryExecuteOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >,
-  ): Promise<
-    | undefined
-    | (Array<TData> extends Array<InfiniteData<TQueryFnData>>
-        ? InfiniteData<TQueryFnData, TPageParam>
-        : TData)
-  > {
-    return this.query({ ...options, _type: 'infinite' } as any)
   }
 
   /**

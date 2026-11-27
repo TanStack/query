@@ -1,6 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import {
   refetchInterval,
+  select,
   useInfiniteQuery,
   useQuery,
   useSuspenseInfiniteQuery,
@@ -13,7 +14,7 @@ describe('refetchInterval types', () => {
     const options = { queryKey: ['book'], queryFn: () => 'Dune' }
     useQuery({
       ...options,
-      select: (book) => book.length,
+      select: [select, (book) => book.length],
       refetchInterval: (query) => {
         expectTypeOf(query.state.data).toEqualTypeOf<string | undefined>()
         return refetchInterval(query.state.data ? false : 3000)

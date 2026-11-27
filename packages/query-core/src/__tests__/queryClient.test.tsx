@@ -1,4 +1,7 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
+import { selectOption } from '@tanstack/query-test-utils/projection'
+import { serialScope } from '@tanstack/query-test-utils/scope'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   CancelledError,
@@ -423,7 +426,7 @@ describe('queryClient', () => {
       queryClient.setQueryData(['key', 1], 1)
       queryClient.setQueryData(['key', 2], 2)
 
-      const result = queryClient.setQueriesData<number>(
+      const result = cacheOperations(queryClient).setQueriesData<number>(
         { queryKey: ['key'] },
         (old) => (old ? old + 5 : undefined),
       )
@@ -441,7 +444,7 @@ describe('queryClient', () => {
       queryClient.setQueryData(['key', 2], 2)
       const query1 = queryCache.find({ queryKey: ['key', 1] })!
 
-      const result = queryClient.setQueriesData<number>(
+      const result = cacheOperations(queryClient).setQueriesData<number>(
         { predicate: (query) => query === query1 },
         (old) => old! + 5,
       )
@@ -452,7 +455,7 @@ describe('queryClient', () => {
     })
 
     it('should not update non existing queries', () => {
-      const result = queryClient.setQueriesData<string>(
+      const result = cacheOperations(queryClient).setQueriesData<string>(
         { queryKey: ['key'] },
         'data',
       )
@@ -634,7 +637,7 @@ describe('queryClient', () => {
         pageParams: [0],
       })
       await expect(
-        queryClient.infiniteQuery({
+        cacheOperations(queryClient).infiniteQuery({
           queryKey: [key, 'id'],
           queryFn,
           staleTime: 'static',
@@ -652,7 +655,7 @@ describe('queryClient', () => {
       )
 
       await expect(
-        queryClient.infiniteQuery({
+        cacheOperations(queryClient).infiniteQuery({
           queryKey: [key, 'id'],
           queryFn,
           staleTime: 'static',
@@ -671,7 +674,9 @@ describe('queryClient', () => {
       queryClient.setQueryData([key1, 1], 1)
       queryClient.setQueryData([key1, 2], 2)
       queryClient.setQueryData([key2, 2], 2)
-      expect(queryClient.getQueriesData({ queryKey: [key1] })).toStrictEqual([
+      expect(
+        cacheOperations(queryClient).getQueriesData({ queryKey: [key1] }),
+      ).toStrictEqual([
         [[key1, 1], 1],
         [[key1, 2], 2],
       ])
@@ -679,7 +684,9 @@ describe('queryClient', () => {
 
     it('should return empty array if queries are not found', () => {
       const key = createKey()
-      expect(queryClient.getQueriesData({ queryKey: key })).toStrictEqual([])
+      expect(
+        cacheOperations(queryClient).getQueriesData({ queryKey: key }),
+      ).toStrictEqual([])
     })
 
     it('should accept query filters', () => {
@@ -687,7 +694,7 @@ describe('queryClient', () => {
       queryClient.setQueryData(['key', 2], 2)
       const query1 = queryCache.find({ queryKey: ['key', 1] })!
 
-      const result = queryClient.getQueriesData({
+      const result = cacheOperations(queryClient).getQueriesData({
         predicate: (query) => query === query1,
       })
 
@@ -797,7 +804,7 @@ describe('queryClient', () => {
         // @ts-expect-error enabled is not supported for imperative queries
         enabled: false,
         staleTime: 0,
-        select: (data) => `${data}-selected`,
+        [selectOption]: (data) => `${data}-selected`,
       })
       expect(result).toBe('fetched-data-selected')
       expect(queryFn).toHaveBeenCalledTimes(1)
@@ -832,7 +839,7 @@ describe('queryClient', () => {
         queryClient.query({
           queryKey: key,
           queryFn: skipToken,
-          select,
+          [selectOption]: select,
           initialData,
         }),
       ).resolves.toBeUndefined()
@@ -850,7 +857,7 @@ describe('queryClient', () => {
       const result = await queryClient.query({
         queryKey: key,
         queryFn: skipToken,
-        select: (data: unknown) => (data as string).length,
+        [selectOption]: (data: unknown) => (data as string).length,
       })
       expect(result).toBe('cached-data'.length)
     })
@@ -921,7 +928,7 @@ describe('queryClient', () => {
       expect(first.data).toBe('data')
       expect(fetchFn).toHaveBeenCalledTimes(1)
 
-      await queryClient.invalidateQueries({
+      await cacheOperations(queryClient).invalidateQueries({
         queryKey: key,
         refetchType: 'none',
       })
@@ -1101,7 +1108,7 @@ describe('queryClient', () => {
         queryKey: key,
         queryFn,
         staleTime: Infinity,
-        select: (data) => `${data}-selected`,
+        [selectOption]: (data) => `${data}-selected`,
       })
       expect(result).toBe('cached-data-selected')
       expect(queryFn).not.toHaveBeenCalled()
@@ -1116,7 +1123,7 @@ describe('queryClient', () => {
       const result = await queryClient.query({
         queryKey: key,
         queryFn,
-        select: (data) => data.value.toUpperCase(),
+        [selectOption]: (data) => data.value.toUpperCase(),
       })
       expect(result).toBe('FETCHED-DATA')
       expect(queryFn).toHaveBeenCalledTimes(1)
@@ -1138,7 +1145,7 @@ describe('queryClient', () => {
         Promise.resolve(data.pages[0])
 
       await expect(
-        queryClient.infiniteQuery<
+        cacheOperations(queryClient).infiniteQuery<
           StrictData,
           any,
           StrictData,
@@ -1155,7 +1162,7 @@ describe('queryClient', () => {
 
     it('should return infinite query data', async () => {
       const key = createKey()
-      const result = await queryClient.infiniteQuery({
+      const result = await cacheOperations(queryClient).infiniteQuery({
         queryKey: key,
         getNextPageParam: () => undefined,
         initialPageParam: 10,
@@ -1179,7 +1186,7 @@ describe('queryClient', () => {
       >(({ pageParam }: { pageParam: number }) => Promise.resolve(pageParam))
 
       await expect(
-        queryClient.infiniteQuery({
+        cacheOperations(queryClient).infiniteQuery({
           queryKey: key,
           queryFn,
           getNextPageParam: () => undefined,
@@ -1205,14 +1212,14 @@ describe('queryClient', () => {
         pageParams: [0],
       })
 
-      const result = await queryClient.infiniteQuery({
+      const result = await cacheOperations(queryClient).infiniteQuery({
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
         initialPageParam: 0,
         // @ts-expect-error enabled is not supported for imperative queries
         enabled: false,
-        select: (data) => data.pages.map((page) => `${page}-selected`),
+        [selectOption]: (data) => data.pages.map((page) => `${page}-selected`),
       })
       expect(result).toStrictEqual(["'fetched-0-selected"])
       expect(queryFn).toHaveBeenCalledTimes(1)
@@ -1226,7 +1233,7 @@ describe('queryClient', () => {
         pageParams: [0],
       })
 
-      const result = await queryClient.infiniteQuery({
+      const result = await cacheOperations(queryClient).infiniteQuery({
         queryKey: key,
         queryFn: skipToken,
         getNextPageParam: () => undefined,
@@ -1245,12 +1252,12 @@ describe('queryClient', () => {
       )
 
       await expect(
-        queryClient.infiniteQuery({
+        cacheOperations(queryClient).infiniteQuery({
           queryKey: key,
           queryFn: skipToken,
           getNextPageParam: () => undefined,
           initialPageParam: 0,
-          select,
+          [selectOption]: select,
         }),
       ).resolves.toBeUndefined()
 
@@ -1289,7 +1296,7 @@ describe('queryClient', () => {
         return query.state.data?.pages[0]?.staleTime ?? 0
       }
 
-      const result = await queryClient.infiniteQuery({
+      const result = await cacheOperations(queryClient).infiniteQuery({
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
@@ -1312,7 +1319,7 @@ describe('queryClient', () => {
       >(({ pageParam }: { pageParam: number }) =>
         Promise.resolve({ value: `fetched-${String(pageParam)}` }),
       )
-      const first = await queryClient.infiniteQuery({
+      const first = await cacheOperations(queryClient).infiniteQuery({
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
@@ -1325,12 +1332,12 @@ describe('queryClient', () => {
       })
       expect(queryFn).toHaveBeenCalledTimes(1)
 
-      await queryClient.invalidateQueries({
+      await cacheOperations(queryClient).invalidateQueries({
         queryKey: key,
         refetchType: 'none',
       })
 
-      const second = await queryClient.infiniteQuery({
+      const second = await cacheOperations(queryClient).infiniteQuery({
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
@@ -1344,12 +1351,12 @@ describe('queryClient', () => {
     it('should apply select to infinite query data', async () => {
       const key = createKey()
 
-      const result = await queryClient.infiniteQuery({
+      const result = await cacheOperations(queryClient).infiniteQuery({
         queryKey: key,
         getNextPageParam: () => undefined,
         initialPageParam: 10,
         queryFn: ({ pageParam }) => Number(pageParam),
-        select: (data) => data.pages.map((page) => page * 2),
+        [selectOption]: (data) => data.pages.map((page) => page * 2),
       })
       expect(result).toStrictEqual([20])
     })
@@ -1364,7 +1371,7 @@ describe('queryClient', () => {
       const fetchFn: QueryFunction<StrictData, StrictQueryKey, number> = () =>
         Promise.resolve('data')
 
-      await queryClient
+      await cacheOperations(queryClient)
         .infiniteQuery<StrictData, any, StrictData, StrictQueryKey, number>({
           queryKey: key,
           queryFn: fetchFn,
@@ -1384,7 +1391,7 @@ describe('queryClient', () => {
     it('should return infinite query data', async () => {
       const key = createKey()
 
-      await queryClient
+      await cacheOperations(queryClient)
         .infiniteQuery({
           queryKey: key,
           queryFn: ({ pageParam }) => Number(pageParam),
@@ -1404,7 +1411,7 @@ describe('queryClient', () => {
     it('should prefetch multiple pages', async () => {
       const key = createKey()
 
-      await queryClient
+      await cacheOperations(queryClient)
         .infiniteQuery({
           queryKey: key,
           queryFn: ({ pageParam }) => String(pageParam),
@@ -1427,7 +1434,7 @@ describe('queryClient', () => {
       const key = createKey()
       let count = 0
 
-      await queryClient
+      await cacheOperations(queryClient)
         .infiniteQuery({
           queryKey: key,
           queryFn: ({ pageParam }) => String(pageParam),
@@ -1516,7 +1523,10 @@ describe('queryClient', () => {
 
       // check the error doesn't occur
       expect(() =>
-        queryClient.removeQueries({ queryKey: key, exact: true }),
+        cacheOperations(queryClient).removeQueries({
+          queryKey: key,
+          exact: true,
+        }),
       ).not.toThrow()
 
       // check query was successful removed
@@ -1535,7 +1545,7 @@ describe('queryClient', () => {
       })
       await vi.advanceTimersByTimeAsync(10)
 
-      await queryClient.cancelQueries()
+      await cacheOperations(queryClient).cancelQueries()
 
       // with previous data present, imperative fetch should resolve to that data after cancel
       await expect(pending).resolves.toBe('data')
@@ -1560,7 +1570,10 @@ describe('queryClient', () => {
         })
         .catch(noop)
       await vi.advanceTimersByTimeAsync(10)
-      await queryClient.cancelQueries({ queryKey: key1 }, { revert: false })
+      await cacheOperations(queryClient).cancelQueries(
+        { queryKey: key1 },
+        { revert: false },
+      )
       const state1 = queryClient.getQueryState(key1)
       expect(state1).toMatchObject({
         status: 'error',
@@ -1576,7 +1589,7 @@ describe('queryClient', () => {
       })
       await vi.advanceTimersByTimeAsync(10)
 
-      await queryClient.cancelQueries({ queryKey: key })
+      await cacheOperations(queryClient).cancelQueries({ queryKey: key })
 
       // we have to reject here because we can't resolve with `undefined`
       // the alternative would be a never-ending promise
@@ -1605,7 +1618,7 @@ describe('queryClient', () => {
         enabled: false,
       })
       observer1.subscribe(() => undefined)
-      await queryClient.refetchQueries()
+      await cacheOperations(queryClient).refetchQueries()
       observer1.destroy()
       expect(queryFn).toHaveBeenCalledTimes(1)
     })
@@ -1628,7 +1641,7 @@ describe('queryClient', () => {
       })
       observer1.subscribe(() => undefined)
       observer2.subscribe(() => undefined)
-      await queryClient.refetchQueries()
+      await cacheOperations(queryClient).refetchQueries()
       observer1.destroy()
       observer2.destroy()
       expect(queryFn).toHaveBeenCalledTimes(2)
@@ -1659,7 +1672,7 @@ describe('queryClient', () => {
       })
       observer1.subscribe(() => undefined)
       observer2.subscribe(() => undefined)
-      await queryClient.refetchQueries()
+      await cacheOperations(queryClient).refetchQueries()
       observer1.destroy()
       observer2.destroy()
       expect(queryFn1).toHaveBeenCalledTimes(2)
@@ -1683,7 +1696,10 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      await queryClient.refetchQueries({ type: 'active', stale: false })
+      await cacheOperations(queryClient).refetchQueries({
+        type: 'active',
+        stale: false,
+      })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(1)
@@ -1705,8 +1721,8 @@ describe('queryClient', () => {
         queryFn: queryFn1,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      queryClient.invalidateQueries({ queryKey: key1 })
-      await queryClient.refetchQueries({ stale: true })
+      cacheOperations(queryClient).invalidateQueries({ queryKey: key1 })
+      await cacheOperations(queryClient).refetchQueries({ stale: true })
       unsubscribe()
       // query, observer mount, invalidation (cancels observer mount) and refetch
       expect(queryFn1).toHaveBeenCalledTimes(4)
@@ -1724,13 +1740,13 @@ describe('queryClient', () => {
         .mockReturnValue('data2')
       await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
       await queryClient.query({ queryKey: key2, queryFn: queryFn2 })
-      queryClient.invalidateQueries({ queryKey: key1 })
+      cacheOperations(queryClient).invalidateQueries({ queryKey: key1 })
       const observer = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      await queryClient.refetchQueries(
+      await cacheOperations(queryClient).refetchQueries(
         { type: 'active', stale: true },
         { cancelRefetch: false },
       )
@@ -1739,7 +1755,7 @@ describe('queryClient', () => {
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
 
-    it('should be able to refetch all active and inactive queries (queryClient.refetchQueries()', async () => {
+    it('should be able to refetch all active and inactive queries (cacheOperations(queryClient).refetchQueries()', async () => {
       const key1 = createKey()
       const key2 = createKey()
       const queryFn1 = vi
@@ -1756,13 +1772,13 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      await queryClient.refetchQueries()
+      await cacheOperations(queryClient).refetchQueries()
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(2)
     })
 
-    it('should be able to refetch all active and inactive queries (queryClient.refetchQueries({ type: "all" }))', async () => {
+    it('should be able to refetch all active and inactive queries (cacheOperations(queryClient).refetchQueries({ type: "all" }))', async () => {
       const key1 = createKey()
       const key2 = createKey()
       const queryFn1 = vi
@@ -1779,7 +1795,7 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      await queryClient.refetchQueries({ type: 'all' })
+      await cacheOperations(queryClient).refetchQueries({ type: 'all' })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(2)
@@ -1802,7 +1818,7 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      await queryClient.refetchQueries({ type: 'active' })
+      await cacheOperations(queryClient).refetchQueries({ type: 'active' })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(1)
@@ -1825,7 +1841,7 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      await queryClient.refetchQueries({ type: 'inactive' })
+      await cacheOperations(queryClient).refetchQueries({ type: 'inactive' })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(1)
       expect(queryFn2).toHaveBeenCalledTimes(2)
@@ -1843,7 +1859,7 @@ describe('queryClient', () => {
       } catch {}
       let error: any
       try {
-        await queryClient.refetchQueries(
+        await cacheOperations(queryClient).refetchQueries(
           { queryKey: key1 },
           { throwOnError: true },
         )
@@ -1861,7 +1877,7 @@ describe('queryClient', () => {
       await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
       mockOnlineManagerIsOnline(false)
 
-      await queryClient.refetchQueries({ queryKey: key1 })
+      await cacheOperations(queryClient).refetchQueries({ queryKey: key1 })
 
       // if we reach this point, the test succeeds because the Promise was resolved immediately
       expect(queryFn1).toHaveBeenCalledTimes(1)
@@ -1880,7 +1896,7 @@ describe('queryClient', () => {
       await queryClient.query({ queryKey: key1, queryFn: () => 'data1' })
       mockOnlineManagerIsOnline(false)
 
-      await queryClient.refetchQueries(
+      await cacheOperations(queryClient).refetchQueries(
         { queryKey: key1 },
         { throwOnError: true },
       )
@@ -1901,7 +1917,7 @@ describe('queryClient', () => {
       await queryClient.query({ queryKey: key1, queryFn: queryFn1 })
       mockOnlineManagerIsOnline(false)
 
-      await queryClient.refetchQueries({ queryKey: key1 })
+      await cacheOperations(queryClient).refetchQueries({ queryKey: key1 })
 
       // initial fetch + refetch (even though we are offline)
       expect(queryFn1).toHaveBeenCalledTimes(2)
@@ -1919,7 +1935,7 @@ describe('queryClient', () => {
         staleTime: 'static',
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      await queryClient.refetchQueries()
+      await cacheOperations(queryClient).refetchQueries()
       expect(queryFn).toHaveBeenCalledTimes(1)
 
       unsubscribe()
@@ -1944,7 +1960,7 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      queryClient.invalidateQueries({ queryKey: key1 })
+      cacheOperations(queryClient).invalidateQueries({ queryKey: key1 })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(1)
@@ -1968,7 +1984,7 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      queryClient.invalidateQueries({ queryKey: key1 })
+      cacheOperations(queryClient).invalidateQueries({ queryKey: key1 })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(1)
       expect(queryFn2).toHaveBeenCalledTimes(1)
@@ -1991,7 +2007,7 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      queryClient.invalidateQueries({
+      cacheOperations(queryClient).invalidateQueries({
         queryKey: key1,
         refetchType: 'none',
       })
@@ -2020,7 +2036,7 @@ describe('queryClient', () => {
       const unsubscribe = observer.subscribe(() => undefined)
       unsubscribe()
 
-      await queryClient.invalidateQueries({
+      await cacheOperations(queryClient).invalidateQueries({
         queryKey: key1,
         refetchType: 'inactive',
       })
@@ -2045,7 +2061,7 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      queryClient.invalidateQueries({
+      cacheOperations(queryClient).invalidateQueries({
         refetchType: 'all',
       })
       unsubscribe()
@@ -2065,7 +2081,7 @@ describe('queryClient', () => {
       })
       const unsubscribe = observer.subscribe(() => undefined)
       unsubscribe()
-      await queryClient.invalidateQueries({
+      await cacheOperations(queryClient).invalidateQueries({
         refetchType: 'all',
       })
       expect(queryFn).toHaveBeenCalledTimes(0)
@@ -2085,7 +2101,7 @@ describe('queryClient', () => {
       unsubscribe()
       expect(queryClient.getQueryState(key)?.dataUpdateCount).toBe(1)
 
-      await queryClient.invalidateQueries({
+      await cacheOperations(queryClient).invalidateQueries({
         refetchType: 'all',
       })
       expect(queryClient.getQueryState(key)?.dataUpdateCount).toBe(1)
@@ -2107,7 +2123,7 @@ describe('queryClient', () => {
       })
       observer.subscribe(() => undefined)
 
-      queryClient.refetchQueries()
+      cacheOperations(queryClient).refetchQueries()
       await vi.advanceTimersByTimeAsync(10)
       observer.destroy()
       expect(abortFn).toHaveBeenCalledTimes(1)
@@ -2131,7 +2147,9 @@ describe('queryClient', () => {
       })
       observer.subscribe(() => undefined)
 
-      queryClient.refetchQueries(undefined, { cancelRefetch: false })
+      cacheOperations(queryClient).refetchQueries(undefined, {
+        cancelRefetch: false,
+      })
       await vi.advanceTimersByTimeAsync(10)
       observer.destroy()
       expect(abortFn).toHaveBeenCalledTimes(0)
@@ -2155,7 +2173,7 @@ describe('queryClient', () => {
       expect(queryFn).toHaveBeenCalledTimes(1)
       expect(queryClient.getQueryState(key)?.status).toBe('error')
 
-      await queryClient.invalidateQueries({ queryKey: key })
+      await cacheOperations(queryClient).invalidateQueries({ queryKey: key })
 
       expect(queryFn).toHaveBeenCalledTimes(2)
       expect(queryClient.getQueryData(key)).toBe('data')
@@ -2174,7 +2192,7 @@ describe('queryClient', () => {
         staleTime: 'static',
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      await queryClient.invalidateQueries()
+      await cacheOperations(queryClient).invalidateQueries()
       expect(queryFn).toHaveBeenCalledTimes(1)
 
       unsubscribe()
@@ -2195,7 +2213,7 @@ describe('queryClient', () => {
       const unsubscribe = observer.subscribe(noop)
       expect(queryFn).toHaveBeenCalledTimes(1)
 
-      await queryClient.resetQueries({ queryKey: key })
+      await cacheOperations(queryClient).resetQueries({ queryKey: key })
 
       expect(queryFn).toHaveBeenCalledTimes(2)
       expect(queryClient.getQueryData(key)).toBe('data')
@@ -2214,7 +2232,7 @@ describe('queryClient', () => {
       const unsubscribe = observer.subscribe(noop)
       queryClient.setQueryData(key, 2)
 
-      await queryClient.resetQueries({ queryKey: key })
+      await cacheOperations(queryClient).resetQueries({ queryKey: key })
 
       expect(queryFn).not.toHaveBeenCalled()
       expect(queryClient.getQueryData(key)).toBe(0)
@@ -2232,7 +2250,7 @@ describe('queryClient', () => {
 
       queryCache.subscribe(callback)
 
-      queryClient.resetQueries({ queryKey: key })
+      cacheOperations(queryClient).resetQueries({ queryKey: key })
 
       const query = queryCache.find({ queryKey: key })
       expect(callback).toHaveBeenNthCalledWith(
@@ -2256,7 +2274,7 @@ describe('queryClient', () => {
       expect(state?.data).toBe('data')
       expect(state?.status).toBe('success')
 
-      queryClient.resetQueries({ queryKey: key })
+      cacheOperations(queryClient).resetQueries({ queryKey: key })
 
       state = queryClient.getQueryState(key)
 
@@ -2279,7 +2297,7 @@ describe('queryClient', () => {
       let state = queryClient.getQueryState(key)
       expect(state?.data).toBe('data')
 
-      queryClient.resetQueries({ queryKey: key })
+      cacheOperations(queryClient).resetQueries({ queryKey: key })
 
       state = queryClient.getQueryState(key)
 
@@ -2309,7 +2327,7 @@ describe('queryClient', () => {
       })
       const unsubscribe = observer.subscribe(() => undefined)
 
-      await queryClient.resetQueries({
+      await cacheOperations(queryClient).resetQueries({
         predicate: (query) => query.state.status === 'error',
       })
       expect(queryFn).toHaveBeenCalledTimes(2)
@@ -2346,7 +2364,7 @@ describe('queryClient', () => {
       observer1.subscribe(() => undefined)
       observer2.subscribe(() => undefined)
       observer3.subscribe(() => (didSkipTokenRun = true))
-      await queryClient.resetQueries()
+      await cacheOperations(queryClient).resetQueries()
       observer3.destroy()
       observer2.destroy()
       observer1.destroy()
@@ -2487,9 +2505,7 @@ describe('queryClient', () => {
       const orders: Array<string> = []
 
       const observer1 = new MutationObserver(queryClient, {
-        scope: {
-          id: 'scope',
-        },
+        scope: serialScope('scope'),
         mutationFn: async () => {
           orders.push('1start')
           await sleep(50)
@@ -2499,9 +2515,7 @@ describe('queryClient', () => {
       })
 
       const observer2 = new MutationObserver(queryClient, {
-        scope: {
-          id: 'scope',
-        },
+        scope: serialScope('scope'),
         mutationFn: async () => {
           orders.push('2start')
           await sleep(20)
@@ -2621,9 +2635,7 @@ describe('queryClient', () => {
       void observer.mutate()
 
       const observer2 = new MutationObserver(queryClient, {
-        scope: {
-          id: 'scope',
-        },
+        scope: serialScope('scope'),
         mutationFn: async () => {
           results.push('mutation2-start')
           await sleep(50)
@@ -2635,9 +2647,7 @@ describe('queryClient', () => {
       void observer2.mutate()
 
       const observer3 = new MutationObserver(queryClient, {
-        scope: {
-          id: 'scope',
-        },
+        scope: serialScope('scope'),
         mutationFn: async () => {
           results.push('mutation3-start')
           await sleep(50)

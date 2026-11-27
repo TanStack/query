@@ -98,7 +98,8 @@ export class Mutation<
     this.#observers = []
     this.state = config.state || getDefaultState()
 
-    this.setOptions(config.options)
+    this.options = config.options
+    this.updateGcTime(config.options.gcTime)
     this.scheduleGc()
   }
 
@@ -110,9 +111,10 @@ export class Mutation<
   setOptions(
     options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
   ): void {
-    this.options = options
-
-    this.updateGcTime(this.options.gcTime)
+    // An observer may change options while its previous mutation is still queued.
+    const scope = this.options.scope
+    this.options = options.scope === scope ? options : { ...options, scope }
+    this.updateGcTime(options.gcTime)
   }
 
   /**

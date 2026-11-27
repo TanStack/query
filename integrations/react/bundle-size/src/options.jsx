@@ -1,0 +1,67 @@
+import * as React from 'react'
+import { useMutation, useQuery, useQueryClient } from '#adapter'
+import {
+  bookmarkScope,
+  previousPage,
+  refreshBookmarks,
+  selectTitles,
+} from '#feature-options'
+import { fetchBooks } from './books.js'
+
+function savedBooks() {
+  return JSON.parse(localStorage.getItem('bookmarks') ?? '[]')
+}
+
+export function ReadingList() {
+  const client = useQueryClient()
+  const [page, setPage] = React.useState(1)
+  const [events, setEvents] = React.useState([])
+  const books = useQuery({
+    queryKey: ['books', page],
+    queryFn: ({ signal }) => fetchBooks(page, signal),
+    select: selectTitles,
+    placeholderData: previousPage,
+  })
+  const saved = useQuery({ queryKey: ['bookmarks'], queryFn: savedBooks })
+  const bookmark = useMutation({
+    scope: bookmarkScope,
+    mutationFn: async (title) => {
+      setEvents((items) => [...items, `Saving ${title}`])
+      await Promise.resolve()
+      localStorage.setItem(
+        'bookmarks',
+        JSON.stringify([...savedBooks(), title]),
+      )
+      setEvents((items) => [...items, `Saved ${title}`])
+    },
+    onSuccess: () => refreshBookmarks(client),
+  })
+  if (books.isPending) return <p>Loading books…</p>
+  if (books.isError) return <p role="alert">{books.error.message}</p>
+  return (
+    <>
+      <ul>
+        {books.data.map((title) => (
+          <li key={title}>{title}</li>
+        ))}
+      </ul>
+      {books.isPlaceholderData && (
+        <p role="status">Showing the previous page</p>
+      )}
+      <button disabled={page === 2} onClick={() => setPage(2)}>
+        Next page
+      </button>
+      <button
+        onClick={() => books.data.forEach((title) => bookmark.mutate(title))}
+      >
+        Bookmark this page
+      </button>
+      <p>Bookmarks: {saved.data?.join(', ')}</p>
+      <ol aria-label="Bookmark activity">
+        {events.map((event, index) => (
+          <li key={index}>{event}</li>
+        ))}
+      </ol>
+    </>
+  )
+}

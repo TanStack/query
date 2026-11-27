@@ -1,4 +1,3 @@
-import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
 import { CancelledError, canFetch, createRetryer } from './retryer'
@@ -17,6 +16,7 @@ import type {
   QueryAction,
   QueryState,
 } from '@tanstack/query-types/bindings'
+import type { prepareInfiniteFetch } from './infiniteQueryBehavior'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type { QueryObserver } from './queryObserver'
@@ -86,7 +86,7 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
-  #queryType?: 'infinite'
+  #prepareInfiniteFetch?: typeof prepareInfiniteFetch
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
@@ -124,10 +124,10 @@ export class Query<
   /**
    * `'infinite'` for an infinite query, otherwise `undefined`.
    * @internal
-   * @returns The type of the query, set from the `_type` option (e.g. `'infinite'`).
+   * @returns The type of the query, determined by its page fetcher.
    */
-  get queryType() {
-    return this.#queryType
+  get queryType(): 'infinite' | undefined {
+    return this.#prepareInfiniteFetch ? 'infinite' : undefined
   }
 
   /**
@@ -150,9 +150,10 @@ export class Query<
   ): void {
     this.options = { ...this.#defaultOptions, ...options }
 
-    if (options?._type) {
-      this.#queryType = options._type
-    }
+    const internalOptions = options as
+      | { _prepareInfiniteFetch?: typeof prepareInfiniteFetch }
+      | undefined
+    this.#prepareInfiniteFetch ??= internalOptions?._prepareInfiniteFetch
 
     this.updateGcTime(this.options.gcTime)
 
@@ -604,12 +605,10 @@ export class Query<
     }
     addSignalProperty(context)
 
-    if (this.#queryType === 'infinite') {
-      const behavior = infiniteQueryBehavior(
-        (this.options as { pages?: number }).pages,
-      ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>
-      behavior.onFetch(context, this as unknown as Query)
-    }
+    const prepare = this.#prepareInfiniteFetch as
+      | QueryBehavior<TQueryFnData, TError, TData, TQueryKey>['onFetch']
+      | undefined
+    prepare?.(context, this as unknown as Query)
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state

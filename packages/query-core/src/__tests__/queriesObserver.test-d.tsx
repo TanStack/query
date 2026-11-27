@@ -1,4 +1,5 @@
 import { createKey } from '@tanstack/query-test-utils'
+import { selectOption } from '@tanstack/query-test-utils/projection'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { QueriesObserver, QueryClient, defaultQueryFn } from '..'
 import type { QueryObserver, QueryObserverResult } from '..'
@@ -96,7 +97,7 @@ describe('queriesObserver', () => {
     it('should reject an option it does not declare', () => {
       new QueriesObserver(queryClient, [], {
         // @ts-expect-error combine is the only option
-        select: (results: Array<QueryObserverResult>) => results,
+        [selectOption]: (results: Array<QueryObserverResult>) => results,
       })
 
       expectTypeOf<

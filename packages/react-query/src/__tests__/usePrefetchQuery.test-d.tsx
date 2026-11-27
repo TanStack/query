@@ -1,5 +1,6 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { refetchInterval } from '@tanstack/query-test-utils/polling'
+import { selectOption } from '@tanstack/query-test-utils/projection'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { skipToken, usePrefetchQuery } from '..'
 
@@ -63,7 +64,7 @@ describe('usePrefetchQuery', () => {
     usePrefetchQuery<string, Error, number, { value: string }>({
       queryKey: createKey(),
       queryFn: () => Promise.resolve('data'),
-      select: (data) => {
+      [selectOption]: (data) => {
         expectTypeOf(data).toEqualTypeOf<{ value: string }>()
 
         return data.value.length

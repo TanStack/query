@@ -55,7 +55,7 @@ export default {
       ignoreDependencies: optionalPeerDependencies(reactQueryNoCore),
     },
     'packages/react-query-no-core-pluggable': {
-      entry: [...compatibilityEntries, 'tests/compat-polling.ts'],
+      entry: [...compatibilityEntries, 'tests/compat-*.ts'],
       ignoreDependencies: optionalPeerDependencies(reactQueryPluggable),
     },
     'packages/react-query-devtools': {

@@ -1,4 +1,5 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { serialScope } from '@tanstack/query-test-utils/scope'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MutationCache, MutationObserver, QueryClient } from '..'
 import { Mutation } from '../mutation'
@@ -618,11 +619,11 @@ describe('mutationCache', () => {
       const testClient = new QueryClient({ mutationCache: testCache })
 
       const mutation1 = Mutation.build(testClient, {
-        scope: { id: 'scope1' },
+        scope: serialScope('scope1'),
         mutationFn: () => Promise.resolve('data1'),
       })
       const mutation2 = Mutation.build(testClient, {
-        scope: { id: 'scope1' },
+        scope: serialScope('scope1'),
         mutationFn: () => Promise.resolve('data2'),
       })
 
@@ -639,7 +640,7 @@ describe('mutationCache', () => {
       const testClient = new QueryClient({ mutationCache: testCache })
 
       const mutation = Mutation.build(testClient, {
-        scope: { id: 'scope1' },
+        scope: serialScope('scope1'),
         mutationFn: () => Promise.resolve('data'),
       })
 
