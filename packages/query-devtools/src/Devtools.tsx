@@ -2215,10 +2215,8 @@ const setupQueryCacheSubscription = () => {
 
   createEffect(() => {
     const cache = queryCache()
-    let active = true
     const pendingUpdates = new Map<symbol, () => void>()
     const flush = () => {
-      if (!active) return
       const updates = [...pendingUpdates.values()]
       pendingUpdates.clear()
       batch(() => {
@@ -2233,7 +2231,7 @@ const setupQueryCacheSubscription = () => {
       queryCacheSubscriptions.notify(() => cache, event, schedule)
     })
     onCleanup(() => {
-      active = false
+      pendingUpdates.clear()
       unsubscribe()
     })
   })
