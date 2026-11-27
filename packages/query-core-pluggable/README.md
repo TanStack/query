@@ -29,6 +29,17 @@ Import `infiniteQuery` for pagination, `refetchInterval` for observer polling, o
 
 Use `findCachedQuery(cache, filters)` to look up a key, `findCachedQueries(cache, filters)` to filter a cache, and `clearQueryCache(cache)` to remove its queries. The predicates `isQueryActive(query)`, `isQueryDisabled(query)`, `isQueryStatic(query)`, and `isQueryStale(query)` inspect individual queries. Import `fetchOptimistic(client, observer, options)` when an observer needs a result as soon as data becomes available during a fetch.
 
+For code that already holds a cache entry, import the operation that takes that entry directly.
+
+| v6 method                   | Pluggable import               | Effect                                                                        |
+| --------------------------- | ------------------------------ | ----------------------------------------------------------------------------- |
+| `entry.invalidate()`        | `invalidateCachedQuery(entry)` | Marks the entry invalidated and notifies its observers.                       |
+| `entry.reset()`             | `resetCachedQuery(entry)`      | Cancels any active fetch and restores the entry's initial state.              |
+| `entry.getObserversCount()` | `getQueryObserverCount(entry)` | Counts subscribed observers, including disabled observers.                    |
+| `entry.isFetched()`         | `isQueryFetched(entry)`        | Checks for a data or error update. Manual cache writes count as data updates. |
+
+The filtered client operations `invalidateQueries(client, filters)` and `resetQueries(client, filters)` also refetch eligible active matches by default.
+
 ## Register application types
 
 Augment `Register` on `@tanstack/query-core-pluggable` to configure default errors, query and mutation keys, or metadata across the pluggable package pair.

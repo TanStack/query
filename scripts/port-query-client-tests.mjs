@@ -17,6 +17,10 @@ const cacheOperations = {
   clear: 'clearQueryCache',
 }
 const queryOperations = {
+  reset: 'resetCachedQuery',
+  invalidate: 'invalidateCachedQuery',
+  getObserversCount: 'getQueryObserverCount',
+  isFetched: 'isQueryFetched',
   isActive: 'isQueryActive',
   isDisabled: 'isQueryDisabled',
   isStatic: 'isQueryStatic',
@@ -43,7 +47,9 @@ export function queryClientTestPort(upstream, files, packageName) {
 
   function methodName(receiver, name) {
     const declarations =
-      checker.getTypeAtLocation(receiver).getProperty(name)?.declarations ?? []
+      checker
+        .getNonNullableType(checker.getTypeAtLocation(receiver))
+        .getProperty(name)?.declarations ?? []
     for (const declaration of declarations) {
       if (
         !/\/query-core\/(?:src|build|dist-ts)\//.test(
@@ -72,6 +78,7 @@ export function queryClientTestPort(upstream, files, packageName) {
     let usesOperations = false
     const factories = new Map()
     let usesBoundaryOption = false
+    let usesOptionalReceiver = false
     let checksArguments = false
     let checksOptimisticOptions = false
     function edit(start, end, text) {
@@ -219,19 +226,25 @@ export function queryClientTestPort(upstream, files, packageName) {
               node.typeArguments.map((t) => t.getText(source)).join(', ') +
               '>'
             : ''
-          edit(
-            member.getStart(),
-            member.getStart(),
+          const call =
             operation(name) +
-              generics +
-              '(' +
-              (name === 'fetchOptimistic' ? 'queryClient, ' : ''),
-          )
-          edit(
-            member.expression.end,
-            node.arguments.pos,
-            node.arguments.length ? ', ' : '',
-          )
+            generics +
+            '(' +
+            (name === 'fetchOptimistic' ? 'queryClient, ' : '')
+          const separator = node.arguments.length ? ', ' : ''
+          if (ts.isOptionalChain(member)) {
+            usesOptionalReceiver = true
+            edit(member.getStart(), member.getStart(), '__whenPresent(')
+            edit(
+              member.expression.end,
+              node.arguments.pos,
+              ', (receiver) => ' + call + 'receiver' + separator,
+            )
+            edit(node.end, node.end, ')')
+          } else {
+            edit(member.getStart(), member.getStart(), call)
+            edit(member.expression.end, node.arguments.pos, separator)
+          }
           for (const arg of node.arguments) visit(arg)
           return
         }
@@ -358,10 +371,23 @@ export function queryClientTestPort(upstream, files, packageName) {
         )
     }
     if (path.basename(file) === 'query.test-d.tsx') {
-      result = result.replace(
-        /^ *\| '(?:isActive|isDisabled|isStatic|isStale)'\n/gm,
-        '',
-      )
+      // The cache entry also has a module-private symbol used to publish state updates.
+      // Compare its public, named API with the equivalent standalone operations removed.
+      const publicMembers = result.indexOf('expectTypeOf<keyof Query>()')
+      if (publicMembers !== -1) {
+        result =
+          result.slice(0, publicMembers) +
+          result
+            .slice(publicMembers)
+            .replace(
+              'expectTypeOf<keyof Query>()',
+              'expectTypeOf<Extract<keyof Query, string>>()',
+            )
+            .replace(
+              /^ *\| '(?:reset|invalidate|getObserversCount|isFetched|isActive|isDisabled|isStatic|isStale)'\n/gm,
+              '',
+            )
+      }
     }
     if (!usesOperations) return result
     const argumentsType = checksArguments
@@ -373,6 +399,9 @@ export function queryClientTestPort(upstream, files, packageName) {
       ' from ' +
       JSON.stringify(packageName) +
       '\n' +
+      (usesOptionalReceiver
+        ? 'function __whenPresent<T, R>(value: T | null | undefined, run: (receiver: T) => R): R | undefined { return value == null ? undefined : run(value) }\n'
+        : '') +
       argumentsType +
       (checksOptimisticOptions
         ? 'type __OptimisticArgs<O> = O extends __clientOperations.QueryObserver<infer F, infer E, infer D, infer Q, infer K> ? [Parameters<typeof __clientOperations.fetchOptimistic<F, E, D, Q, K>>[2]] : never\n'

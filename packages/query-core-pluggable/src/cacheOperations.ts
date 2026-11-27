@@ -1,4 +1,5 @@
 import { notifyManager } from './notifyManager'
+import { invalidateCachedQuery, resetCachedQuery } from './query'
 import { findCachedQueries } from './queryCacheOperations'
 import { getQueryCache, setQueryData } from './queryClient'
 import { isQueryDisabled, isQueryStatic } from './queryPredicates'
@@ -139,7 +140,7 @@ export function resetQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
     const matched = findCachedQueries(queryCache, filters)
     const queriesToRefetch = new Set(matched)
     matched.forEach((query) => {
-      query.reset()
+      resetCachedQuery(query)
     })
     return refetchQueries(
       client,
@@ -212,7 +213,7 @@ export function invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
 ): Promise<void> {
   return notifyManager.batch(() => {
     findCachedQueries(getQueryCache(client), filters).forEach((query) => {
-      query.invalidate()
+      invalidateCachedQuery(query)
     })
 
     if (filters?.refetchType === 'none') {

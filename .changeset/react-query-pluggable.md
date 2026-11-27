@@ -11,4 +11,6 @@ The single-query reader gets its render behavior from the factory. Import result
 
 Cache-wide lookups and query-state checks are named imports, including `findCachedQuery(cache, filters)`, `findCachedQueries(cache, filters)`, `clearQueryCache(cache)`, and `isQueryActive(query)`.
 
+Four methods on an individual cache entry are now named imports. Use `invalidateCachedQuery(entry)` to mark it invalidated, `resetCachedQuery(entry)` to cancel its fetch and restore its initial state, `getQueryObserverCount(entry)` to count subscribed observers, and `isQueryFetched(entry)` to check for a data or error update. For a filtered operation that also refetches eligible active queries by default, use `invalidateQueries(client, filters)` or `resetQueries(client, filters)`. Inside a component, `isFetched(result)` reads the update history from the hook result.
+
 Ordinary readers handle failures inline by default. Import `throwOnError` and set `throwOnError: [throwOnError, true]` or `throwOnError: [throwOnError, predicate]` to opt into React error boundaries. Suspense readers include boundary handling automatically. Ordinary queries retain default structural sharing. The infinite query fetcher prepares page requests only when the application uses pagination.

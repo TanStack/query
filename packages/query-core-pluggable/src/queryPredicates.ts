@@ -2,6 +2,26 @@ import { resolveQueryValue, skipToken } from './utils'
 import type { Query } from './query'
 
 /**
+ * Counts observers currently subscribed to a cache entry.
+ * @param query - The cached query to inspect.
+ * @returns The number of subscribed observers, including disabled observers.
+ */
+export function getQueryObserverCount(
+  query: Query<any, any, any, any>,
+): number {
+  return query.observers.length
+}
+
+/**
+ * Checks whether a cache entry has received a data or error update.
+ * @param query - The cached query to inspect.
+ * @returns Whether data or an error has been recorded since the initial state.
+ */
+export function isQueryFetched(query: Query<any, any, any, any>): boolean {
+  return query.state.dataUpdateCount + query.state.errorUpdateCount > 0
+}
+
+/**
  * Returns `true` if the query has at least one observer for which `enabled`
  * does not resolve to `false`.
  * @param query - The cached query to inspect.
@@ -24,11 +44,11 @@ export function isQueryActive(query: Query<any, any, any, any>): boolean {
  * @returns `true` if the query is disabled.
  */
 export function isQueryDisabled(query: Query<any, any, any, any>): boolean {
-  if (query.getObserversCount() > 0) {
+  if (getQueryObserverCount(query) > 0) {
     return !isQueryActive(query)
   }
   // if a query has no observers, it should still be considered disabled if it never attempted a fetch
-  return query.options.queryFn === skipToken || !query.isFetched()
+  return query.options.queryFn === skipToken || !isQueryFetched(query)
 }
 
 /**
@@ -42,7 +62,7 @@ export function isQueryStatic(query: Query<any, any, any, any>): boolean {
     return false
   }
 
-  if (query.getObserversCount() > 0) {
+  if (getQueryObserverCount(query) > 0) {
     return query.observers.some(
       (observer) =>
         resolveQueryValue(observer.options.staleTime, query) === 'static',
@@ -72,7 +92,7 @@ export function isQueryStatic(query: Query<any, any, any, any>): boolean {
 export function isQueryStale(query: Query<any, any, any, any>): boolean {
   // check observers first, their `isStale` has the source of truth
   // calculated with `isStaleByTime` and it takes `enabled` into account
-  if (query.getObserversCount() > 0) {
+  if (getQueryObserverCount(query) > 0) {
     return query.observers.some(
       (observer) => observer.getCurrentResult().isStale,
     )

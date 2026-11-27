@@ -151,6 +151,8 @@ Predicates read through the tracked result. For example, `isFetching(result)` su
 
 `isFetchedAfterMount`, `isPlaceholderData`, `isStale`, and `isEnabled` describe the observer and remain result properties. Mutation results retain their existing status flags. To count fetching queries across a client, call `countFetchingQueries(client, filters)` or subscribe with `useIsFetching(filters)`.
 
+In a component, `isFetched(result)` reads the data and error update counts from the hook's tracked result. In cache management code, `isQueryFetched(entry)` reads those counts directly from a `Query` returned by `findCachedQuery`.
+
 ### Paginated queries with the same hook
 
 Choose `infiniteQueryOptions` to handle a pending first page in the component, or `suspenseInfiniteQueryOptions` to show the nearest React fallback. Both forms expose `fetchNextPage`,
@@ -285,6 +287,8 @@ await invalidateQueries(client, { queryKey: ['orders'] })
 For example, `client.query(options)` becomes `query(client, options)` and `client.clear()` becomes `clearQueryClient(client)`. The provider manages mounting for React users. Integrations that managed the v6 lifecycle directly can call `mountQueryClient(client)` and `unmountQueryClient(client)`. The same client-first convention applies to defaults, mutation resumption and bulk cache operations.
 
 Use `getQueryCache(client)` and `getMutationCache(client)` for direct cache access. Use `findCachedQuery(cache, filters)`, `findCachedQueries(cache, filters)`, or `clearQueryCache(cache)` for query cache searches and clearing. Query caches expose `.subscribe(listener)`, `.get(hash)`, and `.getAll()`. The stock `@tanstack/query-persist-client-core` subscription calls `client.getQueryCache()` and `client.getMutationCache()`. A custom persistence integration for this adapter must subscribe through the named accessors and use this adapter’s `hydrate` and `dehydrate`.
+
+For one cache entry, `getQueryObserverCount(entry)` counts subscribed observers, `invalidateCachedQuery(entry)` marks it invalidated, and `resetCachedQuery(entry)` cancels its fetch and restores its initial state. To apply an operation to matching keys and refetch eligible active matches by default, call `invalidateQueries(client, filters)` or `resetQueries(client, filters)`.
 
 ## Mutations
 

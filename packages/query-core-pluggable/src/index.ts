@@ -46,7 +46,7 @@ export type {
   QueriesObserverOptions,
   QueriesObserverResultReader,
 } from './queriesObserver'
-export { Query } from './query'
+export { Query, invalidateCachedQuery, resetCachedQuery } from './query'
 export type { QueryState } from './query'
 export { QueryCache } from './queryCache'
 export {
@@ -55,6 +55,8 @@ export {
   findCachedQueries,
 } from './queryCacheOperations'
 export {
+  getQueryObserverCount,
+  isQueryFetched,
   isQueryActive,
   isQueryDisabled,
   isQueryStale,

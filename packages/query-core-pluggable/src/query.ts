@@ -99,6 +99,8 @@ export interface QueryBehavior<
   ) => void
 }
 
+const updateState = Symbol()
+
 // CLASS
 
 /**
@@ -258,7 +260,7 @@ export class Query<
    * @param state - The partial state to merge into the query's state.
    */
   setState(state: Partial<QueryState<TData, TError>>): void {
-    this.#update(state, { type: 'setState', state })
+    this[updateState](state, { type: 'setState', state })
   }
 
   /**
@@ -294,29 +296,10 @@ export class Query<
   /**
    * The state the query was created with.
    * @internal
-   * @returns The state the query had when it was first created, used by {@link Query#reset}.
+   * @returns The state the query had when it was first created, used by {@link resetCachedQuery}.
    */
   get resetState(): QueryState<TData, TError> {
     return this.#initialState
-  }
-
-  /**
-   * Resets the query back to its initial state (the state it had when it was
-   * first created, e.g. any `initialData`), destroying it first to cancel any
-   * in-flight fetch.
-   */
-  reset(): void {
-    this.destroy()
-    this.setState(this.resetState)
-  }
-
-  /**
-   * Returns `true` if the query has been fetched, i.e. it has resolved with
-   * either data or an error at least once.
-   * @returns `true` if the query has been fetched.
-   */
-  isFetched() {
-    return this.state.dataUpdateCount + this.state.errorUpdateCount > 0
   }
 
   /**
@@ -428,35 +411,6 @@ export class Query<
       }
 
       this.#cache.notify({ type: 'observerRemoved', query: this, observer })
-    }
-  }
-
-  /**
-   * Returns the number of observers currently subscribed to this query.
-   * @returns The number of observers.
-   * @example
-   * ```ts
-   * if (query.getObserversCount() === 0) {
-   *   // no component is currently watching this query
-   * }
-   * ```
-   */
-  getObserversCount(): number {
-    return this.observers.length
-  }
-
-  /**
-   * Marks the query as invalidated, unless it is already invalidated. This
-   * updates `state.isInvalidated` and notifies observers, but does not by
-   * itself trigger a refetch.
-   * @example
-   * ```ts
-   * query.invalidate()
-   * ```
-   */
-  invalidate(): void {
-    if (!this.state.isInvalidated) {
-      this.#update({ isInvalidated: true }, { type: 'invalidate' })
     }
   }
 
@@ -577,7 +531,7 @@ export class Query<
       this.state.fetchMeta !== fetchOptions?.meta
     ) {
       const meta = fetchOptions?.meta
-      this.#update(
+      this[updateState](
         {
           ...fetchState(this.state.data, this.options),
           fetchMeta: meta ?? null,
@@ -602,16 +556,16 @@ export class Query<
         abortController.abort()
       },
       onFail: (failureCount, error) => {
-        this.#update(
+        this[updateState](
           { fetchFailureCount: failureCount, fetchFailureReason: error },
           { type: 'failed', failureCount, error },
         )
       },
       onPause: () => {
-        this.#update({ fetchStatus: 'paused' }, { type: 'pause' })
+        this[updateState]({ fetchStatus: 'paused' }, { type: 'pause' })
       },
       onContinue: () => {
-        this.#update({ fetchStatus: 'fetching' }, { type: 'continue' })
+        this[updateState]({ fetchStatus: 'fetching' }, { type: 'continue' })
       },
       retry: activeOptions.retry,
       retryDelay: activeOptions.retryDelay,
@@ -662,7 +616,7 @@ export class Query<
           }
         }
         const fetchError = error as TError
-        this.#update(
+        this[updateState](
           {
             error: fetchError,
             errorUpdatedAt: Date.now(),
@@ -713,7 +667,13 @@ export class Query<
     }
   }
 
-  #update(
+  /**
+   * Merges a state transition and publishes its action to observers and cache listeners.
+   * @internal
+   * @param state - The changes to apply before sending the notification.
+   * @param action - The event that caused this transition.
+   */
+  [updateState](
     state: Partial<QueryState<TData, TError>>,
     action: Action<TData, TError>,
   ): void {
@@ -731,6 +691,26 @@ export class Query<
 
       this.#cache.notify({ query: this, type: 'updated', action })
     })
+  }
+}
+
+/**
+ * Cancels the active request and restores the initial state of one cached query.
+ * @param query - The cache entry to reset.
+ */
+export function resetCachedQuery(query: Query<any, any, any, any>): void {
+  query.destroy()
+  query.setState(query.resetState)
+}
+
+/**
+ * Marks one cached query as invalidated and notifies its observers once per
+ * transition. Use {@link invalidateQueries} to also refetch matching queries.
+ * @param query - The cache entry to invalidate.
+ */
+export function invalidateCachedQuery(query: Query<any, any, any, any>): void {
+  if (!query.state.isInvalidated) {
+    query[updateState]({ isInvalidated: true }, { type: 'invalidate' })
   }
 }
 

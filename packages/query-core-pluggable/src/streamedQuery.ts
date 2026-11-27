@@ -1,5 +1,6 @@
 import { findCachedQuery } from './queryCacheOperations'
 import { getQueryCache, getQueryData, setQueryData } from './queryClient'
+import { isQueryFetched } from './queryPredicates'
 import { addConsumeAwareSignal, fetchSignal } from './utils'
 import type {
   OmitKeyof,
@@ -98,7 +99,7 @@ export function streamedQuery<
       queryKey: context.queryKey,
       exact: true,
     })
-    const isRefetch = !!query && query.isFetched()
+    const isRefetch = !!query && isQueryFetched(query)
     if (isRefetch && refetchMode === 'reset') {
       query.setState({
         ...query.resetState,
