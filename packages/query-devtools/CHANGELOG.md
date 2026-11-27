@@ -1,5 +1,13 @@
 # @tanstack/query-devtools
 
+## 5.108.5
+
+### Patch Changes
+
+- [#12699](https://github.com/TanStack/query/pull/12699) [`18b1ade`](https://github.com/TanStack/query/commit/18b1aded329058c074cda6b1c1a08aba73fdc914) - fix(query-devtools): wrap query cache clear in 'batch' to update the list once instead of once per removed query
+- Updated dependencies [[`bee5eb0`](https://github.com/TanStack/query/commit/bee5eb04c355f623b8b66986cf4eace737567249)]:
+  - @tanstack/query-core@5.108.5
+
 ## 5.108.4
 
 ### Patch Changes

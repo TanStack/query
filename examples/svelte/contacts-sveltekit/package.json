@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@tanstack/svelte-pacer": "^0.2.0",
-    "@tanstack/svelte-query": "^6.4.7",
-    "@tanstack/svelte-query-devtools": "^6.4.7",
+    "@tanstack/svelte-query": "^6.4.8",
+    "@tanstack/svelte-query-devtools": "^6.4.8",
     "match-sorter": "^8.3.0"
   },
   "devDependencies": {
@@ -20,7 +20,7 @@
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tanstack/eslint-config": "^0.5.0",
-    "@tanstack/eslint-plugin-query": "^5.108.4",
+    "@tanstack/eslint-plugin-query": "^5.108.5",
     "@typescript-eslint/parser": "^8.72.1",
     "eslint": "^9.39.5",
     "eslint-plugin-svelte": "^3.23.0",

@@ -13,13 +13,13 @@
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^1.0.1",
     "@solidjs/start": "^2.2.0",
-    "@tanstack/solid-query": "^5.108.4",
-    "@tanstack/solid-query-devtools": "^5.108.4",
+    "@tanstack/solid-query": "^5.108.5",
+    "@tanstack/solid-query-devtools": "^5.108.5",
     "solid-js": "^1.9.18"
   },
   "devDependencies": {
     "@tanstack/eslint-config": "^0.5.0",
-    "@tanstack/eslint-plugin-query": "^5.108.4",
+    "@tanstack/eslint-plugin-query": "^5.108.5",
     "eslint": "^9.39.5",
     "eslint-plugin-solid": "^0.18.1",
     "nitro": "^3.0.260903-beta",

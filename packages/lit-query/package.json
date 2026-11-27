@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/lit-query",
-  "version": "0.2.44",
+  "version": "0.2.45",
   "description": "Lit adapter for TanStack Query Core",
   "author": "tannerlinsley",
   "license": "MIT",

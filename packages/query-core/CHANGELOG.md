@@ -1,5 +1,11 @@
 # @tanstack/query-core
 
+## 5.108.5
+
+### Patch Changes
+
+- [#12598](https://github.com/TanStack/query/pull/12598) [`bee5eb0`](https://github.com/TanStack/query/commit/bee5eb04c355f623b8b66986cf4eace737567249) - fix(query-core/queriesObserver): notify listeners when a query with 'throwOnError' fails even if the combined result does not change
+
 ## 5.108.4
 
 ### Patch Changes
