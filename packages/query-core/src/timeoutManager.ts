@@ -246,15 +246,3 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
  * Singleton instance of {@link TimeoutManager}, used throughout TanStack Query to schedule and cancel timers.
  */
 export const timeoutManager = new TimeoutManager()
-
-/**
- * In many cases code wants to delay to the next event loop tick; this is not
- * mediated by {@link timeoutManager}.
- *
- * This function is provided to make auditing the `tanstack/query-core` for
- * incorrect use of system `setTimeout` easier.
- * @param callback - The function to call on the next event loop tick.
- */
-export function systemSetTimeoutZero(callback: TimeoutCallback): void {
-  setTimeout(callback, 0)
-}

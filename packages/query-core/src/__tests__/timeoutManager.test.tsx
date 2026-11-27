@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   TimeoutManager,
   defaultTimeoutProvider,
-  systemSetTimeoutZero,
   timeoutManager,
 } from '../timeoutManager'
 import type { MockInstance } from 'vitest'
@@ -122,18 +121,6 @@ describe('timeoutManager', () => {
 
     afterEach(() => {
       timeoutManager.setTimeoutProvider(defaultTimeoutProvider)
-    })
-
-    describe('systemSetTimeoutZero', () => {
-      it('should use globalThis setTimeout with 0 delay', () => {
-        const spy = vi.spyOn(globalThis, 'setTimeout')
-
-        const callback = vi.fn<TimeoutCallback>()
-        systemSetTimeoutZero(callback)
-
-        expect(spy).toHaveBeenCalledWith(callback, 0)
-        clearTimeout(spy.mock.results[0]?.value)
-      })
     })
   })
 })
