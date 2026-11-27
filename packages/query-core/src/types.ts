@@ -371,7 +371,8 @@ export interface QueryOptions<
    * If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number.
    * If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false.
    *
-   * Defaults to `3` on the client and `0` on the server.
+   * Defaults to `3` for observed queries in the browser and `0` on the server.
+   * Server retries require a custom provider installed with `timeoutManager.setTimeoutProvider`.
    */
   retry?: RetryValue<TError>
   /**
@@ -399,7 +400,9 @@ export interface QueryOptions<
    * When different garbage collection times are specified, the longest one will be used.
    * Setting it to `Infinity` will disable garbage collection.
    *
-   * Defaults to `5 * 60 * 1000` (5 minutes), or `Infinity` during SSR.
+   * Defaults to `5 * 60 * 1000` (5 minutes) in the browser and `Infinity` on the server.
+   * A finite value only schedules garbage collection on the server if an app installs a
+   * custom provider with `timeoutManager.setTimeoutProvider`.
    *
    * Note: the maximum allowed time is about 24 days, imposed by `setTimeout`'s 32-bit signed integer delay — see
    * `timeoutManager.setTimeoutProvider` for a workaround.
@@ -550,7 +553,8 @@ export interface QueryObserverOptionsBase<
   staleTime?: StaleTimeFunction<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
-   * If set to a function, the function will be executed with the latest data and query to compute a frequency
+   * If set to a function, the function will be executed with the latest data and query to compute a frequency.
+   * Server polling requires a custom provider installed with `timeoutManager.setTimeoutProvider`.
    * @defaultValue false
    */
   refetchInterval?:
@@ -1904,6 +1908,7 @@ export interface MutationOptions<
    * If `true`, failed mutations will retry infinitely.
    * If set to an integer number, e.g. 3, failed mutations will retry until the failed mutation count meets that number.
    * If set to a function `(failureCount, error) => boolean` failed mutations will retry until the function returns false.
+   * Server retries require a custom provider installed with `timeoutManager.setTimeoutProvider`.
    * @defaultValue 0
    */
   retry?: RetryValue<TError>

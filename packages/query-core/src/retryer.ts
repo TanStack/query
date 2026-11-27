@@ -1,6 +1,7 @@
 import { isServer as isServerEnvironment } from './environmentManager'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
+import { TimeoutManager } from './timeoutManager'
 import { noop, sleep } from './utils'
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
@@ -235,6 +236,11 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
       .catch((error) => {
         // Stop if the fetch is already resolved
         if (isResolved()) {
+          return
+        }
+
+        if (!TimeoutManager.canScheduleQueryTimers()) {
+          reject(error)
           return
         }
 

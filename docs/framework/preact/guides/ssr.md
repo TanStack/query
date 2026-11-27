@@ -489,37 +489,6 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 ### High memory consumption on server
 
-On the server, `gcTime` defaults to `Infinity`. With `Infinity`, no garbage collection timer is scheduled, and the cache is freed from memory together with the `QueryClient` once the request finishes.
+Use a request-scoped `QueryClient` for SSR. By default, Query skips garbage collection timers on the server, even when a query sets a finite `gcTime`.
 
-Any finite `gcTime` schedules a timer for each query, and that timer keeps the query in memory until it fires. In Node.js, a timer also keeps alive the [`AsyncLocalStorage`](https://nodejs.org/api/async_context.html#class-asynclocalstorage) context it was created in. If your server framework stores the request in that context, the request stays in memory even after the response is sent, until the timer fires.
-
-This is easy to miss: a `gcTime` set in `defaultOptions` applies on the server too, so a value intended for the client also replaces `Infinity` on the server.
-
-```tsx
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      // This also applies on the server
-      gcTime: 1000 * 60,
-    },
-  },
-})
-```
-
-If you only want a custom `gcTime` in the browser, keep `Infinity` on the server:
-
-```tsx
-import { environmentManager, QueryClient } from '@tanstack/preact-query'
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      gcTime: environmentManager.isServer() ? Infinity : 1000 * 60,
-    },
-  },
-})
-```
-
-Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. Short finite values have the same risk: a prefetched query that finishes early can be removed once its `gcTime` passes, while a slower query is still being prefetched and before `dehydrate` runs. Keep `Infinity` on the server where you can.
-
-If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
+If you keep a cache across requests, install a custom timeout provider with `timeoutManager.setTimeoutProvider()` and set a finite `gcTime` for entries that should expire. The provider applies to all clients that use that manager. See [server timer configuration](../../react/guides/ssr.md#high-memory-consumption-on-server).

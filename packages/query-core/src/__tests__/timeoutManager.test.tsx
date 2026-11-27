@@ -1,9 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import {
-  TimeoutManager,
-  defaultTimeoutProvider,
-  timeoutManager,
-} from '../timeoutManager'
+import { TimeoutManager, timeoutManager } from '../timeoutManager'
 import type { MockInstance } from 'vitest'
 import type { TimeoutCallback, TimeoutProvider } from '../timeoutManager'
 
@@ -108,19 +104,6 @@ describe('timeoutManager', () => {
   describe('globalThis timeoutManager instance', () => {
     it('should be an instance of TimeoutManager', () => {
       expect(timeoutManager).toBeInstanceOf(TimeoutManager)
-    })
-  })
-
-  describe('exported functions', () => {
-    let provider: ReturnType<typeof createMockProvider>
-
-    beforeEach(() => {
-      provider = createMockProvider()
-      timeoutManager.setTimeoutProvider(provider)
-    })
-
-    afterEach(() => {
-      timeoutManager.setTimeoutProvider(defaultTimeoutProvider)
     })
   })
 })

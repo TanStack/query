@@ -1,5 +1,5 @@
 import { isServer as isServerEnvironment } from './environmentManager'
-import { timeoutManager } from './timeoutManager'
+import { TimeoutManager, timeoutManager } from './timeoutManager'
 import { isValidTimeout } from './utils'
 import type { ManagedTimerId } from './timeoutManager'
 
@@ -22,12 +22,15 @@ export abstract class Removable {
 
   /**
    * Schedules the entry to be removed from its cache after `gcTime`, replacing any timeout scheduled
-   * before. Nothing is scheduled if `gcTime` is `Infinity`.
+   * before. Scheduling requires a finite `gcTime` and an enabled timer provider.
    */
   protected scheduleGc(): void {
     this.clearGcTimeout()
 
-    if (isValidTimeout(this.gcTime)) {
+    if (
+      isValidTimeout(this.gcTime) &&
+      TimeoutManager.canScheduleQueryTimers()
+    ) {
       this.#gcTimeout = timeoutManager.setTimeout(() => {
         this.optionalRemove()
       }, this.gcTime)

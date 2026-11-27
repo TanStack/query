@@ -1,3 +1,5 @@
+import { isServer } from './environmentManager'
+
 /**
  * {@link TimeoutManager} does not support passing arguments to the callback.
  *
@@ -95,6 +97,9 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * `setTimeout`, `clearTimeout`, `setInterval`, `clearInterval` functions,
    * called a `TimeoutProvider`.
    *
+   * On the server, installing a provider also enables query and mutation GC,
+   * observer timers, and explicitly configured retries.
+   *
    * This may be useful if you notice event loop performance issues with
    * thousands of queries. A custom TimeoutProvider could also support timer
    * delays longer than the global `setTimeout` maximum delay value of about
@@ -142,6 +147,15 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
     if (process.env.NODE_ENV !== 'production') {
       this.#providerCalled = false
     }
+  }
+
+  /**
+   * Checks whether Query can schedule GC, observer, and retry timers.
+   * @internal
+   * @returns Whether the runtime is a client or a custom provider is installed.
+   */
+  static canScheduleQueryTimers(): boolean {
+    return !isServer() || timeoutManager.#provider !== defaultTimeoutProvider
   }
 
   /**

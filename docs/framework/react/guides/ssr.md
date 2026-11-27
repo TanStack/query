@@ -570,40 +570,28 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 ### High memory consumption on server
 
-On the server, `gcTime` defaults to `Infinity`. With `Infinity`, no garbage collection timer is scheduled, and the cache is freed from memory together with the `QueryClient` once the request finishes.
+Create a `QueryClient` per request so each request has its own cache. By default, Query skips garbage collection timers on the server, even when shared query options set a finite `gcTime`. Query also skips stale notifications, polling, and retries on the server by default.
 
-Any finite `gcTime` schedules a timer for each query, and that timer keeps the query in memory until it fires. In Node.js, a timer also keeps alive the [`AsyncLocalStorage`](https://nodejs.org/api/async_context.html#class-asynclocalstorage) context it was created in, and frameworks like Next.js store the whole request in that context. So with a finite `gcTime`, the request stays in memory even after the response is sent, until the timer fires.
-
-This is easy to miss: a `gcTime` set in `defaultOptions` applies on the server too, so a value intended for the client also replaces `Infinity` on the server.
+If you intentionally keep a cache across requests, install a timeout provider once at server startup with `timeoutManager.setTimeoutProvider()`. Then set a finite `gcTime` for entries that should expire. The server default for `gcTime` is still `Infinity`. The provider also enables stale notifications, polling, and explicitly configured retries.
 
 ```tsx
+import { QueryClient, timeoutManager } from '@tanstack/react-query'
+
+timeoutManager.setTimeoutProvider({
+  setTimeout,
+  clearTimeout,
+  setInterval,
+  clearInterval,
+})
+
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: {
-      // This also applies on the server
-      gcTime: 1000 * 60,
-    },
+    queries: { gcTime: 60_000 },
   },
 })
 ```
 
-If you only want a custom `gcTime` in the browser, keep `Infinity` on the server:
-
-```tsx
-import { environmentManager, QueryClient } from '@tanstack/react-query'
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      gcTime: environmentManager.isServer() ? Infinity : 1000 * 60,
-    },
-  },
-})
-```
-
-Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. Short finite values have the same risk: a prefetched query that finishes early can be removed once its `gcTime` passes, while a slower query is still being prefetched and before `dehydrate` runs. Keep `Infinity` on the server where you can.
-
-If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
+Install the provider before creating any clients. It applies to all clients that use that manager. Once enabled, a timer created during a request can keep that request's [async context](https://nodejs.org/api/async_context.html#class-asynclocalstorage) in memory until the timer fires or is cleared.
 
 ### Caveat for Next.js rewrites
 

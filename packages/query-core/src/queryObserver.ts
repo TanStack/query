@@ -1,9 +1,8 @@
-import { isServer as isServerEnvironment } from './environmentManager'
 import { focusManager } from './focusManager'
 import { notifyManager } from './notifyManager'
 import { fetchState } from './query'
 import { Subscribable } from './subscribable'
-import { timeoutManager } from './timeoutManager'
+import { TimeoutManager, timeoutManager } from './timeoutManager'
 import {
   isValidTimeout,
   noop,
@@ -610,7 +609,7 @@ export class QueryObserver<
 
   #shouldScheduleTimer(timeout: unknown): timeout is number {
     return (
-      !isServerEnvironment() &&
+      TimeoutManager.canScheduleQueryTimers() &&
       resolveQueryValue(this.options.enabled, this.#currentQuery) !== false &&
       isValidTimeout(timeout)
     )
