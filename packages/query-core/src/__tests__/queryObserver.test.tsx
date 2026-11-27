@@ -1481,8 +1481,8 @@ describe('queryObserver', () => {
         staleTime: 10,
         refetchInterval: 10,
       })
-      const setTimeoutSpy = vi.spyOn(timeoutManager, 'setTimeout')
-      const setIntervalSpy = vi.spyOn(timeoutManager, 'setInterval')
+      const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout')
+      const setIntervalSpy = vi.spyOn(globalThis, 'setInterval')
 
       const unsubscribe = observer.subscribe(vi.fn())
       expect(setTimeoutSpy).not.toHaveBeenCalled()

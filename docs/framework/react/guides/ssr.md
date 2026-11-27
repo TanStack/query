@@ -591,7 +591,7 @@ const queryClient = new QueryClient({
 })
 ```
 
-Install the provider before creating any clients. It applies to all clients that use that manager. Once enabled, a timer created during a request can keep that request's [async context](https://nodejs.org/api/async_context.html#class-asynclocalstorage) in memory until the timer fires or is cleared.
+Install the provider before creating any clients. It applies to all clients that use that manager. A custom provider can decide which timers to schedule. Return `undefined` when you skip a timer. Once enabled, a timer created during a request can keep that request's [async context](https://nodejs.org/api/async_context.html#class-asynclocalstorage) in memory until the timer fires or is cleared.
 
 ### Caveat for Next.js rewrites
 

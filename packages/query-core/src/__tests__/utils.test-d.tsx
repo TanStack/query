@@ -21,7 +21,6 @@ import {
   shallowEqualObjects,
   shouldThrowError,
   skipToken,
-  sleep,
   timeUntilStale,
 } from '../utils'
 import type { Mutation } from '../mutation'
@@ -815,13 +814,6 @@ describe('shouldThrowError', () => {
     expectTypeOf(
       shouldThrowError<ThrowOnError>(true, [new CustomError()]),
     ).toEqualTypeOf<boolean>()
-  })
-})
-
-describe('sleep', () => {
-  it('should return a Promise<void>', () => {
-    expectTypeOf(sleep(1)).toEqualTypeOf<Promise<void>>()
-    expectTypeOf(sleep).parameter(0).toEqualTypeOf<number>()
   })
 })
 

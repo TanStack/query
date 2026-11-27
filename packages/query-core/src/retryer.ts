@@ -1,8 +1,8 @@
 import { isServer as isServerEnvironment } from './environmentManager'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
-import { TimeoutManager } from './timeoutManager'
-import { noop, sleep } from './utils'
+import { timeoutManager } from './timeoutManager'
+import { noop } from './utils'
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
 // TYPES
@@ -239,11 +239,6 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
           return
         }
 
-        if (!TimeoutManager.canScheduleQueryTimers()) {
-          reject(error)
-          return
-        }
-
         // Do we need to retry the request?
         const retry = config.retry ?? (isServerEnvironment() ? 0 : 3)
         const retryDelay = config.retryDelay ?? defaultRetryDelay
@@ -262,13 +257,18 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
           return
         }
 
+        const retryWait = Promise.withResolvers<void>()
+        if (timeoutManager.setTimeout(retryWait.resolve, delay) === undefined) {
+          reject(error)
+          return
+        }
+
         failureCount++
 
         // Notify on fail
         config.onFail?.(failureCount, error)
 
-        // Delay
-        sleep(delay)
+        retryWait.promise
           // Pause if the document is not visible or when the device is offline
           .then(() => {
             return isResolved() || canContinue()

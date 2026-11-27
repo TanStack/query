@@ -13,7 +13,12 @@ describe.each([false, true])(
       resetIsServer = setIsServer(true)
       vi.useFakeTimers()
       if (optIn) {
-        timeoutManager.setTimeoutProvider({ ...defaultTimeoutProvider })
+        timeoutManager.setTimeoutProvider({
+          setTimeout,
+          clearTimeout,
+          setInterval,
+          clearInterval,
+        })
       }
       client = new QueryClient()
     })

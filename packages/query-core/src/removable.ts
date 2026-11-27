@@ -1,5 +1,5 @@
 import { isServer as isServerEnvironment } from './environmentManager'
-import { TimeoutManager, timeoutManager } from './timeoutManager'
+import { timeoutManager } from './timeoutManager'
 import { isValidTimeout } from './utils'
 import type { ManagedTimerId } from './timeoutManager'
 
@@ -27,10 +27,7 @@ export abstract class Removable {
   protected scheduleGc(): void {
     this.clearGcTimeout()
 
-    if (
-      isValidTimeout(this.gcTime) &&
-      TimeoutManager.canScheduleQueryTimers()
-    ) {
+    if (isValidTimeout(this.gcTime)) {
       this.#gcTimeout = timeoutManager.setTimeout(() => {
         this.optionalRemove()
       }, this.gcTime)

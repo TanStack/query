@@ -66,7 +66,10 @@ describe('timeoutManager', () => {
     describe('setTimeout', () => {
       it('should take a callback and a delay and return the timer id', () => {
         expectTypeOf<TimeoutProvider['setTimeout']>().toEqualTypeOf<
-          (callback: TimeoutCallback, delay: number) => ManagedTimerId
+          (
+            callback: TimeoutCallback,
+            delay: number,
+          ) => ManagedTimerId | undefined
         >()
       })
     })
@@ -82,7 +85,10 @@ describe('timeoutManager', () => {
     describe('setInterval', () => {
       it('should take a callback and a delay and return the timer id', () => {
         expectTypeOf<TimeoutProvider['setInterval']>().toEqualTypeOf<
-          (callback: TimeoutCallback, delay: number) => ManagedTimerId
+          (
+            callback: TimeoutCallback,
+            delay: number,
+          ) => ManagedTimerId | undefined
         >()
       })
     })
@@ -101,12 +107,12 @@ describe('timeoutManager', () => {
         readonly setTimeout: (
           callback: TimeoutCallback,
           delay: number,
-        ) => ManagedTimerId
+        ) => ManagedTimerId | undefined
         readonly clearTimeout: (timeoutId: ManagedTimerId | undefined) => void
         readonly setInterval: (
           callback: TimeoutCallback,
           delay: number,
-        ) => ManagedTimerId
+        ) => ManagedTimerId | undefined
         readonly clearInterval: (intervalId: ManagedTimerId | undefined) => void
       }>()
     })
@@ -119,7 +125,7 @@ describe('timeoutManager', () => {
 
     it('should carry a narrowed timer id through its members', () => {
       expectTypeOf<TimeoutProvider<number>['setTimeout']>().toEqualTypeOf<
-        (callback: TimeoutCallback, delay: number) => number
+        (callback: TimeoutCallback, delay: number) => number | undefined
       >()
       expectTypeOf<TimeoutProvider<number>['clearTimeout']>().toEqualTypeOf<
         (timeoutId: number | undefined) => void
@@ -149,12 +155,12 @@ describe('timeoutManager', () => {
       // The provider is declared as `TimeoutProvider`, not
       // `TimeoutProvider<ReturnType<typeof setTimeout>>`, so swapping it for a
       // custom provider stays type safe across environments.
-      expectTypeOf(
-        defaultTimeoutProvider.setTimeout,
-      ).returns.toEqualTypeOf<ManagedTimerId>()
-      expectTypeOf(
-        defaultTimeoutProvider.setInterval,
-      ).returns.toEqualTypeOf<ManagedTimerId>()
+      expectTypeOf(defaultTimeoutProvider.setTimeout).returns.toEqualTypeOf<
+        ManagedTimerId | undefined
+      >()
+      expectTypeOf(defaultTimeoutProvider.setInterval).returns.toEqualTypeOf<
+        ManagedTimerId | undefined
+      >()
     })
 
     it('should be accepted by setTimeoutProvider', () => {
@@ -208,7 +214,10 @@ describe('timeoutManager', () => {
     describe('setTimeout', () => {
       it('should take a callback and a delay and return the timer id', () => {
         expectTypeOf(timeoutManager.setTimeout).toEqualTypeOf<
-          (callback: TimeoutCallback, delay: number) => ManagedTimerId
+          (
+            callback: TimeoutCallback,
+            delay: number,
+          ) => ManagedTimerId | undefined
         >()
       })
 
@@ -216,9 +225,9 @@ describe('timeoutManager', () => {
         // @ts-expect-error the delay is required
         timeoutManager.setTimeout(() => {})
 
-        expectTypeOf(
-          timeoutManager.setTimeout(() => {}, 0),
-        ).toEqualTypeOf<ManagedTimerId>()
+        expectTypeOf(timeoutManager.setTimeout(() => {}, 0)).toEqualTypeOf<
+          ManagedTimerId | undefined
+        >()
       })
     })
 
@@ -233,7 +242,10 @@ describe('timeoutManager', () => {
     describe('setInterval', () => {
       it('should take a callback and a delay and return the timer id', () => {
         expectTypeOf(timeoutManager.setInterval).toEqualTypeOf<
-          (callback: TimeoutCallback, delay: number) => ManagedTimerId
+          (
+            callback: TimeoutCallback,
+            delay: number,
+          ) => ManagedTimerId | undefined
         >()
       })
     })

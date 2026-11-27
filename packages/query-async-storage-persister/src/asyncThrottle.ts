@@ -1,6 +1,19 @@
 import { timeoutManager } from '@tanstack/query-core'
 import { noop } from './utils'
 
+/**
+ * Waits for a throttle delay even when the timeout provider skips scheduling.
+ * @param delay - The time to wait, in milliseconds.
+ * @returns A promise that resolves once the delay elapses.
+ */
+function waitForThrottle(delay: number): Promise<void> {
+  return new Promise((resolve) => {
+    if (timeoutManager.setTimeout(resolve, delay) === undefined) {
+      setTimeout(resolve, delay)
+    }
+  })
+}
+
 interface AsyncThrottleOptions {
   interval?: number
   onError?: (error: unknown) => void
@@ -31,12 +44,10 @@ export function asyncThrottle<TArgs extends ReadonlyArray<unknown>>(
     if (isScheduled) return
     isScheduled = true
     while (isExecuting) {
-      await new Promise((done) => timeoutManager.setTimeout(done, interval))
+      await waitForThrottle(interval)
     }
     while (Date.now() < nextExecutionTime) {
-      await new Promise((done) =>
-        timeoutManager.setTimeout(done, nextExecutionTime - Date.now()),
-      )
+      await waitForThrottle(nextExecutionTime - Date.now())
     }
     isScheduled = false
     isExecuting = true
