@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2024",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "outDir": "./.cache/test-types",
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true
+  },
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.v6.json" },
+    { "path": "./tsconfig.pluggable.json" },
+    { "path": "./tsconfig.tools.json" }
+  ]
+}

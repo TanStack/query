@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { queryOptions, mutationOptions, useMutation, useQuery } from '#adapter'
 import { isError, isFetching, isPending, useBookPages } from '#query-hooks'
-import { fetchBooks } from './books.js'
+import { fetchBooks } from './books.ts'
 
 export function ReadingList() {
   const books = useBookPages({
@@ -17,8 +17,9 @@ export function ReadingList() {
     }),
   )
   const save = useMutation(
-    mutationOptions({
-      mutationFn: async (title) => localStorage.setItem('bookmark', title),
+    mutationOptions<void, Error, string>({
+      mutationFn: async (title: string) =>
+        localStorage.setItem('bookmark', title),
       onSuccess: () => bookmark.refetch(),
     }),
   )

@@ -4,8 +4,9 @@ import { realpath, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { brotliCompressSync, constants, gzipSync } from 'node:zlib'
 import { build, normalizePath } from 'vite'
-import { adapterTreemap } from './analyze.mjs'
-import { measureMicrofrontends } from './microfrontends.mjs'
+import { adapterTreemap } from './analyze.ts'
+import { measureMicrofrontends } from './microfrontends.ts'
+import type { Rolldown } from 'vite'
 
 const root = import.meta.dirname
 const checkout = path.resolve(root, '../../..')
@@ -17,7 +18,9 @@ const basePackage =
 const baseline = '@tanstack/react-query'
 const pluggable = '@tanstack/react-query-pluggable'
 const pluggableCore = '@tanstack/query-core-pluggable'
-const packages = [baseline, pluggable]
+type Adapter = typeof baseline | typeof pluggable
+type Chunk = Rolldown.OutputChunk
+type ModuleEntry = [id: string, module: Chunk['modules'][string]]
 const workloads = [
   { screen: 'query', title: 'Read-only list' },
   { screen: 'paginated', title: 'Paginated bookmarks' },
@@ -29,37 +32,52 @@ const workloads = [
     screen: 'polling',
     title: 'Polling',
   },
-]
+] as const
+type Screen = (typeof workloads)[number]['screen']
 
 const otherFrameworks = [
   /\/(?:packages|node_modules\/@tanstack)\/(?:angular|lit|preact|solid|svelte|vue)-query[^/]*\//,
   /\/node_modules\/(?:@angular|@lit|@vue|lit|lit-element|lit-html|preact|solid-js|svelte|vue)\//,
 ]
 
-function buildDirectory(directory, packageName) {
+function buildDirectory(directory: string, packageName: string) {
   return (
     normalizePath(
-      path.join(directory, 'packages', packageName.split('/')[1], 'build'),
+      path.join(
+        directory,
+        'packages',
+        path.posix.basename(packageName),
+        'build',
+      ),
     ) + '/'
   )
 }
 
-function runtimeOwners(directory, adapter) {
+function runtimeOwners(directory: string, adapter: Adapter) {
   const core = adapter === baseline ? '@tanstack/query-core' : pluggableCore
   return [adapter, core].map((name) => buildDirectory(directory, name))
 }
 
 const pluggableOwners = runtimeOwners(checkout, pluggable)
 const pluggableCoreDirectory = buildDirectory(checkout, pluggableCore)
-function rendersFeature(id, feature) {
+function rendersFeature(id: string, feature: string) {
   return (
     id.endsWith(`/${feature}.js`) &&
     pluggableOwners.some((dir) => id.startsWith(dir))
   )
 }
 
-async function buildApp(packageName, screen, belongsToAdapter) {
-  const outDir = path.join(root, 'dist', screen, packageName.split('/')[1])
+async function buildApp(
+  packageName: Adapter,
+  screen: Screen,
+  belongsToAdapter?: (id: string) => boolean,
+) {
+  const outDir = path.join(
+    root,
+    'dist',
+    screen,
+    path.posix.basename(packageName),
+  )
   const result = await build({
     root,
     base: './',
@@ -88,21 +106,21 @@ async function buildApp(packageName, screen, belongsToAdapter) {
         '#query-hooks': path.join(
           root,
           'src',
-          packageName === pluggable ? 'pluggable-query.js' : 'v6-query.js',
+          packageName === pluggable ? 'pluggable-query.ts' : 'v6-query.ts',
         ),
         '#polling-option': path.join(
           root,
           'src',
           packageName === pluggable
-            ? 'pluggable-interval.js'
-            : 'numeric-interval.js',
+            ? 'pluggable-interval.ts'
+            : 'numeric-interval.ts',
         ),
         '#feature-options': path.join(
           root,
           'src',
-          packageName === pluggable ? 'pluggable-options.js' : 'v6-options.js',
+          packageName === pluggable ? 'pluggable-options.ts' : 'v6-options.ts',
         ),
-        '#screen': path.join(root, 'src', `${screen}.jsx`),
+        '#screen': path.join(root, 'src', `${screen}.tsx`),
       },
     },
     build: {
@@ -130,6 +148,7 @@ async function buildApp(packageName, screen, belongsToAdapter) {
       },
     },
   })
+  assert('output' in result, 'Expected a single application build')
   const chunks = result.output.filter((output) => output.type === 'chunk')
   if (!chunks.some((chunk) => chunk.isEntry)) {
     throw new Error(`Missing browser entry chunk for ${packageName}`)
@@ -137,7 +156,7 @@ async function buildApp(packageName, screen, belongsToAdapter) {
   return chunks
 }
 
-function renderedModules(chunks) {
+function renderedModules(chunks: Array<Chunk>): Array<ModuleEntry> {
   return chunks.flatMap((chunk) =>
     Object.entries(chunk.modules).filter(
       ([, module]) => module.renderedLength > 0,
@@ -146,26 +165,43 @@ function renderedModules(chunks) {
 }
 
 // These operations can retain the named helpers they use internally.
-const filterPredicates = ['isQueryActive', 'isQueryStale']
+const filterPredicates = [
+  'isQueryActive',
+  'isQueryStale',
+  'getQueryObserverCount',
+]
 const filteredQueries = ['findCachedQueries', ...filterPredicates]
-const refetchFilters = [...filteredQueries, 'isQueryDisabled', 'isQueryStatic']
-const bulkOperations = {
+const refetchFilters = [
+  ...filteredQueries,
+  'isQueryDisabled',
+  'isQueryStatic',
+  'isQueryFetched',
+]
+const bulkOperations: Record<string, Array<string>> = {
   getQueriesData: filteredQueries,
   setQueriesData: ['setQueryData', ...filteredQueries],
   removeQueries: filteredQueries,
-  resetQueries: ['refetchQueries', ...refetchFilters],
+  resetQueries: ['resetCachedQuery', 'refetchQueries', ...refetchFilters],
   cancelQueries: filteredQueries,
-  invalidateQueries: ['refetchQueries', ...refetchFilters],
+  invalidateQueries: [
+    'invalidateCachedQuery',
+    'refetchQueries',
+    ...refetchFilters,
+  ],
   refetchQueries: refetchFilters,
 }
-const cacheHelpers = {
+const cacheHelpers: Record<string, Array<string>> = {
   findCachedQuery: filterPredicates,
   findCachedQueries: filterPredicates,
   clearQueryCache: [],
   isQueryActive: [],
-  isQueryDisabled: ['isQueryActive'],
-  isQueryStatic: [],
-  isQueryStale: [],
+  isQueryDisabled: ['isQueryActive', 'isQueryFetched', 'getQueryObserverCount'],
+  isQueryStatic: ['getQueryObserverCount'],
+  isQueryStale: ['getQueryObserverCount'],
+  isQueryFetched: [],
+  getQueryObserverCount: [],
+  resetCachedQuery: [],
+  invalidateCachedQuery: [],
 }
 
 const resultHelpers = [
@@ -185,7 +221,11 @@ const resultHelpers = [
   'isFetchPreviousPageError',
 ]
 
-function checkResultHelpers(modules, expected, context) {
+function checkResultHelpers(
+  modules: Array<ModuleEntry>,
+  expected: Array<string>,
+  context: string,
+) {
   const included = modules
     .filter(([id]) => rendersFeature(id, 'queryResult'))
     .flatMap(([, module]) => module.renderedExports)
@@ -196,7 +236,11 @@ function checkResultHelpers(modules, expected, context) {
   )
 }
 
-function checkOptimisticFetch(chunks, expected, context) {
+function checkOptimisticFetch(
+  chunks: Array<Chunk>,
+  expected: boolean,
+  context: string,
+) {
   // Inspect the emitted Query JS. This catches a race left inside an otherwise
   // essential class even if the dedicated Suspense module was tree-shaken.
   const included = chunks.some(({ code }) => /\bPromise\.race\s*\(/.test(code))
@@ -207,7 +251,11 @@ function checkOptimisticFetch(chunks, expected, context) {
   )
 }
 
-function checkErrorReset(chunks, expected, context) {
+function checkErrorReset(
+  chunks: Array<Chunk>,
+  expected: boolean,
+  context: string,
+) {
   // The generic reader must not keep a call to the public boundary reset API.
   const included = chunks.some(({ code }) => /\.clearReset\b/.test(code))
   assert.equal(
@@ -217,29 +265,30 @@ function checkErrorReset(chunks, expected, context) {
   )
 }
 
-function checkClientOperations(modules, workload, required) {
+function checkClientOperations(
+  modules: Array<ModuleEntry>,
+  workload: string,
+  required?: string,
+) {
+  const tracked = new Set([
+    ...Object.keys(bulkOperations),
+    ...Object.keys(cacheHelpers),
+    'infiniteQuery',
+    'query',
+    'setQueryData',
+  ])
   const operations = new Set(
-    modules.flatMap(([id, module]) => {
-      if (
-        [
-          'cacheOperations',
-          'queryCacheOperations',
-          'queryPredicates',
-          'infiniteQuery',
-        ].some((file) => rendersFeature(id, file))
-      )
-        return module.renderedExports
-      if (rendersFeature(id, 'queryClient')) {
-        return module.renderedExports.filter(
-          (name) => name === 'query' || name === 'setQueryData',
-        )
-      }
-      return []
-    }),
+    modules
+      .filter(([id]) => id.startsWith(pluggableCoreDirectory))
+      .flatMap(([, module]) =>
+        module.renderedExports.filter((name) => tracked.has(name)),
+      ),
   )
   const allowed = [
     required,
-    ...(bulkOperations[required] ?? cacheHelpers[required] ?? []),
+    ...(required
+      ? (bulkOperations[required] ?? cacheHelpers[required] ?? [])
+      : []),
     ...(required === 'infiniteQuery' ? ['query'] : []),
   ]
   for (const name of operations) {
@@ -250,10 +299,22 @@ function checkClientOperations(modules, workload, required) {
   }
   if (required)
     assert(operations.has(required), `${workload} is missing ${required}`)
+  if (required === 'invalidateQueries') {
+    for (const used of [
+      'invalidateCachedQuery',
+      'getQueryObserverCount',
+      'isQueryFetched',
+    ])
+      assert(operations.has(used), `${workload} is missing ${used}`)
+  }
 }
 
 // Query modules may only come from the two packages built in the selected checkout.
-function checkPairOwnership(modules, owners, context) {
+function checkPairOwnership(
+  modules: Array<ModuleEntry>,
+  owners: Array<string>,
+  context: string,
+) {
   const foreign = modules.find(
     ([id]) =>
       /\/(?:packages|node_modules\/@tanstack)\/(?:query-core|react-query)(?:-pluggable)?\//.test(
@@ -266,7 +327,7 @@ function checkPairOwnership(modules, owners, context) {
     )
 }
 
-function checkApp(chunks, packageName, screen) {
+function checkApp(chunks: Array<Chunk>, packageName: Adapter, screen: Screen) {
   if (packageName === pluggable) {
     const retained = renderedModules(chunks)
     const modules = retained.map(([id]) => id)
@@ -365,7 +426,7 @@ function checkApp(chunks, packageName, screen) {
 
 const reactPeer = /^react(?:-dom)?(?:\/|$)/
 
-function retainedExports(modules) {
+function retainedExports(modules: Array<ModuleEntry>) {
   return new Map(
     modules.map(([id, module]) => [id, new Set(module.renderedExports)]),
   )
@@ -373,8 +434,13 @@ function retainedExports(modules) {
 
 // v6 keeps some features inside classes. The emitted chunk's source map names
 // their retained implementations even when the production minifier renames them.
-function workloadFeatures(packageName, chunk, modules) {
+function workloadFeatures(
+  packageName: Adapter,
+  chunk: Chunk,
+  modules: Array<ModuleEntry>,
+) {
   const files = new Set(modules.map(([id]) => path.basename(id, '.js')))
+  assert(chunk.map, 'Expected a source map for the attributed Query chunk')
   const symbols = new Set(chunk.map.names)
   const exports = new Set(
     modules.flatMap(([, module]) => module.renderedExports),
@@ -387,6 +453,18 @@ function workloadFeatures(packageName, chunk, modules) {
     'resetQueries',
   ]
   const features = {
+    'Manual cached-query reset': stock
+      ? /\breset\(\)\{[^}]*\bthis\.resetState\b/.test(chunk.code)
+      : exports.has('resetCachedQuery'),
+    'Cached-query invalidation and observer/fetch checks': stock
+      ? ['invalidate', 'getObserversCount', 'isFetched'].every((method) =>
+          chunk.code.includes(`${method}(){`),
+        )
+      : [
+          'invalidateCachedQuery',
+          'getQueryObserverCount',
+          'isQueryFetched',
+        ].some((operation) => exports.has(operation)),
     'Mutation cache': files.has('mutationCache'),
     'Serial mutation queues': stock
       ? symbols.has('scopeFor')
@@ -406,10 +484,12 @@ function workloadFeatures(packageName, chunk, modules) {
       ? bulk.every((method) => chunk.code.includes(`${method}(`))
       : bulk.some((operation) => exports.has(operation)),
   }
-  return Object.keys(features).filter((name) => features[name])
+  return Object.entries(features)
+    .filter(([, included]) => included)
+    .map(([name]) => name)
 }
 
-async function measure(packageName, screen) {
+async function measure(packageName: Adapter, screen: Screen) {
   const app = await buildApp(packageName, screen)
   checkApp(app, packageName, screen)
 
@@ -418,7 +498,8 @@ async function measure(packageName, screen) {
   const source =
     packageName === baseline && baseCheckout ? baseCheckout : checkout
   const owners = runtimeOwners(source, packageName)
-  const belongsToAdapter = (id) => owners.some((dir) => id.startsWith(dir))
+  const belongsToAdapter = (id: string) =>
+    owners.some((dir) => id.startsWith(dir))
   checkPairOwnership(
     renderedModules(app),
     owners,
@@ -431,9 +512,9 @@ async function measure(packageName, screen) {
     `${packageName} ${screen} attribution`,
   )
   const library = attributed.filter((chunk) => chunk.name === 'query-runtime')
-  assert.equal(
-    library.length,
-    1,
+  const [queryChunk] = library
+  assert(
+    queryChunk && library.length === 1,
     `Expected one Query chunk in ${packageName} ${screen}`,
   )
   if (packageName === pluggable) {
@@ -453,10 +534,10 @@ async function measure(packageName, screen) {
     `Query modules or exports differ from the production ${packageName} ${screen} app`,
   )
   if (
-    renderedModules(attributed.filter((chunk) => chunk !== library[0])).some(
+    renderedModules(attributed.filter((chunk) => chunk !== queryChunk)).some(
       ([id]) => belongsToAdapter(id),
     ) ||
-    [...library[0].imports, ...library[0].dynamicImports].some(
+    [...queryChunk.imports, ...queryChunk.dynamicImports].some(
       (id) => !reactPeer.test(id),
     )
   ) {
@@ -470,8 +551,9 @@ async function measure(packageName, screen) {
     .map(([id]) =>
       normalizePath(path.relative(path.join(source, 'packages'), id)),
     )
-  const js = Buffer.from(library[0].code)
+  const js = Buffer.from(queryChunk.code)
   return {
+    name: packageName,
     library: {
       raw: js.length,
       gzip: gzipSync(js, { level: 9 }).length,
@@ -480,14 +562,14 @@ async function measure(packageName, screen) {
       }).length,
     },
     largestModules,
-    features: workloadFeatures(packageName, library[0], actual),
+    features: workloadFeatures(packageName, queryChunk, actual),
   }
 }
 
 // A combined app cannot tell whether each projection pulls in its sibling,
 // or whether rendering a boundary pulls in paused-mutation restoration.
 async function checkPluggableExports() {
-  const adapter = await import(pluggable)
+  const adapter = await import('@tanstack/react-query-pluggable')
   const { QueryClient, QueriesObserver, notifyManager } = adapter
   for (const alias of [
     'fetchQuery',
@@ -507,7 +589,11 @@ async function checkPluggableExports() {
     queryKey: key,
     queryFn: () => ({ titles: ['A'], page: 1 }),
   })
-  const updated = adapter.setQueryData(client, key, { titles: ['A'], page: 2 })
+  const updated = adapter.setQueryData<typeof initial>(client, key, {
+    titles: ['A'],
+    page: 2,
+  })
+  assert(updated)
   assert.equal(updated.page, 2)
   assert.strictEqual(
     updated.titles,
@@ -539,8 +625,20 @@ async function checkPluggableExports() {
   for (const [type, members] of [
     [adapter.QueryObserver, ['fetchOptimistic']],
     [adapter.QueryCache, ['find', 'findAll', 'clear']],
-    [adapter.Query, ['isActive', 'isDisabled', 'isStatic', 'isStale']],
-  ]) {
+    [
+      adapter.Query,
+      [
+        'isActive',
+        'isDisabled',
+        'isStatic',
+        'isStale',
+        'reset',
+        'invalidate',
+        'getObserversCount',
+        'isFetched',
+      ],
+    ],
+  ] as const) {
     for (const member of members)
       assert(
         !(member in type.prototype),
@@ -602,6 +700,10 @@ async function checkPluggableExports() {
     isQueryDisabled: ['queryPredicates'],
     isQueryStatic: ['queryPredicates'],
     isQueryStale: ['queryPredicates'],
+    isQueryFetched: ['queryPredicates'],
+    getQueryObserverCount: ['queryPredicates'],
+    resetCachedQuery: [],
+    invalidateCachedQuery: [],
     ...Object.fromEntries(
       Object.keys(bulkOperations).map((name) => [
         name,
@@ -616,9 +718,12 @@ async function checkPluggableExports() {
       'serialScope',
     ],
   }
-  const expected = { ...reactExports, ...coreExports }
+  const expected: Record<string, Array<string>> = {
+    ...reactExports,
+    ...coreExports,
+  }
   const features = new Set(Object.values(expected).flat())
-  const entry = path.join(root, 'public-export-probe.js')
+  const entry = path.join(root, 'public-export-probe.ts')
   for (const [name, required] of Object.entries(expected)) {
     const coreOnly = Object.hasOwn(coreExports, name)
     const source = coreOnly ? pluggableCore : pluggable
@@ -638,14 +743,15 @@ async function checkPluggableExports() {
               )
               return this.resolve(id, importer, { skipSelf: true })
             }
+            return undefined
           },
           load(id) {
             if (id !== entry) return
             if (name === 'throwOnError') {
               return `
                 import { queryOptions, throwOnError, useQuery } from '${source}'
-                export function useThrowingQuery(options) {
-                  return useQuery(queryOptions({ ...options, throwOnError: [throwOnError, true] }))
+                export function useThrowingQuery() {
+                  return useQuery(queryOptions({ queryKey: ['boundary-probe'], queryFn: () => 1, throwOnError: [throwOnError, true] }))
                 }
               `
             }
@@ -662,6 +768,7 @@ async function checkPluggableExports() {
         },
       },
     })
+    assert(Array.isArray(results), 'Expected an ESM library build')
     const chunks = results.flatMap(({ output }) =>
       output.filter((file) => file.type === 'chunk'),
     )
@@ -723,20 +830,20 @@ async function checkPluggableExports() {
 await checkPluggableExports()
 
 const integer = new Intl.NumberFormat('en-US')
-function formatChange(bytes, baselineBytes) {
+function formatChange(bytes: number, baselineBytes: number) {
   const difference = bytes - baselineBytes
   const sign = difference > 0 ? '+' : ''
   const percent = ((100 * difference) / baselineBytes).toFixed(2)
   return `${sign}${integer.format(difference)} B (${sign}${percent}%)`
 }
 
-function formatSize(bytes, baselineBytes, isBaseline) {
+function formatSize(bytes: number, baselineBytes: number, isBaseline: boolean) {
   const size = `${integer.format(bytes)} B`
   if (isBaseline) return size
   return `${size}<br>${formatChange(bytes, baselineBytes)}`
 }
 
-function revision(directory) {
+function revision(directory: string) {
   return execFileSync('git', ['-C', directory, 'rev-parse', 'HEAD'], {
     encoding: 'utf8',
   }).trim()
@@ -756,12 +863,11 @@ const lines = [
 ]
 const results = []
 for (const { screen, title } of workloads) {
-  const rows = []
-  for (const name of packages) {
-    rows.push({ name, ...(await measure(name, screen)) })
-  }
-  results.push({ screen, title, rows })
-  const [v6Gzip, pluggableGzip] = rows.map((row) => row.library.gzip)
+  const stock = await measure(baseline, screen)
+  const experiment = await measure(pluggable, screen)
+  results.push({ screen, title, rows: [stock, experiment] as const })
+  const v6Gzip = stock.library.gzip
+  const pluggableGzip = experiment.library.gzip
   lines.push(
     `| ${title} | ${integer.format(v6Gzip)} B | ${integer.format(pluggableGzip)} B | ${formatChange(pluggableGzip, v6Gzip)} |`,
   )
@@ -805,15 +911,18 @@ lines.push(
 for (const { title, rows } of results) {
   const baselineSizes = rows[0].library
   for (const row of rows) {
-    const cells = Object.entries(row.library).map(([metric, value]) =>
-      formatSize(value, baselineSizes[metric], row.name === baseline),
+    const cells = (['raw', 'gzip', 'brotli'] as const).map((metric) =>
+      formatSize(
+        row.library[metric],
+        baselineSizes[metric],
+        row.name === baseline,
+      ),
     )
     lines.push(`| ${title} | \`${row.name}\` | ${cells.join(' | ')} |`)
   }
 }
-const readOnly = results
-  .find(({ screen }) => screen === 'query')
-  .rows.find(({ name }) => name === pluggable)
+const readOnly = results.find(({ screen }) => screen === 'query')?.rows[1]
+assert(readOnly, 'Expected a read-only pluggable workload')
 lines.push(
   '',
   `Largest modules in the read-only pluggable chunk, by rendered size before minification: ${readOnly.largestModules.map((name) => `\`${name}\``).join(', ')}.`,

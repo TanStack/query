@@ -3,9 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "measure": "node measure.mjs",
-    "test:browser": "vitest run --config vitest.browser.config.js",
-    "test:browser:ui": "vitest --watch --ui --config vitest.browser.config.js",
+    "test:types": "tsc -b && node check-editor.ts",
+    "measure": "node measure.ts",
+    "test:browser": "vitest run --config vitest.browser.config.ts",
+    "test:browser:ui": "vitest --watch --ui --config vitest.browser.config.ts",
     "browser:install": "playwright install --with-deps --only-shell chromium"
   },
   "dependencies": {
@@ -15,10 +16,14 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "@vitest/browser-playwright": "5.0.5",
     "@vitest/ui": "5.0.5",
     "playwright": "1.65.1",
     "rollup-plugin-visualizer": "7.1.1",
+    "typescript": "catalog:",
     "vite": "^8.3.8",
     "vitest": "^5.0.5"
   }

@@ -5,7 +5,7 @@ import { ReadingList } from '#screen'
 
 const client = new QueryClient()
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={client}>
     <h1>Reading list</h1>
     <ReadingList />

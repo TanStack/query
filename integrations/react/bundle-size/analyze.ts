@@ -1,8 +1,8 @@
 import path from 'node:path'
 import { visualizer } from 'rollup-plugin-visualizer'
 
-export function adapterTreemap(screen, packageName) {
-  const name = packageName.split('/')[1]
+export function adapterTreemap(screen: string, packageName: string) {
+  const name = path.posix.basename(packageName)
   return visualizer({
     filename: path.join(
       import.meta.dirname,

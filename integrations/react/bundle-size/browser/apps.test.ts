@@ -1,9 +1,11 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, assert, describe, expect, it } from 'vitest'
 import { commands } from 'vitest/browser'
 
-const adapters = ['react-query', 'react-query-pluggable']
+const adapters = ['react-query', 'react-query-pluggable'] as const
+type Adapter = (typeof adapters)[number]
+type Scenario = 'query' | 'paginated' | 'options' | 'polling'
 
-function mountApp(scenario, adapter) {
+function mountApp(scenario: Scenario, adapter: Adapter) {
   const frame = document.createElement('iframe')
   frame.title = adapter
   frame.src = `/${scenario}/${adapter}/index.html`
@@ -11,12 +13,14 @@ function mountApp(scenario, adapter) {
   return frame
 }
 
-async function openApp(scenario, adapter) {
+async function openApp(scenario: Scenario, adapter: Adapter) {
   const frame = mountApp(scenario, adapter)
   await expect
     .poll(() => frame.contentDocument?.querySelector('li')?.textContent)
     .toContain('Middlemarch')
-  return frame.contentDocument
+  const app = frame.contentDocument
+  assert(app, 'Missing document for ' + frame.src)
+  return app
 }
 
 afterEach(() => {
@@ -38,11 +42,15 @@ describe.each(adapters)('@tanstack/%s', (adapter) => {
     const more = Array.from(app.querySelectorAll('button')).find(
       (button) => button.textContent === 'Load more',
     )
+    assert(more, 'Missing Load more button')
     more.click()
     await expect.poll(() => app.querySelectorAll('li').length).toBe(4)
     const third = app.querySelectorAll('li')[2]
+    assert(third, 'Missing third book')
     expect(third.textContent).toContain('Villette')
-    third.querySelector('button').click()
+    const bookmark = third.querySelector('button')
+    assert(bookmark, 'Missing bookmark button')
+    bookmark.click()
     await expect
       .poll(() => app.body.textContent)
       .toContain('Bookmarked: Villette')
@@ -52,28 +60,32 @@ describe.each(adapters)('@tanstack/%s', (adapter) => {
   it('retains the previous selection, queues bookmarks and refreshes the cache', async () => {
     const app = await openApp('options', adapter)
     const view = app.defaultView
+    assert(view, 'Missing app window')
     const originalFetch = view.fetch.bind(view)
-    const gate = Promise.withResolvers()
+    const gate = Promise.withResolvers<void>()
     view.fetch = async (...args) => {
       if (String(args[0]).endsWith('books-2.json')) await gate.promise
       return originalFetch(...args)
     }
-    const button = (label) =>
-      Array.from(app.querySelectorAll('button')).find(
+    const button = (label: string) => {
+      const element = Array.from(app.querySelectorAll('button')).find(
         (item) => item.textContent === label,
       )
+      assert(element, 'Missing button: ' + label)
+      return element
+    }
     try {
       button('Next page').click()
       await expect
         .poll(() => app.querySelector('[role="status"]')?.textContent)
         .toBe('Showing the previous page')
-      expect(app.querySelector('ul').textContent).toContain('Middlemarch')
+      expect(app.querySelector('ul')?.textContent).toContain('Middlemarch')
     } finally {
       gate.resolve()
       view.fetch = originalFetch
     }
     await expect
-      .poll(() => app.querySelector('ul').textContent)
+      .poll(() => app.querySelector('ul')?.textContent)
       .toContain('Villette')
     button('Bookmark this page').click()
     await expect
@@ -97,7 +109,7 @@ describe.each(adapters)('@tanstack/%s', (adapter) => {
       await expect
         .poll(() =>
           Array.from(
-            frame.contentDocument.querySelectorAll('[role="status"]'),
+            frame.contentDocument?.querySelectorAll('[role="status"]') ?? [],
             (element) => element.textContent,
           ),
         )
@@ -106,6 +118,7 @@ describe.each(adapters)('@tanstack/%s', (adapter) => {
       await commands.releasePollingBooks(adapter)
     }
     const app = frame.contentDocument
+    assert(app, 'Missing polling app')
     await expect
       .poll(() =>
         Array.from(app.querySelectorAll('li'), (item) =>
@@ -125,7 +138,10 @@ describe.each(adapters)('@tanstack/%s', (adapter) => {
             const current = timestamps()
             return (
               current.length === 4 &&
-              current.every((value, index) => value > previous[index])
+              current.every((value, index) => {
+                const lastUpdate = previous[index]
+                return lastUpdate !== undefined && value > lastUpdate
+              })
             )
           },
           { timeout: 4000 },

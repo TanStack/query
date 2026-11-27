@@ -48,6 +48,9 @@ jobs:
           pnpm --filter '@tanstack/react-query...' run build
       - name: Build workspace dependencies
         run: pnpm --filter '@tanstack/query-integration-react-bundle-size^...' run build
+      - name: Type-check the benchmark and both adapters' screens
+        working-directory: integrations/react/bundle-size
+        run: pnpm run test:types
       - name: Build and measure production apps
         id: measure
         env:

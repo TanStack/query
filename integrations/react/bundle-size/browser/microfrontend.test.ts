@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, assert, describe, expect, it } from 'vitest'
 
 afterEach(() => document.querySelector('iframe')?.remove())
 
@@ -14,11 +14,20 @@ describe.each(['react-query', 'react-query-pluggable'])(
         document.body.append(frame)
         const list = () =>
           frame.contentDocument?.querySelector('li')?.textContent
-        const queryUrls = () =>
-          frame.contentWindow.performance
+        const queryUrls = () => {
+          const view = frame.contentWindow
+          assert(view, 'Missing microfrontend window')
+          return view.performance
             .getEntriesByType('resource')
             .map((resource) => new URL(resource.name).pathname)
             .filter((pathname) => pathname.endsWith('/query-runtime.js'))
+        }
+        const navigate = (id: string) => {
+          const button =
+            frame.contentDocument?.querySelector<HTMLButtonElement>(id)
+          assert(button, 'Missing route button ' + id)
+          button.click()
+        }
         await expect.poll(list).toBe('Middlemarch')
         const expected = [
           prefix +
@@ -26,12 +35,12 @@ describe.each(['react-query', 'react-query-pluggable'])(
             'query-runtime.js',
         ]
         expect(queryUrls()).toEqual(expected)
-        frame.contentDocument.querySelector('#bookmarks').click()
+        navigate('#bookmarks')
         await expect.poll(list).toContain('Bookmark')
         if (deployment === 'independent')
           expected.push(prefix + 'paginated/query-runtime.js')
         expect(queryUrls()).toEqual(expected)
-        frame.contentDocument.querySelector('#catalog').click()
+        navigate('#catalog')
         await expect.poll(list).toBe('Middlemarch')
         expect(queryUrls()).toEqual(expected)
       },

@@ -4,21 +4,27 @@ import path from 'node:path'
 import { gzipSync } from 'node:zlib'
 import { build } from 'vite'
 
-const screens = ['query', 'paginated']
-const deployments = ['independent', 'shared']
+const screens = ['query', 'paginated'] as const
+type Screen = (typeof screens)[number]
+type Adapter = '@tanstack/react-query' | '@tanstack/react-query-pluggable'
+const deployments = ['independent', 'shared'] as const
+type Deployment = (typeof deployments)[number]
 
 // Both remotes use the host's React and React DOM. A shared Query deployment
 // serves one ESM chunk at one URL; each remote still owns its QueryClient.
-async function buildHost(root, directory) {
-  const peers = {
+async function buildHost(root: string, directory: string) {
+  const peers: Record<string, string> = {
     react:
       "export { default, createContext, use, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'",
     dom: "export { createRoot } from 'react-dom/client'",
     jsx: "export { Fragment, jsx, jsxs } from 'react/jsx-runtime'",
   }
-  const input = Object.fromEntries(
-    Object.keys(peers).map((name) => [name, 'host:' + name]),
-  )
+  const input = {
+    navigation: path.join(root, 'host/navigation.ts'),
+    ...Object.fromEntries(
+      Object.keys(peers).map((name) => [name, 'host:' + name]),
+    ),
+  }
   await build({
     root,
     configFile: false,
@@ -28,7 +34,7 @@ async function buildHost(root, directory) {
       {
         name: 'microfrontend-host-peers',
         resolveId(id) {
-          if (id.startsWith('host:')) return '\0' + id
+          return id.startsWith('host:') ? '\0' + id : null
         },
         load(id) {
           if (!id.startsWith('\0host:')) return
@@ -47,23 +53,18 @@ async function buildHost(root, directory) {
   })
 }
 
-function shell(entries) {
+function routeDirectory(deployment: Deployment, screen: Screen) {
+  return deployment === 'shared' ? '.' : './' + screen
+}
+
+function shell(deployment: Deployment) {
+  const catalog = routeDirectory(deployment, 'query') + '/query.js'
+  const bookmarks = routeDirectory(deployment, 'paginated') + '/paginated.js'
   return `<!doctype html>
 <html lang="en"><meta charset="utf-8"><title>Reading list</title>
 <script type="importmap">{"imports":{"react":"../../host/react.js","react-dom/client":"../../host/dom.js","react/jsx-runtime":"../../host/jsx.js"}}</script>
-<nav><button id="catalog">Catalog</button><button id="bookmarks">Bookmarks</button></nav><main></main>
-<script type="module">
-  const routes = ${JSON.stringify(entries)}
-  let unmount
-  async function open(screen) {
-    const { mount } = await import(routes[screen])
-    unmount?.()
-    unmount = mount(document.querySelector('main'))
-  }
-  document.querySelector('#catalog').onclick = () => open('query')
-  document.querySelector('#bookmarks').onclick = () => open('paginated')
-  await open('query')
-</script></html>`
+<nav><button id="catalog" data-entry="${catalog}">Catalog</button><button id="bookmarks" data-entry="${bookmarks}">Bookmarks</button></nav><main></main>
+<script type="module" src="../../host/navigation.js"></script></html>`
 }
 
 async function buildRemotes({
@@ -74,12 +75,20 @@ async function buildRemotes({
   owners,
   packageScope,
   pluggable,
+}: {
+  root: string
+  outDir: string
+  included: ReadonlyArray<Screen>
+  packageName: Adapter
+  owners: ReadonlyArray<string>
+  packageScope: string
+  pluggable: Adapter
 }) {
   const entries = Object.fromEntries(
     included.map((screen) => [screen, 'remote:' + screen]),
   )
-  const belongs = (id) => owners.some((dir) => id.startsWith(dir))
-  const { output } = await build({
+  const belongs = (id: string) => owners.some((dir) => id.startsWith(dir))
+  const result = await build({
     root,
     configFile: false,
     publicDir: false,
@@ -90,7 +99,7 @@ async function buildRemotes({
         '#query-hooks': path.join(
           root,
           'src',
-          packageName === pluggable ? 'pluggable-query.js' : 'v6-query.js',
+          packageName === pluggable ? 'pluggable-query.ts' : 'v6-query.ts',
         ),
       },
     },
@@ -100,11 +109,17 @@ async function buildRemotes({
         enforce: 'pre',
         resolveId(id, importer) {
           if (id.startsWith('remote:'))
-            return path.join(root, 'src', 'remote.jsx') + '?' + id.slice(7)
-          if (id === '#screen')
-            return path.join(root, 'src', importer.split('?').at(-1) + '.jsx')
+            return path.join(root, 'src', 'remote.tsx') + '?' + id.slice(7)
+          if (id === '#screen') {
+            const screen = screens.find((name) =>
+              importer?.endsWith('?' + name),
+            )
+            assert.ok(screen, 'Missing remote screen in ' + importer)
+            return path.join(root, 'src', screen + '.tsx')
+          }
           if (id === '#adapter')
             return this.resolve(packageName, packageScope, { skipSelf: true })
+          return null
         },
       },
     ],
@@ -131,7 +146,8 @@ async function buildRemotes({
       },
     },
   })
-  const chunks = output.filter((chunk) => chunk.type === 'chunk')
+  assert.ok('output' in result, 'Expected one build output for ' + packageName)
+  const chunks = result.output.filter((chunk) => chunk.type === 'chunk')
   const runtime = chunks.find((chunk) => chunk.name === 'query-runtime')
   assert.ok(runtime, 'Missing Query runtime for ' + packageName)
   const modules = Object.entries(runtime.modules).filter(
@@ -158,23 +174,32 @@ export async function measureMicrofrontends({
   pluggable,
   runtimeOwners,
   formatChange,
+}: {
+  root: string
+  checkout: string
+  baseCheckout?: string
+  baseline: Adapter
+  pluggable: Adapter
+  runtimeOwners: (directory: string, adapter: Adapter) => ReadonlyArray<string>
+  formatChange: (bytes: number, baselineBytes: number) => string
 }) {
   const directory = path.join(root, 'dist', 'microfrontends')
   await buildHost(root, directory)
-  const results = []
+  const results: Array<string> = []
   for (const deployment of deployments) {
-    const rows = []
-    for (const packageName of [baseline, pluggable]) {
+    async function measureAdapter(packageName: Adapter) {
       const source =
         packageName === baseline && baseCheckout ? baseCheckout : checkout
-      const name = packageName.split('/')[1]
+      const name = path.basename(packageName)
       const dir = path.join(directory, name, deployment)
       const groups =
-        deployment === 'shared' ? [screens] : screens.map((screen) => [screen])
-      const entries = {}
-      const sizes = []
+        deployment === 'shared'
+          ? [screens]
+          : screens.map((screen) => [screen] as const)
+      let catalog = 0
+      let journey = 0
       for (const included of groups) {
-        const prefix = deployment === 'shared' ? '.' : './' + included[0]
+        const prefix = routeDirectory(deployment, included[0])
         const size = await buildRemotes({
           root,
           outDir: path.join(dir, prefix),
@@ -184,20 +209,22 @@ export async function measureMicrofrontends({
           packageScope: path.join(source, 'packages', name, 'package.json'),
           owners: runtimeOwners(source, packageName),
         })
-        sizes.push(size)
-        for (const screen of included)
-          entries[screen] = prefix + '/' + screen + '.js'
+        if (included.includes('query')) catalog = size
+        journey += size
       }
       await mkdir(dir, { recursive: true })
       await cp(path.join(root, 'public'), dir, { recursive: true })
-      await writeFile(path.join(dir, 'index.html'), shell(entries))
-      rows.push([sizes[0], sizes.reduce((total, bytes) => total + bytes, 0)])
+      await writeFile(path.join(dir, 'index.html'), shell(deployment))
+      return { catalog, journey }
     }
-    for (const [i, journey] of [
-      'Catalog only',
-      'Catalog then bookmarks',
-    ].entries()) {
-      const [base, experiment] = rows.map((row) => row[i])
+    const stock = await measureAdapter(baseline)
+    const experimental = await measureAdapter(pluggable)
+    for (const [key, journey] of [
+      ['catalog', 'Catalog only'],
+      ['journey', 'Catalog then bookmarks'],
+    ] as const) {
+      const base = stock[key]
+      const experiment = experimental[key]
       const label =
         deployment === 'shared' ? 'Shared Query chunk' : 'Query per remote'
       results.push(

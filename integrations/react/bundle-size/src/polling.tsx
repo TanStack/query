@@ -6,12 +6,20 @@ import {
   useSuspenseBookPages,
   useSuspenseBookQuery,
 } from '#query-hooks'
-import { fetchBooks } from './books.js'
+import { fetchBooks } from './books.ts'
+import type { UseQueryResult } from '#adapter'
+import type { BookPage } from './books.ts'
 
-function options(name) {
+function options(name: string) {
   return {
     queryKey: ['books', name],
-    queryFn: ({ pageParam = 1, signal }) => fetchBooks(pageParam, signal),
+    queryFn: ({
+      pageParam,
+      signal,
+    }: {
+      pageParam?: unknown
+      signal: AbortSignal
+    }) => fetchBooks(typeof pageParam === 'number' ? pageParam : 1, signal),
     refetchInterval: interval,
     refetchIntervalInBackground: true,
   }
@@ -19,10 +27,18 @@ function options(name) {
 
 const pagination = {
   initialPageParam: 1,
-  getNextPageParam: (page) => page.next,
+  getNextPageParam: (page: BookPage) => page.next,
 }
 
-function BookRow({ label, result, page }) {
+function BookRow({
+  label,
+  result,
+  page,
+}: {
+  label: string
+  result: Pick<UseQueryResult, 'dataUpdatedAt'>
+  page: BookPage | undefined
+}) {
   return (
     <li>
       {label}: {page?.titles.join(', ')}{' '}

@@ -7,16 +7,16 @@ import {
   selectTitles,
 } from '#feature-options'
 import { isError, isPending, useBookQuery } from '#query-hooks'
-import { fetchBooks } from './books.js'
+import { fetchBooks } from './books.ts'
 
-function savedBooks() {
-  return JSON.parse(localStorage.getItem('bookmarks') ?? '[]')
+function savedBooks(): string[] {
+  return JSON.parse(localStorage.getItem('bookmarks') ?? '[]') as string[]
 }
 
 export function ReadingList() {
   const client = useQueryClient()
   const [page, setPage] = React.useState(1)
-  const [events, setEvents] = React.useState([])
+  const [events, setEvents] = React.useState<string[]>([])
   const books = useBookQuery({
     queryKey: ['books', page],
     queryFn: ({ signal }) => fetchBooks(page, signal),
@@ -26,7 +26,7 @@ export function ReadingList() {
   const saved = useBookQuery({ queryKey: ['bookmarks'], queryFn: savedBooks })
   const bookmark = useMutation({
     scope: bookmarkScope,
-    mutationFn: async (title) => {
+    mutationFn: async (title: string) => {
       setEvents((items) => [...items, `Saving ${title}`])
       await Promise.resolve()
       localStorage.setItem(
