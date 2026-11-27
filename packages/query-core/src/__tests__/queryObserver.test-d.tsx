@@ -14,6 +14,7 @@ import {
   it,
 } from 'vitest'
 import { QueryClient, QueryObserver, defaultQueryFn } from '..'
+import type { QueryBoundaryTuple } from '@tanstack/query-test-utils/descriptors'
 import type { IntervalInput } from '@tanstack/query-test-utils/polling'
 import type { ProjectionInput } from '@tanstack/query-test-utils/projection'
 import type {
@@ -387,7 +388,7 @@ describe('queryObserver', () => {
             QueryObserverOptions['throwOnError'],
             (...args: Array<any>) => any
           >
-        >().toEqualTypeOf<boolean | undefined>()
+        >().toEqualTypeOf<boolean | undefined | QueryBoundaryTuple>()
       })
     })
 

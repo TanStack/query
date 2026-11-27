@@ -30,6 +30,7 @@ export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
 export type { PreparedQuery } from './useQuery'
 export { useQuery } from './useQuery'
+export { throwOnError } from './throwOnError'
 export { suspenseQueryOptions } from './suspenseQueryOptions'
 export type { SkippableSuspenseQueryOptions } from './suspenseQueryOptions'
 export { suspenseInfiniteQueryOptions } from './suspenseInfiniteQueryOptions'
@@ -201,6 +202,7 @@ export type {
   PlaceholderDataFunction,
   QueryOptions,
   ThrowOnError,
+  QueryErrorBoundaryOption,
   QueryObserverOptions,
   DefaultedQueryObserverOptions,
   InfiniteQueryObserverOptions,

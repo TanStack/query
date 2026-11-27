@@ -122,6 +122,8 @@ export type {
   QueryObserverResult,
   DefaultedQueryObserverOptions,
   ThrowOnError,
+  QueryErrorBoundaryOption,
+  QueryErrorBoundaryPolicy,
   QueryFunction,
   StaleTimeFunction,
   QueryBooleanOption,

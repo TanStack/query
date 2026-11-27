@@ -4,20 +4,53 @@ import {
   ensureQueryFn,
   fetchSignal,
 } from './utils'
-import type { FetchContext, Query } from './query'
-import type { InfiniteData, InfiniteQueryPageParamsOptions } from './types'
+import type { FetchContext, FetchOptions, Query } from './query'
+import type { QueryClient } from './queryClient'
+import type {
+  DefaultError,
+  InfiniteData,
+  InfiniteQueryPageParamsOptions,
+} from './types'
 import type { FetchSignalContext } from './utils'
 
 /**
- * Installs the page fetcher for an infinite query. A retry continues from the
+ * Captures the options and cached pages for this fetch before the cache notifies listeners.
+ * @param client - Client that owns the query.
+ * @param query - The cached infinite query.
+ * @param fetchOptions - Options for the fetch in progress.
+ * @param addSignal - Attaches the query's cancellation signal without consuming it.
+ * @returns The fetcher to use for the first attempt and subsequent retries.
+ */
+export function createInfiniteFetch(
+  client: QueryClient,
+  query: Query,
+  fetchOptions: FetchOptions | undefined,
+  addSignal: (context: object) => asserts context is { signal: AbortSignal },
+) {
+  const { queryKey, options, state } = query as Query<
+    unknown,
+    DefaultError,
+    InfiniteData<unknown>
+  >
+  const context = { client, queryKey, options, state, fetchOptions }
+  addSignal(context)
+  return prepareInfiniteFetch(context, query)
+}
+
+/**
+ * Creates the page fetcher for an infinite query. A retry continues from the
  * failed page. A new fetch starts with the most recently cached pages.
  * @param context - The fetch in progress, including its options and cached pages.
  * @param query - The query supplied to a custom persister.
+ * @returns A fetcher that resumes pagination at the failed page on retry.
  */
 export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
-  context: FetchContext<TQueryFnData, TError, InfiniteData<TData, TPageParam>>,
+  context: Omit<
+    FetchContext<TQueryFnData, TError, InfiniteData<TData, TPageParam>>,
+    'fetchFn'
+  >,
   query: Query,
-): void {
+) {
   const options = context.options as InfiniteQueryPageParamsOptions<TData> & {
     pages?: number
   }
@@ -100,7 +133,7 @@ export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
     return result
   }
   if (context.options.persister) {
-    context.fetchFn = () => {
+    return () => {
       return context.options.persister?.(
         fetchFn as any,
         {
@@ -112,9 +145,8 @@ export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
         query,
       )
     }
-  } else {
-    context.fetchFn = fetchFn
   }
+  return fetchFn
 }
 
 /**
@@ -194,6 +226,6 @@ export function infiniteFetchOptions<TOptions extends object>(
   return {
     ...options,
     _type: 'infinite' as const,
-    _prepareInfiniteFetch: prepareInfiniteFetch,
+    _prepareInfiniteFetch: createInfiniteFetch,
   }
 }

@@ -2,6 +2,7 @@ import { skipToken } from '@tanstack/query-core-pluggable'
 import { observerKey } from './queryDescriptor'
 import { queryPolicy } from './queryPolicy'
 import { defaultThrowOnError, suspenseQueryPolicy } from './suspense'
+import { throwOnError } from './throwOnError'
 import type { QueryDescriptor } from './queryDescriptor'
 
 /** Options that allow Suspense to control execution and error handling. */
@@ -17,7 +18,10 @@ export interface SuspenseQueryMode<TSkippable extends boolean = false> {
   /** Running queries suspend, and skipped queries can read cached data. */
   readonly enabled: TSkippable extends true ? boolean : true
   /** Routes errors without cached data to the nearest boundary. */
-  readonly throwOnError: typeof defaultThrowOnError
+  readonly throwOnError: readonly [
+    typeof throwOnError,
+    typeof defaultThrowOnError,
+  ]
   /** The reader uses this policy when the query is enabled. */
   readonly renderPolicy: TSkippable extends true
     ? typeof suspenseQueryPolicy | typeof queryPolicy
@@ -42,7 +46,7 @@ export function prepareSuspenseOptions<
     ...options,
     [observerKey]: Observer,
     enabled,
-    throwOnError: defaultThrowOnError,
+    throwOnError: [throwOnError, defaultThrowOnError],
     renderPolicy: enabled ? suspenseQueryPolicy : queryPolicy,
   }
 }

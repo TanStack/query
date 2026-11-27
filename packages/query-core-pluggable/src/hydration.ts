@@ -1,4 +1,4 @@
-import { prepareInfiniteFetch } from './infiniteQueryBehavior'
+import { createInfiniteFetch } from './infiniteQueryBehavior'
 import { Mutation } from './mutation'
 import {
   getDefaultOptions,
@@ -396,7 +396,7 @@ export function hydrateQueries(
             meta,
             ...(queryType === 'infinite' && {
               _type: queryType,
-              _prepareInfiniteFetch: prepareInfiniteFetch,
+              _prepareInfiniteFetch: createInfiniteFetch,
             }),
           },
           // Reset fetch status to idle to avoid

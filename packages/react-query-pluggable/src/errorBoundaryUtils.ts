@@ -1,35 +1,53 @@
 'use client'
 
-import * as React from 'react'
+import { shouldThrowError } from '@tanstack/query-core-pluggable'
+import type {
+  DefaultedQueryObserverOptions,
+  Query,
+  QueryObserverResult,
+} from '@tanstack/query-core-pluggable'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
-import type { QueryRenderPolicy } from './queryDescriptor'
+
+type Options = DefaultedQueryObserverOptions<any, any, any, any, any>
+type CachedQuery = Query<any, any, any, any>
 
 /**
- * Clears a boundary reset after a successful commit so later errors can reach the boundary again.
- * @param boundary - The nearest query error boundary.
+ * Stops a failed query retrying on mount until the boundary requests a reset.
+ * @param options - The observer options for this reader.
+ * @param boundary - The nearest reset boundary.
+ * @param query - The cache entry at the start of the render.
  */
-export function useClearResetErrorBoundary(
+export function prepareErrorBoundary(
+  options: Options,
   boundary: QueryErrorResetBoundaryValue,
+  query: CachedQuery | undefined,
 ) {
-  React.useEffect(() => {
-    boundary.clearReset()
-  }, [boundary])
+  const rule =
+    typeof options.throwOnError === 'object'
+      ? options.throwOnError[1]
+      : options.throwOnError
+  if (
+    (options.suspense ||
+      (query?.state.status === 'error' && typeof rule === 'function'
+        ? rule(query.state.error, query)
+        : rule)) &&
+    !boundary.isReset()
+  )
+    options.retryOnMount = false
 }
 
 /**
- * Applies the factory's policy once a query has settled in an error state.
- * @param policy - The render policy selected for this query.
- * @param result - The current snapshot.
- * @param options - The observer's defaulted options.
- * @param query - The cache entry, if it already existed at the start of the render.
- * @param boundary - The nearest query error boundary.
- * @returns Whether the query error should be thrown during render.
+ * Checks whether a settled observer error belongs to the nearest boundary.
+ * @param result - The snapshot being rendered.
+ * @param options - The observer options for this reader.
+ * @param query - The cache entry at the start of the render.
+ * @param boundary - The nearest reset boundary.
+ * @returns Whether React should receive the settled error.
  */
 export function getHasError(
-  policy: QueryRenderPolicy,
-  result: Parameters<QueryRenderPolicy['shouldThrow']>[0],
-  options: Parameters<QueryRenderPolicy['shouldThrow']>[1],
-  query: Parameters<QueryRenderPolicy['shouldThrow']>[2] | undefined,
+  result: QueryObserverResult<any, any>,
+  options: Options,
+  query: CachedQuery | undefined,
   boundary: QueryErrorResetBoundaryValue,
 ) {
   return (
@@ -37,6 +55,12 @@ export function getHasError(
     !boundary.isReset() &&
     result.fetchStatus !== 'fetching' &&
     !!query &&
-    policy.shouldThrow(result, options, query)
+    ((options.suspense && result.data === undefined) ||
+      shouldThrowError(
+        typeof options.throwOnError === 'object'
+          ? options.throwOnError[1]
+          : options.throwOnError,
+        [result.error, query],
+      ))
   )
 }

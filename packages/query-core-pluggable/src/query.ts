@@ -10,7 +10,7 @@ import {
   replaceData,
   timeUntilStale,
 } from './utils'
-import type { prepareInfiniteFetch } from './infiniteQueryBehavior'
+import type { createInfiniteFetch } from './infiniteQueryBehavior'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type { QueryObserver } from './queryObserver'
@@ -129,7 +129,7 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
-  #prepareInfiniteFetch?: typeof prepareInfiniteFetch
+  #prepareInfiniteFetch?: typeof createInfiniteFetch
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
@@ -194,7 +194,7 @@ export class Query<
     this.options = { ...this.#defaultOptions, ...options }
 
     const internalOptions = options as
-      | { _prepareInfiniteFetch?: typeof prepareInfiniteFetch }
+      | { _prepareInfiniteFetch?: typeof createInfiniteFetch }
       | undefined
     this.#prepareInfiniteFetch ??= internalOptions?._prepareInfiniteFetch
 
@@ -538,44 +538,35 @@ export class Query<
       })
     }
 
-    // Create fetch function
-    const fetchFn = () => {
-      const queryFn = ensureQueryFn(this.options, fetchOptions)
+    const activeOptions = this.options
+    const runFetch =
+      this.#prepareInfiniteFetch?.(
+        this.#client,
+        this as unknown as Query,
+        fetchOptions,
+        addSignalProperty,
+      ) ??
+      (() => {
+        const queryFn = ensureQueryFn(this.options, fetchOptions)
 
-      const queryFnContext = {
-        client: this.#client,
-        queryKey: this.queryKey,
-        meta: this.meta,
-      }
-      addSignalProperty(queryFnContext)
+        const queryFnContext = {
+          client: this.#client,
+          queryKey: this.queryKey,
+          meta: this.meta,
+        }
+        addSignalProperty(queryFnContext)
 
-      this.#abortSignalConsumed = false
-      if (this.options.persister) {
-        return this.options.persister(
-          queryFn,
-          queryFnContext,
-          this as unknown as Query,
-        )
-      }
+        this.#abortSignalConsumed = false
+        if (this.options.persister) {
+          return this.options.persister(
+            queryFn,
+            queryFnContext,
+            this as unknown as Query,
+          )
+        }
 
-      return queryFn(queryFnContext)
-    }
-
-    // Trigger behavior hook
-    const context = {
-      fetchOptions,
-      options: this.options,
-      queryKey: this.queryKey,
-      client: this.#client,
-      state: this.state,
-      fetchFn,
-    }
-    addSignalProperty(context)
-
-    const prepare = this.#prepareInfiniteFetch as
-      | QueryBehavior<TQueryFnData, TError, TData, TQueryKey>['onFetch']
-      | undefined
-    prepare?.(context, this as unknown as Query)
+        return queryFn(queryFnContext)
+      })
 
     // Store state in case the current fetch needs to be reverted
     this.#revertState = this.state
@@ -583,9 +574,9 @@ export class Query<
     // Set to fetching state if not already in it
     if (
       this.state.fetchStatus === 'idle' ||
-      this.state.fetchMeta !== context.fetchOptions?.meta
+      this.state.fetchMeta !== fetchOptions?.meta
     ) {
-      const meta = context.fetchOptions?.meta
+      const meta = fetchOptions?.meta
       this.#update(
         {
           ...fetchState(this.state.data, this.options),
@@ -600,7 +591,7 @@ export class Query<
       initialPromise: fetchOptions?.initialPromise as
         | Promise<TData>
         | undefined,
-      fn: context.fetchFn as () => Promise<TData>,
+      fn: runFetch as () => Promise<TData>,
       onCancel: (error) => {
         if (error instanceof CancelledError && error.revert) {
           this.setState({
@@ -622,9 +613,9 @@ export class Query<
       onContinue: () => {
         this.#update({ fetchStatus: 'fetching' }, { type: 'continue' })
       },
-      retry: context.options.retry,
-      retryDelay: context.options.retryDelay,
-      networkMode: context.options.networkMode,
+      retry: activeOptions.retry,
+      retryDelay: activeOptions.retryDelay,
+      networkMode: activeOptions.networkMode,
       canRun: () => true,
     }))
 

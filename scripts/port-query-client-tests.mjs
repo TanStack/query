@@ -71,6 +71,7 @@ export function queryClientTestPort(upstream, files, packageName) {
     const api = '__clientOperations'
     let usesOperations = false
     const factories = new Map()
+    let usesBoundaryOption = false
     let checksArguments = false
     let checksOptimisticOptions = false
     function edit(start, end, text) {
@@ -168,6 +169,29 @@ export function queryClientTestPort(upstream, files, packageName) {
         const factory =
           factories.size &&
           factories.get(checker.getSymbolAtLocation(node.expression))
+        // Single-query readers opt into the React boundary policy explicitly.
+        const options = node.arguments[0]
+        if (
+          (node.expression.text === 'useQuery' ||
+            factory === 'infiniteQueryOptions') &&
+          options &&
+          ts.isObjectLiteralExpression(options)
+        ) {
+          for (const prop of options.properties) {
+            if (
+              ts.isPropertyAssignment(prop) &&
+              prop.name.getText(source) === 'throwOnError'
+            ) {
+              usesBoundaryOption = true
+              edit(
+                prop.initializer.getStart(),
+                prop.initializer.getStart(),
+                '[__prepared.throwOnError, ',
+              )
+              edit(prop.initializer.end, prop.initializer.end, ']')
+            }
+          }
+        }
         if (factory) {
           edit(
             node.expression.getStart(),
@@ -321,7 +345,7 @@ export function queryClientTestPort(upstream, files, packageName) {
       result = result.slice(0, start) + text + result.slice(end)
     }
     result = resultPort.imports() + result
-    if (factories.size)
+    if (factories.size || usesBoundaryOption)
       result =
         "import * as __prepared from '@tanstack/react-query-pluggable'\n" +
         result

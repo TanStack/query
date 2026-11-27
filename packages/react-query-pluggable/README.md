@@ -94,7 +94,25 @@ function PostTitle({ id }: { id: number }) {
 ```
 
 The Suspense policy sends a failed query without cached data to the nearest error boundary.
-Suspense factories own `enabled` and `throwOnError`. Pass `skipToken` as the fetcher for a conditional Suspense query. A skipped query renders with cached data or `undefined`. An ordinary query may set `throwOnError` to a boolean or a predicate. Both modes support retries through `QueryErrorResetBoundary`.
+Suspense factories own `enabled` and `throwOnError`. Pass `skipToken` as the fetcher for a conditional Suspense query. A skipped query renders with cached data or `undefined`.
+
+Ordinary single and paginated queries return failures in `result.error` by default. To send a failure to a React error boundary, import `throwOnError` and pass it in the descriptor or the client's query defaults. Use `[throwOnError, true]` for every error, or put a predicate in the second slot. For example, this reader keeps displaying a cached post when a background refresh fails.
+
+```ts
+import { queryOptions, throwOnError } from '@tanstack/react-query-pluggable'
+
+const postQueryOptions = (id: number) =>
+  queryOptions({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+    throwOnError: [
+      throwOnError,
+      (_error, query) => query.state.data === undefined,
+    ],
+  })
+```
+
+Set `throwOnError: false` on a query to override a client or key default. Use `QueryErrorResetBoundary` to allow a failed boundary reader to retry. An ordinary reader that handles errors inline leaves a pending boundary reset available for its siblings.
 
 ### Reading query state
 

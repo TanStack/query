@@ -14,13 +14,20 @@ import type {
   MutationObserverResult,
   OmitKeyof,
   Override,
+  QueryErrorBoundaryOption,
   QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
   QueryObserverPlaceholderResult,
   QueryObserverResult,
   SkipToken,
+  ThrowOnError,
 } from '@tanstack/query-core-pluggable'
+
+/** Error options recognized when inferring a query inside a parallel group. */
+export type GroupThrowOnError<TError> =
+  | ThrowOnError<any, TError, any, any>
+  | QueryErrorBoundaryOption<any, TError, any, any>
 
 /**
  * {@link UseBaseQueryOptions} with all type parameters set to `any`, useful when the specific types aren't
@@ -162,8 +169,16 @@ export interface UseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
   UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
-  'suspense'
-> {}
+  'suspense' | 'throwOnError'
+> {
+  /** Pass [throwOnError, true] or [throwOnError, predicate] to route a settled error to React. */
+  throwOnError?: QueryErrorBoundaryOption<
+    TQueryFnData,
+    TError,
+    TQueryFnData,
+    TQueryKey
+  >
+}
 
 /**
  * {@link UseSuspenseQueryOptions} with all type parameters set to `any`, useful when the specific types aren't
@@ -238,8 +253,15 @@ export interface UseInfiniteQueryOptions<
     TQueryKey,
     TPageParam
   >,
-  'suspense'
+  'suspense' | 'throwOnError'
 > {
+  /** Enables error boundary handling for the paginated query. */
+  throwOnError?: QueryErrorBoundaryOption<
+    TQueryFnData,
+    TError,
+    InfiniteData<TQueryFnData, TPageParam>,
+    TQueryKey
+  >
   /**
    * Set this to `false` to unsubscribe this observer from updates to the query cache.
    * @defaultValue true

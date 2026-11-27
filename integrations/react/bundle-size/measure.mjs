@@ -207,6 +207,16 @@ function checkOptimisticFetch(chunks, expected, context) {
   )
 }
 
+function checkErrorReset(chunks, expected, context) {
+  // The generic reader must not keep a call to the public boundary reset API.
+  const included = chunks.some(({ code }) => /\.clearReset\b/.test(code))
+  assert.equal(
+    included,
+    expected,
+    `${context} retained error-boundary reset access: ${included}`,
+  )
+}
+
 function checkClientOperations(modules, workload, required) {
   const operations = new Set(
     modules.flatMap(([id, module]) => {
@@ -257,8 +267,9 @@ function checkPairOwnership(modules, owners, context) {
 }
 
 function checkApp(chunks, packageName, screen) {
-  const modules = renderedModules(chunks).map(([id]) => id)
   if (packageName === pluggable) {
+    const retained = renderedModules(chunks)
+    const modules = retained.map(([id]) => id)
     const foreignRuntime = modules.find((id) =>
       otherFrameworks.some((pattern) => pattern.test(id)),
     )
@@ -281,6 +292,7 @@ function checkApp(chunks, packageName, screen) {
       )
     }
     const usesMutations = screen === 'paginated' || screen === 'options'
+    const usesPages = screen === 'paginated' || screen === 'polling'
     const features = {
       queryClient: true,
       queryCache: true,
@@ -292,13 +304,15 @@ function checkApp(chunks, packageName, screen) {
       suspenseQueryOptions: screen === 'polling',
       suspenseInfiniteQueryOptions: screen === 'polling',
       suspense: screen === 'polling',
+      QueryErrorResetBoundary: screen === 'polling',
+      errorBoundaryUtils: screen === 'polling',
       fetchOptimistic: screen === 'polling',
       refetchInterval: screen === 'polling',
       infiniteQuery: false,
       queryOptions: true,
-      infiniteQueryOptions: screen === 'paginated' || screen === 'polling',
-      infiniteQueryObserver: screen === 'paginated' || screen === 'polling',
-      infiniteQueryBehavior: screen === 'paginated' || screen === 'polling',
+      infiniteQueryOptions: usesPages,
+      infiniteQueryObserver: usesPages,
+      infiniteQueryBehavior: usesPages,
       select: screen === 'options',
       placeholderData: screen === 'options',
       serialScope: screen === 'options',
@@ -314,11 +328,35 @@ function checkApp(chunks, packageName, screen) {
         )
       }
     }
+    const pageFetcher = retained.some(
+      ([id, module]) =>
+        rendersFeature(id, 'infiniteQueryBehavior') &&
+        module.renderedExports.includes('createInfiniteFetch'),
+    )
+    assert.equal(pageFetcher, usesPages, `${screen} infinite page fetcher`)
+    const utilities = retained
+      .filter(([id]) => rendersFeature(id, 'utils'))
+      .flatMap(([, module]) => module.renderedExports)
+    assert(
+      utilities.includes('replaceEqualDeep') &&
+        utilities.includes('replaceData'),
+      `${screen} is missing default structural sharing`,
+    )
+    if (screen === 'query') {
+      assert(
+        !modules.some((id) => rendersFeature(id, 'throwOnError')),
+        'Read-only list retained the optional throwOnError implementation',
+      )
+      assert(
+        !utilities.includes('shouldThrowError'),
+        'Read-only list retained the error boundary predicate',
+      )
+    }
     const selectedStatus = screen === 'polling' ? [] : ['isPending', 'isError']
     if (screen === 'paginated') selectedStatus.push('isFetching')
-    checkResultHelpers(renderedModules(chunks), selectedStatus, screen)
+    checkResultHelpers(retained, selectedStatus, screen)
     checkClientOperations(
-      renderedModules(chunks),
+      retained,
       screen,
       screen === 'options' ? 'invalidateQueries' : undefined,
     )
@@ -331,6 +369,44 @@ function retainedExports(modules) {
   return new Map(
     modules.map(([id, module]) => [id, new Set(module.renderedExports)]),
   )
+}
+
+// v6 keeps some features inside classes. The emitted chunk's source map names
+// their retained implementations even when the production minifier renames them.
+function workloadFeatures(packageName, chunk, modules) {
+  const files = new Set(modules.map(([id]) => path.basename(id, '.js')))
+  const symbols = new Set(chunk.map.names)
+  const exports = new Set(
+    modules.flatMap(([, module]) => module.renderedExports),
+  )
+  const stock = packageName === baseline
+  const bulk = [
+    'getQueriesData',
+    'setQueriesData',
+    'cancelQueries',
+    'resetQueries',
+  ]
+  const features = {
+    'Mutation cache': files.has('mutationCache'),
+    'Serial mutation queues': stock
+      ? symbols.has('scopeFor')
+      : files.has('serialScope'),
+    'Infinite page fetching': files.has('infiniteQueryBehavior'),
+    'Interval polling': stock
+      ? symbols.has('#updateRefetchInterval')
+      : files.has('refetchInterval'),
+    'Result selection and placeholder data': stock
+      ? symbols.has('selection') && symbols.has('#resolvePlaceholder')
+      : files.has('select') || files.has('placeholderData'),
+    'Optimistic observer fetch (`fetchOptimistic`)': stock
+      ? chunk.code.includes('fetchOptimistic(')
+      : files.has('fetchOptimistic'),
+    'Query error reset handling': files.has('QueryErrorResetBoundary'),
+    'Bulk cache reads, writes, cancellation and reset': stock
+      ? bulk.every((method) => chunk.code.includes(`${method}(`))
+      : bulk.some((operation) => exports.has(operation)),
+  }
+  return Object.keys(features).filter((name) => features[name])
 }
 
 async function measure(packageName, screen) {
@@ -360,8 +436,10 @@ async function measure(packageName, screen) {
     1,
     `Expected one Query chunk in ${packageName} ${screen}`,
   )
-  if (packageName === pluggable)
+  if (packageName === pluggable) {
     checkOptimisticFetch(library, screen === 'polling', screen)
+    checkErrorReset(library, screen === 'polling', screen)
+  }
   const actual = renderedModules(library)
   const expected = renderedModules(app).filter(([id]) => belongsToAdapter(id))
   for (const dir of owners) {
@@ -402,6 +480,7 @@ async function measure(packageName, screen) {
       }).length,
     },
     largestModules,
+    features: workloadFeatures(packageName, library[0], actual),
   }
 }
 
@@ -423,12 +502,17 @@ async function checkPluggableExports() {
     assert(!Object.hasOwn(adapter, alias), `Unexpected retired export ${alias}`)
   }
   const client = new QueryClient()
-  assert.equal(
-    await adapter.query(client, {
-      queryKey: ['public-export-probe'],
-      queryFn: () => 'value',
-    }),
-    'value',
+  const key = ['public-export-probe']
+  const initial = await adapter.query(client, {
+    queryKey: key,
+    queryFn: () => ({ titles: ['A'], page: 1 }),
+  })
+  const updated = adapter.setQueryData(client, key, { titles: ['A'], page: 2 })
+  assert.equal(updated.page, 2)
+  assert.strictEqual(
+    updated.titles,
+    initial.titles,
+    'Default structural sharing',
   )
   assert.deepEqual(
     await adapter.infiniteQuery(client, {
@@ -473,10 +557,19 @@ async function checkPluggableExports() {
       'infiniteQueryBehavior',
     ],
     mutationOptions: [],
+    throwOnError: [
+      'queryOptions',
+      'queryObserver',
+      'throwOnError',
+      'QueryErrorResetBoundary',
+      'errorBoundaryUtils',
+    ],
     suspenseQueryOptions: [
       'suspenseQueryOptions',
       'queryObserver',
       'suspense',
+      'QueryErrorResetBoundary',
+      'errorBoundaryUtils',
       'fetchOptimistic',
     ],
     suspenseInfiniteQueryOptions: [
@@ -485,6 +578,8 @@ async function checkPluggableExports() {
       'queryObserver',
       'infiniteQueryBehavior',
       'suspense',
+      'QueryErrorResetBoundary',
+      'errorBoundaryUtils',
       'fetchOptimistic',
     ],
     HydrationBoundary: ['infiniteQueryBehavior'],
@@ -545,7 +640,16 @@ async function checkPluggableExports() {
             }
           },
           load(id) {
-            if (id === entry) return `export { ${name} } from '${source}'`
+            if (id !== entry) return
+            if (name === 'throwOnError') {
+              return `
+                import { queryOptions, throwOnError, useQuery } from '${source}'
+                export function useThrowingQuery(options) {
+                  return useQuery(queryOptions({ ...options, throwOnError: [throwOnError, true] }))
+                }
+              `
+            }
+            return `export { ${name} } from '${source}'`
           },
         },
       ],
@@ -583,6 +687,8 @@ async function checkPluggableExports() {
       throw new Error(`Core export ${name} imported React`)
     }
     for (const feature of features) {
+      // Suspense can share the error policy used by the explicit option helper.
+      if (feature === 'throwOnError' && required.includes('suspense')) continue
       const included = modules.some(([id]) => rendersFeature(id, feature))
       if (included !== required.includes(feature)) {
         throw new Error(
@@ -591,6 +697,12 @@ async function checkPluggableExports() {
       }
     }
     if (resultHelpers.includes(name)) checkResultHelpers(modules, [name], name)
+    if (!coreOnly)
+      checkErrorReset(
+        chunks,
+        required.includes('QueryErrorResetBoundary'),
+        name,
+      )
     if (!coreOnly || name === 'fetchOptimistic')
       checkOptimisticFetch(chunks, required.includes('fetchOptimistic'), name)
     if (
@@ -656,7 +768,27 @@ for (const { screen, title } of workloads) {
 }
 lines.push(
   '',
-  'The pluggable read-only list retains the query client, query cache, observer and two status helpers (`isPending` and `isError`). Its Query chunk excludes optimistic Suspense fetching, mutations, infinite queries, polling, selection, placeholder data, serial scopes, cache searches and bulk operations. Both bookmark apps retain mutation support. The polling screen retains the Suspense fetch path and uses no status helpers.',
+  '### What each workload leaves out',
+  '',
+  'These implementations are present in the v6 Query chunk and absent from the pluggable chunk for the same screen.',
+  '',
+  '| Workload | Code removed compared with v6 |',
+  '| --- | --- |',
+)
+for (const {
+  title,
+  rows: [stock, experiment],
+} of results) {
+  const removed = stock.features.filter(
+    (feature) => !experiment.features.includes(feature),
+  )
+  lines.push(
+    `| ${title} | ${removed.join(' · ') || 'None of the tracked features'} |`,
+  )
+}
+lines.push(
+  '',
+  'All four screens retain default structural sharing. Both bookmark screens retain mutation support. The selection screen retains invalidation and refetching. The polling screen retains Suspense, pagination and polling.',
   '',
   `Baseline adapter and core at \`${base}\` (${baseCheckout ? 'base checkout' : 'current checkout'}). Pluggable adapter, core and fixture at \`${head}\`.`,
 )

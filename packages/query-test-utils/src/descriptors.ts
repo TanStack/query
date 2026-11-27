@@ -13,3 +13,6 @@ export type PageDirectionResultKeys =
 export type PageFailureDuringLoad = false
 /** The v6 refetch-error type leaves both page-error fields boolean. */
 export type PageFailureDuringFullRefetch = boolean
+
+/** The stock observer accepts booleans and predicates directly. */
+export type QueryBoundaryTuple = never

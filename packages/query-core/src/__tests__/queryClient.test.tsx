@@ -379,7 +379,7 @@ describe('queryClient', () => {
             ? prevData
             : newData
         },
-      } as QueryObserverOptions
+      } as Pick<QueryObserverOptions, 'structuralSharing'>
 
       queryClient.setDefaultOptions({ queries: queryObserverOptions })
 

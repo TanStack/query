@@ -10,3 +10,5 @@ Import optional features such as `refetchInterval`, `select`, `placeholderData`,
 The single-query reader gets its render behavior from the factory. Import result predicates such as `isSuccess(result)`, `isLoading(result)`, and `isFetchingNextPage(result)` wherever a component needs them. They narrow the result for TypeScript. Use `countFetchingQueries(client)` to count fetching queries across a cache. For a variable-length list, use `useQueries` or `useSuspenseQueries`.
 
 Cache-wide lookups and query-state checks are named imports, including `findCachedQuery(cache, filters)`, `findCachedQueries(cache, filters)`, `clearQueryCache(cache)`, and `isQueryActive(query)`.
+
+Ordinary readers handle failures inline by default. Import `throwOnError` and set `throwOnError: [throwOnError, true]` or `throwOnError: [throwOnError, predicate]` to opt into React error boundaries. Suspense readers include boundary handling automatically. Ordinary queries retain default structural sharing. The infinite query fetcher prepares page requests only when the application uses pagination.

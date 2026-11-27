@@ -12,11 +12,35 @@ import {
   skipToken,
   suspenseInfiniteQueryOptions,
   suspenseQueryOptions,
+  throwOnError,
   useQuery,
 } from '..'
 import type { InfiniteData, PreparedQuery } from '..'
 
 describe('query render modes', () => {
+  it('infers the ordinary boundary predicate from the prepared query', () => {
+    const options = queryOptions({
+      queryKey: ['post'] as const,
+      queryFn: () => ({ title: 'Dune' }),
+      throwOnError: [
+        throwOnError,
+        (error, query) => {
+          expectTypeOf(error).toEqualTypeOf<Error>()
+          expectTypeOf(query.state.data).toEqualTypeOf<
+            { title: string } | undefined
+          >()
+          expectTypeOf(query.queryKey).toEqualTypeOf<readonly ['post']>()
+          return query.state.data === undefined
+        },
+      ],
+    })
+    expectTypeOf(useQuery(options).data).toEqualTypeOf<
+      { title: string } | undefined
+    >()
+    // @ts-expect-error A regular reader opts in with the imported error policy.
+    queryOptions({ ...options, throwOnError: true })
+  })
+
   it('infers data for each render mode from the same query', () => {
     const options = { queryKey: ['post'], queryFn: () => ({ title: 'Dune' }) }
     expectTypeOf(useQuery(queryOptions(options)).data).toEqualTypeOf<

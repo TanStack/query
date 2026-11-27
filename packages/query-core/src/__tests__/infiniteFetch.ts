@@ -10,4 +10,5 @@ export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
   infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>().onFetch(
     ...args,
   )
+  return args[0].fetchFn
 }

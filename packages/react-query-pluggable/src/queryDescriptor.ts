@@ -1,11 +1,12 @@
 import type {
   DefaultedQueryObserverOptions,
-  Query,
   QueryClient,
+  QueryErrorBoundaryPolicy,
   QueryObserver,
   QueryObserverResult,
   QueryObserverResultReader,
 } from '@tanstack/query-core-pluggable'
+import type { Context } from 'react'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
 /** The observer chosen by a React option factory. Enumerable so descriptor spreads preserve it. */
@@ -13,20 +14,21 @@ export const observerKey = Symbol('queryObserver')
 
 type Options = DefaultedQueryObserverOptions<any, any, any, any, any>
 type Result = QueryObserverResult<any, any>
-type CachedQuery = Query<any, any, any, any>
+
+/** The optional behavior supplied by the error-boundary feature. */
+export type QueryBoundaryPolicy = QueryErrorBoundaryPolicy<
+  Context<QueryErrorResetBoundaryValue>,
+  QueryErrorResetBoundaryValue
+>
 
 /** Render behavior selected by a single-query or parallel-query factory. */
 export interface QueryRenderPolicy<TSuspense extends boolean = boolean> {
   /** Whether the observer uses Suspense defaults. */
   readonly suspense: TSuspense
   /** Adjusts the observer options before reading its snapshot. */
-  prepare: (
-    options: Options,
-    boundary: QueryErrorResetBoundaryValue,
-    query: CachedQuery | undefined,
-  ) => void
-  /** Checks whether a settled error belongs to the nearest error boundary. */
-  shouldThrow: (result: Result, options: Options, query: CachedQuery) => boolean
+  prepare?: (options: Options) => void
+  /** An optional policy for throwing errors during render. */
+  errorBoundary?: QueryBoundaryPolicy
   /** May start a render-time fetch and read its promise with React.use. */
   readQuery?: (
     options: Options,

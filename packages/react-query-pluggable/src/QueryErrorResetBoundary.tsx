@@ -67,7 +67,8 @@ function createValue(): QueryErrorResetBoundaryValue {
   }
 }
 
-const QueryErrorResetBoundaryContext = React.createContext(createValue())
+/** Shares the reset state used by error-boundary readers. */
+export const QueryErrorResetBoundaryContext = React.createContext(createValue())
 
 // HOOK
 

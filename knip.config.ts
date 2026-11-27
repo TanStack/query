@@ -42,6 +42,7 @@ export default {
     'packages/query-core-pluggable': {
       // Copied v6 compatibility suites import helpers and types directly from these modules.
       entry: [
+        'src/infiniteQueryBehavior.ts',
         'src/notifyManager.ts',
         'src/query.ts',
         'src/timeoutManager.ts',

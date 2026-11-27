@@ -1,14 +1,9 @@
 'use client'
 
-import {
-  defaultQueryOptions,
-  getQueryCache,
-} from '@tanstack/query-core-pluggable'
+import { defaultQueryOptions } from '@tanstack/query-core-pluggable'
 import * as React from 'react'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
-import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
-import { getHasError, useClearResetErrorBoundary } from './errorBoundaryUtils'
 import { observerKey } from './queryDescriptor'
 import { useObserverSnapshot } from './useObserverSnapshot'
 import type {
@@ -18,6 +13,7 @@ import type {
   QueryObserver,
 } from '@tanstack/query-core-pluggable'
 import type { InfiniteQueryMode } from './infiniteQueryOptions'
+import type { QueryBoundaryPolicy, QueryRenderPolicy } from './queryDescriptor'
 import type { QueryMode } from './queryOptions'
 import type {
   AnyUseQueryOptions,
@@ -101,10 +97,8 @@ export function useQuery(
   const Observer = options[observerKey] as typeof QueryObserver
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
-  const boundary = useQueryErrorResetBoundary()
-  useClearResetErrorBoundary(boundary)
 
-  const policy = options.renderPolicy
+  const policy: QueryRenderPolicy = options.renderPolicy
   const defaulted = defaultQueryOptions(client, {
     ...(options as AnyUseQueryOptions),
     suspense: policy.suspense,
@@ -120,8 +114,20 @@ export function useQuery(
     : subscribed
       ? 'optimistic'
       : undefined
-  const query = getQueryCache(client).get(defaulted.queryHash)
-  policy.prepare(defaulted, boundary, query)
+  policy.prepare?.(defaulted)
+  const rule = defaulted.throwOnError
+  const boundaryPolicy =
+    policy.errorBoundary ??
+    (typeof rule === 'object' ? (rule[0] as QueryBoundaryPolicy) : undefined)
+  if (process.env.NODE_ENV !== 'production' && rule && !boundaryPolicy)
+    throw new TypeError(
+      'Pass [throwOnError, true] or [throwOnError, predicate] to a query.',
+    )
+  const boundary = boundaryPolicy && React.use(boundaryPolicy.context)
+  const handling =
+    boundary && boundaryPolicy.prepare(client, defaulted, boundary)
+  const onCommit = handling?.onCommit
+  React.useEffect(() => onCommit?.(), [onCommit])
 
   const createObserver = () => ({
     client,
@@ -137,15 +143,15 @@ export function useQuery(
 
   const { observer } = current
   const reader = observer.createResultReader(defaulted)
-  policy.readQuery?.(defaulted, reader, observer, client, boundary)
+  if (boundary)
+    policy.readQuery?.(defaulted, reader, observer, client, boundary)
   const result = useObserverSnapshot(
     observer,
     reader,
     !isRestoring && subscribed,
     refreshQuery,
   )
-  if (getHasError(policy, result, defaulted, query, boundary))
-    throw result.error
+  handling?.check(result)
   return defaulted.notifyOnChangeProps ? result : observer.trackResult(result)
 }
 

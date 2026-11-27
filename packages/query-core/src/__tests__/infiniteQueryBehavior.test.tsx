@@ -371,12 +371,12 @@ describe('InfiniteQueryBehavior', () => {
       signal: abortController.signal,
     }
 
-    prepareInfiniteFetch<number, Error, number, number>(
+    const fetchPages = prepareInfiniteFetch<number, Error, number, number>(
       context as any,
       {} as any,
     )
 
-    await expect(context.fetchFn()).rejects.toBe(abortController.signal.reason)
+    await expect(fetchPages()).rejects.toBe(abortController.signal.reason)
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 

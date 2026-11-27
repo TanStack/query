@@ -8,8 +8,7 @@ import * as React from 'react'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
-import { getHasError, useClearResetErrorBoundary } from './errorBoundaryUtils'
-import { queryPolicy } from './queryPolicy'
+import { getHasError, prepareErrorBoundary } from './errorBoundaryUtils'
 import { useObserverSnapshot } from './useObserverSnapshot'
 import type {
   DefaultError,
@@ -21,12 +20,12 @@ import type {
   QueryKey,
   QueryObserverOptions,
   Select,
-  ThrowOnError,
   placeholderData,
 } from '@tanstack/query-core-pluggable'
 import type { suspenseQueriesPolicy } from './suspense'
 import type {
   DefinedUseQueryResult,
+  GroupThrowOnError,
   TaggedQueryError,
   UseQueryOptions,
   UseQueryResult,
@@ -41,8 +40,15 @@ type UseQueryOptionsForUseQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData' | 'subscribed'
+  'placeholderData' | 'subscribed' | 'throwOnError'
 > & {
+  throwOnError?: QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey
+  >['throwOnError']
   placeholderData?: readonly [
     typeof placeholderData,
     TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>,
@@ -80,7 +86,7 @@ type GetUseQueryOptionsForUseQueries<T> =
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForUseQueries
                     select?: Select<any, infer TData>
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    throwOnError?: GroupThrowOnError<infer TError>
                   }
                 ? UseQueryOptionsForUseQueries<
                     TQueryFnData,
@@ -132,7 +138,7 @@ type GetUseQueryResult<T> =
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForUseQueries
                     select?: Select<any, infer TData>
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    throwOnError?: GroupThrowOnError<infer TError>
                   }
                 ? GetDefinedOrUndefinedQueryResult<
                     T,
@@ -431,13 +437,13 @@ export function useBaseQueries<
     [queries, client, isRestoring, subscribed, suspense],
   )
 
-  const policy = suspense ?? queryPolicy
   defaultedQueries.forEach((queryOptions) => {
     const query = getQueryCache(client).get(queryOptions.queryHash)
-    policy.prepare(queryOptions, errorResetBoundary, query)
+    suspense?.prepare?.(queryOptions)
+    prepareErrorBoundary(queryOptions, errorResetBoundary, query)
   })
 
-  useClearResetErrorBoundary(errorResetBoundary)
+  React.useEffect(() => errorResetBoundary.clearReset(), [errorResetBoundary])
 
   const [observer] = React.useState(
     () =>
@@ -466,7 +472,6 @@ export function useBaseQueries<
     return (
       query &&
       getHasError(
-        policy,
         result,
         query,
         getQueryCache(client).get(query.queryHash),

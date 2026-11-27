@@ -4,7 +4,7 @@ import {
   getQueryCache,
 } from '@tanstack/query-core-pluggable'
 import { use } from 'react'
-import { queryPolicy } from './queryPolicy'
+import { throwOnError } from './throwOnError'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -171,16 +171,8 @@ const useReadSuspenseQuery = (
 
 const suspensePolicy: QueryRenderPolicy<true> = {
   suspense: true,
-  prepare(options, boundary) {
-    ensureSuspenseTimers(options)
-    if (!boundary.isReset()) options.retryOnMount = false
-  },
-  shouldThrow(result, options, query) {
-    return (
-      result.data === undefined ||
-      queryPolicy.shouldThrow(result, options, query)
-    )
-  },
+  prepare: ensureSuspenseTimers,
+  errorBoundary: throwOnError,
 }
 
 /** Supplies Suspense behavior for one query. */

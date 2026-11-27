@@ -375,11 +375,12 @@ export class QueriesObserver<
       !this.#options?.combine ||
       this.#observers.some((observer, index) => {
         const result = this.#result[index]
+        const rule = observer.options.throwOnError
         return (
           (observer.options.suspense && result?.data === undefined) ||
           (result?.status === 'error' &&
             result.fetchStatus !== 'fetching' &&
-            shouldThrowError(observer.options.throwOnError, [
+            shouldThrowError(typeof rule === 'object' ? rule[1] : rule, [
               result.error,
               observer.getCurrentQuery(),
             ]))

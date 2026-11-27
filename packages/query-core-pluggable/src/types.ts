@@ -521,6 +521,44 @@ export type ThrowOnError<
     ) => boolean)
 
 /**
+ * The adapter supplies a context and a per-render error check. The core only carries this
+ * value through query defaults and never subscribes to the context.
+ */
+export interface QueryErrorBoundaryPolicy<TContext extends object, TBoundary> {
+  /** The context read by the adapter when boundary handling is enabled. */
+  readonly context: TContext
+  /** Prepares the checks and commit callback for this render. */
+  prepare: (
+    client: QueryClient,
+    options: DefaultedQueryObserverOptions<any, any, any, any, any>,
+    boundary: TBoundary,
+  ) => {
+    /** Runs after a successful commit when the boundary changes. */
+    onCommit: () => void
+    /** Checks a settled snapshot during render. */
+    check: (result: QueryObserverResult<any, any>) => void
+  }
+}
+
+/** A paired error-boundary policy and a rule evaluated against the cached query. */
+export type QueryErrorBoundaryOption<
+  TQueryFnData,
+  TError,
+  TQueryData,
+  TQueryKey extends QueryKey,
+> =
+  | false
+  | readonly [
+      policy: QueryErrorBoundaryPolicy<object, never>,
+      rule:
+        | true
+        | Exclude<
+            ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>,
+            boolean
+          >,
+    ]
+
+/**
  * Shared options for default resolution and resolved observer state.
  * @internal
  */
@@ -630,7 +668,9 @@ export interface QueryObserverOptionsBase<
    * If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * @defaultValue false
    */
-  throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
+  throwOnError?:
+    | ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
+    | QueryErrorBoundaryOption<TQueryFnData, TError, TQueryData, TQueryKey>
 
   /** Pass [select, transform] to derive the data returned by this observer. */
   select?: Select<TQueryData, TData>
@@ -1954,8 +1994,10 @@ export interface DefaultOptions<TError = DefaultError> {
   /** Default options applied to every query, unless overridden per-query. */
   queries?: OmitKeyof<
     QueryObserverOptionsBase<unknown, TError>,
-    'suspense' | 'queryKey'
-  >
+    'suspense' | 'queryKey' | 'throwOnError'
+  > & {
+    throwOnError?: QueryErrorBoundaryOption<unknown, TError, unknown, QueryKey>
+  }
   /** Default options applied to every mutation, unless overridden per-mutation. */
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
   /** Default options used when hydrating queries and mutations; see {@link HydrateOptions}. */

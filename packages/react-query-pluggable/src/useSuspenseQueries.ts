@@ -11,10 +11,10 @@ import type {
   QueryFunction,
   QueryKey,
   Select,
-  ThrowOnError,
   placeholderData,
 } from '@tanstack/query-core-pluggable'
 import type {
+  GroupThrowOnError,
   TaggedQueryError,
   UseSuspenseQueryOptions,
   UseSuspenseQueryResult,
@@ -71,7 +71,7 @@ type GetUseSuspenseQueryOptions<T> =
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForUseQueries
                     select?: Select<any, infer TData>
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    throwOnError?: GroupThrowOnError<infer TError>
                   }
                 ? UseSuspenseQueryOptionsForUseSuspenseQueries<
                     TQueryFnData,
@@ -83,7 +83,7 @@ type GetUseSuspenseQueryOptions<T> =
                       queryFn?:
                         | QueryFunction<infer TQueryFnData, infer TQueryKey>
                         | SkipTokenForUseQueries
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
+                      throwOnError?: GroupThrowOnError<infer TError>
                     }
                   ? UseSuspenseQueryOptionsForUseSuspenseQueries<
                       TQueryFnData,
@@ -115,7 +115,7 @@ type GetUseSuspenseQueryResult<T> =
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForUseQueries
                     select?: Select<any, infer TData>
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    throwOnError?: GroupThrowOnError<infer TError>
                   }
                 ? UseSuspenseQueryResult<
                     unknown extends TData ? TQueryFnData : TData,
@@ -128,7 +128,7 @@ type GetUseSuspenseQueryResult<T> =
                       queryFn?:
                         | QueryFunction<infer TQueryFnData, any>
                         | SkipTokenForUseQueries
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
+                      throwOnError?: GroupThrowOnError<infer TError>
                     }
                   ? UseSuspenseQueryResult<
                       TQueryFnData,

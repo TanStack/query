@@ -24,6 +24,7 @@ import type {
   MutationOptions,
   OmitKeyof,
   QueryClientConfig,
+  QueryErrorBoundaryOption,
   QueryExecuteOptions,
   QueryKey,
   QueryObserverOptionsBase,
@@ -554,9 +555,16 @@ export function setQueryDefaults<
   options: Partial<
     OmitKeyof<
       QueryObserverOptionsBase<TQueryFnData, TError, TData, TQueryData>,
-      'queryKey'
+      'queryKey' | 'throwOnError'
     >
-  >,
+  > & {
+    throwOnError?: QueryErrorBoundaryOption<
+      TQueryFnData,
+      TError,
+      TQueryData,
+      QueryKey
+    >
+  },
 ): void {
   ;(client[clientState].queryDefaults ??= new KeyDefaults()).set(
     queryKey,
