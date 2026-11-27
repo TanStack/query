@@ -7285,6 +7285,9 @@ importers:
       playwright:
         specifier: 1.65.1
         version: 1.65.1
+      rollup-plugin-visualizer:
+        specifier: 7.1.1
+        version: 7.1.1(rolldown@1.3.1)(rollup@4.65.1)
       vite:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.108.2)(sass@1.108.2)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)

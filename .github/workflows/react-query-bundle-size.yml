@@ -28,6 +28,7 @@ jobs:
       contents: read
     outputs:
       report: ${{ steps.measure.outputs.report }}
+      analyzer_url: ${{ steps.analyzer.outputs.artifact-url }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -62,6 +63,14 @@ jobs:
       - name: Exercise production apps in Chromium
         working-directory: integrations/react/bundle-size
         run: pnpm run test:browser
+      - name: Upload interactive bundle treemaps
+        id: analyzer
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: react-query-bundle-analyzer
+          path: integrations/react/bundle-size/dist/analyzer/
+          if-no-files-found: error
+          retention-days: 30
   comment:
     if: github.event.pull_request.head.repo.full_name == github.repository
     needs: measure
@@ -75,6 +84,7 @@ jobs:
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.number }}
           REPORT: ${{ needs.measure.outputs.report }}
+          ANALYZER_URL: ${{ needs.measure.outputs.analyzer_url }}
         run: |
           comments="repos/$REPO/issues/$PR_NUMBER/comments"
           marker='<!-- react-query-app-bundle-size -->'
@@ -86,6 +96,6 @@ jobs:
             endpoint="repos/$REPO/issues/comments/$id"
             method=PATCH
           fi
-          jq -n --arg marker "$marker" --argjson report "$REPORT" \
-            '{body: ($marker + "\n" + $report)}' |
+          jq -n --arg marker "$marker" --argjson report "$REPORT" --arg analyzer "$ANALYZER_URL" \
+            '{body: ($marker + "\n" + $report + "\n[Download the interactive bundle treemaps](" + $analyzer + ")")}' |
             gh api --silent --method "$method" "$endpoint" --input -
