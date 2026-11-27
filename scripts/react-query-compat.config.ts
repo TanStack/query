@@ -25,9 +25,7 @@ export default defineConfig({
     ...base.test,
     name: `${basename(adapter)}/${suite}`,
     // Override the relative paths inherited from the upstream project.
-    setupFiles: isReact
-      ? [resolve(import.meta.dirname, '../packages/react-query/test-setup.ts')]
-      : [],
+    setupFiles: isReact ? [resolve('test-setup.ts')] : [],
     coverage: {
       ...base.test?.coverage,
       include: [

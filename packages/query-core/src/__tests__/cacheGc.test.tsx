@@ -1,4 +1,3 @@
-import { getMutationCache } from '@tanstack/query-test-utils/cacheOperations'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MutationObserver, QueryClient, QueryObserver } from '..'
 import { Mutation } from '../mutation'
@@ -22,7 +21,7 @@ describe('garbage collection after cache removal', () => {
   })
 
   it('clears an existing mutation timer on clear', () => {
-    const cache = getMutationCache(client)
+    const cache = client.getMutationCache()
     Mutation.build(client, {})
     expect(vi.getTimerCount()).toBe(1)
 
@@ -33,7 +32,7 @@ describe('garbage collection after cache removal', () => {
   })
 
   it('clears an existing mutation timer on remove', () => {
-    const cache = getMutationCache(client)
+    const cache = client.getMutationCache()
     const mutation = Mutation.build(client, {})
     expect(vi.getTimerCount()).toBe(1)
 

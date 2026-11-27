@@ -1,16 +1,18 @@
 import { afterEach, describe, expect, it } from 'vitest'
+import { commands } from 'vitest/browser'
 
-const adapters = [
-  'react-query',
-  'react-query-no-core',
-  'react-query-no-core-pluggable',
-]
+const adapters = ['react-query', 'react-query-pluggable']
 
-async function openApp(scenario, adapter) {
+function mountApp(scenario, adapter) {
   const frame = document.createElement('iframe')
   frame.title = adapter
   frame.src = `/${scenario}/${adapter}/index.html`
   document.body.append(frame)
+  return frame
+}
+
+async function openApp(scenario, adapter) {
+  const frame = mountApp(scenario, adapter)
   await expect
     .poll(() => frame.contentDocument?.querySelector('li')?.textContent)
     .toContain('Middlemarch')
@@ -88,7 +90,29 @@ describe.each(adapters)('@tanstack/%s', (adapter) => {
   })
 
   it('periodically refetches regular, infinite and suspense queries', async () => {
-    const app = await openApp('polling', adapter)
+    await commands.holdPollingBooks(adapter)
+    const frame = mountApp('polling', adapter)
+    try {
+      await commands.waitForPollingRequest(adapter)
+      await expect
+        .poll(() =>
+          Array.from(
+            frame.contentDocument.querySelectorAll('[role="status"]'),
+            (element) => element.textContent,
+          ),
+        )
+        .toEqual(['Loading suspense query…', 'Loading suspense pages…'])
+    } finally {
+      await commands.releasePollingBooks(adapter)
+    }
+    const app = frame.contentDocument
+    await expect
+      .poll(() =>
+        Array.from(app.querySelectorAll('li'), (item) =>
+          item.textContent.includes('Middlemarch'),
+        ),
+      )
+      .toEqual([true, true, true, true])
     const timestamps = () =>
       Array.from(app.querySelectorAll('time'), (time) => time.dateTime)
     await expect.poll(() => timestamps().length).toBe(4)

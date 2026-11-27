@@ -1,11 +1,11 @@
 import * as React from 'react'
-import {
-  useQuery,
-  useInfiniteQuery,
-  useSuspenseQuery,
-  useSuspenseInfiniteQuery,
-} from '#adapter'
 import { interval } from '#polling-option'
+import {
+  useBookPages,
+  useBookQuery,
+  useSuspenseBookPages,
+  useSuspenseBookQuery,
+} from '#query-hooks'
 import { fetchBooks } from './books.js'
 
 function options(name) {
@@ -22,44 +22,55 @@ const pagination = {
   getNextPageParam: (page) => page.next,
 }
 
-function Updates() {
-  const query = useQuery(options('query'))
-  const infinite = useInfiniteQuery({ ...options('infinite'), ...pagination })
-  const suspense = useSuspenseQuery(options('suspense'))
-  const suspenseInfinite = useSuspenseInfiniteQuery({
+function BookRow({ label, result, page }) {
+  return (
+    <li>
+      {label}: {page?.titles.join(', ')}{' '}
+      {result.dataUpdatedAt > 0 && (
+        <time dateTime={new Date(result.dataUpdatedAt).toISOString()}>
+          {new Date(result.dataUpdatedAt).toLocaleTimeString()}
+        </time>
+      )}
+    </li>
+  )
+}
+
+function SuspenseBook() {
+  const result = useSuspenseBookQuery(options('suspense'))
+  return <BookRow label="Suspense query" result={result} page={result.data} />
+}
+
+function SuspensePages() {
+  const result = useSuspenseBookPages({
     ...options('suspense-infinite'),
     ...pagination,
   })
-  const rows = [
-    ['Query', query, query.data],
-    ['Infinite query', infinite, infinite.data?.pages[0]],
-    ['Suspense query', suspense, suspense.data],
-    [
-      'Suspense infinite query',
-      suspenseInfinite,
-      suspenseInfinite.data.pages[0],
-    ],
-  ]
   return (
-    <ul>
-      {rows.map(([name, result, page]) => (
-        <li key={name}>
-          {name}: {page?.titles.join(', ')}{' '}
-          {result.dataUpdatedAt > 0 && (
-            <time dateTime={new Date(result.dataUpdatedAt).toISOString()}>
-              {new Date(result.dataUpdatedAt).toLocaleTimeString()}
-            </time>
-          )}
-        </li>
-      ))}
-    </ul>
+    <BookRow
+      label="Suspense infinite query"
+      result={result}
+      page={result.data.pages[0]}
+    />
   )
 }
 
 export function ReadingList() {
+  const query = useBookQuery(options('query'))
+  const infinite = useBookPages({ ...options('infinite'), ...pagination })
   return (
-    <React.Suspense fallback={<p>Loading books…</p>}>
-      <Updates />
-    </React.Suspense>
+    <ul>
+      <BookRow label="Query" result={query} page={query.data} />
+      <BookRow
+        label="Infinite query"
+        result={infinite}
+        page={infinite.data?.pages[0]}
+      />
+      <React.Suspense fallback={<li role="status">Loading suspense query…</li>}>
+        <SuspenseBook />
+      </React.Suspense>
+      <React.Suspense fallback={<li role="status">Loading suspense pages…</li>}>
+        <SuspensePages />
+      </React.Suspense>
+    </ul>
   )
 }

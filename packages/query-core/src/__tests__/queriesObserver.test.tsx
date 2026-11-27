@@ -1,7 +1,6 @@
 import { setFlagsFromString } from 'node:v8'
 import { runInNewContext } from 'node:vm'
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import {
   placeholderOption,
   selectOption,
@@ -756,7 +755,7 @@ describe('queriesObserver', () => {
 
     const unsubscribe = observer.subscribe(() => undefined)
 
-    void cacheOperations(queryClient).resetQueries({ queryKey: key })
+    void queryClient.resetQueries({ queryKey: key })
     expect(combine).toHaveBeenCalledTimes(1)
 
     unsubscribe()
@@ -802,7 +801,7 @@ describe('queriesObserver', () => {
       { combine },
     )
 
-    void cacheOperations(queryClient).resetQueries({ queryKey: key })
+    void queryClient.resetQueries({ queryKey: key })
     expect(combine).toHaveBeenCalledTimes(1)
 
     unsubscribe()
@@ -973,7 +972,7 @@ describe('queriesObserver', () => {
       expect.objectContaining({ status: 'success', data: 'data' }),
     ])
 
-    void cacheOperations(queryClient).refetchQueries({ queryKey: key })
+    void queryClient.refetchQueries({ queryKey: key })
     await vi.advanceTimersByTimeAsync(10)
     expect(listener).toHaveBeenCalledTimes(2)
     expect(listener).toHaveBeenLastCalledWith([
@@ -984,7 +983,7 @@ describe('queriesObserver', () => {
       }),
     ])
 
-    void cacheOperations(queryClient).refetchQueries({ queryKey: key })
+    void queryClient.refetchQueries({ queryKey: key })
     await vi.advanceTimersByTimeAsync(0)
     expect(observer.getCurrentResult()[0]).toMatchObject({
       status: 'error',
@@ -1345,7 +1344,7 @@ describe('queriesObserver', () => {
     )
 
     observer.setQueries([{ queryKey: createKey(), queryFn: () => 2 }])
-    cacheOperations(queryClient).removeQueries({ queryKey: oldKey })
+    queryClient.removeQueries({ queryKey: oldKey })
     // A WeakRef keeps its target alive until the current job ends.
     await vi.advanceTimersByTimeAsync(0)
     gc()

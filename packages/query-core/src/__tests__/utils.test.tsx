@@ -1,5 +1,4 @@
 import { createKey } from '@tanstack/query-test-utils'
-import { getMutationCache } from '@tanstack/query-test-utils/cacheOperations'
 import { describe, expect, it, vi } from 'vitest'
 import { QueryClient } from '..'
 import { Mutation } from '../mutation'
@@ -560,7 +559,7 @@ describe('core/utils', () => {
       const mutation = new Mutation({
         client: queryClient,
         mutationId: 1,
-        mutationCache: getMutationCache(queryClient),
+        mutationCache: queryClient.getMutationCache(),
         options: {},
       })
 

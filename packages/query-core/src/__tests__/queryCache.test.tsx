@@ -1,5 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryCache, QueryClient, QueryObserver, hashKey, noop } from '..'
 import type { DefaultError, Query, QueryCacheNotifyEvent } from '..'
@@ -249,7 +248,7 @@ describe('queryCache', () => {
         })
         .catch(noop)
       await vi.advanceTimersByTimeAsync(100)
-      cacheOperations(queryClient).invalidateQueries({ queryKey: key2 })
+      queryClient.invalidateQueries({ queryKey: key2 })
       const query1 = queryCache.find({ queryKey: key1 })!
       const query2 = queryCache.find({ queryKey: key2 })!
       const query3 = queryCache.find({ queryKey: [{ a: 'a', b: 'b' }] })!

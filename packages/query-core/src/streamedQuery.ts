@@ -1,14 +1,53 @@
 import { addConsumeAwareSignal, fetchSignal } from './utils'
-import type * as Shared from '@tanstack/query-types/bindings'
-import type { QueryRuntime } from './runtimeBinding'
-import type { OmitKeyof, QueryFunction, QueryKey } from './types'
+import type {
+  OmitKeyof,
+  QueryFunction,
+  QueryFunctionContext,
+  QueryKey,
+} from './types'
 import type { FetchSignalContext } from './utils'
 
-type StreamedQueryParams<
+type BaseStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = {
+  /** Returns an `AsyncIterable` or a promise that resolves to one. */
+  streamFn: (
+    context: QueryFunctionContext<TQueryKey>,
+  ) => AsyncIterable<TQueryFnData> | Promise<AsyncIterable<TQueryFnData>>
+  /**
+   * Defines how refetches are handled.
+   * - `'reset'` (default): resets the query to its initial state before reading the stream.
+   * - `'append'`: appends new data to the existing data.
+   * - `'replace'`: writes all data to the cache once the stream ends.
+   */
+  refetchMode?: 'append' | 'reset' | 'replace'
+}
+
+type SimpleStreamedQueryParams<
+  TQueryFnData,
+  TQueryKey extends QueryKey,
+> = BaseStreamedQueryParams<TQueryFnData, TQueryKey> & {
+  reducer?: never
+  initialValue?: never
+}
+
+type ReducibleStreamedQueryParams<
   TQueryFnData,
   TData,
   TQueryKey extends QueryKey,
-> = Shared.StreamedQueryParams<QueryRuntime, TQueryFnData, TData, TQueryKey>
+> = BaseStreamedQueryParams<TQueryFnData, TQueryKey> & {
+  /**
+   * Combines the accumulated data with the next chunk. Provide `initialValue` with a custom reducer.
+   */
+  reducer: (acc: TData, chunk: TQueryFnData) => TData
+  /**
+   * The starting value for the reducer when there is no cached data or when
+   * `refetchMode` is `'replace'` during a refetch.
+   */
+  initialValue: TData
+}
+
+type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
+  | SimpleStreamedQueryParams<TQueryFnData, TQueryKey>
+  | ReducibleStreamedQueryParams<TQueryFnData, TData, TQueryKey>
 
 /**
  * Creates a query function that streams data from an `AsyncIterable`.

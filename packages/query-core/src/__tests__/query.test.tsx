@@ -3,7 +3,6 @@ import {
   mockVisibilityState,
   sleep,
 } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   CancelledError,
@@ -53,7 +52,7 @@ describe('query', () => {
     })
     initial.catch(noop)
     await vi.advanceTimersByTimeAsync(0)
-    await cacheOperations(queryClient).cancelQueries({ queryKey: key })
+    await queryClient.cancelQueries({ queryKey: key })
     focusManager.setFocused(false)
     try {
       const replacement = queryClient.query({
@@ -81,7 +80,7 @@ describe('query', () => {
     })
     initial.catch(noop)
     await vi.advanceTimersByTimeAsync(0)
-    await cacheOperations(queryClient).cancelQueries({ queryKey: key })
+    await queryClient.cancelQueries({ queryKey: key })
     focusManager.setFocused(false)
     try {
       await vi.advanceTimersByTimeAsync(250)
@@ -1152,9 +1151,9 @@ describe('query', () => {
 
     mockedData = [1, 2] // update "server" state in the background
 
-    void cacheOperations(queryClient).invalidateQueries({ queryKey: key })
+    void queryClient.invalidateQueries({ queryKey: key })
     await vi.advanceTimersByTimeAsync(5)
-    void cacheOperations(queryClient).invalidateQueries({ queryKey: key })
+    void queryClient.invalidateQueries({ queryKey: key })
     await vi.advanceTimersByTimeAsync(5)
     unsubscribe() // unsubscribe to simulate unmount
     await vi.advanceTimersByTimeAsync(5)
@@ -1197,10 +1196,7 @@ describe('query', () => {
     x = 1
 
     // cancel ongoing re-fetches
-    void cacheOperations(queryClient).refetchQueries(
-      { queryKey: key },
-      { cancelRefetch: true },
-    )
+    void queryClient.refetchQueries({ queryKey: key }, { cancelRefetch: true })
 
     // The promise should not reject
     await vi.advanceTimersByTimeAsync(100)
@@ -1231,7 +1227,7 @@ describe('query', () => {
     ])
 
     await vi.advanceTimersByTimeAsync(10)
-    void cacheOperations(queryClient).invalidateQueries({ queryKey: key })
+    void queryClient.invalidateQueries({ queryKey: key })
     await vi.advanceTimersByTimeAsync(100)
 
     await expect(results).resolves.toStrictEqual([
@@ -1263,9 +1259,9 @@ describe('query', () => {
     ])
 
     await vi.advanceTimersByTimeAsync(10)
-    void cacheOperations(queryClient).invalidateQueries({ queryKey: key })
+    void queryClient.invalidateQueries({ queryKey: key })
     await vi.advanceTimersByTimeAsync(10)
-    void cacheOperations(queryClient).invalidateQueries({ queryKey: key })
+    void queryClient.invalidateQueries({ queryKey: key })
     await vi.advanceTimersByTimeAsync(100)
 
     await expect(results).resolves.toStrictEqual([

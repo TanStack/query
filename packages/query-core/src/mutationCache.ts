@@ -1,17 +1,114 @@
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import { matchMutation, noop } from './utils'
-import type * as Shared from '@tanstack/query-types/bindings'
-import type { Mutation } from './mutation'
-import type { QueryRuntime } from './runtimeBinding'
-import type { DefaultError } from './types'
+import type { Action, Mutation } from './mutation'
+import type { MutationObserver } from './mutationObserver'
+import type {
+  CacheKeyConfig,
+  DefaultError,
+  MutationFunctionContext,
+  MutationKey,
+  NotifyEvent,
+} from './types'
 import type { MutationFilters } from './utils'
 
-type MutationCacheConfig = Shared.MutationCacheConfig<QueryRuntime>
+// TYPES
 
-type MutationCacheNotifyEvent = Shared.MutationCacheNotifyEvent<QueryRuntime>
+/**
+ * Global callbacks that fire for every mutation handled by a `MutationCache`, regardless of which
+ * component or observer triggered it. They differ from the `defaultOptions` provided to a
+ * `QueryClient` in two ways: `defaultOptions` can be overridden by each mutation, while these
+ * callbacks are always called, and `onMutate` here does not allow returning a result.
+ *
+ * If a callback returns a promise, it will be awaited before the mutation continues.
+ */
+export interface MutationCacheConfig {
+  /**
+   * Configures mutation key comparison and hashing globally.
+   * `equalityFn` compares individual values during partial matching and defaults to strict equality.
+   * `hashFn` hashes mutation keys for exact matching and mutation defaults.
+   */
+  mutationKey?: CacheKeyConfig<MutationKey>
+  /** Called when any mutation in the cache encounters an error. */
+  onError?: (
+    error: DefaultError,
+    variables: unknown,
+    onMutateResult: unknown,
+    mutation: Mutation<unknown, unknown, unknown>,
+    context: MutationFunctionContext,
+  ) => Promise<unknown> | unknown
+  /** Called when any mutation in the cache is successful. */
+  onSuccess?: (
+    data: unknown,
+    variables: unknown,
+    onMutateResult: unknown,
+    mutation: Mutation<unknown, unknown, unknown>,
+    context: MutationFunctionContext,
+  ) => Promise<unknown> | unknown
+  /** Called before any mutation in the cache executes. */
+  onMutate?: (
+    variables: unknown,
+    mutation: Mutation<unknown, unknown, unknown>,
+    context: MutationFunctionContext,
+  ) => Promise<unknown> | unknown
+  /** Called when any mutation in the cache is settled, either successfully or with an error. */
+  onSettled?: (
+    data: unknown | undefined,
+    error: DefaultError | null,
+    variables: unknown,
+    onMutateResult: unknown,
+    mutation: Mutation<unknown, unknown, unknown>,
+    context: MutationFunctionContext,
+  ) => Promise<unknown> | unknown
+}
 
-type MutationCacheListener = Shared.MutationCacheListener<QueryRuntime>
+interface NotifyEventMutationAdded extends NotifyEvent {
+  type: 'added'
+  mutation: Mutation<any, any, any, any>
+}
+interface NotifyEventMutationRemoved extends NotifyEvent {
+  type: 'removed'
+  mutation: Mutation<any, any, any, any>
+}
+
+interface NotifyEventMutationObserverAdded extends NotifyEvent {
+  type: 'observerAdded'
+  mutation: Mutation<any, any, any, any>
+  observer: MutationObserver<any, any, any>
+}
+
+interface NotifyEventMutationObserverRemoved extends NotifyEvent {
+  type: 'observerRemoved'
+  mutation: Mutation<any, any, any, any>
+  observer: MutationObserver<any, any, any>
+}
+
+interface NotifyEventMutationObserverOptionsUpdated extends NotifyEvent {
+  type: 'observerOptionsUpdated'
+  mutation?: Mutation<any, any, any, any>
+  observer: MutationObserver<any, any, any, any>
+}
+
+interface NotifyEventMutationUpdated extends NotifyEvent {
+  type: 'updated'
+  mutation: Mutation<any, any, any, any>
+  action: Action<any, any, any, any>
+}
+
+/**
+ * The event passed to a `MutationCache` subscriber. Fired whenever a mutation is added or removed
+ * from the cache, its state is updated, or one of its observers is added, removed, or has its
+ * options updated.
+ */
+export type MutationCacheNotifyEvent =
+  | NotifyEventMutationAdded
+  | NotifyEventMutationRemoved
+  | NotifyEventMutationObserverAdded
+  | NotifyEventMutationObserverRemoved
+  | NotifyEventMutationObserverOptionsUpdated
+  | NotifyEventMutationUpdated
+
+type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
 
 // CLASS
 
@@ -267,5 +364,3 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 function scopeFor(mutation: Mutation<any, any, any, any>) {
   return mutation.options.scope?.id
 }
-
-export type { MutationCacheConfig, MutationCacheNotifyEvent }

@@ -10,8 +10,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "workspace:*",
-    "@tanstack/react-query-no-core": "workspace:*",
-    "@tanstack/react-query-no-core-pluggable": "workspace:*",
+    "@tanstack/react-query-pluggable": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

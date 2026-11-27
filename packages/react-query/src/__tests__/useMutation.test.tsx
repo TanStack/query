@@ -1,8 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import {
-  cacheOperations,
-  getMutationCache,
-} from '@tanstack/query-test-utils/cacheOperations'
 import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -1088,7 +1084,7 @@ describe('useMutation', () => {
     expect(count).toBe(0)
 
     onlineMock.mockReturnValue(true)
-    getMutationCache(queryClient).resumePausedMutations()
+    queryClient.getMutationCache().resumePausedMutations()
 
     await vi.advanceTimersByTimeAsync(6)
     expect(
@@ -1145,7 +1141,7 @@ describe('useMutation', () => {
     })
 
     onlineMock.mockReturnValue(true)
-    getMutationCache(queryClient).resumePausedMutations()
+    queryClient.getMutationCache().resumePausedMutations()
 
     await vi.advanceTimersByTimeAsync(11)
     expect(
@@ -1200,7 +1196,7 @@ describe('useMutation', () => {
     expect(states[1]).toBe('pending, true')
 
     onlineMock.mockReturnValue(true)
-    getMutationCache(queryClient).resumePausedMutations()
+    queryClient.getMutationCache().resumePausedMutations()
 
     await vi.advanceTimersByTimeAsync(11)
     expect(
@@ -1248,10 +1244,10 @@ describe('useMutation', () => {
     expect(rendered.getByText('isPaused: true')).toBeInTheDocument()
 
     expect(
-      getMutationCache(queryClient).findAll({ mutationKey: key }),
+      queryClient.getMutationCache().findAll({ mutationKey: key }),
     ).toHaveLength(1)
     expect(
-      getMutationCache(queryClient).findAll({ mutationKey: key })[0]?.state,
+      queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
     ).toMatchObject({
       status: 'pending',
       isPaused: true,
@@ -1260,13 +1256,13 @@ describe('useMutation', () => {
     })
 
     onlineMock.mockReturnValue(true)
-    getMutationCache(queryClient).resumePausedMutations()
+    queryClient.getMutationCache().resumePausedMutations()
 
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: data2')).toBeInTheDocument()
 
     expect(
-      getMutationCache(queryClient).findAll({ mutationKey: key })[0]?.state,
+      queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
     ).toMatchObject({
       status: 'success',
       isPaused: false,
@@ -1299,12 +1295,12 @@ describe('useMutation', () => {
     expect(states).toStrictEqual(['idle', 'pending'])
 
     fireEvent.click(getByText('unmount'))
-    expect(getMutationCache(queryClient).getAll()[0]?.state.status).toBe(
+    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
       'pending',
     )
 
     await vi.advanceTimersByTimeAsync(11)
-    expect(getMutationCache(queryClient).getAll()[0]?.state.status).toBe(
+    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
       'success',
     )
     expect(states).toStrictEqual(['idle', 'pending'])
@@ -1644,9 +1640,9 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(getMutationCache(queryClient).findAll({ mutationKey })).toHaveLength(
-      0,
-    )
+    expect(
+      queryClient.getMutationCache().findAll({ mutationKey }),
+    ).toHaveLength(0)
 
     expect(count).toBe(1)
 
@@ -2318,7 +2314,7 @@ describe('useMutation', () => {
         mutationFn: () =>
           sleep(10).then(() => Promise.reject(new Error('Some error'))),
         onMutate: async (newTodo: string) => {
-          await cacheOperations(queryClient).cancelQueries({ queryKey: key })
+          await queryClient.cancelQueries({ queryKey: key })
           const previousTodos = queryClient.getQueryData<Array<string>>(key)
 
           queryClient.setQueryData<Array<string>>(key, (old) => [
@@ -2355,7 +2351,7 @@ describe('useMutation', () => {
       const { mutate } = useMutation({
         mutationFn: (newTodo: string) => sleep(10).then(() => newTodo),
         onMutate: async (newTodo: string) => {
-          await cacheOperations(queryClient).cancelQueries({ queryKey: key })
+          await queryClient.cancelQueries({ queryKey: key })
           const previousTodos = queryClient.getQueryData<Array<string>>(key)
 
           queryClient.setQueryData<Array<string>>(key, (old) => [
@@ -2614,7 +2610,7 @@ describe('useMutation', () => {
       const { mutate } = useMutation({
         mutationFn: () => sleep(10).then(() => 'mutated'),
         onSuccess: (_data, _variables, _onMutateResult, context) => {
-          cacheOperations(context.client).invalidateQueries({ queryKey: key })
+          context.client.invalidateQueries({ queryKey: key })
         },
       })
 

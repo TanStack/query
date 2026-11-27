@@ -1,10 +1,12 @@
-import type {
-  BatchCallsCallback,
-  BatchNotifyFunction,
-  NotifyCallback,
-  NotifyFunction,
-  ScheduleFunction,
-} from '@tanstack/query-types/bindings'
+type NotifyCallback = () => void
+
+type NotifyFunction = (callback: () => void) => void
+
+type BatchNotifyFunction = (callback: () => void) => void
+
+type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
+
+type ScheduleFunction = (callback: () => void) => void
 
 /**
  * Default scheduling function used by the notify manager.

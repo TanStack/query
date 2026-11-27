@@ -25,7 +25,6 @@
     },
     "./package.json": "./package.json",
     "./polling": "./src/polling.ts",
-    "./cacheOperations": "./src/cacheOperations.ts",
     "./scope": "./src/scope.ts",
     "./projection": "./src/projection.ts"
   },

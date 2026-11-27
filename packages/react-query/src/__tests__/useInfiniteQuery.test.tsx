@@ -1,5 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import {
   placeholderOption,
   selectOption,
@@ -1542,7 +1541,7 @@ describe('useInfiniteQuery', () => {
                     // makes an actual network request
                     // and calls invalidateQueries in an onSuccess
                     items.splice(4, 1)
-                    cacheOperations(queryClient).invalidateQueries({
+                    queryClient.invalidateQueries({
                       queryKey: key,
                     })
                   }}

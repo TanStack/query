@@ -1,5 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import {
   placeholderOption,
   selectOption,
@@ -338,9 +337,7 @@ describe('useSuspenseQueries', () => {
       return (
         <div>
           <button
-            onClick={() =>
-              void cacheOperations(queryClient).resetQueries({ queryKey: key })
-            }
+            onClick={() => void queryClient.resetQueries({ queryKey: key })}
           >
             reset
           </button>

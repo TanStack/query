@@ -1,5 +1,4 @@
 import { createKey } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import {
   placeholderOption,
   selectOption,
@@ -40,7 +39,7 @@ describe('observer data outcome after reset', () => {
       isPlaceholderData: false,
     })
 
-    await cacheOperations(queryClient).resetQueries({ queryKey: key })
+    await queryClient.resetQueries({ queryKey: key })
 
     expect(queryClient.getQueryData(key)).toBeUndefined()
     expect(observer.getCurrentResult()).toMatchObject({
@@ -79,7 +78,7 @@ describe('observer data outcome after reset', () => {
       })
       expect(select).toHaveBeenCalledTimes(2)
 
-      await cacheOperations(queryClient).resetQueries({ queryKey: key })
+      await queryClient.resetQueries({ queryKey: key })
 
       expect(queryClient.getQueryData(key)).toBeUndefined()
       const callsAfterReset = select.mock.calls.length

@@ -1,9 +1,9 @@
 import * as React from 'react'
-import { useQuery } from '#adapter'
+import { useBookQuery } from '#query-hooks'
 import { fetchBooks } from './books.js'
 
 export function ReadingList() {
-  const books = useQuery({
+  const books = useBookQuery({
     queryKey: ['books', 1],
     queryFn: ({ signal }) => fetchBooks(1, signal),
   })

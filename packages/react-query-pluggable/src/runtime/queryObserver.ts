@@ -1,0 +1,950 @@
+import {
+  Subscribable,
+  fetchState,
+  isServer as isServerEnvironment,
+  isValidTimeout,
+  noop,
+  shallowEqualObjects,
+  timeUntilStale,
+  timeoutManager,
+} from '@tanstack/query-core/primitives'
+import { notifyManager } from './notifyManager'
+import { defaultQueryOptions, getQueryCache } from './queryClient'
+import { resolveQueryValue } from './utils'
+import type { QueryObserverResultReader } from '@tanstack/query-core'
+import type {
+  FetchOptions,
+  ManagedTimerId,
+} from '@tanstack/query-core/primitives'
+import type { projectResult } from './projectResult'
+import type { Query, QueryState } from './query'
+import type { QueryClient } from './queryClient'
+import type { PollingTimer } from './refetchInterval'
+import type {
+  DefaultError,
+  DefaultedQueryObserverOptions,
+  PlaceholderValue,
+  QueryKey,
+  QueryObserverBaseResult,
+  QueryObserverOptions,
+  QueryObserverOptionsBase,
+  QueryObserverResult,
+  QueryOptions,
+  RefetchOptions,
+} from './types'
+
+/** The last selector or placeholder error and when it occurred. */
+export type ProjectionFailure<TError> = {
+  /** The error thrown while computing the result. */
+  error: TError
+  /** Timestamp of the failed computation. */
+  errorUpdatedAt: number
+}
+
+interface ObserverFetchOptions extends FetchOptions {
+  throwOnError?: boolean
+}
+
+type QueryObserverListener<TData, TError> = (
+  result: QueryObserverResult<TData, TError>,
+) => void
+
+/**
+ * Selection and placeholder computation state shared by reads of the same result.
+ * @internal
+ */
+export interface QueryObserverResultContext<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey extends QueryKey,
+> {
+  /** The optional result projection that produced this reader’s cached state. */
+  project?: typeof projectResult
+
+  /** The memo key and failure of the most recent selection. */
+  selection?: {
+    key: {
+      input: TQueryData
+      select: (data: TQueryData) => TData
+      structuralSharing: QueryOptions<
+        TQueryFnData,
+        TError,
+        TQueryData,
+        TQueryKey
+      >['structuralSharing']
+    }
+    failure?: ProjectionFailure<TError>
+  }
+  /** The last successful selection, used if selection fails. */
+  selected?: {
+    data: TData
+    query?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+  }
+  /** The unselected placeholder or factory error. */
+  placeholder?: {
+    key: {
+      placeholderData:
+        | PlaceholderValue<TQueryData, TError, TQueryKey>
+        | undefined
+      structuralSharing: QueryOptions<
+        TQueryFnData,
+        TError,
+        TQueryData,
+        TQueryKey
+      >['structuralSharing']
+      previousQuery:
+        | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+        | undefined
+      previousState: QueryState<TQueryData, TError> | undefined
+      previousOptions:
+        | QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>
+        | undefined
+    }
+    sourceQuery?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+    input: TQueryData | undefined
+    failure?: ProjectionFailure<TError>
+  }
+}
+
+/**
+ * Options supplied to an observer by a caller or already resolved by the client.
+ * @internal
+ */
+export type ObserverOptionsInput<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> =
+  | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+  | DefaultedQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >
+
+/**
+ * A `QueryObserver` watches a single query in the `QueryCache` and computes a
+ * `QueryObserverResult` from its state, recomputing and notifying subscribers
+ * whenever the underlying query (or the observer's options) changes. It is
+ * the primitive that framework adapters (e.g. `useQuery`) build their hooks
+ * on top of, but it can also be used directly to observe and switch between
+ * queries outside of any framework.
+ * @example
+ * ```ts
+ * const observer = new QueryObserver(queryClient, {
+ *   queryKey: ['posts'],
+ *   queryFn: fetchPosts,
+ * })
+ *
+ * const unsubscribe = observer.subscribe((result) => {
+ *   console.log(result.data)
+ * })
+ * ```
+ */
+export class QueryObserver<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends Subscribable<QueryObserverListener<TData, TError>> {
+  #client: QueryClient
+  #currentQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> = undefined!
+  #currentQueryInitialState: QueryState<TQueryData, TError> = undefined!
+  #currentResult: QueryObserverResult<TData, TError> = undefined!
+  #resultContext: QueryObserverResultContext<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  > = {}
+  // This property keeps track of the last query with defined data.
+  // It will be used to pass the previous data and query to the placeholder function between renders.
+  #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+  #staleTimeoutId?: ManagedTimerId
+  #polling?: PollingTimer
+  #trackedProps = new Set<keyof QueryObserverResult>()
+
+  constructor(
+    client: QueryClient,
+    public options: ObserverOptionsInput<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+  ) {
+    super()
+
+    this.#client = client
+
+    this.bindMethods()
+    this.setOptions(options)
+  }
+
+  /**
+   * Binds the methods of the result (`refetch`) to the observer, so they keep working when destructured
+   * from it. Subclasses override it to bind their own result methods as well.
+   */
+  protected bindMethods(): void {
+    this.refetch = this.refetch.bind(this)
+  }
+
+  protected override onSubscribe(): void {
+    if (this.listeners.size === 1) {
+      this.#currentQuery.addObserver(this)
+
+      if (shouldFetchOnMount(this.#currentQuery, this.options)) {
+        this.#executeFetch()
+      } else {
+        this.updateResult()
+      }
+
+      this.#updateTimers()
+    }
+  }
+
+  protected override onUnsubscribe(): void {
+    if (!this.hasListeners()) {
+      this.destroy()
+    }
+  }
+
+  /**
+   * Returns whether the observed query is currently stale and configured
+   * (via the `refetchOnReconnect` option) to refetch when the network
+   * reconnects.
+   * @returns `true` if the observer should refetch the query on reconnect.
+   */
+  shouldFetchOnReconnect(): boolean {
+    return shouldFetchOn(
+      this.#currentQuery,
+      this.options,
+      this.options.refetchOnReconnect,
+    )
+  }
+
+  /**
+   * Returns whether the observed query is currently stale and configured
+   * (via the `refetchOnWindowFocus` option) to refetch when the window
+   * regains focus.
+   * @returns `true` if the observer should refetch the query on window focus.
+   */
+  shouldFetchOnWindowFocus(): boolean {
+    return shouldFetchOn(
+      this.#currentQuery,
+      this.options,
+      this.options.refetchOnWindowFocus,
+    )
+  }
+
+  /**
+   * Stops observing the current query: clears all listeners, cancels the
+   * stale and refetch-interval timers, and removes this observer from the
+   * query it was observing.
+   */
+  destroy(): void {
+    this.listeners = new Set()
+    this.#clearStaleTimeout()
+    this.#polling?.stop()
+    this.#polling = undefined
+    this.#currentQuery.removeObserver(this)
+  }
+
+  /**
+   * Updates the observer's options. This will re-resolve the query being
+   * observed (switching to a different query if the `queryKey` changed),
+   * trigger a fetch if the new options require one and the observer has
+   * subscribers, recompute the current result, and reschedule the stale and
+   * refetch-interval timers as needed.
+   * @param options - The new observer options. They are defaulted with {@link
+   * defaultQueryOptions} before being applied.
+   * @throws {Error} If `enabled` is neither a boolean nor a function.
+   * @example
+   * ```ts
+   * observer.setOptions({ queryKey: ['posts', 1], queryFn: () => fetchPost(1) })
+   * // later: switch to a different query, reusing the same observer
+   * observer.setOptions({ queryKey: ['posts', 2], queryFn: () => fetchPost(2) })
+   * ```
+   */
+  setOptions(
+    options: ObserverOptionsInput<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+  ): void {
+    const prevOptions = this.options
+    const prevQuery = this.#currentQuery
+
+    this.options = defaultQueryOptions(this.#client, options)
+
+    if (
+      this.options.enabled !== undefined &&
+      typeof this.options.enabled !== 'boolean' &&
+      typeof this.options.enabled !== 'function' &&
+      typeof resolveQueryValue(this.options.enabled, this.#currentQuery) !==
+        'boolean'
+    ) {
+      throw new Error(
+        'Expected enabled to be a boolean or a callback that returns a boolean',
+      )
+    }
+
+    this.#updateQuery()
+    this.#currentQuery.setOptions(this.options)
+
+    if (
+      prevOptions._defaulted &&
+      !shallowEqualObjects(this.options, prevOptions)
+    ) {
+      getQueryCache(this.#client).notify({
+        type: 'observerOptionsUpdated',
+        query: this.#currentQuery,
+        observer: this,
+      })
+    }
+
+    const mounted = this.hasListeners()
+
+    // Fetch if there are subscribers
+    if (
+      mounted &&
+      shouldFetchOptionally(
+        this.#currentQuery,
+        prevQuery,
+        this.options,
+        prevOptions,
+      )
+    ) {
+      this.#executeFetch()
+    }
+
+    // Update result
+    this.updateResult()
+
+    // Update stale interval if needed
+    if (
+      mounted &&
+      (this.#currentQuery !== prevQuery ||
+        resolveQueryValue(this.options.enabled, this.#currentQuery) !==
+          resolveQueryValue(prevOptions.enabled, this.#currentQuery) ||
+        resolveQueryValue(this.options.staleTime, this.#currentQuery) !==
+          resolveQueryValue(prevOptions.staleTime, this.#currentQuery))
+    ) {
+      this.#updateStaleTimeout()
+    }
+
+    this.#updatePolling()
+  }
+
+  /**
+   * Creates a result reader that captures the supplied query options.
+   * Reads cache the complete result locally and retain its reference while its
+   * fields are unchanged. They do not update this observer's committed result,
+   * options, or selection state. Missing queries are built in the query cache.
+   * Call `commit` after the render commits to apply the options and reuse the
+   * reader's computation. An abandoned reader needs no cleanup.
+   * @param options - The defaulted options used to read and commit the query result.
+   * @returns A reader with local snapshot and computation caches.
+   */
+  createResultReader(
+    options: DefaultedQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+  ): QueryObserverResultReader<QueryObserverResult<TData, TError>> {
+    const readerOptions = { ...options }
+    const context = { ...this.#resultContext }
+    let result = this.#currentResult
+
+    const getSnapshot = () => {
+      const query = getQueryCache(this.#client).build(
+        this.#client,
+        readerOptions,
+      )
+      readerOptions.select?.[0].reuse(
+        readerOptions,
+        query,
+        this.#resultContext,
+        context,
+      )
+
+      const nextResult = this.createResult(
+        query,
+        readerOptions,
+        context,
+        result,
+      )
+      if (!shallowEqualObjects(nextResult, result)) {
+        result = nextResult
+      }
+      return result
+    }
+
+    return {
+      getSnapshot,
+      commit: () => {
+        // Reuse selections computed since the last read.
+        getSnapshot()
+        this.#resultContext = { ...context }
+        this.setOptions(readerOptions)
+      },
+    }
+  }
+
+  /**
+   * Returns the most recently computed `QueryObserverResult` for the
+   * observed query. This is a point-in-time read; to be notified of updates
+   * as they happen, subscribe to the observer instead (its inherited
+   * `subscribe` method).
+   * @returns The observer's latest result.
+   * @example
+   * ```ts
+   * const result = observer.getCurrentResult()
+   * console.log(result.status, result.data)
+   * ```
+   */
+  getCurrentResult(): QueryObserverResult<TData, TError> {
+    return this.#currentResult
+  }
+
+  /**
+   * Wraps a `QueryObserverResult` in a `Proxy` that records which properties are read, via
+   * {@link QueryObserver#trackProp} (and an optional `onPropTracked` callback). Used by framework
+   * adapters when `notifyOnChangeProps` is not set, to implement its default "only re-render on
+   * properties you actually read" behavior.
+   * @param result - The result to wrap.
+   * @param onPropTracked - Called with the name of each property that is read.
+   * @returns A proxy of `result` that tracks property reads.
+   */
+  trackResult(
+    result: QueryObserverResult<TData, TError>,
+    onPropTracked?: (key: keyof QueryObserverResult) => void,
+  ): QueryObserverResult<TData, TError> {
+    return new Proxy(result, {
+      get: (target, key) => {
+        this.trackProp(key as keyof QueryObserverResult)
+        onPropTracked?.(key as keyof QueryObserverResult)
+        return Reflect.get(target, key)
+      },
+    })
+  }
+
+  /**
+   * Records that the given `QueryObserverResult` property was read, so a subsequent update only
+   * notifies this observer if a tracked property actually changed. {@link QueryObserver#trackResult}
+   * calls this on property access. `useQueries` tracks the same property across its observers
+   * when computing a combined result.
+   * @param key - The name of the property that was read.
+   */
+  trackProp(key: keyof QueryObserverResult) {
+    this.#trackedProps.add(key)
+  }
+
+  /**
+   * Returns the `Query` instance this observer is currently observing.
+   * @returns The observed query.
+   */
+  getCurrentQuery(): Query<TQueryFnData, TError, TQueryData, TQueryKey> {
+    return this.#currentQuery
+  }
+
+  /**
+   * Refetches the observed query and returns a promise that resolves with
+   * the resulting `QueryObserverResult`.
+   * @param options - Set `cancelRefetch` to `false` to keep a running fetch instead of cancelling
+   * it, and `throwOnError` to `true` to reject when the refetch fails.
+   * @returns A promise that resolves with the result after the refetch.
+   * @example
+   * ```ts
+   * const result = await observer.refetch({ cancelRefetch: false })
+   * console.log(result.data)
+   * ```
+   */
+  refetch(
+    options: RefetchOptions = {},
+  ): Promise<QueryObserverResult<TData, TError>> {
+    return this.fetch(options)
+  }
+
+  /**
+   * Fetches a query defined by the given options without affecting this
+   * observer's own tracked query or result, and returns a promise that
+   * resolves with the `QueryObserverResult` for that fetch. This is useful
+   * for prefetching data that another observer (e.g. a query about to be
+   * navigated to) will need, ahead of time.
+   * @param options - The observer options of the query to fetch.
+   * @returns A promise that resolves with the result for the fetched query.
+   * @example
+   * ```ts
+   * const result = await observer.fetchOptimistic({
+   *   queryKey: ['posts', 2],
+   *   queryFn: () => fetchPost(2),
+   * })
+   * console.log(result.data)
+   * ```
+   */
+  fetchOptimistic(
+    options: ObserverOptionsInput<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+  ): Promise<QueryObserverResult<TData, TError>> {
+    const defaultedOptions = defaultQueryOptions(this.#client, options)
+
+    const query = getQueryCache(this.#client).build(
+      this.#client,
+      defaultedOptions,
+    )
+
+    const cached = Promise.withResolvers<QueryObserverResult<TData, TError>>()
+    const unsubscribe = getQueryCache(this.#client).subscribe((event) => {
+      if (
+        event.type === 'updated' &&
+        event.query.queryHash === query.queryHash &&
+        query.state.data !== undefined
+      ) {
+        unsubscribe()
+        cached.resolve(this.createResult(query, defaultedOptions))
+      }
+    })
+
+    return Promise.race([
+      query
+        .fetch(defaultedOptions)
+        .then(() => {
+          const result = this.createResult(query, defaultedOptions)
+          // Resolve the cache wait when the fetch succeeds.
+          cached.resolve(result)
+          return result
+        })
+        .finally(unsubscribe),
+      cached.promise,
+    ])
+  }
+
+  /**
+   * Fetches the observed query and updates the result once the fetch settles. Used by `refetch` and,
+   * in `InfiniteQueryObserver`, to fetch more pages.
+   * @param fetchOptions - Options for this fetch. `cancelRefetch` defaults to `true`.
+   * @returns A promise that resolves with the updated result.
+   */
+  protected fetch(
+    fetchOptions: ObserverFetchOptions,
+  ): Promise<QueryObserverResult<TData, TError>> {
+    return this.#executeFetch({
+      ...fetchOptions,
+      cancelRefetch: fetchOptions.cancelRefetch ?? true,
+    }).then(() => {
+      this.updateResult()
+      return this.#currentResult
+    })
+  }
+
+  #executeFetch(
+    fetchOptions?: Omit<ObserverFetchOptions, 'initialPromise'>,
+  ): Promise<TQueryData | undefined> {
+    // Make sure we reference the latest query as the current one might have been removed
+    this.#updateQuery()
+
+    // Fetch
+    let promise: Promise<TQueryData | undefined> = this.#currentQuery.fetch(
+      this.options,
+      fetchOptions,
+    )
+
+    if (!fetchOptions?.throwOnError) {
+      promise = promise.catch(noop)
+    }
+
+    return promise
+  }
+
+  #shouldScheduleTimer(timeout: unknown): timeout is number {
+    return (
+      !isServerEnvironment() &&
+      resolveQueryValue(this.options.enabled, this.#currentQuery) !== false &&
+      isValidTimeout(timeout)
+    )
+  }
+
+  #updateStaleTimeout(): void {
+    this.#clearStaleTimeout()
+    const staleTime = resolveQueryValue(
+      this.options.staleTime,
+      this.#currentQuery,
+    )
+
+    if (this.#currentResult.isStale || !this.#shouldScheduleTimer(staleTime)) {
+      return
+    }
+
+    const time = timeUntilStale(this.#currentResult.dataUpdatedAt, staleTime)
+
+    // The timeout is sometimes triggered 1 ms before the stale time expiration.
+    // To mitigate this issue we always add 1 ms to the timeout.
+    const timeout = time + 1
+
+    this.#staleTimeoutId = timeoutManager.setTimeout(() => {
+      if (!this.#currentResult.isStale) {
+        this.updateResult()
+      }
+    }, timeout)
+  }
+
+  #updatePolling(restart = false): void {
+    const polling = resolveQueryValue(
+      this.options.refetchInterval,
+      this.#currentQuery,
+    )
+    if (polling) {
+      this.#polling = polling.update(this, this.#polling, restart, () =>
+        this.#executeFetch(),
+      )
+    } else {
+      this.#polling?.stop()
+      this.#polling = undefined
+    }
+  }
+
+  #updateTimers(): void {
+    this.#updateStaleTimeout()
+    this.#updatePolling(true)
+  }
+
+  #clearStaleTimeout(): void {
+    if (this.#staleTimeoutId !== undefined) {
+      timeoutManager.clearTimeout(this.#staleTimeoutId)
+      this.#staleTimeoutId = undefined
+    }
+  }
+
+  /**
+   * Computes the result for a query and options from the query's state, applying `select`,
+   * `placeholderData`, and the derived flags. Subclasses override it to add their own fields.
+   * @param query - The query to compute the result for.
+   * @param options - The observer options to compute the result with.
+   * @param context - The selection and placeholder state reused between computations.
+   * @param prevResult - The previous result used for structural sharing.
+   * @returns The computed result.
+   */
+  protected createResult(
+    query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+    options: QueryObserverOptionsBase<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+    context = this.#resultContext,
+    prevResult = this.#currentResult as
+      | QueryObserverResult<TData, TError>
+      | undefined,
+  ): QueryObserverResult<TData, TError> {
+    const prevQuery = this.#currentQuery
+    const prevOptions = this.options
+    const queryChange = query !== prevQuery
+    const queryInitialState = queryChange
+      ? query.state
+      : this.#currentQueryInitialState
+
+    const { state } = query
+    const fetchOptimistically =
+      options._optimisticResults &&
+      (this.hasListeners()
+        ? shouldFetchOptionally(query, prevQuery, options, prevOptions)
+        : shouldFetchOnMount(query, options))
+    const newState = fetchOptimistically
+      ? { ...state, ...fetchState(state.data, query.options) }
+      : state
+    const fetchStatus =
+      options._optimisticResults === 'isRestoring'
+        ? 'idle'
+        : newState.fetchStatus
+    const feature = options.select?.[0] ?? options.placeholderData?.[0]
+    const project = feature?.project ?? context.project
+    const projection = project?.(
+      query,
+      newState,
+      options,
+      context,
+      prevResult?.data,
+      this.#lastQueryWithDefinedData,
+    )
+    const { error, errorUpdatedAt, status } = projection ?? newState
+    const data = projection
+      ? projection.data
+      : (newState.data as unknown as TData | undefined)
+    const isPlaceholderData = projection?.isPlaceholderData ?? false
+    const isFetching = fetchStatus === 'fetching'
+    const isPending = status === 'pending'
+    const isError = status === 'error'
+
+    const isLoading = isPending && isFetching
+    const hasData = data !== undefined
+
+    const result: QueryObserverBaseResult<TData, TError> = {
+      status,
+      fetchStatus,
+      isPending,
+      isSuccess: status === 'success',
+      isError,
+      isLoading,
+      data,
+      dataUpdatedAt: newState.dataUpdatedAt,
+      error,
+      errorUpdatedAt,
+      failureCount: newState.fetchFailureCount,
+      failureReason: newState.fetchFailureReason,
+      errorUpdateCount: newState.errorUpdateCount,
+      isFetched: query.isFetched(),
+      isFetchedAfterMount:
+        newState.dataUpdateCount > queryInitialState.dataUpdateCount ||
+        newState.errorUpdateCount > queryInitialState.errorUpdateCount,
+      isFetching,
+      isRefetching: isFetching && !isPending,
+      isLoadingError: isError && !hasData,
+      isPaused: fetchStatus === 'paused',
+      isPlaceholderData,
+      isRefetchError: isError && hasData,
+      isStale: isStale(query, options),
+      refetch: this.refetch,
+      isEnabled: resolveQueryValue(options.enabled, query) !== false,
+    }
+
+    const nextResult = result as QueryObserverResult<TData, TError>
+
+    return nextResult
+  }
+
+  /**
+   * Recomputes and stores the current result from the current query/options, notifying listeners
+   * if it changed. Framework adapters call this right after subscribing to make sure no query
+   * update was missed in the gap between creating the observer and subscribing to it.
+   */
+  updateResult(): void {
+    const prevResult = this.#currentResult as
+      | QueryObserverResult<TData, TError>
+      | undefined
+
+    const nextResult = this.createResult(this.#currentQuery, this.options)
+
+    if (this.#currentQuery.state.data !== undefined) {
+      this.#lastQueryWithDefinedData = this.#currentQuery
+    }
+
+    // Only notify and update result if something has changed
+    if (shallowEqualObjects(nextResult, prevResult)) {
+      return
+    }
+
+    this.#currentResult = nextResult
+
+    const shouldNotifyListeners = (): boolean => {
+      if (!prevResult) {
+        return true
+      }
+
+      const { notifyOnChangeProps } = this.options
+
+      if (
+        notifyOnChangeProps === 'all' ||
+        (notifyOnChangeProps !== 'none' && !this.#trackedProps.size)
+      ) {
+        return true
+      }
+
+      if (
+        this.options.throwOnError &&
+        this.#currentResult.error !== prevResult.error
+      ) {
+        return true
+      }
+
+      if (notifyOnChangeProps === 'none') {
+        return false
+      }
+
+      for (const key of this.#trackedProps) {
+        if (this.#currentResult[key] !== prevResult[key]) {
+          return true
+        }
+      }
+      return false
+    }
+
+    const notifyListeners = shouldNotifyListeners()
+
+    notifyManager.batch(() => {
+      // First, trigger the listeners
+      if (notifyListeners) {
+        this.listeners.forEach((listener) => {
+          listener(this.#currentResult)
+        })
+      }
+
+      // Then the cache listeners
+      getQueryCache(this.#client).notify({
+        query: this.#currentQuery,
+        type: 'observerResultsUpdated',
+      })
+    })
+  }
+
+  #updateQuery(): void {
+    const query = getQueryCache(this.#client).build(this.#client, this.options)
+
+    if (query === this.#currentQuery) {
+      return
+    }
+
+    const prevQuery = this.#currentQuery as
+      | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      | undefined
+    this.#currentQuery = query
+    this.#currentQueryInitialState = query.state
+
+    if (this.hasListeners()) {
+      prevQuery?.removeObserver(this)
+      query.addObserver(this)
+    }
+  }
+
+  /**
+   * Updates the observer's result when the observed query changes, and reschedules its timers if it
+   * has listeners.
+   * @internal
+   */
+  onQueryUpdate(): void {
+    this.updateResult()
+
+    if (this.hasListeners()) {
+      this.#updateTimers()
+    }
+  }
+}
+
+/**
+ * Checks whether a query has no data yet and should do its initial load when an observer mounts.
+ * @param query - The query to check.
+ * @param options - The observer options.
+ * @returns `true` if the query is enabled, has no data, and isn't in an error state with
+ * `retryOnMount: false`.
+ */
+function shouldLoadOnMount(
+  query: Query<any, any, any, any>,
+  options: QueryObserverOptionsBase<any, any, any, any>,
+): boolean {
+  return (
+    resolveQueryValue(options.enabled, query) !== false &&
+    query.state.data === undefined &&
+    !(
+      query.state.status === 'error' &&
+      resolveQueryValue(options.retryOnMount, query) === false
+    )
+  )
+}
+
+/**
+ * Checks whether a query should fetch when an observer mounts: either for its initial load, or
+ * because it has data and `refetchOnMount` asks for a refetch.
+ * @param query - The query to check.
+ * @param options - The observer options.
+ * @returns `true` if the query should fetch on mount.
+ */
+function shouldFetchOnMount(
+  query: Query<any, any, any, any>,
+  options: QueryObserverOptionsBase<any, any, any, any, any>,
+): boolean {
+  return (
+    shouldLoadOnMount(query, options) ||
+    (query.state.data !== undefined &&
+      shouldFetchOn(query, options, options.refetchOnMount))
+  )
+}
+
+/**
+ * Checks whether a query should fetch for a `refetchOnMount`, `refetchOnWindowFocus`, or
+ * `refetchOnReconnect` option.
+ * @param query - The query to check.
+ * @param options - The observer options.
+ * @param field - The value of the option to check.
+ * @returns `true` if the query is enabled, not static, and the option is `'always'`, or is not
+ * `false` and the query is stale.
+ */
+function shouldFetchOn(
+  query: Query<any, any, any, any>,
+  options: QueryObserverOptionsBase<any, any, any, any, any>,
+  field: (typeof options)['refetchOnMount'] &
+    (typeof options)['refetchOnWindowFocus'] &
+    (typeof options)['refetchOnReconnect'],
+) {
+  if (
+    resolveQueryValue(options.enabled, query) !== false &&
+    resolveQueryValue(options.staleTime, query) !== 'static'
+  ) {
+    const value = resolveQueryValue(field, query)
+
+    return value === 'always' || (value !== false && isStale(query, options))
+  }
+  return false
+}
+
+/**
+ * Checks whether a query should fetch after the observer's options change.
+ * @param query - The query observed with the new options.
+ * @param prevQuery - The query observed with the previous options.
+ * @param options - The new observer options.
+ * @param prevOptions - The previous observer options.
+ * @returns `true` if the query changed or was disabled before, it isn't a suspense query in an
+ * error state, and it is stale.
+ */
+function shouldFetchOptionally(
+  query: Query<any, any, any, any>,
+  prevQuery: Query<any, any, any, any>,
+  options: QueryObserverOptionsBase<any, any, any, any, any>,
+  prevOptions: QueryObserverOptionsBase<any, any, any, any, any>,
+): boolean {
+  return (
+    (query !== prevQuery ||
+      resolveQueryValue(prevOptions.enabled, query) === false) &&
+    (!options.suspense || query.state.status !== 'error') &&
+    isStale(query, options)
+  )
+}
+
+/**
+ * Checks whether a query is stale for the given observer options.
+ * @param query - The query to check.
+ * @param options - The observer options, whose `enabled` and `staleTime` are used.
+ * @returns `true` if the query is enabled and its data is stale for `staleTime`.
+ */
+function isStale(
+  query: Query<any, any, any, any>,
+  options: QueryObserverOptionsBase<any, any, any, any, any>,
+): boolean {
+  return (
+    resolveQueryValue(options.enabled, query) !== false &&
+    query.isStaleByTime(resolveQueryValue(options.staleTime, query))
+  )
+}
+
+export type { QueryObserverResultReader } from '@tanstack/query-core'
