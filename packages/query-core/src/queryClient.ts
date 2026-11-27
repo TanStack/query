@@ -218,7 +218,7 @@ export class QueryClient {
     const cachedData = query.state.data
 
     if (cachedData === undefined) {
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax
       return this.fetchQuery(options)
     }
 
@@ -226,7 +226,7 @@ export class QueryClient {
       options.revalidateIfStale &&
       query.isStaleByTime(resolveQueryValue(defaultedOptions.staleTime, query))
     ) {
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax
       void this.prefetchQuery(defaultedOptions)
     }
 
@@ -695,7 +695,7 @@ export class QueryClient {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<void> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax
     return this.fetchQuery(options).then(noop).catch(noop)
   }
 
@@ -773,7 +773,7 @@ export class QueryClient {
     >,
   ): Promise<InfiniteData<TData, TPageParam>> {
     options._type = 'infinite'
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax
     return this.fetchQuery(options as any)
   }
 
@@ -799,7 +799,7 @@ export class QueryClient {
       TPageParam
     >,
   ): Promise<void> {
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax
     return this.fetchInfiniteQuery(options).then(noop).catch(noop)
   }
 
@@ -828,7 +828,7 @@ export class QueryClient {
   ): Promise<InfiniteData<TData, TPageParam>> {
     options._type = 'infinite'
 
-    // oxlint-disable-next-line tanstack-query/no-restricted-syntax
+    // oxlint-disable-next-line eslint-js/no-restricted-syntax
     return this.ensureQueryData(options as any)
   }
 

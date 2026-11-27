@@ -66,12 +66,7 @@
     "test:oxlint": {
       "cache": true,
       "dependsOn": ["^compile"],
-      "inputs": [
-        "default",
-        "^production",
-        "{workspaceRoot}/oxlint.config.ts",
-        "{workspaceRoot}/scripts/oxlint-plugin.ts"
-      ]
+      "inputs": ["default", "^production", "{workspaceRoot}/oxlint.config.ts"]
     },
     "test:lib": {
       "cache": true,

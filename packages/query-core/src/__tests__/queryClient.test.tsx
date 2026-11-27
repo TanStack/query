@@ -481,7 +481,7 @@ describe('queryClient', () => {
 
       queryClient.setQueryData([key, 'id'], 'bar')
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
       ).resolves.toBe('bar')
     })
@@ -492,7 +492,7 @@ describe('queryClient', () => {
 
       queryClient.setQueryData([key, 'id'], null)
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
       ).resolves.toBeNull()
     })
@@ -502,7 +502,7 @@ describe('queryClient', () => {
       const queryFn = () => Promise.resolve('data')
 
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({ queryKey: [key], queryFn }),
       ).resolves.toBe('data')
     })
@@ -518,7 +518,7 @@ describe('queryClient', () => {
         })
 
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -527,7 +527,7 @@ describe('queryClient', () => {
       ).resolves.toBe('old')
       await vi.advanceTimersByTimeAsync(TIMEOUT + 10)
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -541,7 +541,7 @@ describe('queryClient', () => {
       const queryFn = vi.fn<() => Promise<string>>().mockResolvedValue('data')
 
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -656,7 +656,7 @@ describe('queryClient', () => {
 
       queryClient.setQueryData([key, 'id'], { pages: ['bar'], pageParams: [0] })
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -671,7 +671,7 @@ describe('queryClient', () => {
       const queryFn = () => Promise.resolve('data')
 
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -689,7 +689,7 @@ describe('queryClient', () => {
       const queryFn = () => sleep(TIMEOUT).then(() => 'new')
 
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -700,7 +700,7 @@ describe('queryClient', () => {
       ).resolves.toStrictEqual({ pages: ['old'], pageParams: [0] })
       await vi.advanceTimersByTimeAsync(TIMEOUT + 10)
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.ensureInfiniteQueryData({
           queryKey: [key, 'id'],
           queryFn,
@@ -796,7 +796,7 @@ describe('queryClient', () => {
         Promise.resolve('data')
 
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.fetchQuery<StrictData, any, StrictData, StrictQueryKey>({
           queryKey: key,
           queryFn: fetchFn,
@@ -809,7 +809,7 @@ describe('queryClient', () => {
       const key = createKey()
 
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.fetchQuery({
           queryKey: key,
           queryFn: (): Promise<unknown> => {
@@ -823,13 +823,13 @@ describe('queryClient', () => {
       const key = createKey()
 
       const fetchFn = () => Promise.resolve('data')
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
       })
 
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const second = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -844,7 +844,7 @@ describe('queryClient', () => {
         Promise.resolve({ data: 'data' }),
       )
 
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -858,7 +858,7 @@ describe('queryClient', () => {
         refetchType: 'none',
       })
 
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const second = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -871,7 +871,7 @@ describe('queryClient', () => {
 
     it('should be able to fetch when garbage collection time is set to 0 and then be removed', async () => {
       const key1 = createKey()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const promise = queryClient.fetchQuery({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 1),
@@ -885,7 +885,7 @@ describe('queryClient', () => {
 
     it('should keep a query in cache if garbage collection time is Infinity', async () => {
       const key1 = createKey()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const promise = queryClient.fetchQuery({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 1),
@@ -901,7 +901,7 @@ describe('queryClient', () => {
       const key = createKey()
       queryClient.setQueryData(key, 'og')
       const fetchFn = () => Promise.resolve('new')
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: fetchFn,
@@ -918,7 +918,7 @@ describe('queryClient', () => {
       const queryFn = () => ++count
 
       queryClient.setQueryData(key, count)
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const firstPromise = queryClient.fetchQuery({
         queryKey: key,
         queryFn,
@@ -926,14 +926,14 @@ describe('queryClient', () => {
       })
       await expect(firstPromise).resolves.toBe(0)
       await vi.advanceTimersByTimeAsync(10)
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const secondPromise = queryClient.fetchQuery({
         queryKey: key,
         queryFn,
         staleTime: 10,
       })
       await expect(secondPromise).resolves.toBe(1)
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const thirdPromise = queryClient.fetchQuery({
         queryKey: key,
         queryFn,
@@ -941,7 +941,7 @@ describe('queryClient', () => {
       })
       await expect(thirdPromise).resolves.toBe(1)
       await vi.advanceTimersByTimeAsync(10)
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const fourthPromise = queryClient.fetchQuery({
         queryKey: key,
         queryFn,
@@ -953,7 +953,7 @@ describe('queryClient', () => {
     it('should allow new meta', async () => {
       const key = createKey()
 
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const first = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: ({ meta }) => Promise.resolve(meta),
@@ -963,7 +963,7 @@ describe('queryClient', () => {
       })
       expect(first).toStrictEqual({ foo: true })
 
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const second = await queryClient.fetchQuery({
         queryKey: key,
         queryFn: ({ meta }) => Promise.resolve(meta),
@@ -1428,7 +1428,7 @@ describe('queryClient', () => {
         Promise.resolve(data.pages[0])
 
       await expect(
-        // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+        // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
         queryClient.fetchInfiniteQuery<
           StrictData,
           any,
@@ -1446,7 +1446,7 @@ describe('queryClient', () => {
 
     it('should return infinite query data', async () => {
       const key = createKey()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const result = await queryClient.fetchInfiniteQuery({
         queryKey: key,
         getNextPageParam: () => undefined,
@@ -1718,7 +1718,7 @@ describe('queryClient', () => {
       const fetchFn: QueryFunction<StrictData, StrictQueryKey, number> = () =>
         Promise.resolve('data')
 
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchInfiniteQuery<
         StrictData,
         any,
@@ -1743,7 +1743,7 @@ describe('queryClient', () => {
     it('should return infinite query data', async () => {
       const key = createKey()
 
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => Number(pageParam),
@@ -1762,7 +1762,7 @@ describe('queryClient', () => {
     it('should prefetch multiple pages', async () => {
       const key = createKey()
 
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => String(pageParam),
@@ -1784,7 +1784,7 @@ describe('queryClient', () => {
       const key = createKey()
       let count = 0
 
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => String(pageParam),
@@ -1915,7 +1915,7 @@ describe('queryClient', () => {
       const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
 
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchQuery<
         StrictData,
         any,
@@ -1931,7 +1931,7 @@ describe('queryClient', () => {
     it('should return undefined when an error is thrown', async () => {
       const key = createKey()
 
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       const result = await queryClient.prefetchQuery({
         queryKey: key,
         queryFn: (): Promise<unknown> => {
@@ -1945,7 +1945,7 @@ describe('queryClient', () => {
     it('should be garbage collected after gcTime if unused', async () => {
       const key = createKey()
 
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       await queryClient.prefetchQuery({
         queryKey: key,
         queryFn: () => 'data',

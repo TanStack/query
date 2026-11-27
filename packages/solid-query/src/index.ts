@@ -6,7 +6,7 @@ import { useQueries } from './useQueries'
 import { useQuery } from './useQuery'
 
 // Re-export core
-// oxlint-disable-next-line tanstack-query/no-restricted-syntax
+// oxlint-disable-next-line eslint-js/no-restricted-syntax
 export * from '@tanstack/query-core'
 
 // Solid Query

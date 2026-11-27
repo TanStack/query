@@ -30,7 +30,7 @@ describe('createInfiniteQuery', () => {
 
     it('should define type of param passed to queryFunctionContext with initialPageParam for fetchInfiniteQuery', () => {
       const queryClient = new QueryClient()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       queryClient.fetchInfiniteQuery({
         queryKey: createKey(),
         queryFn: ({ pageParam }) => {
@@ -43,7 +43,7 @@ describe('createInfiniteQuery', () => {
 
     it('should define type of param passed to queryFunctionContext with initialPageParam for prefetchInfiniteQuery', () => {
       const queryClient = new QueryClient()
-      // oxlint-disable-next-line tanstack-query/no-restricted-syntax -- grandfathered direct test
+      // oxlint-disable-next-line eslint-js/no-restricted-syntax -- grandfathered direct test
       queryClient.prefetchInfiniteQuery({
         queryKey: createKey(),
         queryFn: ({ pageParam }) => {
