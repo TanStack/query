@@ -159,7 +159,7 @@ function Posts() {
 ```
 
 For component-managed loading, prepare the same options with `infiniteQueryOptions`. Outside React, import
-`fetchInfiniteQuery` to fetch and cache pages by calling `fetchInfiniteQuery(client, postPages)`.
+`infiniteQuery` to fetch and cache pages by calling `infiniteQuery(client, postPages)`.
 
 ### Parallel queries
 
@@ -239,21 +239,21 @@ The `QueryClient` constructor creates the state shared by hooks, providers and i
 
 ```ts
 import {
-  fetchQuery,
-  fetchInfiniteQuery,
+  query,
+  infiniteQuery,
   getQueryData,
   invalidateQueries,
   setQueryData,
 } from '@tanstack/react-query-pluggable'
 
-const order = await fetchQuery(client, orderOptions)
+const order = await query(client, orderOptions)
 const cached = getQueryData(client, orderOptions.queryKey)
 setQueryData(client, orderOptions.queryKey, updatedOrder)
-await fetchInfiniteQuery(client, orderPageOptions)
+await infiniteQuery(client, orderPageOptions)
 await invalidateQueries(client, { queryKey: ['orders'] })
 ```
 
-For example, `client.query(options)` becomes `fetchQuery(client, options)` and `client.clear()` becomes `clearQueryClient(client)`. The provider manages mounting for React users. Integrations that managed the v6 lifecycle directly can call `mountQueryClient(client)` and `unmountQueryClient(client)`. The same client-first convention applies to defaults, mutation resumption and bulk cache operations.
+For example, `client.query(options)` becomes `query(client, options)` and `client.clear()` becomes `clearQueryClient(client)`. The provider manages mounting for React users. Integrations that managed the v6 lifecycle directly can call `mountQueryClient(client)` and `unmountQueryClient(client)`. The same client-first convention applies to defaults, mutation resumption and bulk cache operations.
 
 Use `getQueryCache(client)` and `getMutationCache(client)` for direct cache access. Use `findCachedQuery(cache, filters)`, `findCachedQueries(cache, filters)`, or `clearQueryCache(cache)` for query cache searches and clearing. Query caches expose `.subscribe(listener)`, `.get(hash)`, and `.getAll()`. The stock `@tanstack/query-persist-client-core` subscription calls `client.getQueryCache()` and `client.getMutationCache()`. A custom persistence integration for this adapter must subscribe through the named accessors and use this adapter’s `hydrate` and `dehydrate`.
 

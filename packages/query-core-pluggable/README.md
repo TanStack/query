@@ -7,13 +7,13 @@ Create a `QueryClient` and pass it as the first argument to each operation. This
 ```ts
 import {
   QueryClient,
-  fetchQuery,
+  query,
   invalidateQueries,
 } from '@tanstack/query-core-pluggable'
 
 const client = new QueryClient()
 
-const titles = await fetchQuery(client, {
+const titles = await query(client, {
   queryKey: ['books', 'featured'],
   queryFn: async (): Promise<string[]> => {
     const response = await fetch('/api/featured-titles')
@@ -25,7 +25,7 @@ const titles = await fetchQuery(client, {
 await invalidateQueries(client, { queryKey: ['books'] })
 ```
 
-Import `fetchInfiniteQuery` for pagination, `refetchInterval` for observer polling, or `getMutationCache` to access the client's mutation cache. Pass the same client to the React adapter's `QueryClientProvider` to share cached data between direct calls and components.
+Import `infiniteQuery` for pagination, `refetchInterval` for observer polling, or `getMutationCache` to access the client's mutation cache. Pass the same client to the React adapter's `QueryClientProvider` to share cached data between direct calls and components.
 
 Use `findCachedQuery(cache, filters)` to look up a key, `findCachedQueries(cache, filters)` to filter a cache, and `clearQueryCache(cache)` to remove its queries. The predicates `isQueryActive(query)`, `isQueryDisabled(query)`, `isQueryStatic(query)`, and `isQueryStale(query)` inspect individual queries. Import `fetchOptimistic(client, observer, options)` when an observer needs a result as soon as data becomes available during a fetch.
 

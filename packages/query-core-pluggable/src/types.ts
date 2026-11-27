@@ -750,7 +750,7 @@ export type DefaultedInfiniteQueryObserverOptions<
   InfiniteQueryPageParamsOptions<TQueryFnData, TPageParam>
 
 /**
- * The options of `fetchQuery`: the {@link QueryOptions} of the query, plus a `staleTime`
+ * The options of `query`: the {@link QueryOptions} of the query, plus a `staleTime`
  * that decides whether cached data is returned instead of fetching, and a `select` that only
  * transforms the value the call resolves with.
  */
@@ -792,7 +792,7 @@ type InfiniteQueryFetchPageOptions<TQueryFnData, TPageParam> = Pick<
 }
 
 /**
- * The options of `fetchInfiniteQuery`. Extends {@link QueryExecuteOptions}
+ * The options of `infiniteQuery`. Extends {@link QueryExecuteOptions}
  * with `initialPageParam`, `getNextPageParam`, and the optional `pages` count.
  */
 export type InfiniteQueryExecuteOptions<

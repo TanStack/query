@@ -1,4 +1,4 @@
-import { fetchQuery, getQueryState, noop } from '@tanstack/query-core-pluggable'
+import { getQueryState, noop, query } from '@tanstack/query-core-pluggable'
 import { useQueryClient } from './QueryClientProvider'
 import type {
   DefaultError,
@@ -10,13 +10,13 @@ import type { UsePrefetchQueryOptions } from './types'
 /**
  * `usePrefetchQuery` does not return anything, it should be used just to fire a prefetch during render, before
  * a suspense boundary that wraps a component that uses `useQuery(suspenseQueryOptions(...))`. You can pass everything to
- * `usePrefetchQuery` that you can pass to `fetchQuery`, though `queryKey` is always required, and
+ * `usePrefetchQuery` that you can pass to `query`, though `queryKey` is always required, and
  * `queryFn` is required. Pass `defaultQueryFn` to use the client defaults.
  *
  * The prefetch is skipped if the query already has any cached state — including a `pending`/`error` state left
  * over from a previous attempt — so calling this on every render is cheap and won't refetch data that's
  * already there or already in flight.
- * @param options - The {@link UsePrefetchQueryOptions} to use — everything you can pass to `fetchQuery`.
+ * @param options - The {@link UsePrefetchQueryOptions} to use — everything you can pass to `query`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest context will
  * be used.
  * @example
@@ -58,6 +58,6 @@ export function usePrefetchQuery<
   const client = useQueryClient(queryClient)
 
   if (!getQueryState(client, options.queryKey)) {
-    void fetchQuery(client, options).catch(noop)
+    void query(client, options).catch(noop)
   }
 }

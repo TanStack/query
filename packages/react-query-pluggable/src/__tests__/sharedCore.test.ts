@@ -1,10 +1,10 @@
 import {
   CancelledError,
   clearQueryClient,
-  fetchQuery,
   getQueryState,
   mountQueryClient,
   onlineManager,
+  query,
   unmountQueryClient,
 } from '@tanstack/query-core-pluggable'
 import { describe, expect, it } from 'vitest'
@@ -18,7 +18,7 @@ describe('shared query-core runtime', () => {
     try {
       onlineManager.setOnline(false)
       const queryKey = ['connection']
-      const pending = fetchQuery(client, { queryKey, queryFn: () => 'online' })
+      const pending = query(client, { queryKey, queryFn: () => 'online' })
       expect(getQueryState(client, queryKey)?.fetchStatus).toBe('paused')
       onlineManager.setOnline(true)
       await expect(pending).resolves.toBe('online')
@@ -32,7 +32,7 @@ describe('shared query-core runtime', () => {
   it('rejects cancelled queries with the core cancellation error', async () => {
     const client = new QueryClient()
     const queryKey = ['cancel']
-    const pending = fetchQuery(client, {
+    const pending = query(client, {
       queryKey,
       queryFn: () => new Promise<void>(() => {}),
     })

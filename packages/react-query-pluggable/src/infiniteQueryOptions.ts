@@ -139,7 +139,7 @@ export type ResolvedPages<TData, TPage, TParam> = TData extends UnselectedPages
 type InfiniteQueryOptionsFactory<TPolicy> = {
   /**
    * The factory accepts the fetcher, pagination callbacks, and observer options for the query.
-   * These options can be shared across hooks and imperative APIs such as `fetchInfiniteQuery(client, options)`.
+   * These options can be shared across hooks and imperative APIs such as `infiniteQuery(client, options)`.
    * `options.queryKey` is required and is the query key to generate options for.
    *
    * This overload is selected when `initialData` is known to be defined.
@@ -208,7 +208,7 @@ type InfiniteQueryOptionsFactory<TPolicy> = {
 
   /**
    * The factory accepts the fetcher, pagination callbacks, and observer options for the query.
-   * These options can be shared across hooks and imperative APIs such as `fetchInfiniteQuery(client, options)`.
+   * These options can be shared across hooks and imperative APIs such as `infiniteQuery(client, options)`.
    * `options.queryKey` is required and is the query key to generate options for.
    * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — the fetcher, pagination, and observer options.
    * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
@@ -274,7 +274,7 @@ type InfiniteQueryOptionsFactory<TPolicy> = {
 
   /**
    * The factory accepts the fetcher, pagination callbacks, and observer options for the query.
-   * These options can be shared across hooks and imperative APIs such as `fetchInfiniteQuery(client, options)`.
+   * These options can be shared across hooks and imperative APIs such as `infiniteQuery(client, options)`.
    * `options.queryKey` is required and is the query key to generate options for.
    * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — the fetcher, pagination, and observer options.
    * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.

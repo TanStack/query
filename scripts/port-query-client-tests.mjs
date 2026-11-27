@@ -5,8 +5,6 @@ import ts from 'typescript'
 import { queryResultTestPort } from './port-query-result-tests.mjs'
 
 const renamed = {
-  query: 'fetchQuery',
-  infiniteQuery: 'fetchInfiniteQuery',
   mount: 'mountQueryClient',
   unmount: 'unmountQueryClient',
   clear: 'clearQueryClient',

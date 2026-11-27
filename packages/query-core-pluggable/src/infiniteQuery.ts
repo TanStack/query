@@ -1,5 +1,5 @@
 import { infiniteFetchOptions } from './infiniteQueryBehavior'
-import { fetchQuery } from './queryClient'
+import { query } from './queryClient'
 import type { QueryClient, WithoutSkipToken } from './queryClient'
 import type {
   DefaultError,
@@ -25,7 +25,7 @@ import type {
  * @example
  * ```ts
  * try {
- *   const data = await fetchInfiniteQuery(queryClient, {
+ *   const data = await infiniteQuery(queryClient, {
  *     queryKey,
  *     queryFn,
  *     initialPageParam: 0,
@@ -37,7 +37,7 @@ import type {
  * }
  * ```
  */
-export function fetchInfiniteQuery<
+export function infiniteQuery<
   TQueryFnData,
   TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
@@ -59,7 +59,7 @@ export function fetchInfiniteQuery<
     ? InfiniteData<TQueryFnData, TPageParam>
     : TData
 >
-export function fetchInfiniteQuery<
+export function infiniteQuery<
   TQueryFnData,
   TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
@@ -80,7 +80,7 @@ export function fetchInfiniteQuery<
       ? InfiniteData<TQueryFnData, TPageParam>
       : TData)
 >
-export function fetchInfiniteQuery<
+export function infiniteQuery<
   TQueryFnData,
   TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
@@ -101,5 +101,5 @@ export function fetchInfiniteQuery<
       ? InfiniteData<TQueryFnData, TPageParam>
       : TData)
 > {
-  return fetchQuery(client, infiniteFetchOptions(options) as any)
+  return query(client, infiniteFetchOptions(options) as any)
 }

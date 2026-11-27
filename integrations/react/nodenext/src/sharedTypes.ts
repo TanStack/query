@@ -1,7 +1,12 @@
 import { QueryClient as StockClient } from '@tanstack/query-core'
-import { QueryClient, getQueryData } from '@tanstack/query-core-pluggable'
+import {
+  QueryClient,
+  getQueryData,
+  query,
+} from '@tanstack/query-core-pluggable'
 import { queryOptions as stockOptions } from '@tanstack/react-query'
 import {
+  infiniteQuery,
   infiniteQueryOptions,
   isSuccess,
   queryOptions,
@@ -73,4 +78,13 @@ export function useFirstBookPage() {
     const cursor: number | undefined = feed.data.pageParams[0]
     return { cursor, first: feed.data.pages[0] }
   }
+}
+
+export function readBook(client: QueryClient): Promise<string> {
+  return query(client, book)
+}
+
+export async function readPageCursors(client: QueryClient): Promise<number[]> {
+  const data = await infiniteQuery(client, paged)
+  return data.pageParams
 }

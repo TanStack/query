@@ -65,7 +65,7 @@ export interface UseBaseQueryOptions<
 }
 
 /**
- * The options accepted by `usePrefetchQuery` — everything you can pass to `fetchQuery`, with a
+ * The options accepted by `usePrefetchQuery` — everything you can pass to `query`, with a
  * required `queryFn`. Pass `defaultQueryFn` to use the client defaults.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -101,7 +101,7 @@ export type UsePrefetchQueryOptions<
 }
 
 /**
- * The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `fetchInfiniteQuery(client, options)`,
+ * The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `infiniteQuery(client, options)`,
  * with a required `queryFn`. Pass `defaultQueryFn` to use the client defaults.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.

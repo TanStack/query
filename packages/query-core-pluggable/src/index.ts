@@ -10,7 +10,7 @@ export {
   refetchQueries,
 } from './cacheOperations'
 export { environmentManager } from './environmentManager'
-export { fetchInfiniteQuery } from './fetchInfiniteQuery'
+export { infiniteQuery } from './infiniteQuery'
 export { fetchOptimistic } from './fetchOptimistic'
 export { focusManager } from './focusManager'
 export type { FocusManager } from './focusManager'
@@ -71,7 +71,7 @@ export {
   getQueryData,
   setQueryData,
   getQueryState,
-  fetchQuery,
+  query,
   resumePausedMutations,
   getDefaultOptions,
   setDefaultOptions,

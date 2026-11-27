@@ -340,13 +340,13 @@ export function getQueryState<
  * @example
  * ```ts
  * try {
- *   const data = await fetchQuery(queryClient, { queryKey, queryFn, staleTime: 10000 })
+ *   const data = await query(queryClient, { queryKey, queryFn, staleTime: 10000 })
  * } catch (error) {
  *   console.log(error)
  * }
  * ```
  */
-export function fetchQuery<
+export function query<
   TQueryFnData,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -367,7 +367,7 @@ export function fetchQuery<
   >,
 ): Promise<TData>
 
-export function fetchQuery<
+export function query<
   TQueryFnData,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -386,7 +386,7 @@ export function fetchQuery<
   >,
 ): Promise<TData | undefined>
 
-export async function fetchQuery<
+export async function query<
   TQueryFnData,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -422,15 +422,18 @@ export async function fetchQuery<
       defaultedOptions.retry = false
     }
 
-    const query = client[clientState].queryCache.build(client, defaultedOptions)
+    const cachedQuery = client[clientState].queryCache.build(
+      client,
+      defaultedOptions,
+    )
 
-    const isStale = query.isStaleByTime(
-      resolveQueryValue(defaultedOptions.staleTime, query),
+    const isStale = cachedQuery.isStaleByTime(
+      resolveQueryValue(defaultedOptions.staleTime, cachedQuery),
     )
 
     queryData = isStale
-      ? await query.fetch(defaultedOptions)
-      : (query.state.data as TQueryData)
+      ? await cachedQuery.fetch(defaultedOptions)
+      : (cachedQuery.state.data as TQueryData)
   }
 
   const select = defaultedOptions.select
@@ -537,7 +540,7 @@ export function setDefaultOptions(
  * ```ts
  * setQueryDefaults(queryClient, ['posts'], { queryFn: fetchPosts })
  *
- * await fetchQuery(queryClient, { queryKey: ['posts'] })
+ * await query(queryClient, { queryKey: ['posts'] })
  * ```
  */
 export function setQueryDefaults<

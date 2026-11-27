@@ -211,14 +211,17 @@ function checkClientOperations(modules, workload, required) {
   const operations = new Set(
     modules.flatMap(([id, module]) => {
       if (
-        ['cacheOperations', 'queryCacheOperations', 'queryPredicates'].some(
-          (file) => rendersFeature(id, file),
-        )
+        [
+          'cacheOperations',
+          'queryCacheOperations',
+          'queryPredicates',
+          'infiniteQuery',
+        ].some((file) => rendersFeature(id, file))
       )
         return module.renderedExports
       if (rendersFeature(id, 'queryClient')) {
         return module.renderedExports.filter(
-          (name) => name === 'fetchQuery' || name === 'setQueryData',
+          (name) => name === 'query' || name === 'setQueryData',
         )
       }
       return []
@@ -227,6 +230,7 @@ function checkClientOperations(modules, workload, required) {
   const allowed = [
     required,
     ...(bulkOperations[required] ?? cacheHelpers[required] ?? []),
+    ...(required === 'infiniteQuery' ? ['query'] : []),
   ]
   for (const name of operations) {
     assert(
@@ -290,7 +294,7 @@ function checkApp(chunks, packageName, screen) {
       suspense: screen === 'polling',
       fetchOptimistic: screen === 'polling',
       refetchInterval: screen === 'polling',
-      fetchInfiniteQuery: false,
+      infiniteQuery: false,
       queryOptions: true,
       infiniteQueryOptions: screen === 'paginated' || screen === 'polling',
       infiniteQueryObserver: screen === 'paginated' || screen === 'polling',
@@ -410,8 +414,8 @@ async function checkPluggableExports() {
   const adapter = await import(pluggable)
   const { QueryClient, QueriesObserver, notifyManager } = adapter
   for (const alias of [
-    'query',
-    'infiniteQuery',
+    'fetchQuery',
+    'fetchInfiniteQuery',
     'suspense',
     'suspenseQuery',
     'useBaseQuery',
@@ -419,11 +423,25 @@ async function checkPluggableExports() {
     'useSuspenseQuery',
     'useSuspenseInfiniteQuery',
   ]) {
-    assert(
-      !Object.hasOwn(adapter, alias),
-      `Unexpected query mode export ${alias}`,
-    )
+    assert(!Object.hasOwn(adapter, alias), `Unexpected retired export ${alias}`)
   }
+  const client = new QueryClient()
+  assert.equal(
+    await adapter.query(client, {
+      queryKey: ['public-export-probe'],
+      queryFn: () => 'value',
+    }),
+    'value',
+  )
+  assert.deepEqual(
+    await adapter.infiniteQuery(client, {
+      queryKey: ['public-infinite-export-probe'],
+      initialPageParam: 0,
+      queryFn: ({ pageParam }) => pageParam,
+      getNextPageParam: () => undefined,
+    }),
+    { pages: [0], pageParams: [0] },
+  )
   assert.deepEqual(
     Object.getOwnPropertyNames(QueryClient.prototype),
     ['constructor'],
@@ -477,9 +495,9 @@ async function checkPluggableExports() {
   const coreExports = {
     ...Object.fromEntries(resultHelpers.map((name) => [name, ['queryResult']])),
     fetchOptimistic: ['fetchOptimistic'],
-    fetchInfiniteQuery: ['fetchInfiniteQuery', 'infiniteQueryBehavior'],
+    infiniteQuery: ['infiniteQuery', 'infiniteQueryBehavior'],
     QueryClient: [],
-    fetchQuery: [],
+    query: [],
     setQueryData: [],
     getMutationCache: ['mutationCache'],
     select: ['select', 'projectResult'],
@@ -579,7 +597,9 @@ async function checkPluggableExports() {
     if (!coreOnly || name === 'fetchOptimistic')
       checkOptimisticFetch(chunks, required.includes('fetchOptimistic'), name)
     if (
-      ['QueryClient', 'fetchQuery', 'setQueryData'].includes(name) ||
+      ['QueryClient', 'query', 'infiniteQuery', 'setQueryData'].includes(
+        name,
+      ) ||
       Object.hasOwn(bulkOperations, name) ||
       Object.hasOwn(cacheHelpers, name)
     ) {

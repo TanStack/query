@@ -65,7 +65,7 @@ type BaseStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = {
  * @returns A query function to pass as `queryFn`.
  * @example
  * ```ts
- * await fetchQuery(queryClient, {
+ * await query(queryClient, {
  *   queryKey: ['data'],
  *   queryFn: streamedQuery({
  *     streamFn: fetchDataInChunks,

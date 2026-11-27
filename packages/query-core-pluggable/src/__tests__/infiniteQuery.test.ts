@@ -2,8 +2,8 @@ import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import {
   QueryClient,
   dehydrate,
-  fetchInfiniteQuery,
   hydrate,
+  infiniteQuery,
   refetchQueries,
 } from '..'
 import {
@@ -13,7 +13,7 @@ import {
 } from '../queryClient'
 import type { InfiniteData } from '..'
 
-describe('fetchInfiniteQuery', () => {
+describe('infiniteQuery', () => {
   it('refetches hydrated pages before any observer subscribes', async () => {
     const server = new QueryClient()
     const client = new QueryClient()
@@ -29,7 +29,7 @@ describe('fetchInfiniteQuery', () => {
       pages: 2,
     }
 
-    const promise = fetchInfiniteQuery(server, options)
+    const promise = infiniteQuery(server, options)
     expectTypeOf(promise).toEqualTypeOf<Promise<InfiniteData<number, number>>>()
     expect(
       fetchPage.mock.calls.map(([context]) => context.pageParam),

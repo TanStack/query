@@ -4,8 +4,8 @@ import {
   QueryClient,
   QueryObserver,
   environmentManager,
-  fetchInfiniteQuery,
   focusManager,
+  infiniteQuery,
   refetchInterval,
 } from '..'
 
@@ -140,7 +140,7 @@ describe('refetchInterval', () => {
     })
     await expect(mutation.mutate()).resolves.toBe(42)
     await expect(
-      fetchInfiniteQuery(client, {
+      infiniteQuery(client, {
         queryKey: ['pages'],
         initialPageParam: 1,
         pages: 2,
