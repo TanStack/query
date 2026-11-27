@@ -1,5 +1,8 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
+import {
+  cacheOperations,
+  getMutationCache,
+} from '@tanstack/query-test-utils/cacheOperations'
 import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -1085,7 +1088,7 @@ describe('useMutation', () => {
     expect(count).toBe(0)
 
     onlineMock.mockReturnValue(true)
-    queryClient.getMutationCache().resumePausedMutations()
+    getMutationCache(queryClient).resumePausedMutations()
 
     await vi.advanceTimersByTimeAsync(6)
     expect(
@@ -1142,7 +1145,7 @@ describe('useMutation', () => {
     })
 
     onlineMock.mockReturnValue(true)
-    queryClient.getMutationCache().resumePausedMutations()
+    getMutationCache(queryClient).resumePausedMutations()
 
     await vi.advanceTimersByTimeAsync(11)
     expect(
@@ -1197,7 +1200,7 @@ describe('useMutation', () => {
     expect(states[1]).toBe('pending, true')
 
     onlineMock.mockReturnValue(true)
-    queryClient.getMutationCache().resumePausedMutations()
+    getMutationCache(queryClient).resumePausedMutations()
 
     await vi.advanceTimersByTimeAsync(11)
     expect(
@@ -1245,10 +1248,10 @@ describe('useMutation', () => {
     expect(rendered.getByText('isPaused: true')).toBeInTheDocument()
 
     expect(
-      queryClient.getMutationCache().findAll({ mutationKey: key }),
+      getMutationCache(queryClient).findAll({ mutationKey: key }),
     ).toHaveLength(1)
     expect(
-      queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
+      getMutationCache(queryClient).findAll({ mutationKey: key })[0]?.state,
     ).toMatchObject({
       status: 'pending',
       isPaused: true,
@@ -1257,13 +1260,13 @@ describe('useMutation', () => {
     })
 
     onlineMock.mockReturnValue(true)
-    queryClient.getMutationCache().resumePausedMutations()
+    getMutationCache(queryClient).resumePausedMutations()
 
     await vi.advanceTimersByTimeAsync(11)
     expect(rendered.getByText('data: data2')).toBeInTheDocument()
 
     expect(
-      queryClient.getMutationCache().findAll({ mutationKey: key })[0]?.state,
+      getMutationCache(queryClient).findAll({ mutationKey: key })[0]?.state,
     ).toMatchObject({
       status: 'success',
       isPaused: false,
@@ -1296,12 +1299,12 @@ describe('useMutation', () => {
     expect(states).toStrictEqual(['idle', 'pending'])
 
     fireEvent.click(getByText('unmount'))
-    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+    expect(getMutationCache(queryClient).getAll()[0]?.state.status).toBe(
       'pending',
     )
 
     await vi.advanceTimersByTimeAsync(11)
-    expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+    expect(getMutationCache(queryClient).getAll()[0]?.state.status).toBe(
       'success',
     )
     expect(states).toStrictEqual(['idle', 'pending'])
@@ -1641,9 +1644,9 @@ describe('useMutation', () => {
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(
-      queryClient.getMutationCache().findAll({ mutationKey }),
-    ).toHaveLength(0)
+    expect(getMutationCache(queryClient).findAll({ mutationKey })).toHaveLength(
+      0,
+    )
 
     expect(count).toBe(1)
 

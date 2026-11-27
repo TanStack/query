@@ -1,8 +1,10 @@
 import { notifyManager } from './notifyManager'
+import { mutationCacheKey } from './queryClient'
 import { Subscribable } from './subscribable'
 import { matchMutation, noop } from './utils'
 import type * as Shared from '@tanstack/query-types/bindings'
 import type { Mutation } from './mutation'
+import type { QueryClient } from './queryClient'
 import type { QueryRuntime } from './runtimeBinding'
 import type { DefaultError } from './types'
 import type { MutationFilters } from './utils'
@@ -16,14 +18,26 @@ export type MutationCacheNotifyEvent =
 
 type MutationCacheListener = Shared.MutationCacheListener<QueryRuntime>
 
-// CLASS
+/**
+ * Returns the client's configured mutation cache, creating a default cache on
+ * first use. Mutation hooks and hydration share this cache.
+ * @param client - The client whose mutations you want to access.
+ * @returns The same mutation cache on every call for this client.
+ * @example
+ * ```ts
+ * import { getMutationCache } from '@tanstack/react-query-no-core-pluggable'
+ *
+ * const pending = getMutationCache(queryClient).findAll({ status: 'pending' })
+ * ```
+ */
+export function getMutationCache(client: QueryClient): MutationCache {
+  return (client[mutationCacheKey] ??= new MutationCache())
+}
 
 /**
- * The `MutationCache` is the storage for mutations.
- *
- * Normally, you will not interact with the `MutationCache` directly and instead use a
- * `QueryClient`. You can subscribe to it (inherited from `Subscribable`) to be informed of
- * safe/known updates to the cache, such as mutations being added, removed, or updated.
+ * Stores the mutations executed through a client. Use {@link getMutationCache} to
+ * access the cache that mutation hooks use. Subscribe to it to receive updates
+ * when a mutation is added, removed, or changes state.
  * @example
  * ```ts
  * const unsubscribe = mutationCache.subscribe((event) => {
@@ -119,7 +133,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * Mutations that are already running continue to execute.
    * @example
    * ```ts
-   * const mutationCache = queryClient.getMutationCache()
+   * const mutationCache = getMutationCache(queryClient)
    *
    * mutationCache.clear()
    * ```
@@ -146,7 +160,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * @returns Every mutation in the cache.
    * @example
    * ```ts
-   * const mutationCache = queryClient.getMutationCache()
+   * const mutationCache = getMutationCache(queryClient)
    *
    * const mutations = mutationCache.getAll()
    * ```
@@ -166,7 +180,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * @see {@link MutationCache#findAll}
    * @example
    * ```ts
-   * const mutationCache = queryClient.getMutationCache()
+   * const mutationCache = getMutationCache(queryClient)
    *
    * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
    * ```
@@ -197,7 +211,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * @see {@link MutationCache#find}
    * @example
    * ```ts
-   * const mutationCache = queryClient.getMutationCache()
+   * const mutationCache = getMutationCache(queryClient)
    *
    * const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
    * ```

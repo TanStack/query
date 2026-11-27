@@ -72,6 +72,17 @@ for (const suite of ['query-core', 'react-query']) {
         noEmit: true,
         paths: {
           '@tanstack/query-core': [entry],
+          // The React suite uses per-query persistence. The separate whole-client
+          // persister subscribes through the original client's mutation-cache method.
+          ...(pluggable &&
+            suite === 'react-query' && {
+              '@tanstack/query-persist-client-core': [
+                join(
+                  repository,
+                  'packages/query-persist-client-core/src/createPersister.ts',
+                ),
+              ],
+            }),
           ...(pluggable &&
             Object.fromEntries(
               ['polling', 'cacheOperations', 'projection', 'scope'].map(

@@ -67,6 +67,10 @@ function usePostTitle(id: number) {
 
 ## Mutations and cache operations
 
+`useMutation`, `useMutationState`, and `useIsMutating` acquire the client's mutation cache automatically. To inspect or subscribe to it directly, replace `client.getMutationCache()` with the named export `getMutationCache(client)`. The first call creates a default cache for that client. If you supplied `new QueryClient({ mutationCache })`, the helper returns that same cache. An app that uses only `useQuery` can omit the mutation cache implementation from its bundle.
+
+Integrations that subscribe to both caches need the same migration. For example, a persistence integration for this adapter can subscribe to `client.getQueryCache()` and `getMutationCache(client)`. The stock `@tanstack/query-persist-client-core` subscription expects the v6 client instance method.
+
 Pass `scope: serialScope('orders')` to `useMutation` to run mutations with that ID one at a time within a cache. Multiple calls to `serialScope('orders')` share the queue. The scope ID survives dehydration and hydration.
 
 Imperative infinite queries and bulk cache operations are named exports. Pass the client as the first argument.

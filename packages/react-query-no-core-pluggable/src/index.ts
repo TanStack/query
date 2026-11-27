@@ -13,7 +13,7 @@ export {
 } from './runtime/hydration'
 export { infiniteQuery } from './runtime/infiniteQuery'
 export { InfiniteQueryObserver } from './runtime/infiniteQueryObserver'
-export { MutationCache } from './runtime/mutationCache'
+export { MutationCache, getMutationCache } from './runtime/mutationCache'
 export type {
   MutationCacheNotifyEvent,
   MutationCacheConfig,

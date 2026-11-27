@@ -1,5 +1,6 @@
 import { prepareInfiniteFetch } from './infiniteQueryBehavior'
 import { Mutation } from './mutation'
+import { mutationCacheKey } from './queryClient'
 import { serialScope } from './serialScope'
 import { noop } from './utils'
 import type * as Shared from '@tanstack/query-types/bindings'
@@ -186,12 +187,12 @@ export function dehydrate(
     client.getDefaultOptions().dehydrate?.shouldDehydrateMutation ??
     defaultShouldDehydrateMutation
 
-  const mutations = client
-    .getMutationCache()
-    .getAll()
-    .flatMap((mutation) =>
-      filterMutation(mutation) ? [dehydrateMutation(mutation)] : [],
-    )
+  const mutations =
+    client[mutationCacheKey]
+      ?.getAll()
+      .flatMap((mutation) =>
+        filterMutation(mutation) ? [dehydrateMutation(mutation)] : [],
+      ) ?? []
 
   const filterQuery =
     options.shouldDehydrateQuery ??
