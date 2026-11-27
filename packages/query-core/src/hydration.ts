@@ -37,9 +37,9 @@ function tryResolveSync(promise: PromiseLike<unknown>) {
   return undefined
 }
 
-export type DehydrateOptions = Shared.DehydrateOptions<QueryRuntime>
+type DehydrateOptions = Shared.DehydrateOptions<QueryRuntime>
 
-export type HydrateOptions = Shared.HydrateOptions<QueryRuntime>
+type HydrateOptions = Shared.HydrateOptions<QueryRuntime>
 
 // FUNCTIONS
 
@@ -366,3 +366,5 @@ export function hydrate(
 }
 
 export type { DehydratedState } from '@tanstack/query-types/bindings'
+
+export type { DehydrateOptions, HydrateOptions }

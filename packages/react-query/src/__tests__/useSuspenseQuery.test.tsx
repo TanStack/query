@@ -1,4 +1,5 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { refetchInterval } from '@tanstack/query-test-utils/polling'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -1211,7 +1212,7 @@ describe('useSuspenseQuery', () => {
       const state = useSuspenseQuery({
         queryKey: key,
         queryFn: () => sleep(10).then(() => ++count),
-        refetchInterval: 10,
+        refetchInterval: refetchInterval(10),
       })
 
       return <div>count: {state.data}</div>

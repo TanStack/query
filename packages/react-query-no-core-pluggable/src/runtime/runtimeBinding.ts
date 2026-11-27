@@ -6,44 +6,50 @@ import type { Query } from './query'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type { QueryObserver } from './queryObserver'
-import type { QueryKey } from './types'
+import type { RefetchInterval } from './refetchInterval'
 
 /** Binds shared option and callback types to the concrete classes in this runtime. */
 export interface QueryRuntime extends RuntimeBinding {
+  /** Polling can be installed independently on each observed query. */
+  refetchInterval:
+    | false
+    | RefetchInterval<this['Query']>
+    | ((
+        query: this['Query'],
+      ) => false | undefined | RefetchInterval<this['Query']>)
+  /** {@inheritDoc RuntimeBinding.QueryClient} */
   QueryClient: QueryClient
+  /** {@inheritDoc RuntimeBinding.QueryCache} */
   QueryCache: QueryCache
+  /** {@inheritDoc RuntimeBinding.MutationCache} */
   MutationCache: MutationCache
-  Query: this['args'] extends [
-    infer TQueryFnData,
-    infer TError,
-    infer TData,
-    infer TQueryKey extends QueryKey,
-  ]
-    ? Query<TQueryFnData, TError, TData, TQueryKey>
-    : never
-  Mutation: this['args'] extends [
-    infer TData,
-    infer TError,
-    infer TVariables,
-    infer TOnMutateResult,
-  ]
-    ? Mutation<TData, TError, TVariables, TOnMutateResult>
-    : never
-  QueryObserver: this['args'] extends [
-    infer TQueryFnData,
-    infer TError,
-    infer TData,
-    infer TQueryData,
-    infer TQueryKey extends QueryKey,
-  ]
-    ? QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-    : never
-  MutationObserver: this['args'] extends [
-    infer TData,
-    infer TError,
-    infer TVariables,
-    infer TOnMutateResult,
-  ]
-    ? MutationObserver<TData, TError, TVariables, TOnMutateResult>
-    : never
+  /** {@inheritDoc RuntimeBinding.Query} */
+  Query: Query<
+    this['queryFnData'],
+    this['error'],
+    this['data'],
+    this['queryKey'][0]
+  >
+  /** {@inheritDoc RuntimeBinding.Mutation} */
+  Mutation: Mutation<
+    this['data'],
+    this['error'],
+    this['variables'],
+    this['onMutateResult']
+  >
+  /** {@inheritDoc RuntimeBinding.QueryObserver} */
+  QueryObserver: QueryObserver<
+    this['queryFnData'],
+    this['error'],
+    this['data'],
+    this['queryData'],
+    this['queryKey'][0]
+  >
+  /** {@inheritDoc RuntimeBinding.MutationObserver} */
+  MutationObserver: MutationObserver<
+    this['data'],
+    this['error'],
+    this['variables'],
+    this['onMutateResult']
+  >
 }

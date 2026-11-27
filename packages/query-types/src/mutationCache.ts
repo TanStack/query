@@ -56,21 +56,21 @@ export interface MutationCacheConfig<TRuntime extends RuntimeBinding> {
   ) => Promise<unknown> | unknown
 }
 
-export interface NotifyEventMutationAdded<
+interface NotifyEventMutationAdded<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'added'
   mutation: MutationOf<TRuntime, any, any, any, any>
 }
 
-export interface NotifyEventMutationRemoved<
+interface NotifyEventMutationRemoved<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'removed'
   mutation: MutationOf<TRuntime, any, any, any, any>
 }
 
-export interface NotifyEventMutationObserverAdded<
+interface NotifyEventMutationObserverAdded<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'observerAdded'
@@ -78,7 +78,7 @@ export interface NotifyEventMutationObserverAdded<
   observer: MutationObserverOf<TRuntime, any, any, any>
 }
 
-export interface NotifyEventMutationObserverRemoved<
+interface NotifyEventMutationObserverRemoved<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'observerRemoved'
@@ -86,7 +86,7 @@ export interface NotifyEventMutationObserverRemoved<
   observer: MutationObserverOf<TRuntime, any, any, any>
 }
 
-export interface NotifyEventMutationObserverOptionsUpdated<
+interface NotifyEventMutationObserverOptionsUpdated<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'observerOptionsUpdated'
@@ -94,7 +94,7 @@ export interface NotifyEventMutationObserverOptionsUpdated<
   observer: MutationObserverOf<TRuntime, any, any, any, any>
 }
 
-export interface NotifyEventMutationUpdated<
+interface NotifyEventMutationUpdated<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'updated'
@@ -115,6 +115,16 @@ export type MutationCacheNotifyEvent<TRuntime extends RuntimeBinding> =
   | NotifyEventMutationObserverOptionsUpdated<TRuntime>
   | NotifyEventMutationUpdated<TRuntime>
 
-export type MutationCacheListener<TRuntime extends RuntimeBinding> = (
+type MutationCacheListener<TRuntime extends RuntimeBinding> = (
   event: MutationCacheNotifyEvent<TRuntime>,
 ) => void
+
+export type {
+  NotifyEventMutationAdded,
+  NotifyEventMutationRemoved,
+  NotifyEventMutationObserverAdded,
+  NotifyEventMutationObserverRemoved,
+  NotifyEventMutationObserverOptionsUpdated,
+  NotifyEventMutationUpdated,
+  MutationCacheListener,
+}

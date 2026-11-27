@@ -2,11 +2,11 @@ import { timeoutManager } from './timeoutManager'
 import type * as Shared from '@tanstack/query-types/bindings'
 import type {
   DefaultQueryFn,
+  SkipToken,
+  Updater,
   DefaultQueryFn as defaultQueryFnType,
   FetchSignal as fetchSignalType,
-  SkipToken,
   SkipToken as skipTokenType,
-  Updater,
 } from '@tanstack/query-types/bindings'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
@@ -21,10 +21,12 @@ import type {
   QueryOptions,
 } from './types'
 
-export type QueryFilters<TQueryKey extends QueryKey = QueryKey> =
-  Shared.QueryFilters<QueryRuntime, TQueryKey>
+type QueryFilters<TQueryKey extends QueryKey = QueryKey> = Shared.QueryFilters<
+  QueryRuntime,
+  TQueryKey
+>
 
-export type MutationFilters<
+type MutationFilters<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
@@ -746,3 +748,5 @@ export type {
   DefaultQueryFn,
   FetchSignalContext,
 } from '@tanstack/query-types/bindings'
+
+export type { QueryFilters, MutationFilters }

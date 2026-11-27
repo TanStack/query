@@ -8,13 +8,13 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { noop, notifyManager } from './runtime/index'
+import { useObserverSnapshot } from './useObserverSnapshot'
 import type {
   QueryClient,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
-} from './runtime/index'
+} from './runtime'
 import type { suspenseQueryPolicy } from './suspense'
 import type { UseBaseQueryOptions } from './types'
 
@@ -22,7 +22,7 @@ import type { UseBaseQueryOptions } from './types'
  * Base implementation shared by `useQuery`, `useInfiniteQuery`, `useSuspenseQuery`, and
  * `useSuspenseInfiniteQuery`.
  * @param options - The options passed to the calling hook.
- * @param Observer - The observer class (`QueryObserver` or
+ * @param Observer - The query observer class (`QueryObserver` or
  * `InfiniteQueryObserver`).
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one from the nearest
  * context will be used.
@@ -111,28 +111,11 @@ export function useBaseQuery<
     errorResetBoundary,
   )
 
-  React.useEffect(() => {
-    reader.commit()
-  }, [reader])
-
-  const shouldSubscribe = !isRestoring && subscribed
-  const result = React.useSyncExternalStore(
-    React.useCallback(
-      (onStoreChange) => {
-        const unsubscribe = shouldSubscribe
-          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
-          : noop
-
-        // Update result to make sure we did not miss any query updates
-        // between creating the observer and subscribing to it.
-        observer.updateResult()
-
-        return unsubscribe
-      },
-      [observer, shouldSubscribe],
-    ),
-    reader.getSnapshot,
-    reader.getSnapshot,
+  const result = useObserverSnapshot(
+    observer,
+    reader,
+    !isRestoring && subscribed,
+    refreshQuery,
   )
 
   // Handle error boundary
@@ -152,4 +135,12 @@ export function useBaseQuery<
   return !defaultedOptions.notifyOnChangeProps
     ? observer.trackResult(result)
     : result
+}
+
+/**
+ * Refreshes the query after the observer subscribes.
+ * @param observer - The observer that was subscribed.
+ */
+function refreshQuery(observer: Pick<QueryObserver, 'updateResult'>): void {
+  observer.updateResult()
 }

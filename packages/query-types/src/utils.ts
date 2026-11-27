@@ -8,15 +8,16 @@ import type {
   QueryKey,
 } from './types'
 
-export type DropLast<T extends ReadonlyArray<unknown>> = T extends readonly [
+type DropLast<T extends ReadonlyArray<unknown>> = T extends readonly [
   ...infer R,
   unknown,
 ]
   ? readonly [...R]
   : never
 
-export type TuplePrefixes<T extends ReadonlyArray<unknown>> =
-  T extends readonly [] ? readonly [] : TuplePrefixes<DropLast<T>> | T
+type TuplePrefixes<T extends ReadonlyArray<unknown>> = T extends readonly []
+  ? readonly []
+  : TuplePrefixes<DropLast<T>> | T
 
 /**
  * Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
@@ -111,7 +112,9 @@ export type { skipToken as SkipToken } from './symbols'
 export type { defaultQueryFn as DefaultQueryFn } from './symbols'
 
 /** Internal view of a context that exposes its signal without consuming it. */
-export interface FetchSignalContext {
+interface FetchSignalContext {
   readonly signal: AbortSignal
   readonly [fetchSignal]?: AbortSignal
 }
+
+export type { DropLast, TuplePrefixes, FetchSignalContext }

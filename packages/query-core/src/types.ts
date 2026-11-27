@@ -3,9 +3,9 @@ import type {
   DefaultError,
   InfiniteData,
   QueryKey,
-  UnsetMarker as unsetMarkerType,
   dataTagErrorSymbol as dataTagErrorSymbolType,
   dataTagSymbol as dataTagSymbolType,
+  UnsetMarker as unsetMarkerType,
 } from '@tanstack/query-types/bindings'
 import type { QueryRuntime } from './runtimeBinding'
 
@@ -27,13 +27,13 @@ export const unsetMarker: unsetMarkerType = Symbol.for(
   '@tanstack/query/unsetMarker',
 ) as unsetMarkerType
 
-export type QueryFunction<
+type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > = Shared.QueryFunction<QueryRuntime, T, TQueryKey, TPageParam>
 
-export type StaleTimeFunction<
+type StaleTimeFunction<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -46,7 +46,7 @@ export type StaleTimeFunction<
   TQueryKey
 >
 
-export type QueryBooleanOption<
+type QueryBooleanOption<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -59,20 +59,18 @@ export type QueryBooleanOption<
   TQueryKey
 >
 
-export type QueryPersister<
+type QueryPersister<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > = Shared.QueryPersister<QueryRuntime, T, TQueryKey, TPageParam>
 
-export type QueryFunctionContext<
+type QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > = Shared.QueryFunctionContext<QueryRuntime, TQueryKey, TPageParam>
 
-// oxlint-disable-next-line typescript/no-unsafe-function-type -- excludes every function-like value, including constructors, from the value branch
-
-export type PlaceholderDataFunction<
+type PlaceholderDataFunction<
   TQueryFnData = unknown,
   TError = DefaultError,
   TQueryData = TQueryFnData,
@@ -85,7 +83,7 @@ export type PlaceholderDataFunction<
   TQueryKey
 >
 
-export type QueryOptions<
+type QueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -100,7 +98,7 @@ export type QueryOptions<
   TPageParam
 >
 
-export type ThrowOnError<
+type ThrowOnError<
   TQueryFnData,
   TError,
   TQueryData,
@@ -113,7 +111,7 @@ export type ThrowOnError<
   TQueryKey
 >
 
-export type QueryObserverOptionsBase<
+type QueryObserverOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -130,7 +128,7 @@ export type QueryObserverOptionsBase<
   TPageParam
 >
 
-export type QueryObserverOptions<
+type QueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -147,7 +145,7 @@ export type QueryObserverOptions<
   TPageParam
 >
 
-export type DefaultedQueryObserverOptions<
+type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -164,7 +162,7 @@ export type DefaultedQueryObserverOptions<
   TPageParam
 >
 
-export type InfiniteQueryObserverOptions<
+type InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -179,7 +177,7 @@ export type InfiniteQueryObserverOptions<
   TPageParam
 >
 
-export type DefaultedInfiniteQueryObserverOptions<
+type DefaultedInfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -194,7 +192,7 @@ export type DefaultedInfiniteQueryObserverOptions<
   TPageParam
 >
 
-export type QueryExecuteOptions<
+type QueryExecuteOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -211,7 +209,7 @@ export type QueryExecuteOptions<
   TPageParam
 >
 
-export type InfiniteQueryExecuteOptions<
+type InfiniteQueryExecuteOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
@@ -226,21 +224,20 @@ export type InfiniteQueryExecuteOptions<
   TPageParam
 >
 
-export type InvalidateQueryFilters<TQueryKey extends QueryKey = QueryKey> =
+type InvalidateQueryFilters<TQueryKey extends QueryKey = QueryKey> =
   Shared.InvalidateQueryFilters<QueryRuntime, TQueryKey>
 
-export type RefetchQueryFilters<TQueryKey extends QueryKey = QueryKey> =
+type RefetchQueryFilters<TQueryKey extends QueryKey = QueryKey> =
   Shared.RefetchQueryFilters<QueryRuntime, TQueryKey>
 
-export type MutationFunctionContext =
-  Shared.MutationFunctionContext<QueryRuntime>
+type MutationFunctionContext = Shared.MutationFunctionContext<QueryRuntime>
 
-export type MutationFunction<
+type MutationFunction<
   TData = unknown,
   TVariables = unknown,
 > = Shared.MutationFunction<QueryRuntime, TData, TVariables>
 
-export type MutationOptions<
+type MutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -253,7 +250,7 @@ export type MutationOptions<
   TOnMutateResult
 >
 
-export type MutationObserverOptions<
+type MutationObserverOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -266,7 +263,7 @@ export type MutationObserverOptions<
   TOnMutateResult
 >
 
-export type MutateOptions<
+type MutateOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -279,7 +276,7 @@ export type MutateOptions<
   TOnMutateResult
 >
 
-export type MutateFunctionRest<
+type MutateFunctionRest<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -292,7 +289,7 @@ export type MutateFunctionRest<
   TOnMutateResult
 >
 
-export type MutateFunction<
+type MutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -305,7 +302,7 @@ export type MutateFunction<
   TOnMutateResult
 >
 
-export type MutationObserverBaseResult<
+type MutationObserverBaseResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -318,7 +315,7 @@ export type MutationObserverBaseResult<
   TOnMutateResult
 >
 
-export type MutationObserverIdleResult<
+type MutationObserverIdleResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -331,7 +328,7 @@ export type MutationObserverIdleResult<
   TOnMutateResult
 >
 
-export type MutationObserverLoadingResult<
+type MutationObserverLoadingResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -344,7 +341,7 @@ export type MutationObserverLoadingResult<
   TOnMutateResult
 >
 
-export type MutationObserverErrorResult<
+type MutationObserverErrorResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -357,7 +354,7 @@ export type MutationObserverErrorResult<
   TOnMutateResult
 >
 
-export type MutationObserverSuccessResult<
+type MutationObserverSuccessResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -370,7 +367,7 @@ export type MutationObserverSuccessResult<
   TOnMutateResult
 >
 
-export type MutationObserverResult<
+type MutationObserverResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -383,9 +380,9 @@ export type MutationObserverResult<
   TOnMutateResult
 >
 
-export type QueryClientConfig = Shared.QueryClientConfig<QueryRuntime>
+type QueryClientConfig = Shared.QueryClientConfig<QueryRuntime>
 
-export type DefaultOptions<TError = DefaultError> = Shared.DefaultOptions<
+type DefaultOptions<TError = DefaultError> = Shared.DefaultOptions<
   QueryRuntime,
   TError
 >
@@ -454,3 +451,38 @@ export type {
   NotifyEventType,
   NotifyEvent,
 } from '@tanstack/query-types/bindings'
+
+export type {
+  QueryFunction,
+  StaleTimeFunction,
+  QueryBooleanOption,
+  QueryPersister,
+  QueryFunctionContext,
+  PlaceholderDataFunction,
+  QueryOptions,
+  ThrowOnError,
+  QueryObserverOptionsBase,
+  QueryObserverOptions,
+  DefaultedQueryObserverOptions,
+  InfiniteQueryObserverOptions,
+  DefaultedInfiniteQueryObserverOptions,
+  QueryExecuteOptions,
+  InfiniteQueryExecuteOptions,
+  InvalidateQueryFilters,
+  RefetchQueryFilters,
+  MutationFunctionContext,
+  MutationFunction,
+  MutationOptions,
+  MutationObserverOptions,
+  MutateOptions,
+  MutateFunctionRest,
+  MutateFunction,
+  MutationObserverBaseResult,
+  MutationObserverIdleResult,
+  MutationObserverLoadingResult,
+  MutationObserverErrorResult,
+  MutationObserverSuccessResult,
+  MutationObserverResult,
+  QueryClientConfig,
+  DefaultOptions,
+}

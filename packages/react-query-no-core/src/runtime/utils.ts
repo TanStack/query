@@ -2,10 +2,7 @@ import { timeoutManager } from './timeoutManager'
 import type * as Shared from '@tanstack/query-types/bindings'
 import type {
   DefaultQueryFn,
-  DefaultQueryFn as defaultQueryFnType,
-  FetchSignal as fetchSignalType,
   SkipToken,
-  SkipToken as skipTokenType,
   Updater,
 } from '@tanstack/query-types/bindings'
 import type { Mutation } from './mutation'
@@ -21,9 +18,11 @@ import type {
   QueryOptions,
 } from './types'
 
+/** {@inheritDoc Shared.QueryFilters} */
 export type QueryFilters<TQueryKey extends QueryKey = QueryKey> =
   Shared.QueryFilters<QueryRuntime, TQueryKey>
 
+/** {@inheritDoc Shared.MutationFilters} */
 export type MutationFilters<
   TData = unknown,
   TError = DefaultError,
@@ -600,18 +599,18 @@ export function addToArray<T>(
  * })
  * ```
  */
-export const skipToken: skipTokenType = Symbol.for(
+export const skipToken: SkipToken = Symbol.for(
   '@tanstack/query/skipToken',
-) as skipTokenType
+) as SkipToken
 
 /**
  * Pass this as `queryFn` to use the query function configured on the client.
  * The defaults for the query key take precedence over the client's global query defaults.
  * If no query function is configured, a fetch fails with a `Missing queryFn` error.
  */
-export const defaultQueryFn: defaultQueryFnType = Symbol.for(
+export const defaultQueryFn: DefaultQueryFn = Symbol.for(
   '@tanstack/query/defaultQueryFn',
-) as defaultQueryFnType
+) as DefaultQueryFn
 
 /**
  * Returns the function to call for a fetch. If there is no `queryFn` but the fetch was started from
@@ -691,9 +690,9 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
   return !!throwOnError
 }
 
-export const fetchSignal: fetchSignalType = Symbol.for(
+export const fetchSignal: Shared.FetchSignal = Symbol.for(
   '@tanstack/query/fetchSignal',
-) as fetchSignalType
+) as Shared.FetchSignal
 
 /**
  * Adds a lazy `signal` getter to an object, such as a query function context. The first time

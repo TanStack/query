@@ -17,7 +17,6 @@ const repository = resolve(import.meta.dirname, '..')
 const require = createRequire(import.meta.url)
 const core = join(adapter, 'src/runtime/index.ts')
 const pluggable = basename(adapter) === 'react-query-no-core-pluggable'
-const fixture = join(adapter, 'tests/compat-client.ts')
 function importPath(from, to) {
   return './' + relative(from, to).split(sep).join('/')
 }
@@ -37,23 +36,10 @@ for (const suite of ['query-core', 'react-query']) {
       recursive: true,
     })
 
-    if (pluggable && suite === 'query-core') {
-      const tests = join(source, '__tests__')
-      writeFileSync(
-        join(tests, 'clientOptions.ts'),
-        `export type { AdapterClientOptions } from '${importPath(tests, fixture)}'\n`,
-      )
-    }
-
     for (const file of readdirSync(implementation, { withFileTypes: true })) {
       if (!file.isFile() || !/\.tsx?$/.test(file.name)) continue
       const target = importPath(source, join(implementation, file.name))
-      let exports = `export * from '${target}'\n`
-      if (pluggable && ['index.ts', 'queryClient.ts'].includes(file.name)) {
-        const client = importPath(source, fixture)
-        exports += `export { QueryClient } from '${client}'\n`
-      }
-      writeFileSync(join(source, file.name), exports)
+      writeFileSync(join(source, file.name), `export * from '${target}'\n`)
     }
 
     const setup = join(repository, 'packages/react-query/test-setup.ts')
@@ -65,7 +51,14 @@ for (const suite of ['query-core', 'react-query']) {
         incremental: false,
         emitDeclarationOnly: false,
         noEmit: true,
-        paths: { '@tanstack/query-core': [core] },
+        paths: {
+          '@tanstack/query-core': [core],
+          ...(pluggable && {
+            '@tanstack/query-test-utils/polling': [
+              join(adapter, 'tests/compat-polling.ts'),
+            ],
+          }),
+        },
       },
       include: suite === 'react-query' ? ['src', setup] : ['src'],
     }

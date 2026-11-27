@@ -8,7 +8,8 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { QueriesObserver, noop, notifyManager } from './runtime/index'
+import { QueriesObserver } from './runtime/queriesObserver'
+import { useObserverSnapshot } from './useObserverSnapshot'
 import type {
   DefaultError,
   OmitKeyof,
@@ -19,7 +20,7 @@ import type {
   QueryKey,
   QueryObserverOptions,
   ThrowOnError,
-} from './runtime/index'
+} from './runtime'
 import type { suspenseQueriesPolicy } from './suspense'
 import type {
   DefinedUseQueryResult,
@@ -440,29 +441,11 @@ export function useBaseQueries<
   )
   suspense?.readQueries(defaultedQueries, reader, client, errorResetBoundary)
 
-  // Commit the combine cache before subscription can start a fetch.
-  React.useEffect(() => {
-    reader.commit()
-  }, [reader])
-
-  const shouldSubscribe = !isRestoring && subscribed
-  const results = React.useSyncExternalStore(
-    React.useCallback(
-      (onStoreChange) => {
-        const unsubscribe = shouldSubscribe
-          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
-          : noop
-
-        // Include cache updates that occurred before subscription.
-        observer
-          .getObservers()
-          .forEach((queryObserver) => queryObserver.updateResult())
-        return unsubscribe
-      },
-      [observer, shouldSubscribe],
-    ),
-    reader.getSnapshot,
-    reader.getSnapshot,
+  const results = useObserverSnapshot(
+    observer,
+    reader,
+    !isRestoring && subscribed,
+    refreshQueries,
   )
 
   const firstErrorResult = results.find((result, index) => {
@@ -484,4 +467,14 @@ export function useBaseQueries<
   }
 
   return reader.combineResult(results)
+}
+
+/**
+ * Refreshes each query after the group subscribes.
+ * @param observer - The observer that was subscribed.
+ */
+function refreshQueries(observer: Pick<QueriesObserver, 'getObservers'>): void {
+  observer
+    .getObservers()
+    .forEach((queryObserver) => queryObserver.updateResult())
 }

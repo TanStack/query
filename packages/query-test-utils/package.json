@@ -23,7 +23,8 @@
       "types": "./src/index.ts",
       "default": "./src/index.ts"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./polling": "./src/polling.ts"
   },
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",

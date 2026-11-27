@@ -14,7 +14,7 @@ import {
 import type * as Shared from '@tanstack/query-types/bindings'
 import type {
   FetchOptions,
-  QueryAction as Action,
+  QueryAction,
   QueryState,
 } from '@tanstack/query-types/bindings'
 import type { QueryCache } from './queryCache'
@@ -40,6 +40,7 @@ type QueryConfig<
   TQueryKey extends QueryKey = QueryKey,
 > = Shared.QueryConfig<QueryRuntime, TQueryFnData, TError, TData, TQueryKey>
 
+/** {@inheritDoc Shared.FetchContext} */
 export type FetchContext<
   TQueryFnData,
   TError,
@@ -47,6 +48,7 @@ export type FetchContext<
   TQueryKey extends QueryKey = QueryKey,
 > = Shared.FetchContext<QueryRuntime, TQueryFnData, TError, TData, TQueryKey>
 
+/** {@inheritDoc Shared.QueryBehavior} */
 export type QueryBehavior<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -756,13 +758,13 @@ export class Query<
 
   #update(
     state: Partial<QueryState<TData, TError>>,
-    action: Action<TData, TError>,
+    action: QueryAction<TData, TError>,
   ): void {
     this.state = { ...this.state, ...state }
     this.#notify(action)
   }
 
-  #notify(action: Action<TData, TError>): void {
+  #notify(action: QueryAction<TData, TError>): void {
     notifyManager.batch(() => {
       // Keep the current iteration stable if an observer unsubscribes
       // synchronously while it is being notified.

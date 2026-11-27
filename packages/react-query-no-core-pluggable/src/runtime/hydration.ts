@@ -1,4 +1,4 @@
-import { clientFeatures, requireMutations } from './clientFeatures'
+import { Mutation } from './mutation'
 import { noop } from './utils'
 import type * as Shared from '@tanstack/query-types/bindings'
 import type {
@@ -7,7 +7,6 @@ import type {
   DehydratedState,
   TransformerFn,
 } from '@tanstack/query-types/bindings'
-import type { Mutation } from './mutation'
 import type { Query } from './query'
 import type { QueryClient } from './queryClient'
 import type { QueryRuntime } from './runtimeBinding'
@@ -38,8 +37,10 @@ function tryResolveSync(promise: PromiseLike<unknown>) {
   return undefined
 }
 
+/** {@inheritDoc Shared.DehydrateOptions} */
 export type DehydrateOptions = Shared.DehydrateOptions<QueryRuntime>
 
+/** {@inheritDoc Shared.HydrateOptions} */
 export type HydrateOptions = Shared.HydrateOptions<QueryRuntime>
 
 // FUNCTIONS
@@ -183,11 +184,12 @@ export function dehydrate(
     client.getDefaultOptions().dehydrate?.shouldDehydrateMutation ??
     defaultShouldDehydrateMutation
 
-  const mutations = (
-    client[clientFeatures].mutations?.cache.getAll() ?? []
-  ).flatMap((mutation) =>
-    filterMutation(mutation) ? [dehydrateMutation(mutation)] : [],
-  )
+  const mutations = client
+    .getMutationCache()
+    .getAll()
+    .flatMap((mutation) =>
+      filterMutation(mutation) ? [dehydrateMutation(mutation)] : [],
+    )
 
   const filterQuery =
     options.shouldDehydrateQuery ??
@@ -245,7 +247,7 @@ export function hydrate(
     client.getDefaultOptions().hydrate?.deserializeData
 
   dehydratedState.mutations?.forEach(({ state, ...mutationOptions }) => {
-    requireMutations(client).build(
+    Mutation.build(
       client,
       {
         ...client.getDefaultOptions().hydrate?.mutations,

@@ -6,11 +6,11 @@ import type {
   QueryKey,
 } from './types'
 
-export type InfiniteQueryObserverListener<TData, TError> = (
+type InfiniteQueryObserverListener<TData, TError> = (
   result: InfiniteQueryObserverResult<TData, TError>,
 ) => void
 
-export type InfiniteObserverOptionsInput<
+type InfiniteObserverOptionsInput<
   TRuntime extends RuntimeBinding,
   TQueryFnData,
   TError,
@@ -35,7 +35,13 @@ export type InfiniteObserverOptionsInput<
       TPageParam
     >
 
-export type ReplaceReturnType<
+type ReplaceReturnType<
   TFunction extends (...args: Array<any>) => unknown,
   TReturn,
 > = (...args: Parameters<TFunction>) => TReturn
+
+export type {
+  InfiniteQueryObserverListener,
+  InfiniteObserverOptionsInput,
+  ReplaceReturnType,
+}

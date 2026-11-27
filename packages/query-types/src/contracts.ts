@@ -1,19 +1,43 @@
 import type { RuntimeBinding } from './binding'
+import type { FocusManagerListener, FocusManagerSetupFn } from './focusManager'
+import type {
+  InfiniteQueryObserverListener,
+  ReplaceReturnType,
+  InfiniteObserverOptionsInput as SharedInfiniteObserverOptionsInput,
+} from './infiniteQueryObserver'
 import type { MutationCacheListener as SharedMutationCacheListener } from './mutationCache'
 import type { MutationObserverListener as SharedMutationObserverListener } from './mutationObserver'
+import type {
+  OnlineManagerListener,
+  OnlineManagerSetupFn,
+} from './onlineManager'
+import type {
+  QueriesObserverListener,
+  QueriesObserverOptions,
+  QueriesObserverResultReader,
+} from './queriesObserver'
 import type { QueryCacheListener as SharedQueryCacheListener } from './queryCache'
 import type { WithoutSkipToken } from './queryClient'
 import type { QueryObserverListener } from './queryObserver'
 import type {
+  ManagedTimerId,
+  TimeoutCallback,
+  TimeoutProvider,
+} from './timeoutManager'
+import type {
   CancelOptions,
   DefaultError,
   DefaultOptions,
+  DefaultedInfiniteQueryObserverOptions,
   DefaultedQueryObserverOptions,
+  FetchNextPageOptions,
   FetchOptions,
+  FetchPreviousPageOptions,
   InferDataFromTag,
   InferErrorFromTag,
   InfiniteData,
   InfiniteQueryExecuteOptions,
+  InfiniteQueryObserverResult,
   InvalidateOptions,
   InvalidateQueryFilters,
   MutateOptions,
@@ -48,6 +72,9 @@ import type {
   Updater,
   WithRequired,
 } from './index'
+
+/* oxlint-disable typescript/method-signature-style -- Match runtime class methods, including their parameter variance. */
+
 interface Subscription<TListener> {
   subscribe(listener: TListener): () => void
   hasListeners(): boolean
@@ -56,7 +83,7 @@ interface CacheEntry {
   gcTime: number
   destroy(): void
 }
-export interface QueryClient {
+interface QueryClient {
   mount(): void
   unmount(): void
   isFetching(filters?: Omit<QueryFilters, 'fetchStatus'>): number
@@ -276,7 +303,7 @@ export interface QueryClient {
   clear(): void
 }
 
-export interface QueryCache extends Subscription<QueryCacheListener> {
+interface QueryCache extends Subscription<QueryCacheListener> {
   config: QueryCacheConfig
   build<
     TQueryFnData = unknown,
@@ -312,7 +339,7 @@ export interface QueryCache extends Subscription<QueryCacheListener> {
   onOnline(): void
 }
 
-export interface MutationCache extends Subscription<MutationCacheListener> {
+interface MutationCache extends Subscription<MutationCacheListener> {
   config: MutationCacheConfig
   register<T extends Mutation<any, any, any, any>>(create: (id: number) => T): T
   add(mutation: Mutation<any, any, any, any>): void
@@ -335,7 +362,7 @@ export interface MutationCache extends Subscription<MutationCacheListener> {
   resumePausedMutations(): Promise<unknown>
 }
 
-export interface Query<
+interface Query<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -381,7 +408,7 @@ export interface Query<
   ): Promise<TData>
 }
 
-export interface Mutation<
+interface Mutation<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
@@ -400,7 +427,7 @@ export interface Mutation<
   execute(variables: TVariables): Promise<TData>
 }
 
-export interface QueryObserver<
+interface QueryObserver<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -456,7 +483,7 @@ export interface QueryObserver<
   onQueryUpdate(): void
 }
 
-export interface MutationObserver<
+interface MutationObserver<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -501,41 +528,165 @@ type MutationObserverListener<TData, TError, TVariables, TOnMutateResult> =
   >
 
 /** Structural public class shapes used when importing types without a runtime. */
-export interface DefaultRuntime extends RuntimeBinding {
+interface DefaultRuntime extends RuntimeBinding {
   QueryClient: QueryClient
   QueryCache: QueryCache
   MutationCache: MutationCache
-  Query: this['args'] extends [
-    infer TQueryFnData,
-    infer TError,
-    infer TData,
-    infer TQueryKey extends QueryKey,
-  ]
-    ? Query<TQueryFnData, TError, TData, TQueryKey>
-    : never
-  Mutation: this['args'] extends [
-    infer TData,
-    infer TError,
-    infer TVariables,
-    infer TOnMutateResult,
-  ]
-    ? Mutation<TData, TError, TVariables, TOnMutateResult>
-    : never
-  QueryObserver: this['args'] extends [
-    infer TQueryFnData,
-    infer TError,
-    infer TData,
-    infer TQueryData,
-    infer TQueryKey extends QueryKey,
-  ]
-    ? QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-    : never
-  MutationObserver: this['args'] extends [
-    infer TData,
-    infer TError,
-    infer TVariables,
-    infer TOnMutateResult,
-  ]
-    ? MutationObserver<TData, TError, TVariables, TOnMutateResult>
-    : never
+  Query: Query<
+    this['queryFnData'],
+    this['error'],
+    this['data'],
+    this['queryKey'][0]
+  >
+  Mutation: Mutation<
+    this['data'],
+    this['error'],
+    this['variables'],
+    this['onMutateResult']
+  >
+  QueryObserver: QueryObserver<
+    this['queryFnData'],
+    this['error'],
+    this['data'],
+    this['queryData'],
+    this['queryKey'][0]
+  >
+  MutationObserver: MutationObserver<
+    this['data'],
+    this['error'],
+    this['variables'],
+    this['onMutateResult']
+  >
+}
+
+interface FocusManager extends Subscription<FocusManagerListener> {
+  setEventListener(setup: FocusManagerSetupFn): void
+  setFocused(focused?: boolean): void
+  onFocus(): void
+  isFocused(): boolean
+}
+
+interface OnlineManager extends Subscription<OnlineManagerListener> {
+  setEventListener(setup: OnlineManagerSetupFn): void
+  setOnline(online: boolean): void
+  isOnline(): boolean
+}
+
+interface TimeoutManager {
+  setTimeoutProvider<TTimerId extends ManagedTimerId>(
+    provider: TimeoutProvider<TTimerId>,
+  ): void
+  setTimeout(callback: TimeoutCallback, delay: number): ManagedTimerId
+  clearTimeout(timeoutId: ManagedTimerId | undefined): void
+  setInterval(callback: TimeoutCallback, delay: number): ManagedTimerId
+  clearInterval(intervalId: ManagedTimerId | undefined): void
+}
+
+interface QueriesObserver<
+  TCombinedResult = Array<QueryObserverResult>,
+> extends Subscription<QueriesObserverListener> {
+  destroy(): void
+  setQueries(
+    queries: Array<ObserverOptionsInput>,
+    options?: QueriesObserverOptions<TCombinedResult>,
+  ): void
+  getCurrentResult(): Array<QueryObserverResult>
+  getQueries(): Array<Query>
+  getObservers(): Array<QueryObserver>
+  createResultReader(
+    queries: Array<ObserverOptionsInput<any, any, any, any, any>>,
+    options?: QueriesObserverOptions<TCombinedResult>,
+  ): QueriesObserverResultReader<TCombinedResult>
+}
+
+interface InfiniteQueryObserver<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = InfiniteData<TQueryFnData>,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = unknown,
+> extends QueryObserver<
+  TQueryFnData,
+  TError,
+  TData,
+  InfiniteData<TQueryFnData, TPageParam>,
+  TQueryKey
+> {
+  subscribe: Subscription<
+    InfiniteQueryObserverListener<TData, TError>
+  >['subscribe']
+  getCurrentResult: ReplaceReturnType<
+    QueryObserver<
+      TQueryFnData,
+      TError,
+      TData,
+      InfiniteData<TQueryFnData, TPageParam>,
+      TQueryKey
+    >['getCurrentResult'],
+    InfiniteQueryObserverResult<TData, TError>
+  >
+  setOptions(
+    options: InfiniteObserverOptionsInput<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): void
+  createResultReader(
+    options: DefaultedInfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    >,
+  ): QueryObserverResultReader<InfiniteQueryObserverResult<TData, TError>>
+  fetchNextPage(
+    options?: FetchNextPageOptions,
+  ): Promise<InfiniteQueryObserverResult<TData, TError>>
+  fetchPreviousPage(
+    options?: FetchPreviousPageOptions,
+  ): Promise<InfiniteQueryObserverResult<TData, TError>>
+}
+
+interface CancelledError extends Error {
+  revert?: boolean
+  silent?: boolean
+}
+
+type InfiniteObserverOptionsInput<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey,
+  TPageParam,
+> = SharedInfiniteObserverOptionsInput<
+  DefaultRuntime,
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+>
+
+export type {
+  FocusManager,
+  OnlineManager,
+  TimeoutManager,
+  QueriesObserver,
+  InfiniteQueryObserver,
+  CancelledError,
+}
+
+export type {
+  QueryClient,
+  QueryCache,
+  MutationCache,
+  Query,
+  Mutation,
+  QueryObserver,
+  MutationObserver,
+  DefaultRuntime,
 }

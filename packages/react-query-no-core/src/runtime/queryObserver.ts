@@ -34,6 +34,7 @@ import type {
   RefetchOptions,
 } from './types'
 
+/** {@inheritDoc Shared.QueryObserverResultContext} */
 export type QueryObserverResultContext<
   TQueryFnData,
   TError,
@@ -49,6 +50,7 @@ export type QueryObserverResultContext<
   TQueryKey
 >
 
+/** {@inheritDoc Shared.ObserverOptionsInput} */
 export type ObserverOptionsInput<
   TQueryFnData = unknown,
   TError = DefaultError,

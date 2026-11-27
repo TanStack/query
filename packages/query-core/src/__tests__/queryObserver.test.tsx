@@ -1,4 +1,5 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { refetchInterval } from '@tanstack/query-test-utils/polling'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
@@ -945,7 +946,7 @@ describe('queryObserver', () => {
       queryKey: key,
       queryFn: fetchData,
       gcTime: 0,
-      refetchInterval: 10,
+      refetchInterval: refetchInterval(10),
     })
     const unsubscribe = observer.subscribe(() => undefined)
     expect(count).toBe(1)
@@ -967,7 +968,7 @@ describe('queryObserver', () => {
         count++
         return Promise.resolve('data')
       },
-      refetchInterval: () => 10,
+      refetchInterval: refetchInterval(() => 10),
     })
     const unsubscribe = observer.subscribe(() => undefined)
     expect(count).toBe(1)
@@ -979,15 +980,15 @@ describe('queryObserver', () => {
 
   it('should call refetchInterval with the query when it is a function', async () => {
     const key = createKey()
-    const refetchInterval = vi.fn<() => number>(() => 10)
+    const getInterval = vi.fn<() => number>(() => 10)
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
-      refetchInterval,
+      refetchInterval: refetchInterval(getInterval),
     })
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(10)
-    expect(refetchInterval).toHaveBeenCalledWith(
+    expect(getInterval).toHaveBeenCalledWith(
       queryClient.getQueryCache().find({ queryKey: key }),
     )
 
@@ -1137,7 +1138,7 @@ describe('queryObserver', () => {
       queryKey: key,
       queryFn,
       refetchIntervalInBackground: false,
-      refetchInterval: 10,
+      refetchInterval: refetchInterval(10),
     })
 
     const unsubscribe = observer.subscribe(() => undefined)
@@ -1418,7 +1419,7 @@ describe('queryObserver', () => {
       queryKey: key,
       queryFn: defaultQueryFn,
       enabled: false,
-      refetchInterval: 10,
+      refetchInterval: refetchInterval(10),
     })
 
     const query = queryClient.getQueryCache().find({ queryKey: key })
@@ -1456,7 +1457,7 @@ describe('queryObserver', () => {
       queryFn: defaultQueryFn,
       enabled: false,
       staleTime: 10,
-      refetchInterval: 10,
+      refetchInterval: refetchInterval(10),
     })
     const setTimeoutSpy = vi.spyOn(timeoutManager, 'setTimeout')
     const setIntervalSpy = vi.spyOn(timeoutManager, 'setInterval')
@@ -1479,7 +1480,7 @@ describe('queryObserver', () => {
         queryKey: key,
         queryFn: defaultQueryFn,
         staleTime: 10,
-        refetchInterval: 10,
+        refetchInterval: refetchInterval(10),
       })
       const setTimeoutSpy = vi.spyOn(timeoutManager, 'setTimeout')
       const setIntervalSpy = vi.spyOn(timeoutManager, 'setInterval')

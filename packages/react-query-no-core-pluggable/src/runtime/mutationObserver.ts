@@ -1,10 +1,9 @@
-import { requireMutations } from './clientFeatures'
-import { getDefaultState } from './mutation'
+import { Mutation, getDefaultState } from './mutation'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import { hashKeyByOptions, shallowEqualObjects } from './utils'
 import type * as Shared from '@tanstack/query-types/bindings'
-import type { Action, Mutation } from './mutation'
+import type { Action } from './mutation'
 import type { QueryClient } from './queryClient'
 import type { QueryRuntime } from './runtimeBinding'
 import type {
@@ -235,10 +234,7 @@ export class MutationObserver<
 
     this.#currentMutation?.removeObserver(this)
 
-    this.#currentMutation = requireMutations(this.#client).build(
-      this.#client,
-      this.options,
-    )
+    this.#currentMutation = Mutation.build(this.#client, this.options)
 
     this.#currentMutation.addObserver(this)
 

@@ -1,5 +1,5 @@
-import { clientFeatures, requireMutations } from './clientFeatures'
 import { focusManager } from './focusManager'
+import { MutationCache } from './mutationCache'
 import { notifyManager } from './notifyManager'
 import { onlineManager } from './onlineManager'
 import { QueryCache } from './queryCache'
@@ -13,8 +13,6 @@ import {
   skipToken,
 } from './utils'
 import type { WithoutSkipToken } from '@tanstack/query-types/bindings'
-import type { QueryClientFeatures } from './clientFeatures'
-import type { MutationCache } from './mutationCache'
 import type { QueryState } from './query'
 import type {
   CacheKeyConfig,
@@ -72,7 +70,7 @@ class KeyDefaults<
 
 /**
  * `QueryClient` is used to interact with a cache of queries and mutations. It owns a
- * `QueryCache` and, with `mutationPlugin`, a `MutationCache`. It holds
+ * `QueryCache` and a `MutationCache` (creating default ones if none are passed in) and holds
  * the default options that are applied to queries and mutations created through it.
  * @example
  * ```ts
@@ -89,20 +87,17 @@ class KeyDefaults<
  */
 export class QueryClient {
   #queryCache: QueryCache
-  readonly [clientFeatures]: QueryClientFeatures = {}
+  #mutationCache: MutationCache
   #defaultOptions: DefaultOptions
   #queryDefaults = new KeyDefaults<QueryKey, QueryDefaults>()
-  #mutationDefaults?: KeyDefaults<MutationKey, MutationDefaults>
+  #mutationDefaults = new KeyDefaults<MutationKey, MutationDefaults>()
   #mountCount: number
   #unsubscribeFocus?: () => void
   #unsubscribeOnline?: () => void
 
   constructor(config: QueryClientConfig = {}) {
     this.#queryCache = config.queryCache || new QueryCache()
-    for (const plugin of config.plugins ?? []) {
-      plugin(this[clientFeatures], config)
-    }
-    if (config.mutationCache) requireMutations(this)
+    this.#mutationCache = config.mutationCache || new MutationCache()
     this.#defaultOptions = config.defaultOptions || {}
     this.#mountCount = 0
   }
@@ -185,12 +180,7 @@ export class QueryClient {
       any
     >,
   >(filters?: NoInfer<Omit<TMutationFilters, 'status'>>): number {
-    return (
-      this[clientFeatures].mutations?.cache.findAll({
-        ...filters,
-        status: 'pending',
-      }).length ?? 0
-    )
+    return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
   }
 
   /**
@@ -774,9 +764,8 @@ export class QueryClient {
    * ```
    */
   resumePausedMutations(): Promise<unknown> {
-    const mutations = this[clientFeatures].mutations
-    if (mutations && onlineManager.isOnline()) {
-      return mutations.cache.resumePausedMutations()
+    if (onlineManager.isOnline()) {
+      return this.#mutationCache.resumePausedMutations()
     }
     return Promise.resolve()
   }
@@ -802,15 +791,15 @@ export class QueryClient {
    * @returns The {@link MutationCache} instance.
    * @example
    * ```ts
-   * import { QueryClient, mutationPlugin } from '@tanstack/react-query-no-core-pluggable'
+   * import { QueryClient } from '@tanstack/react-query-no-core-pluggable'
    *
-   * const queryClient = new QueryClient({ plugins: [mutationPlugin] })
+   * const queryClient = new QueryClient()
    * const mutationCache = queryClient.getMutationCache()
    * const mutations = mutationCache.findAll({ status: 'pending' })
    * ```
    */
   getMutationCache(): MutationCache {
-    return requireMutations(this).cache
+    return this.#mutationCache
   }
 
   /**
@@ -925,9 +914,11 @@ export class QueryClient {
       'mutationKey'
     >,
   ): void {
-    const config = this.getMutationCache().config.mutationKey
-    this.#mutationDefaults ??= new KeyDefaults<MutationKey, MutationDefaults>()
-    this.#mutationDefaults.set(mutationKey, options, config)
+    this.#mutationDefaults.set(
+      mutationKey,
+      options,
+      this.#mutationCache.config.mutationKey,
+    )
   }
 
   /**
@@ -945,11 +936,9 @@ export class QueryClient {
   getMutationDefaults(
     mutationKey: MutationKey,
   ): OmitKeyof<MutationObserverOptions<any, any, any, any>, 'mutationKey'> {
-    return (
-      this.#mutationDefaults?.get(
-        mutationKey,
-        this.getMutationCache().config.mutationKey,
-      ) ?? {}
+    return this.#mutationDefaults.get(
+      mutationKey,
+      this.#mutationCache.config.mutationKey,
     )
   }
 
@@ -1083,6 +1072,6 @@ export class QueryClient {
    */
   clear(): void {
     this.#queryCache.clear()
-    this[clientFeatures].mutations?.cache.clear()
+    this.#mutationCache.clear()
   }
 }

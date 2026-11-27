@@ -165,3 +165,4 @@ export type {
   NotifyEventType,
   NotifyEvent,
 } from './types'
+export type { QueryRuntime } from './runtimeBinding'

@@ -1,5 +1,7 @@
-export type OnlineManagerListener = (online: boolean) => void
+type OnlineManagerListener = (online: boolean) => void
 
-export type OnlineManagerSetupFn = (
+type OnlineManagerSetupFn = (
   setOnline: OnlineManagerListener,
 ) => (() => void) | undefined
+
+export type { OnlineManagerListener, OnlineManagerSetupFn }

@@ -7,7 +7,7 @@ import type {
   QueryStatus,
 } from './types'
 
-export interface QueryConfig<
+interface QueryConfig<
   TRuntime extends RuntimeBinding,
   TQueryFnData,
   TError,
@@ -191,42 +191,42 @@ export interface FetchOptions<TData = unknown> {
   initialPromise?: Promise<TData>
 }
 
-export interface QueryFailedAction<TError> {
+interface QueryFailedAction<TError> {
   type: 'failed'
   failureCount: number
   error: TError
 }
 
-export interface FetchAction {
+interface FetchAction {
   type: 'fetch'
   meta?: FetchMeta
 }
 
-export interface QuerySuccessAction<TData> {
+interface QuerySuccessAction<TData> {
   data: TData | undefined
   type: 'success'
   dataUpdatedAt?: number
   manual?: boolean
 }
 
-export interface QueryErrorAction<TError> {
+interface QueryErrorAction<TError> {
   type: 'error'
   error: TError
 }
 
-export interface InvalidateAction {
+interface InvalidateAction {
   type: 'invalidate'
 }
 
-export interface QueryPauseAction {
+interface QueryPauseAction {
   type: 'pause'
 }
 
-export interface QueryContinueAction {
+interface QueryContinueAction {
   type: 'continue'
 }
 
-export interface SetStateAction<TData, TError> {
+interface SetStateAction<TData, TError> {
   type: 'setState'
   state: Partial<QueryState<TData, TError>>
 }
@@ -244,3 +244,15 @@ export type QueryAction<TData, TError> =
   | QueryPauseAction
   | SetStateAction<TData, TError>
   | QuerySuccessAction<TData>
+
+export type {
+  QueryConfig,
+  QueryFailedAction,
+  FetchAction,
+  QuerySuccessAction,
+  QueryErrorAction,
+  InvalidateAction,
+  QueryPauseAction,
+  QueryContinueAction,
+  SetStateAction,
+}

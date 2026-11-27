@@ -1,5 +1,7 @@
-export type FocusManagerListener = (focused: boolean) => void
+type FocusManagerListener = (focused: boolean) => void
 
-export type FocusManagerSetupFn = (
+type FocusManagerSetupFn = (
   setFocused: (focused?: boolean) => void,
 ) => (() => void) | undefined
+
+export type { FocusManagerListener, FocusManagerSetupFn }

@@ -1,22 +1,35 @@
 import * as React from 'react'
-import { useInfiniteQuery, useMutation, useQuery } from '#adapter'
+import {
+  queryOptions,
+  infiniteQueryOptions,
+  mutationOptions,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+} from '#adapter'
 import { fetchBooks } from './books.js'
 
 export function ReadingList() {
-  const books = useInfiniteQuery({
-    queryKey: ['books'],
-    queryFn: ({ pageParam, signal }) => fetchBooks(pageParam, signal),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => lastPage.next,
-  })
-  const bookmark = useQuery({
-    queryKey: ['bookmark'],
-    queryFn: () => localStorage.getItem('bookmark'),
-  })
-  const save = useMutation({
-    mutationFn: async (title) => localStorage.setItem('bookmark', title),
-    onSuccess: () => bookmark.refetch(),
-  })
+  const books = useInfiniteQuery(
+    infiniteQueryOptions({
+      queryKey: ['books'],
+      queryFn: ({ pageParam, signal }) => fetchBooks(pageParam, signal),
+      initialPageParam: 1,
+      getNextPageParam: (lastPage) => lastPage.next,
+    }),
+  )
+  const bookmark = useQuery(
+    queryOptions({
+      queryKey: ['bookmark'],
+      queryFn: () => localStorage.getItem('bookmark'),
+    }),
+  )
+  const save = useMutation(
+    mutationOptions({
+      mutationFn: async (title) => localStorage.setItem('bookmark', title),
+      onSuccess: () => bookmark.refetch(),
+    }),
+  )
   if (books.isPending) return <p>Loading books…</p>
   if (books.isError) return <p role="alert">{books.error.message}</p>
   return (

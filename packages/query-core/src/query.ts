@@ -13,8 +13,8 @@ import {
 } from './utils'
 import type * as Shared from '@tanstack/query-types/bindings'
 import type {
-  FetchOptions,
   QueryAction as Action,
+  FetchOptions,
   QueryState,
 } from '@tanstack/query-types/bindings'
 import type { QueryCache } from './queryCache'
@@ -40,14 +40,14 @@ type QueryConfig<
   TQueryKey extends QueryKey = QueryKey,
 > = Shared.QueryConfig<QueryRuntime, TQueryFnData, TError, TData, TQueryKey>
 
-export type FetchContext<
+type FetchContext<
   TQueryFnData,
   TError,
   TData,
   TQueryKey extends QueryKey = QueryKey,
 > = Shared.FetchContext<QueryRuntime, TQueryFnData, TError, TData, TQueryKey>
 
-export type QueryBehavior<
+type QueryBehavior<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -908,3 +908,5 @@ export type {
   FetchOptions,
   QueryAction as Action,
 } from '@tanstack/query-types/bindings'
+
+export type { FetchContext, QueryBehavior }

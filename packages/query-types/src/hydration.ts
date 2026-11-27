@@ -12,7 +12,7 @@ import type {
   QueryOptions,
 } from './types'
 
-export type TransformerFn = (data: any) => any
+type TransformerFn = (data: any) => any
 
 /**
  * Options for `dehydrate`, controlling which queries/mutations are included in the resulting `DehydratedState` and
@@ -55,14 +55,14 @@ export interface HydrateOptions<TRuntime extends RuntimeBinding> {
   }
 }
 
-export interface DehydratedMutation {
+interface DehydratedMutation {
   mutationKey?: MutationKey
   state: MutationState
   meta?: MutationMeta
   scope?: MutationScope
 }
 
-export interface DehydratedQuery {
+interface DehydratedQuery {
   queryHash: string
   queryKey: QueryKey
   state: QueryState
@@ -87,3 +87,5 @@ export interface DehydratedState {
    */
   queries: Array<DehydratedQuery>
 }
+
+export type { TransformerFn, DehydratedMutation, DehydratedQuery }

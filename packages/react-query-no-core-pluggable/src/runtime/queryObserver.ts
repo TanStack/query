@@ -1,5 +1,4 @@
 import { isServer as isServerEnvironment } from './environmentManager'
-import { focusManager } from './focusManager'
 import { notifyManager } from './notifyManager'
 import { fetchState } from './query'
 import { Subscribable } from './subscribable'
@@ -21,6 +20,7 @@ import type {
 } from '@tanstack/query-types/bindings'
 import type { Query, QueryState } from './query'
 import type { QueryClient } from './queryClient'
+import type { PollingTimer } from './refetchInterval'
 import type { QueryRuntime } from './runtimeBinding'
 import type { ManagedTimerId } from './timeoutManager'
 import type {
@@ -34,6 +34,7 @@ import type {
   RefetchOptions,
 } from './types'
 
+/** {@inheritDoc Shared.QueryObserverResultContext} */
 export type QueryObserverResultContext<
   TQueryFnData,
   TError,
@@ -49,6 +50,7 @@ export type QueryObserverResultContext<
   TQueryKey
 >
 
+/** {@inheritDoc Shared.ObserverOptionsInput} */
 export type ObserverOptionsInput<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -105,8 +107,7 @@ export class QueryObserver<
   // It will be used to pass the previous data and query to the placeholder function between renders.
   #lastQueryWithDefinedData?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
   #staleTimeoutId?: ManagedTimerId
-  #refetchIntervalId?: ManagedTimerId
-  #currentRefetchInterval?: number | false
+  #polling?: PollingTimer
   #trackedProps = new Set<keyof QueryObserverResult>()
 
   constructor(
@@ -191,7 +192,8 @@ export class QueryObserver<
   destroy(): void {
     this.listeners = new Set()
     this.#clearStaleTimeout()
-    this.#clearRefetchInterval()
+    this.#polling?.stop()
+    this.#polling = undefined
     this.#currentQuery.removeObserver(this)
   }
 
@@ -281,18 +283,7 @@ export class QueryObserver<
       this.#updateStaleTimeout()
     }
 
-    const nextRefetchInterval = this.#computeRefetchInterval()
-
-    // Update refetch interval if needed
-    if (
-      mounted &&
-      (this.#currentQuery !== prevQuery ||
-        resolveQueryValue(this.options.enabled, this.#currentQuery) !==
-          resolveQueryValue(prevOptions.enabled, this.#currentQuery) ||
-        nextRefetchInterval !== this.#currentRefetchInterval)
-    ) {
-      this.#updateRefetchInterval(nextRefetchInterval)
-    }
+    this.#updatePolling()
   }
 
   /**
@@ -564,51 +555,29 @@ export class QueryObserver<
     }, timeout)
   }
 
-  #computeRefetchInterval() {
-    return (
-      resolveQueryValue(this.options.refetchInterval, this.#currentQuery) ??
-      false
-    )
-  }
-
-  #updateRefetchInterval(nextInterval: number | false): void {
-    this.#clearRefetchInterval()
-
-    this.#currentRefetchInterval = nextInterval
-
-    if (
-      this.#currentRefetchInterval === 0 ||
-      !this.#shouldScheduleTimer(this.#currentRefetchInterval)
-    ) {
-      return
+  #updatePolling(restart = false): void {
+    const option = this.options.refetchInterval
+    const polling =
+      typeof option === 'function' ? option(this.#currentQuery) : option
+    if (polling) {
+      this.#polling = polling.update(this, this.#polling, restart, () =>
+        this.#executeFetch(),
+      )
+    } else {
+      this.#polling?.stop()
+      this.#polling = undefined
     }
-
-    this.#refetchIntervalId = timeoutManager.setInterval(() => {
-      if (
-        this.options.refetchIntervalInBackground ||
-        focusManager.isFocused()
-      ) {
-        this.#executeFetch()
-      }
-    }, this.#currentRefetchInterval)
   }
 
   #updateTimers(): void {
     this.#updateStaleTimeout()
-    this.#updateRefetchInterval(this.#computeRefetchInterval())
+    this.#updatePolling(true)
   }
 
   #clearStaleTimeout(): void {
     if (this.#staleTimeoutId !== undefined) {
       timeoutManager.clearTimeout(this.#staleTimeoutId)
       this.#staleTimeoutId = undefined
-    }
-  }
-
-  #clearRefetchInterval(): void {
-    if (this.#refetchIntervalId !== undefined) {
-      timeoutManager.clearInterval(this.#refetchIntervalId)
-      this.#refetchIntervalId = undefined
     }
   }
 

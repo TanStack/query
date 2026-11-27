@@ -37,8 +37,10 @@ function tryResolveSync(promise: PromiseLike<unknown>) {
   return undefined
 }
 
+/** {@inheritDoc Shared.DehydrateOptions} */
 export type DehydrateOptions = Shared.DehydrateOptions<QueryRuntime>
 
+/** {@inheritDoc Shared.HydrateOptions} */
 export type HydrateOptions = Shared.HydrateOptions<QueryRuntime>
 
 // FUNCTIONS

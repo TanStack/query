@@ -14,12 +14,15 @@ import type {
 } from './types'
 import type { QueryFilters } from './utils'
 
+/** {@inheritDoc Shared.QueryCacheConfig} */
 export type QueryCacheConfig = Shared.QueryCacheConfig<QueryRuntime>
 
+/** {@inheritDoc Shared.QueryCacheNotifyEvent} */
 export type QueryCacheNotifyEvent = Shared.QueryCacheNotifyEvent<QueryRuntime>
 
 type QueryCacheListener = Shared.QueryCacheListener<QueryRuntime>
 
+/** {@inheritDoc Shared.QueryStore} */
 export type QueryStore = Shared.QueryStore<QueryRuntime>
 
 // CLASS

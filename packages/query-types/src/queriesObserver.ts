@@ -5,11 +5,9 @@ import type {
   QueryObserverResult,
 } from './types'
 
-export type QueriesObserverListener = (
-  result: Array<QueryObserverResult>,
-) => void
+type QueriesObserverListener = (result: Array<QueryObserverResult>) => void
 
-export type CombineFn<TCombinedResult> = (
+type CombineFn<TCombinedResult> = (
   result: Array<QueryObserverResult>,
 ) => TCombinedResult
 
@@ -21,7 +19,7 @@ export interface QueriesObserverResultReader<
   combineResult: (result: Array<QueryObserverResult>) => TCombinedResult
 }
 
-export type CombineContext<TCombinedResult> = {
+type CombineContext<TCombinedResult> = {
   result?: Array<QueryObserverResult>
   combine?: CombineFn<TCombinedResult>
   value?: TCombinedResult
@@ -45,8 +43,15 @@ export interface QueriesObserverOptions<
   combine?: CombineFn<TCombinedResult>
 }
 
-export type QueryObserverMatch<TRuntime extends RuntimeBinding> = {
+type QueryObserverMatch<TRuntime extends RuntimeBinding> = {
   defaultedQueryOptions: DefaultedQueryObserverOptions<TRuntime>
   observer: QueryObserverOf<TRuntime>
   reader?: QueryObserverResultReader<QueryObserverResult>
+}
+
+export type {
+  QueriesObserverListener,
+  CombineFn,
+  CombineContext,
+  QueryObserverMatch,
 }

@@ -3,15 +3,16 @@ import type {
   QueryCacheOf,
   QueryClientOf,
   QueryOf,
+  RefetchIntervalOf,
   RuntimeBinding,
 } from './binding'
 import type { DehydrateOptions, HydrateOptions } from './hydration'
 import type { MutationState } from './mutation'
 import type { RetryDelayValue, RetryValue } from './retryer'
 import type {
+  unsetMarker as UnsetMarker,
   dataTagErrorSymbol,
   dataTagSymbol,
-  unsetMarker as UnsetMarker,
 } from './symbols'
 import type {
   DefaultQueryFn,
@@ -266,7 +267,8 @@ export type QueryFunctionContext<
 /** @inline */
 export type InitialDataFunction<T> = () => T | undefined
 
-export type NonFunctionGuard<T> = T extends Function ? never : T
+// oxlint-disable-next-line typescript/no-unsafe-function-type -- excludes every function-like value, including constructors, from the value branch
+type NonFunctionGuard<T> = T extends Function ? never : T
 
 /** @inline */
 export type PlaceholderDataFunction<
@@ -590,12 +592,13 @@ export interface QueryObserverOptionsBase<
    * If set to a function, the function will be executed with the latest data and query to compute a frequency
    * @defaultValue false
    */
-  refetchInterval?:
-    | number
-    | false
-    | ((
-        query: QueryOf<TRuntime, TQueryFnData, TError, TQueryData, TQueryKey>,
-      ) => number | false | undefined)
+  refetchInterval?: RefetchIntervalOf<
+    TRuntime,
+    TQueryFnData,
+    TError,
+    TQueryData,
+    TQueryKey
+  >
   /**
    * If set to `true`, the query will continue to refetch while their tab/window is in the background.
    * @defaultValue false
@@ -860,7 +863,7 @@ export interface QueryExecuteOptions<
   >
 }
 
-export type InfiniteQueryFetchPageOptions<TQueryFnData, TPageParam> = Pick<
+type InfiniteQueryFetchPageOptions<TQueryFnData, TPageParam> = Pick<
   InfiniteQueryPageParamsOptions<TQueryFnData, TPageParam>,
   'initialPageParam' | 'getNextPageParam'
 > & {
@@ -2550,3 +2553,5 @@ export interface NotifyEvent {
    */
   type: NotifyEventType
 }
+
+export type { NonFunctionGuard, InfiniteQueryFetchPageOptions }

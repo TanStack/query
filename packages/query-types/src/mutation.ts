@@ -1,7 +1,7 @@
 import type { MutationCacheOf, QueryClientOf, RuntimeBinding } from './binding'
 import type { DefaultError, MutationOptions, MutationStatus } from './types'
 
-export interface MutationConfig<
+interface MutationConfig<
   TRuntime extends RuntimeBinding,
   TData,
   TError,
@@ -66,34 +66,34 @@ export interface MutationState<
   submittedAt: number
 }
 
-export interface MutationFailedAction<TError> {
+interface MutationFailedAction<TError> {
   type: 'failed'
   failureCount: number
   error: TError | null
 }
 
-export interface PendingAction<TVariables, TOnMutateResult> {
+interface PendingAction<TVariables, TOnMutateResult> {
   type: 'pending'
   isPaused: boolean
   variables?: TVariables
   context?: TOnMutateResult
 }
 
-export interface MutationSuccessAction<TData> {
+interface MutationSuccessAction<TData> {
   type: 'success'
   data: TData
 }
 
-export interface MutationErrorAction<TError> {
+interface MutationErrorAction<TError> {
   type: 'error'
   error: TError
 }
 
-export interface MutationPauseAction {
+interface MutationPauseAction {
   type: 'pause'
 }
 
-export interface MutationContinueAction {
+interface MutationContinueAction {
   type: 'continue'
 }
 
@@ -108,3 +108,13 @@ export type MutationAction<TData, TError, TVariables, TOnMutateResult> =
   | PendingAction<TVariables, TOnMutateResult>
   | MutationPauseAction
   | MutationSuccessAction<TData>
+
+export type {
+  MutationConfig,
+  MutationFailedAction,
+  PendingAction,
+  MutationSuccessAction,
+  MutationErrorAction,
+  MutationPauseAction,
+  MutationContinueAction,
+}

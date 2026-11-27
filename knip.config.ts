@@ -20,7 +20,7 @@ const optionalPeerDependencies = (pkg: {
 // modules imported by the upstream suites.
 const compatibilityEntries = [
   'src/suspense.ts',
-  'src/runtime/{query,notifyManager,timeoutManager,utils}.ts',
+  'src/runtime/{query,notifyManager,retryer,timeoutManager,utils}.ts',
 ]
 
 export default {
@@ -55,7 +55,7 @@ export default {
       ignoreDependencies: optionalPeerDependencies(reactQueryNoCore),
     },
     'packages/react-query-no-core-pluggable': {
-      entry: [...compatibilityEntries, 'tests/compat-client.ts'],
+      entry: [...compatibilityEntries, 'tests/compat-polling.ts'],
       ignoreDependencies: optionalPeerDependencies(reactQueryPluggable),
     },
     'packages/react-query-devtools': {

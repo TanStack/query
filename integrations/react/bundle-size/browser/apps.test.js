@@ -45,4 +45,27 @@ describe.each(adapters)('@tanstack/%s', (adapter) => {
       .toContain('Bookmarked: Villette')
     expect(localStorage.getItem('bookmark')).toBe('Villette')
   })
+
+  it('periodically refetches regular, infinite and suspense queries', async () => {
+    const app = await openApp('polling', adapter)
+    const timestamps = () =>
+      Array.from(app.querySelectorAll('time'), (time) => time.dateTime)
+    await expect.poll(() => timestamps().length).toBe(4)
+    // Two successive refreshes for every hook distinguish interval polling from a mount refetch.
+    for (let refresh = 0; refresh < 2; refresh++) {
+      const previous = timestamps()
+      await expect
+        .poll(
+          () => {
+            const current = timestamps()
+            return (
+              current.length === 4 &&
+              current.every((value, index) => value > previous[index])
+            )
+          },
+          { timeout: 4000 },
+        )
+        .toBe(true)
+    }
+  })
 })

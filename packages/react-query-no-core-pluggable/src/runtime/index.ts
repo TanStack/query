@@ -1,7 +1,5 @@
 /* istanbul ignore file */
 
-export { mutationPlugin, infiniteQueryPlugin } from './plugins'
-export type { QueryClientFeatures, QueryClientPlugin } from './clientFeatures'
 export { focusManager } from './focusManager'
 export type { FocusManager } from './focusManager'
 export { environmentManager } from './environmentManager'
@@ -23,6 +21,9 @@ export { QueriesObserver } from './queriesObserver'
 export { QueryCache } from './queryCache'
 export type { QueryCacheNotifyEvent } from './queryCache'
 export { QueryClient } from './queryClient'
+export type { QueryRuntime } from './runtimeBinding'
+export { refetchInterval } from './refetchInterval'
+export type { RefetchInterval } from './refetchInterval'
 export { QueryObserver } from './queryObserver'
 export type { QueryObserverResultReader } from './queryObserver'
 export { CancelledError } from './retryer'

@@ -34,7 +34,7 @@ import type {
   RefetchOptions,
 } from './types'
 
-export type QueryObserverResultContext<
+type QueryObserverResultContext<
   TQueryFnData,
   TError,
   TData,
@@ -49,7 +49,7 @@ export type QueryObserverResultContext<
   TQueryKey
 >
 
-export type ObserverOptionsInput<
+type ObserverOptionsInput<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -1043,3 +1043,5 @@ function isStale(
 }
 
 export type { QueryObserverResultReader } from '@tanstack/query-types/bindings'
+
+export type { QueryObserverResultContext, ObserverOptionsInput }

@@ -38,21 +38,21 @@ export interface QueryCacheConfig<TRuntime extends RuntimeBinding> {
   ) => void
 }
 
-export interface NotifyEventQueryAdded<
+interface NotifyEventQueryAdded<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'added'
   query: QueryOf<TRuntime, any, any, any, any>
 }
 
-export interface NotifyEventQueryRemoved<
+interface NotifyEventQueryRemoved<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'removed'
   query: QueryOf<TRuntime, any, any, any, any>
 }
 
-export interface NotifyEventQueryUpdated<
+interface NotifyEventQueryUpdated<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'updated'
@@ -60,7 +60,7 @@ export interface NotifyEventQueryUpdated<
   action: QueryAction<any, any>
 }
 
-export interface NotifyEventQueryObserverAdded<
+interface NotifyEventQueryObserverAdded<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'observerAdded'
@@ -68,7 +68,7 @@ export interface NotifyEventQueryObserverAdded<
   observer: QueryObserverOf<TRuntime, any, any, any, any, any>
 }
 
-export interface NotifyEventQueryObserverRemoved<
+interface NotifyEventQueryObserverRemoved<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'observerRemoved'
@@ -76,14 +76,14 @@ export interface NotifyEventQueryObserverRemoved<
   observer: QueryObserverOf<TRuntime, any, any, any, any, any>
 }
 
-export interface NotifyEventQueryObserverResultsUpdated<
+interface NotifyEventQueryObserverResultsUpdated<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'observerResultsUpdated'
   query: QueryOf<TRuntime, any, any, any, any>
 }
 
-export interface NotifyEventQueryObserverOptionsUpdated<
+interface NotifyEventQueryObserverOptionsUpdated<
   TRuntime extends RuntimeBinding,
 > extends NotifyEvent {
   type: 'observerOptionsUpdated'
@@ -105,7 +105,7 @@ export type QueryCacheNotifyEvent<TRuntime extends RuntimeBinding> =
   | NotifyEventQueryObserverResultsUpdated<TRuntime>
   | NotifyEventQueryObserverOptionsUpdated<TRuntime>
 
-export type QueryCacheListener<TRuntime extends RuntimeBinding> = (
+type QueryCacheListener<TRuntime extends RuntimeBinding> = (
   event: QueryCacheNotifyEvent<TRuntime>,
 ) => void
 
@@ -133,4 +133,15 @@ export interface QueryStore<TRuntime extends RuntimeBinding> {
    * Returns an iterator over all stored queries.
    */
   values: () => IterableIterator<QueryOf<TRuntime>>
+}
+
+export type {
+  NotifyEventQueryAdded,
+  NotifyEventQueryRemoved,
+  NotifyEventQueryUpdated,
+  NotifyEventQueryObserverAdded,
+  NotifyEventQueryObserverRemoved,
+  NotifyEventQueryObserverResultsUpdated,
+  NotifyEventQueryObserverOptionsUpdated,
+  QueryCacheListener,
 }

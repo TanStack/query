@@ -1,7 +1,7 @@
 import type { RuntimeBinding } from './binding'
 import type { QueryFunctionContext, QueryKey } from './types'
 
-export type BaseStreamedQueryParams<
+type BaseStreamedQueryParams<
   TRuntime extends RuntimeBinding,
   TQueryFnData,
   TQueryKey extends QueryKey,
@@ -19,7 +19,7 @@ export type BaseStreamedQueryParams<
   refetchMode?: 'append' | 'reset' | 'replace'
 }
 
-export type SimpleStreamedQueryParams<
+type SimpleStreamedQueryParams<
   TRuntime extends RuntimeBinding,
   TQueryFnData,
   TQueryKey extends QueryKey,
@@ -28,7 +28,7 @@ export type SimpleStreamedQueryParams<
   initialValue?: never
 }
 
-export type ReducibleStreamedQueryParams<
+type ReducibleStreamedQueryParams<
   TRuntime extends RuntimeBinding,
   TQueryFnData,
   TData,
@@ -45,7 +45,7 @@ export type ReducibleStreamedQueryParams<
   initialValue: TData
 }
 
-export type StreamedQueryParams<
+type StreamedQueryParams<
   TRuntime extends RuntimeBinding,
   TQueryFnData,
   TData,
@@ -53,3 +53,10 @@ export type StreamedQueryParams<
 > =
   | SimpleStreamedQueryParams<TRuntime, TQueryFnData, TQueryKey>
   | ReducibleStreamedQueryParams<TRuntime, TQueryFnData, TData, TQueryKey>
+
+export type {
+  BaseStreamedQueryParams,
+  SimpleStreamedQueryParams,
+  ReducibleStreamedQueryParams,
+  StreamedQueryParams,
+}

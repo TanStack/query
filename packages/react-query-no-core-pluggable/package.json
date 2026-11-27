@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/react-query-no-core-pluggable",
   "version": "5.108.4",
-  "description": "React Query with a standalone runtime and opt-in mutation and infinite query plugins",
+  "description": "React Query with a standalone runtime and opt-in polling per query observer",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": {
@@ -25,8 +25,8 @@
     "test:types:tscurrent": "tsc --project tsconfig.json --outDir .cache/test-types/tscurrent --tsBuildInfoFile .cache/test-types/tscurrent.tsbuildinfo",
     "test:types:ts70": "node ../../node_modules/typescript70/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts70 --tsBuildInfoFile .cache/test-types/ts70.tsbuildinfo",
     "test:types:ts71": "node ../../node_modules/typescript71/lib/tsc.js --project tsconfig.legacy.json --outDir .cache/test-types/ts71 --tsBuildInfoFile .cache/test-types/ts71.tsbuildinfo",
-    "test:lib": "vitest run && node ../../scripts/test-react-query-compat.mjs",
-    "test:lib:dev": "vitest --watch",
+    "test:lib": "vitest run --typecheck src/__tests__ && node ../../scripts/test-react-query-compat.mjs",
+    "test:lib:dev": "vitest --watch src/__tests__",
     "test:build": "publint --strict && attw --pack --profile esm-only",
     "build": "tsdown --tsconfig tsconfig.prod.json"
   },
@@ -53,13 +53,9 @@
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "catalog:",
-    "@testing-library/react": "catalog:",
-    "@testing-library/react-render-stream": "^2.0.2",
     "@types/react": "catalog:",
-    "@vitejs/plugin-react": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {

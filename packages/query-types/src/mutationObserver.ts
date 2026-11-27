@@ -1,7 +1,7 @@
 import type { RuntimeBinding } from './binding'
 import type { MutationObserverResult } from './types'
 
-export type MutationObserverListener<
+type MutationObserverListener<
   TRuntime extends RuntimeBinding,
   TData,
   TError,
@@ -16,3 +16,5 @@ export type MutationObserverListener<
     TOnMutateResult
   >,
 ) => void
+
+export type { MutationObserverListener }

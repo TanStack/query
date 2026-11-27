@@ -22,10 +22,11 @@ import type {
 } from './queryObserver'
 import type {
   DefaultError,
+  InfiniteData,
+  QueryKey,
   DefaultOptions as SharedDefaultOptions,
   DefaultedInfiniteQueryObserverOptions as SharedDefaultedInfiniteQueryObserverOptions,
   DefaultedQueryObserverOptions as SharedDefaultedQueryObserverOptions,
-  InfiniteData,
   InfiniteQueryExecuteOptions as SharedInfiniteQueryExecuteOptions,
   InfiniteQueryObserverOptions as SharedInfiniteQueryObserverOptions,
   InvalidateQueryFilters as SharedInvalidateQueryFilters,
@@ -48,7 +49,6 @@ import type {
   QueryExecuteOptions as SharedQueryExecuteOptions,
   QueryFunction as SharedQueryFunction,
   QueryFunctionContext as SharedQueryFunctionContext,
-  QueryKey,
   QueryObserverOptions as SharedQueryObserverOptions,
   QueryObserverOptionsBase as SharedQueryObserverOptionsBase,
   QueryOptions as SharedQueryOptions,
@@ -61,6 +61,7 @@ import type {
   MutationFilters as SharedMutationFilters,
   QueryFilters as SharedQueryFilters,
 } from './utils'
+
 export type { IsServerValue } from './environmentManager'
 export type { DehydratedState } from './hydration'
 export type { MutationState, MutationAction } from './mutation'
@@ -155,27 +156,26 @@ export type {
   DefaultQueryFn,
   FetchSignalContext,
 } from './utils'
-export type DehydrateOptions = SharedDehydrateOptions<DefaultRuntime>
-export type HydrateOptions = SharedHydrateOptions<DefaultRuntime>
-export type MutationCacheConfig = SharedMutationCacheConfig<DefaultRuntime>
-export type MutationCacheNotifyEvent =
-  SharedMutationCacheNotifyEvent<DefaultRuntime>
-export type FetchContext<
+type DehydrateOptions = SharedDehydrateOptions<DefaultRuntime>
+type HydrateOptions = SharedHydrateOptions<DefaultRuntime>
+type MutationCacheConfig = SharedMutationCacheConfig<DefaultRuntime>
+type MutationCacheNotifyEvent = SharedMutationCacheNotifyEvent<DefaultRuntime>
+type FetchContext<
   TQueryFnData,
   TError,
   TData,
   TQueryKey extends QueryKey = QueryKey,
 > = SharedFetchContext<DefaultRuntime, TQueryFnData, TError, TData, TQueryKey>
-export type QueryBehavior<
+type QueryBehavior<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = SharedQueryBehavior<DefaultRuntime, TQueryFnData, TError, TData, TQueryKey>
-export type QueryCacheConfig = SharedQueryCacheConfig<DefaultRuntime>
-export type QueryCacheNotifyEvent = SharedQueryCacheNotifyEvent<DefaultRuntime>
-export type QueryStore = SharedQueryStore<DefaultRuntime>
-export type QueryObserverResultContext<
+type QueryCacheConfig = SharedQueryCacheConfig<DefaultRuntime>
+type QueryCacheNotifyEvent = SharedQueryCacheNotifyEvent<DefaultRuntime>
+type QueryStore = SharedQueryStore<DefaultRuntime>
+type QueryObserverResultContext<
   TQueryFnData,
   TError,
   TData,
@@ -189,7 +189,7 @@ export type QueryObserverResultContext<
   TQueryData,
   TQueryKey
 >
-export type ObserverOptionsInput<
+type ObserverOptionsInput<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -203,12 +203,12 @@ export type ObserverOptionsInput<
   TQueryData,
   TQueryKey
 >
-export type QueryFunction<
+type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > = SharedQueryFunction<DefaultRuntime, T, TQueryKey, TPageParam>
-export type StaleTimeFunction<
+type StaleTimeFunction<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -220,7 +220,7 @@ export type StaleTimeFunction<
   TData,
   TQueryKey
 >
-export type QueryBooleanOption<
+type QueryBooleanOption<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -232,16 +232,16 @@ export type QueryBooleanOption<
   TData,
   TQueryKey
 >
-export type QueryPersister<
+type QueryPersister<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > = SharedQueryPersister<DefaultRuntime, T, TQueryKey, TPageParam>
-export type QueryFunctionContext<
+type QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = never,
 > = SharedQueryFunctionContext<DefaultRuntime, TQueryKey, TPageParam>
-export type PlaceholderDataFunction<
+type PlaceholderDataFunction<
   TQueryFnData = unknown,
   TError = DefaultError,
   TQueryData = TQueryFnData,
@@ -253,7 +253,7 @@ export type PlaceholderDataFunction<
   TQueryData,
   TQueryKey
 >
-export type QueryOptions<
+type QueryOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -267,7 +267,7 @@ export type QueryOptions<
   TQueryKey,
   TPageParam
 >
-export type ThrowOnError<
+type ThrowOnError<
   TQueryFnData,
   TError,
   TQueryData,
@@ -279,7 +279,7 @@ export type ThrowOnError<
   TQueryData,
   TQueryKey
 >
-export type QueryObserverOptionsBase<
+type QueryObserverOptionsBase<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -295,7 +295,7 @@ export type QueryObserverOptionsBase<
   TQueryKey,
   TPageParam
 >
-export type QueryObserverOptions<
+type QueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -311,7 +311,7 @@ export type QueryObserverOptions<
   TQueryKey,
   TPageParam
 >
-export type DefaultedQueryObserverOptions<
+type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -327,7 +327,7 @@ export type DefaultedQueryObserverOptions<
   TQueryKey,
   TPageParam
 >
-export type InfiniteQueryObserverOptions<
+type InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -341,7 +341,7 @@ export type InfiniteQueryObserverOptions<
   TQueryKey,
   TPageParam
 >
-export type DefaultedInfiniteQueryObserverOptions<
+type DefaultedInfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -355,7 +355,7 @@ export type DefaultedInfiniteQueryObserverOptions<
   TQueryKey,
   TPageParam
 >
-export type QueryExecuteOptions<
+type QueryExecuteOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
@@ -371,7 +371,7 @@ export type QueryExecuteOptions<
   TQueryKey,
   TPageParam
 >
-export type InfiniteQueryExecuteOptions<
+type InfiniteQueryExecuteOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
@@ -385,17 +385,16 @@ export type InfiniteQueryExecuteOptions<
   TQueryKey,
   TPageParam
 >
-export type InvalidateQueryFilters<TQueryKey extends QueryKey = QueryKey> =
+type InvalidateQueryFilters<TQueryKey extends QueryKey = QueryKey> =
   SharedInvalidateQueryFilters<DefaultRuntime, TQueryKey>
-export type RefetchQueryFilters<TQueryKey extends QueryKey = QueryKey> =
+type RefetchQueryFilters<TQueryKey extends QueryKey = QueryKey> =
   SharedRefetchQueryFilters<DefaultRuntime, TQueryKey>
-export type MutationFunctionContext =
-  SharedMutationFunctionContext<DefaultRuntime>
-export type MutationFunction<
+type MutationFunctionContext = SharedMutationFunctionContext<DefaultRuntime>
+type MutationFunction<
   TData = unknown,
   TVariables = unknown,
 > = SharedMutationFunction<DefaultRuntime, TData, TVariables>
-export type MutationOptions<
+type MutationOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -407,7 +406,7 @@ export type MutationOptions<
   TVariables,
   TOnMutateResult
 >
-export type MutationObserverOptions<
+type MutationObserverOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -419,7 +418,7 @@ export type MutationObserverOptions<
   TVariables,
   TOnMutateResult
 >
-export type MutateOptions<
+type MutateOptions<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -431,7 +430,7 @@ export type MutateOptions<
   TVariables,
   TOnMutateResult
 >
-export type MutateFunctionRest<
+type MutateFunctionRest<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -443,7 +442,7 @@ export type MutateFunctionRest<
   TVariables,
   TOnMutateResult
 >
-export type MutateFunction<
+type MutateFunction<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -455,7 +454,7 @@ export type MutateFunction<
   TVariables,
   TOnMutateResult
 >
-export type MutationObserverBaseResult<
+type MutationObserverBaseResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -467,7 +466,7 @@ export type MutationObserverBaseResult<
   TVariables,
   TOnMutateResult
 >
-export type MutationObserverIdleResult<
+type MutationObserverIdleResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -479,7 +478,7 @@ export type MutationObserverIdleResult<
   TVariables,
   TOnMutateResult
 >
-export type MutationObserverLoadingResult<
+type MutationObserverLoadingResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -491,7 +490,7 @@ export type MutationObserverLoadingResult<
   TVariables,
   TOnMutateResult
 >
-export type MutationObserverErrorResult<
+type MutationObserverErrorResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -503,7 +502,7 @@ export type MutationObserverErrorResult<
   TVariables,
   TOnMutateResult
 >
-export type MutationObserverSuccessResult<
+type MutationObserverSuccessResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -515,7 +514,7 @@ export type MutationObserverSuccessResult<
   TVariables,
   TOnMutateResult
 >
-export type MutationObserverResult<
+type MutationObserverResult<
   TData = unknown,
   TError = DefaultError,
   TVariables = void,
@@ -527,14 +526,16 @@ export type MutationObserverResult<
   TVariables,
   TOnMutateResult
 >
-export type QueryClientConfig = SharedQueryClientConfig<DefaultRuntime>
-export type DefaultOptions<TError = DefaultError> = SharedDefaultOptions<
+type QueryClientConfig = SharedQueryClientConfig<DefaultRuntime>
+type DefaultOptions<TError = DefaultError> = SharedDefaultOptions<
   DefaultRuntime,
   TError
 >
-export type QueryFilters<TQueryKey extends QueryKey = QueryKey> =
-  SharedQueryFilters<DefaultRuntime, TQueryKey>
-export type MutationFilters<
+type QueryFilters<TQueryKey extends QueryKey = QueryKey> = SharedQueryFilters<
+  DefaultRuntime,
+  TQueryKey
+>
+type MutationFilters<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
@@ -553,3 +554,59 @@ export type { Query } from './contracts'
 export type { Mutation } from './contracts'
 export type { QueryObserver } from './contracts'
 export type { MutationObserver } from './contracts'
+export type {
+  FocusManager,
+  OnlineManager,
+  TimeoutManager,
+  QueriesObserver,
+  InfiniteQueryObserver,
+  CancelledError,
+} from './contracts'
+
+export type {
+  DehydrateOptions,
+  HydrateOptions,
+  MutationCacheConfig,
+  MutationCacheNotifyEvent,
+  FetchContext,
+  QueryBehavior,
+  QueryCacheConfig,
+  QueryCacheNotifyEvent,
+  QueryStore,
+  QueryObserverResultContext,
+  ObserverOptionsInput,
+  QueryFunction,
+  StaleTimeFunction,
+  QueryBooleanOption,
+  QueryPersister,
+  QueryFunctionContext,
+  PlaceholderDataFunction,
+  QueryOptions,
+  ThrowOnError,
+  QueryObserverOptionsBase,
+  QueryObserverOptions,
+  DefaultedQueryObserverOptions,
+  InfiniteQueryObserverOptions,
+  DefaultedInfiniteQueryObserverOptions,
+  QueryExecuteOptions,
+  InfiniteQueryExecuteOptions,
+  InvalidateQueryFilters,
+  RefetchQueryFilters,
+  MutationFunctionContext,
+  MutationFunction,
+  MutationOptions,
+  MutationObserverOptions,
+  MutateOptions,
+  MutateFunctionRest,
+  MutateFunction,
+  MutationObserverBaseResult,
+  MutationObserverIdleResult,
+  MutationObserverLoadingResult,
+  MutationObserverErrorResult,
+  MutationObserverSuccessResult,
+  MutationObserverResult,
+  QueryClientConfig,
+  DefaultOptions,
+  QueryFilters,
+  MutationFilters,
+}

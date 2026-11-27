@@ -1,9 +1,17 @@
-export type NotifyCallback = () => void
+type NotifyCallback = () => void
 
-export type NotifyFunction = (callback: () => void) => void
+type NotifyFunction = (callback: () => void) => void
 
-export type BatchNotifyFunction = (callback: () => void) => void
+type BatchNotifyFunction = (callback: () => void) => void
 
-export type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
+type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
 
-export type ScheduleFunction = (callback: () => void) => void
+type ScheduleFunction = (callback: () => void) => void
+
+export type {
+  NotifyCallback,
+  NotifyFunction,
+  BatchNotifyFunction,
+  BatchCallsCallback,
+  ScheduleFunction,
+}

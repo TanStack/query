@@ -46,4 +46,6 @@ export type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> =
     readonly clearInterval: (intervalId: TTimerId | undefined) => void
   }
 
-export type SystemTimerId = ReturnType<typeof setTimeout>
+type SystemTimerId = ReturnType<typeof setTimeout>
+
+export type { SystemTimerId }

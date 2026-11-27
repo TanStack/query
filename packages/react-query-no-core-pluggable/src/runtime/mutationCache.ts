@@ -7,8 +7,10 @@ import type { QueryRuntime } from './runtimeBinding'
 import type { DefaultError } from './types'
 import type { MutationFilters } from './utils'
 
+/** {@inheritDoc Shared.MutationCacheConfig} */
 export type MutationCacheConfig = Shared.MutationCacheConfig<QueryRuntime>
 
+/** {@inheritDoc Shared.MutationCacheNotifyEvent} */
 export type MutationCacheNotifyEvent =
   Shared.MutationCacheNotifyEvent<QueryRuntime>
 

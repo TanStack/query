@@ -14,10 +14,13 @@ const workloads = [
     title:
       'Paginated list with bookmarks · useQuery, useMutation, useInfiniteQuery',
   },
+  {
+    screen: 'polling',
+    title: 'Polling with the four regular and suspense query hooks',
+  },
 ]
 
 async function measure(packageName, screen) {
-  const withPlugins = packageName === pluggable && screen === 'paginated'
   const outDir = path.join(root, 'dist', screen, packageName.split('/')[1])
   const result = await build({
     root,
@@ -28,10 +31,12 @@ async function measure(packageName, screen) {
     resolve: {
       alias: {
         '#adapter': packageName,
-        '#client': path.join(
+        '#polling-option': path.join(
           root,
           'src',
-          withPlugins ? 'plugin-client.js' : 'client.js',
+          packageName === pluggable
+            ? 'pluggable-interval.js'
+            : 'numeric-interval.js',
         ),
         '#screen': path.join(root, 'src', `${screen}.jsx`),
       },
@@ -70,16 +75,15 @@ async function measure(packageName, screen) {
   ) {
     throw new Error(`${packageName} bundled @tanstack/query-core`)
   }
-  if (
-    packageName === pluggable &&
-    screen === 'query' &&
-    modules.some((id) =>
-      /\/runtime\/(mutation|mutationCache|infiniteQueryBehavior)\.js$/.test(id),
+  if (packageName === pluggable) {
+    const includesPolling = modules.some((id) =>
+      id.endsWith('/runtime/refetchInterval.js'),
     )
-  ) {
-    throw new Error(
-      'The query-only client bundled an optional plugin implementation',
-    )
+    if (includesPolling !== (screen === 'polling')) {
+      throw new Error(
+        `Unexpected refetchInterval implementation in ${screen}: included=${includesPolling}`,
+      )
+    }
   }
 
   const sizes = { raw: 0, gzip: 0, brotli: 0 }
@@ -102,6 +106,22 @@ function formatSize(bytes, baselineBytes, isBaseline) {
   const sign = difference > 0 ? '+' : ''
   const percent = ((100 * difference) / baselineBytes).toFixed(2)
   return `${size} (${sign}${integer.format(difference)} B, ${sign}${percent}%)`
+}
+
+// These public typing helpers share one callable in each standalone ESM package.
+for (const name of packages.filter((name) => name !== baseline)) {
+  const { queryOptions, mutationOptions, infiniteQueryOptions } = await import(
+    name
+  )
+  if (
+    typeof queryOptions !== 'function' ||
+    queryOptions !== mutationOptions ||
+    queryOptions !== infiniteQueryOptions
+  ) {
+    throw new Error(
+      `${name} must export one runtime function for all three option factories`,
+    )
+  }
 }
 
 const lines = [
@@ -129,7 +149,7 @@ for (const { screen, title } of workloads) {
 }
 lines.push(
   '',
-  'Gzip level 9 and Brotli quality 11 are applied to each JavaScript chunk before summing. The pluggable client registers mutation and infinite-query support for the paginated workload.',
+  'Gzip level 9 and Brotli quality 11 are applied to each JavaScript chunk before summing. All workloads use the default client. Only the polling app imports the pluggable refetchInterval helper.',
   '',
 )
 const report = lines.join('\n')

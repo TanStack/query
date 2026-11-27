@@ -13,7 +13,15 @@ export default defineConfig({
   ...base,
   resolve: {
     ...base.resolve,
-    alias: { '@tanstack/query-core': join(adapter, 'src/runtime/index.ts') },
+    alias: {
+      '@tanstack/query-core': join(adapter, 'src/runtime/index.ts'),
+      ...(basename(adapter) === 'react-query-no-core-pluggable' && {
+        '@tanstack/query-test-utils/polling': join(
+          adapter,
+          'tests/compat-polling.ts',
+        ),
+      }),
+    },
   },
   test: {
     ...base.test,

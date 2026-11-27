@@ -9,11 +9,11 @@ import type {
   QueryOptions,
 } from './types'
 
-export type QueryObserverListener<TData, TError> = (
+type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>,
 ) => void
 
-export interface ObserverFetchOptions extends FetchOptions {
+interface ObserverFetchOptions extends FetchOptions {
   throwOnError?: boolean
 }
 
@@ -25,7 +25,7 @@ export interface QueryObserverResultReader<TResult> {
   commit: () => void
 }
 
-export type ProjectionFailure<TError> = {
+type ProjectionFailure<TError> = {
   error: TError
   errorUpdatedAt: number
 }
@@ -122,3 +122,5 @@ export type ObserverOptionsInput<
       TQueryData,
       TQueryKey
     >
+
+export type { QueryObserverListener, ObserverFetchOptions, ProjectionFailure }

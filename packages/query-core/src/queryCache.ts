@@ -14,13 +14,13 @@ import type {
 } from './types'
 import type { QueryFilters } from './utils'
 
-export type QueryCacheConfig = Shared.QueryCacheConfig<QueryRuntime>
+type QueryCacheConfig = Shared.QueryCacheConfig<QueryRuntime>
 
-export type QueryCacheNotifyEvent = Shared.QueryCacheNotifyEvent<QueryRuntime>
+type QueryCacheNotifyEvent = Shared.QueryCacheNotifyEvent<QueryRuntime>
 
 type QueryCacheListener = Shared.QueryCacheListener<QueryRuntime>
 
-export type QueryStore = Shared.QueryStore<QueryRuntime>
+type QueryStore = Shared.QueryStore<QueryRuntime>
 
 // CLASS
 
@@ -296,3 +296,5 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     })
   }
 }
+
+export type { QueryCacheConfig, QueryCacheNotifyEvent, QueryStore }

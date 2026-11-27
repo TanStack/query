@@ -1,4 +1,4 @@
-import { clientFeatures } from './clientFeatures'
+import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
 import { CancelledError, canFetch, createRetryer } from './retryer'
@@ -14,10 +14,9 @@ import {
 import type * as Shared from '@tanstack/query-types/bindings'
 import type {
   FetchOptions,
-  QueryAction as Action,
+  QueryAction,
   QueryState,
 } from '@tanstack/query-types/bindings'
-import type { QueryClientFeatures } from './clientFeatures'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type { QueryObserver } from './queryObserver'
@@ -41,6 +40,7 @@ type QueryConfig<
   TQueryKey extends QueryKey = QueryKey,
 > = Shared.QueryConfig<QueryRuntime, TQueryFnData, TError, TData, TQueryKey>
 
+/** {@inheritDoc Shared.FetchContext} */
 export type FetchContext<
   TQueryFnData,
   TError,
@@ -48,6 +48,7 @@ export type FetchContext<
   TQueryKey extends QueryKey = QueryKey,
 > = Shared.FetchContext<QueryRuntime, TQueryFnData, TError, TData, TQueryKey>
 
+/** {@inheritDoc Shared.QueryBehavior} */
 export type QueryBehavior<
   TQueryFnData = unknown,
   TError = DefaultError,
@@ -85,7 +86,7 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
-  #infiniteQueryBehavior?: QueryClientFeatures['infiniteQueryBehavior']
+  #queryType?: 'infinite'
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
@@ -102,9 +103,9 @@ export class Query<
 
     this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
-    this.#client = config.client
     this.setOptions(config.options)
     this.observers = []
+    this.#client = config.client
     this.#cache = this.#client.getQueryCache()
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
@@ -125,8 +126,8 @@ export class Query<
    * @internal
    * @returns The type of the query, set from the `_type` option (e.g. `'infinite'`).
    */
-  get queryType(): 'infinite' | undefined {
-    return this.#infiniteQueryBehavior ? 'infinite' : undefined
+  get queryType() {
+    return this.#queryType
   }
 
   /**
@@ -143,21 +144,15 @@ export class Query<
    * the `initialData` from the new options, if any.
    * @internal
    * @param options - The new query options, merged on top of the query's default options.
-   * @throws {Error} When an infinite query is used without `infiniteQueryPlugin`.
    */
   setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
-    if (options?._type === 'infinite') {
-      const behavior = this.#client[clientFeatures].infiniteQueryBehavior
-      if (!behavior) {
-        throw new Error(
-          'Add infiniteQueryPlugin to the QueryClient plugins to use infinite queries.',
-        )
-      }
-      this.#infiniteQueryBehavior = behavior
-    }
     this.options = { ...this.#defaultOptions, ...options }
+
+    if (options?._type) {
+      this.#queryType = options._type
+    }
 
     this.updateGcTime(this.options.gcTime)
 
@@ -607,9 +602,10 @@ export class Query<
       state: this.state,
       fetchFn,
     }
-    if (this.#infiniteQueryBehavior) {
-      addSignalProperty(context)
-      const behavior = this.#infiniteQueryBehavior(
+    addSignalProperty(context)
+
+    if (this.#queryType === 'infinite') {
+      const behavior = infiniteQueryBehavior(
         (this.options as { pages?: number }).pages,
       ) as QueryBehavior<TQueryFnData, TError, TData, TQueryKey>
       behavior.onFetch(context, this as unknown as Query)
@@ -762,13 +758,13 @@ export class Query<
 
   #update(
     state: Partial<QueryState<TData, TError>>,
-    action: Action<TData, TError>,
+    action: QueryAction<TData, TError>,
   ): void {
     this.state = { ...this.state, ...state }
     this.#notify(action)
   }
 
-  #notify(action: Action<TData, TError>): void {
+  #notify(action: QueryAction<TData, TError>): void {
     notifyManager.batch(() => {
       // Keep the current iteration stable if an observer unsubscribes
       // synchronously while it is being notified.

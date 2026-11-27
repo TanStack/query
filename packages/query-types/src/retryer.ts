@@ -1,6 +1,6 @@
 import type { CancelOptions, DefaultError, NetworkMode } from './types'
 
-export interface RetryerConfig<TData = unknown, TError = DefaultError> {
+interface RetryerConfig<TData = unknown, TError = DefaultError> {
   fn: () => TData | Promise<TData>
   initialPromise?: Promise<TData>
   onCancel?: (error: TError) => void
@@ -53,7 +53,7 @@ export interface Retryer<TData = unknown> {
   status: () => 'pending' | 'resolved' | 'rejected'
 }
 
-export type RetryerStatus = 'pending' | 'resolved' | 'rejected'
+type RetryerStatus = 'pending' | 'resolved' | 'rejected'
 
 /** @inline */
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
@@ -72,3 +72,5 @@ export type RetryDelayFunction<TError = DefaultError> = (
   failureCount: number,
   error: TError,
 ) => number
+
+export type { RetryerConfig, RetryerStatus }

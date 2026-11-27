@@ -1,4 +1,5 @@
 import { createKey } from '@tanstack/query-test-utils'
+import { refetchInterval } from '@tanstack/query-test-utils/polling'
 import {
   afterEach,
   assertType,
@@ -8,6 +9,7 @@ import {
   it,
 } from 'vitest'
 import { QueryClient, QueryObserver, defaultQueryFn } from '..'
+import type { IntervalInput } from '@tanstack/query-test-utils/polling'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -191,7 +193,7 @@ describe('queryObserver', () => {
             expectTypeOf(query.state.data).toEqualTypeOf<
               { value: string } | undefined
             >()
-            return false
+            return refetchInterval(false)
           },
         })
       })
@@ -201,18 +203,18 @@ describe('queryObserver', () => {
           queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error a refetchInterval callback must return a number, false or undefined
-          refetchInterval: () => 'often',
+          refetchInterval: refetchInterval(() => 'often'),
         })
 
         expectTypeOf<
           Extract<
-            QueryObserverOptions['refetchInterval'],
+            IntervalInput<QueryObserverOptions['refetchInterval']>,
             (...args: Array<any>) => any
           >
         >().returns.toEqualTypeOf<number | false | undefined>()
         expectTypeOf<
           Exclude<
-            QueryObserverOptions['refetchInterval'],
+            IntervalInput<QueryObserverOptions['refetchInterval']>,
             (...args: Array<any>) => any
           >
         >().toEqualTypeOf<number | false | undefined>()

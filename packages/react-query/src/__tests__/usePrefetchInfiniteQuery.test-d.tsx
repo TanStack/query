@@ -1,4 +1,5 @@
 import { createKey } from '@tanstack/query-test-utils'
+import { refetchInterval } from '@tanstack/query-test-utils/polling'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { skipToken, usePrefetchInfiniteQuery } from '..'
 
@@ -32,7 +33,7 @@ describe('usePrefetchInfiniteQuery', () => {
         initialPageParam: 1,
         getNextPageParam: () => 1,
         // @ts-expect-error TS2353
-        refetchInterval: 1000,
+        refetchInterval: refetchInterval(1000),
       }),
     )
 

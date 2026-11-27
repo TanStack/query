@@ -7,10 +7,9 @@ import type { QueryRuntime } from './runtimeBinding'
 import type { DefaultError } from './types'
 import type { MutationFilters } from './utils'
 
-export type MutationCacheConfig = Shared.MutationCacheConfig<QueryRuntime>
+type MutationCacheConfig = Shared.MutationCacheConfig<QueryRuntime>
 
-export type MutationCacheNotifyEvent =
-  Shared.MutationCacheNotifyEvent<QueryRuntime>
+type MutationCacheNotifyEvent = Shared.MutationCacheNotifyEvent<QueryRuntime>
 
 type MutationCacheListener = Shared.MutationCacheListener<QueryRuntime>
 
@@ -268,3 +267,5 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 function scopeFor(mutation: Mutation<any, any, any, any>) {
   return mutation.options.scope?.id
 }
+
+export type { MutationCacheConfig, MutationCacheNotifyEvent }

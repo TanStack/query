@@ -3,6 +3,7 @@ import {
   mockVisibilityState,
   sleep,
 } from '@tanstack/query-test-utils'
+import { refetchInterval } from '@tanstack/query-test-utils/polling'
 import { act, fireEvent, render, renderHook } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -4039,7 +4040,7 @@ describe('useQuery', () => {
       const { data } = useQuery({
         queryKey: key,
         queryFn: () => count++,
-        refetchInterval: int,
+        refetchInterval: refetchInterval(int),
       })
 
       React.useEffect(() => {
@@ -4071,7 +4072,8 @@ describe('useQuery', () => {
       const queryInfo = useQuery({
         queryKey: key,
         queryFn: () => sleep(10).then(() => count++),
-        refetchInterval: ({ state: { data = 0 } }) => (data < 2 ? 10 : false),
+        refetchInterval: ({ state: { data = 0 } }) =>
+          refetchInterval(data < 2 ? 10 : false),
       })
 
       states.push(queryInfo)
@@ -4135,7 +4137,7 @@ describe('useQuery', () => {
       const queryInfo = useQuery({
         queryKey: key,
         queryFn,
-        refetchInterval: 0,
+        refetchInterval: refetchInterval(0),
       })
 
       return <div>count: {queryInfo.data}</div>
