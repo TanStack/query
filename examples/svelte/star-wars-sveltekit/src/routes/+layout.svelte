@@ -2,7 +2,7 @@
   import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
   import '../app.css'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
-  import { browser } from '$app/environment'
+  import { browser } from '$app/env'
   import { resolve } from '$app/paths'
   import type { LayoutProps } from './$types'
 
