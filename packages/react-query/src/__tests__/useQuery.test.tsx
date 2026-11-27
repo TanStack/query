@@ -3,7 +3,6 @@ import {
   mockVisibilityState,
   sleep,
 } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { refetchInterval } from '@tanstack/query-test-utils/polling'
 import {
   placeholderOption,
@@ -182,9 +181,7 @@ describe('useQuery', () => {
       )
       try {
         await act(() => vi.advanceTimersByTimeAsync(0))
-        await act(() =>
-          cacheOperations(queryClient).cancelQueries({ queryKey: key }),
-        )
+        await act(() => queryClient.cancelQueries({ queryKey: key }))
         await act(() => vi.advanceTimersByTimeAsync(1))
         expect(view.result.current.fetchStatus).toBe('idle')
         focusManager.setFocused(false)
@@ -672,7 +669,7 @@ describe('useQuery', () => {
 
           <button
             onClick={() => {
-              cacheOperations(queryClient).removeQueries({ queryKey: key })
+              queryClient.removeQueries({ queryKey: key })
               setState({})
             }}
           >
@@ -968,11 +965,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <button
-            onClick={() =>
-              cacheOperations(queryClient).removeQueries({ queryKey: key })
-            }
-          >
+          <button onClick={() => queryClient.removeQueries({ queryKey: key })}>
             remove
           </button>
           <button onClick={() => setState({})}>rerender</button>
@@ -1021,11 +1014,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <button
-            onClick={() =>
-              cacheOperations(queryClient).removeQueries({ queryKey: key })
-            }
-          >
+          <button onClick={() => queryClient.removeQueries({ queryKey: key })}>
             remove
           </button>
           <button onClick={() => refetch()}>refetch</button>
@@ -1140,11 +1129,7 @@ describe('useQuery', () => {
       return (
         <div>
           <div>isFetching: {result.isFetching}</div>
-          <button
-            onClick={() =>
-              cacheOperations(queryClient).refetchQueries({ queryKey: key })
-            }
-          >
+          <button onClick={() => queryClient.refetchQueries({ queryKey: key })}>
             refetch
           </button>
           data: {result.data}
@@ -1180,9 +1165,7 @@ describe('useQuery', () => {
       return (
         <div>
           <button
-            onClick={() =>
-              cacheOperations(queryClient).invalidateQueries({ queryKey: key })
-            }
+            onClick={() => queryClient.invalidateQueries({ queryKey: key })}
           >
             invalidate
           </button>
@@ -1230,7 +1213,7 @@ describe('useQuery', () => {
 
       React.useEffect(() => {
         setActTimeout(() => {
-          cacheOperations(queryClient).refetchQueries({ queryKey: key })
+          queryClient.refetchQueries({ queryKey: key })
         }, 20)
       }, [])
 
@@ -1269,7 +1252,7 @@ describe('useQuery', () => {
 
       React.useEffect(() => {
         setActTimeout(() => {
-          cacheOperations(queryClient).invalidateQueries({ queryKey: key })
+          queryClient.invalidateQueries({ queryKey: key })
         }, 10)
       }, [])
 
@@ -3004,11 +2987,7 @@ describe('useQuery', () => {
       return (
         <div>
           <button onClick={toggle}>{show ? 'hide' : 'show'}</button>
-          <button
-            onClick={() =>
-              cacheOperations(queryClient).cancelQueries({ queryKey: key })
-            }
-          >
+          <button onClick={() => queryClient.cancelQueries({ queryKey: key })}>
             cancel
           </button>
           {show && <Page />}
@@ -4744,11 +4723,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <button
-            onClick={() =>
-              cacheOperations(queryClient).resetQueries({ queryKey: key })
-            }
-          >
+          <button onClick={() => queryClient.resetQueries({ queryKey: key })}>
             reset
           </button>
           <div>data: {state.data ?? 'null'}</div>
@@ -4824,11 +4799,7 @@ describe('useQuery', () => {
       return (
         <div>
           <button onClick={() => refetch()}>refetch</button>
-          <button
-            onClick={() =>
-              cacheOperations(queryClient).resetQueries({ queryKey: key })
-            }
-          >
+          <button onClick={() => queryClient.resetQueries({ queryKey: key })}>
             reset
           </button>
           <div>data: {state.data ?? 'null'}</div>
@@ -5252,7 +5223,7 @@ describe('useQuery', () => {
             <div>data: {state.data}</div>
             <button
               onClick={() =>
-                cacheOperations(queryClient).invalidateQueries({
+                queryClient.invalidateQueries({
                   queryKey: key,
                 })
               }
@@ -5314,7 +5285,7 @@ describe('useQuery', () => {
             <div>data: {state.data}</div>
             <button
               onClick={() =>
-                cacheOperations(queryClient).invalidateQueries({
+                queryClient.invalidateQueries({
                   queryKey: key,
                 })
               }
@@ -5364,7 +5335,7 @@ describe('useQuery', () => {
             <div>data: {state.data}</div>
             <button
               onClick={() =>
-                cacheOperations(queryClient).invalidateQueries({
+                queryClient.invalidateQueries({
                   queryKey: key,
                 })
               }
@@ -5413,7 +5384,7 @@ describe('useQuery', () => {
             <div>data: {state.data}</div>
             <button
               onClick={() =>
-                cacheOperations(queryClient).invalidateQueries({
+                queryClient.invalidateQueries({
                   queryKey: key,
                 })
               }
@@ -5463,7 +5434,7 @@ describe('useQuery', () => {
             <div>data: {state.data}</div>
             <button
               onClick={() =>
-                cacheOperations(queryClient).invalidateQueries({
+                queryClient.invalidateQueries({
                   queryKey: key,
                 })
               }
@@ -5683,9 +5654,7 @@ describe('useQuery', () => {
         return (
           <div>
             <button
-              onClick={() =>
-                cacheOperations(queryClient).cancelQueries({ queryKey: key })
-              }
+              onClick={() => queryClient.cancelQueries({ queryKey: key })}
             >
               cancel
             </button>
@@ -5750,7 +5719,7 @@ describe('useQuery', () => {
             <button onClick={() => setShow(false)}>hide</button>
             <button
               onClick={() =>
-                cacheOperations(queryClient).invalidateQueries({
+                queryClient.invalidateQueries({
                   queryKey: key,
                 })
               }

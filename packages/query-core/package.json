@@ -40,6 +40,11 @@
       "types": "./build/index.d.ts",
       "default": "./build/index.js"
     },
+    "./primitives": {
+      "@tanstack/custom-condition": "./src/primitives.ts",
+      "types": "./build/primitives.d.ts",
+      "default": "./build/primitives.js"
+    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,
@@ -48,9 +53,6 @@
     "src",
     "!src/__tests__"
   ],
-  "dependencies": {
-    "@tanstack/query-types": "workspace:*"
-  },
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
     "typescript": "catalog:"

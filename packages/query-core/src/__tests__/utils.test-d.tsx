@@ -1,4 +1,3 @@
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import {
@@ -25,15 +24,10 @@ import {
   sleep,
   timeUntilStale,
 } from '../utils'
-import type { DataTag, MutationStatus } from '..'
+import type { DataTag, EqualityFn, MutationStatus } from '..'
 import type { Mutation } from '../mutation'
 import type { Query } from '../query'
-import type {
-  EqualityFn,
-  QueryFunction,
-  QueryKey,
-  QueryOptions,
-} from '../types'
+import type { QueryFunction, QueryKey, QueryOptions } from '../types'
 import type {
   DefaultQueryFn,
   MutationFilters,
@@ -125,7 +119,7 @@ describe('QueryFilters', () => {
 
     const queryKey: Key = ['foo', 'bar'] as any as Key
 
-    const result = cacheOperations(new QueryClient()).invalidateQueries({
+    const result = new QueryClient().invalidateQueries({
       queryKey,
     })
     expectTypeOf(result).toEqualTypeOf<Promise<void>>()

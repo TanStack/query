@@ -12,10 +12,7 @@ import {
   resolveQueryValue,
   skipToken,
 } from './utils'
-import type * as Shared from '@tanstack/query-types/bindings'
-import type { WithoutSkipToken } from '@tanstack/query-types/bindings'
 import type { QueryState } from './query'
-import type { QueryRuntime } from './runtimeBinding'
 import type {
   CancelOptions,
   DefaultError,
@@ -35,6 +32,7 @@ import type {
   QueryExecuteOptions,
   QueryKey,
   QueryObserverOptionsBase,
+  QueryOptions,
   RefetchOptions,
   RefetchQueryFilters,
   ResetOptions,
@@ -42,9 +40,21 @@ import type {
 } from './types'
 import type { MutationFilters, QueryFilters, Updater } from './utils'
 
-type QueryDefaults = Shared.QueryDefaults<QueryRuntime>
+type WithoutSkipToken<T extends { queryFn?: unknown }> = Omit<T, 'queryFn'> & {
+  queryFn?: Exclude<T['queryFn'], typeof skipToken>
+}
 
-type MutationDefaults = Shared.MutationDefaults<QueryRuntime>
+// TYPES
+
+interface QueryDefaults {
+  queryKey: QueryKey
+  defaultOptions: OmitKeyof<QueryOptions<any, any, any>, 'queryKey'>
+}
+
+interface MutationDefaults {
+  mutationKey: MutationKey
+  defaultOptions: MutationOptions<any, any, any, any>
+}
 
 // CLASS
 

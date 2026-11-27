@@ -27,6 +27,7 @@
     ],
     "reactQueryCompatibility": [
       "{workspaceRoot}/scripts/test-react-query-compat.mjs",
+      "{workspaceRoot}/scripts/port-query-client-tests.mjs",
       "{workspaceRoot}/scripts/port-query-projection-tests.mjs",
       "{workspaceRoot}/scripts/react-query-compat.config.ts",
       "{workspaceRoot}/packages/query-core/src/__tests__/**/*",

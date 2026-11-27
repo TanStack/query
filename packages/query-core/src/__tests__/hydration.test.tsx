@@ -1,5 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { serialScope } from '@tanstack/query-test-utils/scope'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { dehydrate, hydrate } from '../hydration'
@@ -790,7 +789,7 @@ describe('dehydration and rehydration', () => {
       })
       .catch(noop)
 
-    cacheOperations(queryClient).refetchQueries({ queryKey: key })
+    queryClient.refetchQueries({ queryKey: key })
 
     const dehydrated = dehydrate(queryClient)
     resolvePromise('string')
@@ -1535,7 +1534,7 @@ describe('dehydration and rehydration', () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
 
-    const prefetchPromise = cacheOperations(queryClient)
+    const prefetchPromise = queryClient
       .infiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) =>
@@ -1576,7 +1575,7 @@ describe('dehydration and rehydration', () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
 
-    const prefetchPromise = cacheOperations(queryClient)
+    const prefetchPromise = queryClient
       .infiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) =>
@@ -1598,7 +1597,7 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, dehydrated)
 
-    const resultPromise = cacheOperations(hydrationClient).infiniteQuery({
+    const resultPromise = hydrationClient.infiniteQuery({
       queryKey: key,
       queryFn: ({ pageParam }) =>
         sleep(10).then(() => ({
@@ -1620,7 +1619,7 @@ describe('dehydration and rehydration', () => {
     const key = createKey()
     const serverClient = new QueryClient({ queryCache: new QueryCache() })
 
-    const prefetchPromise = cacheOperations(serverClient)
+    const prefetchPromise = serverClient
       .infiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) =>
@@ -1657,7 +1656,7 @@ describe('dehydration and rehydration', () => {
     const key = createKey()
     const serverClient = new QueryClient({ queryCache: new QueryCache() })
 
-    const prefetchPromise = cacheOperations(serverClient)
+    const prefetchPromise = serverClient
       .infiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) =>
@@ -1686,7 +1685,7 @@ describe('dehydration and rehydration', () => {
     expect(beforeRefetch?.pages).toHaveLength(1)
     expect(beforeRefetch?.pageParams).toHaveLength(1)
 
-    const resultPromise = cacheOperations(clientClient).infiniteQuery({
+    const resultPromise = clientClient.infiniteQuery({
       queryKey: key,
       queryFn: ({ pageParam }) =>
         sleep(10).then(() => ({
@@ -1710,7 +1709,7 @@ describe('dehydration and rehydration', () => {
     const key = createKey()
     const serverClient = new QueryClient({ queryCache: new QueryCache() })
 
-    const prefetchPromise = cacheOperations(serverClient)
+    const prefetchPromise = serverClient
       .infiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) =>
@@ -1743,7 +1742,7 @@ describe('dehydration and rehydration', () => {
     const key = createKey()
     const serverClient = new QueryClient({ queryCache: new QueryCache() })
 
-    const prefetchPromise = cacheOperations(serverClient)
+    const prefetchPromise = serverClient
       .infiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) =>
@@ -1772,7 +1771,7 @@ describe('dehydration and rehydration', () => {
     }>(key)
     expect(beforeRefetch?.pages).toHaveLength(2)
 
-    const resultPromise = cacheOperations(clientClient)
+    const resultPromise = clientClient
       .infiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) =>

@@ -1,5 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { selectOption } from '@tanstack/query-test-utils/projection'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { InfiniteQueryObserver, QueryClient } from '..'
@@ -262,7 +261,7 @@ describe('InfiniteQueryObserver', () => {
     const unsubscribe = observer.subscribe(() => {})
     await vi.advanceTimersByTimeAsync(10)
 
-    cacheOperations(queryClient).removeQueries({ queryKey: key })
+    queryClient.removeQueries({ queryKey: key })
     queryClient.getQueryCache().build(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'recreated-page'),

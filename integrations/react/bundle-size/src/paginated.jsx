@@ -3,14 +3,14 @@ import {
   queryOptions,
   infiniteQueryOptions,
   mutationOptions,
-  useInfiniteQuery,
   useMutation,
   useQuery,
 } from '#adapter'
+import { useBookPages } from '#query-hooks'
 import { fetchBooks } from './books.js'
 
 export function ReadingList() {
-  const books = useInfiniteQuery(
+  const books = useBookPages(
     infiniteQueryOptions({
       queryKey: ['books'],
       queryFn: ({ pageParam, signal }) => fetchBooks(pageParam, signal),

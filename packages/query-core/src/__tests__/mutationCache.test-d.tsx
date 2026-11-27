@@ -1,4 +1,3 @@
-import { getMutationCache } from '@tanstack/query-test-utils/cacheOperations'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { MutationCache, QueryClient } from '..'
 import { Mutation } from '../mutation'
@@ -23,7 +22,7 @@ describe('mutationCache', () => {
   beforeEach(() => {
     queryClient = new QueryClient()
     queryClient.mount()
-    mutationCache = getMutationCache(queryClient)
+    mutationCache = queryClient.getMutationCache()
   })
 
   afterEach(() => {

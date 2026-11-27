@@ -1,5 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { refetchInterval } from '@tanstack/query-test-utils/polling'
 import {
   placeholderOption,
@@ -688,10 +687,7 @@ describe('useSuspenseQuery', () => {
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
-          <button
-            aria-label="fail"
-            onClick={() => cacheOperations(queryClient).resetQueries()}
-          >
+          <button aria-label="fail" onClick={() => queryClient.resetQueries()}>
             fail
           </button>
         </div>

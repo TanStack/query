@@ -1,5 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { refetchInterval } from '@tanstack/query-test-utils/polling'
 import {
   placeholderOption,
@@ -158,7 +157,7 @@ describe('queryObserver', () => {
     it('should not be re-fetched when invalidated with refetchType: all', async () => {
       const unsubscribe = observer.subscribe(vi.fn())
 
-      cacheOperations(queryClient).invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: key,
         refetchType: 'all',
       })
@@ -231,7 +230,7 @@ describe('queryObserver', () => {
 
       unsubscribe()
 
-      cacheOperations(queryClient).invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: key,
         refetchType: 'active',
       })
@@ -249,7 +248,7 @@ describe('queryObserver', () => {
       // Toggle enabled
       enabled = true
 
-      cacheOperations(queryClient).invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: key,
         refetchType: 'active',
       })
@@ -270,7 +269,7 @@ describe('queryObserver', () => {
       // Toggle enabled
       enabled = true
 
-      cacheOperations(queryClient).invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: key,
         refetchType: 'inactive',
       })
@@ -279,7 +278,7 @@ describe('queryObserver', () => {
       await vi.advanceTimersByTimeAsync(10)
       expect(count).toBe(0)
 
-      cacheOperations(queryClient).invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: key,
         refetchType: 'active',
       })
@@ -292,7 +291,7 @@ describe('queryObserver', () => {
       enabled = false
 
       // should not refetch since it is not active and we only refetch active
-      cacheOperations(queryClient).invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: key,
         refetchType: 'active',
       })
@@ -786,7 +785,7 @@ describe('queryObserver', () => {
     })
 
     shouldThrow = false
-    cacheOperations(queryClient).resetQueries({ queryKey: key })
+    queryClient.resetQueries({ queryKey: key })
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       data: undefined,
@@ -1702,7 +1701,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, options)
     const unsubscribe = observer.subscribe(noop)
 
-    cacheOperations(queryClient).removeQueries({ queryKey: key })
+    queryClient.removeQueries({ queryKey: key })
     // Broadcast can recreate the query without a queryFn before the observer updates.
     queryClient.getQueryCache().build(queryClient, {
       queryKey: key,

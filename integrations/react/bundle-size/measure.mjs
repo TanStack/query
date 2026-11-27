@@ -14,8 +14,8 @@ const baseCheckout = process.env.QUERY_BASE_CHECKOUT
 const basePackage =
   baseCheckout && path.join(baseCheckout, 'packages/react-query')
 const baseline = '@tanstack/react-query'
-const pluggable = '@tanstack/react-query-no-core-pluggable'
-const packages = [baseline, '@tanstack/react-query-no-core', pluggable]
+const pluggable = '@tanstack/react-query-pluggable'
+const packages = [baseline, pluggable]
 const workloads = [
   { screen: 'query', title: 'Read-only list' },
   { screen: 'paginated', title: 'Paginated bookmarks' },
@@ -29,10 +29,25 @@ const workloads = [
   },
 ]
 
-const excludedFromStandaloneApps = [
-  /\/(?:packages|node_modules\/@tanstack)\/(?:query-core|(?:angular|lit|preact|solid|svelte|vue)-query[^/]*)\//,
+const otherFrameworks = [
+  /\/(?:packages|node_modules\/@tanstack)\/(?:angular|lit|preact|solid|svelte|vue)-query[^/]*\//,
   /\/node_modules\/(?:@angular|@lit|@vue|lit|lit-element|lit-html|preact|solid-js|svelte|vue)\//,
 ]
+
+function runtimeOwners(directory, packageName) {
+  return [packageName.split('/')[1], 'query-core'].map(
+    (name) =>
+      normalizePath(path.join(directory, 'packages', name, 'build')) + '/',
+  )
+}
+
+const pluggableOwners = runtimeOwners(checkout, pluggable)
+function rendersFeature(id, feature) {
+  return (
+    id.endsWith(`/${feature}.js`) &&
+    pluggableOwners.some((dir) => id.startsWith(dir))
+  )
+}
 
 async function buildApp(packageName, screen, belongsToAdapter) {
   const outDir = path.join(root, 'dist', screen, packageName.split('/')[1])
@@ -61,6 +76,11 @@ async function buildApp(packageName, screen, belongsToAdapter) {
     resolve: {
       dedupe: ['react', 'react-dom'],
       alias: {
+        '#query-hooks': path.join(
+          root,
+          'src',
+          packageName === pluggable ? 'pluggable-query.js' : 'v6-query.js',
+        ),
         '#polling-option': path.join(
           root,
           'src',
@@ -116,6 +136,40 @@ function renderedModules(chunks) {
   )
 }
 
+// Each bulk operation may retain the other public operations it calls.
+const bulkOperations = {
+  getQueriesData: [],
+  setQueriesData: ['setQueryData'],
+  removeQueries: [],
+  resetQueries: ['refetchQueries'],
+  cancelQueries: [],
+  invalidateQueries: ['refetchQueries'],
+  refetchQueries: [],
+}
+
+function checkClientOperations(modules, workload, required) {
+  const operations = new Set(
+    modules.flatMap(([id, module]) => {
+      if (rendersFeature(id, 'cacheOperations')) return module.renderedExports
+      if (rendersFeature(id, 'queryClient')) {
+        return module.renderedExports.filter(
+          (name) => name === 'fetchQuery' || name === 'setQueryData',
+        )
+      }
+      return []
+    }),
+  )
+  const allowed = [required, ...(bulkOperations[required] ?? [])]
+  for (const name of operations) {
+    assert(
+      allowed.includes(name),
+      `${workload} retained unused client operation ${name}`,
+    )
+  }
+  if (required)
+    assert(operations.has(required), `${workload} is missing ${required}`)
+}
+
 function checkApp(chunks, packageName, screen) {
   const modules = renderedModules(chunks).map(([id]) => id)
   if (
@@ -127,18 +181,9 @@ function checkApp(chunks, packageName, screen) {
       `Missing built @tanstack/react-query from base checkout ${basePackage}`,
     )
   }
-  if (
-    modules.some((id) =>
-      /\/(?:packages|node_modules\/@tanstack)\/query-types\//.test(id),
-    )
-  ) {
-    throw new Error(
-      `${packageName} shipped runtime code from @tanstack/query-types`,
-    )
-  }
-  if (packageName !== baseline) {
+  if (packageName === pluggable) {
     const foreignRuntime = modules.find((id) =>
-      excludedFromStandaloneApps.some((pattern) => pattern.test(id)),
+      otherFrameworks.some((pattern) => pattern.test(id)),
     )
     if (foreignRuntime) {
       throw new Error(
@@ -154,8 +199,6 @@ function checkApp(chunks, packageName, screen) {
         `${packageName} included an internal runtime barrel in the app`,
       )
     }
-  }
-  if (packageName === pluggable) {
     const usesMutations = screen === 'paginated' || screen === 'options'
     const features = {
       queryClient: true,
@@ -165,7 +208,12 @@ function checkApp(chunks, packageName, screen) {
       mutationCache: usesMutations,
       mutation: usesMutations,
       mutationObserver: usesMutations,
+      suspenseQuery: screen === 'polling',
+      suspense: screen === 'polling',
       refetchInterval: screen === 'polling',
+      fetchInfiniteQuery: false,
+      infiniteQuery: screen === 'paginated' || screen === 'polling',
+      infiniteQueryObserver: screen === 'paginated' || screen === 'polling',
       infiniteQueryBehavior: screen === 'paginated' || screen === 'polling',
       select: screen === 'options',
       placeholderData: screen === 'options',
@@ -173,15 +221,18 @@ function checkApp(chunks, packageName, screen) {
       cacheOperations: screen === 'options',
     }
     for (const [feature, expected] of Object.entries(features)) {
-      const included = modules.some((id) =>
-        id.endsWith(`/runtime/${feature}.js`),
-      )
+      const included = modules.some((id) => rendersFeature(id, feature))
       if (included !== expected) {
         throw new Error(
           `Unexpected ${feature} implementation in ${screen}: included=${included}`,
         )
       }
     }
+    checkClientOperations(
+      renderedModules(chunks),
+      screen,
+      screen === 'options' ? 'invalidateQueries' : undefined,
+    )
   }
 }
 
@@ -214,13 +265,7 @@ async function measure(packageName, screen) {
   // Query chunk. Keep the original app entrypoint so it drives tree-shaking.
   const source =
     packageName === baseline && baseCheckout ? baseCheckout : checkout
-  const owners = (
-    packageName === baseline
-      ? ['react-query', 'query-core']
-      : [packageName.split('/')[1]]
-  ).map(
-    (name) => normalizePath(path.join(source, 'packages', name, 'build')) + '/',
-  )
+  const owners = runtimeOwners(source, packageName)
   const belongsToAdapter = (id) => owners.some((dir) => id.startsWith(dir))
   const attributed = await buildApp(packageName, screen, belongsToAdapter)
   const library = attributed.filter((chunk) => chunk.name === 'query-runtime')
@@ -256,20 +301,67 @@ async function measure(packageName, screen) {
   const largestModules = actual
     .sort(([, a], [, b]) => b.renderedLength - a.renderedLength)
     .slice(0, 5)
-    .map(([id]) => id.slice(owners.find((dir) => id.startsWith(dir)).length))
+    .map(([id]) =>
+      normalizePath(path.relative(path.join(source, 'packages'), id)),
+    )
   return { library: sizesOf(library), app: sizesOf(app), largestModules }
 }
 
 // A combined app cannot tell whether each projection pulls in its sibling,
 // or whether rendering a boundary pulls in paused-mutation restoration.
-async function checkStandaloneExports() {
+async function checkPluggableExports() {
+  const {
+    QueryClient,
+    query,
+    queryOptions,
+    mutationOptions,
+    infiniteQueryOptions,
+    QueriesObserver,
+    notifyManager,
+  } = await import(pluggable)
+  assert.deepEqual(
+    Object.getOwnPropertyNames(QueryClient.prototype),
+    ['constructor'],
+    'QueryClient operations must be independently importable',
+  )
+  if (
+    'getQueries' in QueriesObserver.prototype ||
+    'setBatchNotifyFunction' in notifyManager
+  ) {
+    throw new Error(
+      `${pluggable} exposed another adapter's observer or batch notification API`,
+    )
+  }
+  if (
+    typeof queryOptions !== 'function' ||
+    queryOptions !== query ||
+    queryOptions !== mutationOptions ||
+    queryOptions !== infiniteQueryOptions
+  ) {
+    throw new Error(
+      `${pluggable} must use the same identity function for query and the three option factories`,
+    )
+  }
+
   const expected = {
+    query: [],
+    suspenseQuery: ['suspenseQuery', 'suspense'],
+    infiniteQuery: [
+      'infiniteQuery',
+      'infiniteQueryObserver',
+      'infiniteQueryBehavior',
+    ],
+    fetchInfiniteQuery: ['fetchInfiniteQuery', 'infiniteQueryBehavior'],
     QueryClient: [],
+    fetchQuery: [],
+    setQueryData: [],
     getMutationCache: ['mutationCache'],
     select: ['select', 'projectResult'],
     placeholderData: ['placeholderData', 'projectResult'],
     serialScope: ['serialScope'],
-    invalidateQueries: ['cacheOperations'],
+    ...Object.fromEntries(
+      Object.keys(bulkOperations).map((name) => [name, ['cacheOperations']]),
+    ),
     HydrationBoundary: ['infiniteQueryBehavior'],
     dehydrate: [],
     hydrate: [
@@ -314,30 +406,26 @@ async function checkStandaloneExports() {
       )
       .filter(([, module]) => module.renderedLength > 0)
     for (const feature of features) {
-      const included = modules.some(([id]) =>
-        id.endsWith(`/runtime/${feature}.js`),
-      )
+      const included = modules.some(([id]) => rendersFeature(id, feature))
       if (included !== required.includes(feature)) {
         throw new Error(
           `Importing ${name} unexpectedly ${included ? 'included' : 'excluded'} ${feature}`,
         )
       }
     }
-    if (name === 'invalidateQueries') {
-      const [, operations] = modules.find(([id]) =>
-        id.endsWith('/runtime/cacheOperations.js'),
+    if (
+      ['QueryClient', 'fetchQuery', 'setQueryData'].includes(name) ||
+      Object.hasOwn(bulkOperations, name)
+    ) {
+      checkClientOperations(
+        modules,
+        name,
+        name === 'QueryClient' ? undefined : name,
       )
-      if (
-        operations.renderedExports.some(
-          (item) => !['invalidateQueries', 'refetchQueries'].includes(item),
-        )
-      ) {
-        throw new Error('Invalidation included unrelated bulk cache operations')
-      }
     }
   }
 }
-await checkStandaloneExports()
+await checkPluggableExports()
 
 const integer = new Intl.NumberFormat('en-US')
 function formatChange(bytes, baselineBytes) {
@@ -351,34 +439,6 @@ function formatSize(bytes, baselineBytes, isBaseline) {
   const size = `${integer.format(bytes)} B`
   if (isBaseline) return size
   return `${size}<br>${formatChange(bytes, baselineBytes)}`
-}
-
-// Inspect the published ESM entry points as a consumer would.
-for (const name of packages.filter((name) => name !== baseline)) {
-  const {
-    queryOptions,
-    mutationOptions,
-    infiniteQueryOptions,
-    QueriesObserver,
-    notifyManager,
-  } = await import(name)
-  if (
-    'getQueries' in QueriesObserver.prototype ||
-    'setBatchNotifyFunction' in notifyManager
-  ) {
-    throw new Error(
-      `${name} exposed another adapter's observer or batch notification API`,
-    )
-  }
-  if (
-    typeof queryOptions !== 'function' ||
-    queryOptions !== mutationOptions ||
-    queryOptions !== infiniteQueryOptions
-  ) {
-    throw new Error(
-      `${name} must export one runtime function for all three option factories`,
-    )
-  }
 }
 
 function revision(directory) {
@@ -396,7 +456,7 @@ const lines = [
   '',
   'Each row compares the Query JavaScript used by the same app. The change is measured against v6 for that row. Negative values mean fewer bytes.',
   '',
-  '| Workload | v6 | no-core change | no-core-pluggable change |',
+  '| Workload | React Query v6 | React Query Pluggable | Change vs v6 |',
   '| --- | ---: | ---: | ---: |',
 ]
 const results = []
@@ -406,18 +466,16 @@ for (const { screen, title } of workloads) {
     rows.push({ name, ...(await measure(name, screen)) })
   }
   results.push({ screen, title, rows })
-  const [v6Gzip, standaloneGzip, pluggableGzip] = rows.map(
-    (row) => row.library.gzip,
-  )
+  const [v6Gzip, pluggableGzip] = rows.map((row) => row.library.gzip)
   lines.push(
-    `| ${title} | ${integer.format(v6Gzip)} B | ${formatChange(standaloneGzip, v6Gzip)} | ${formatChange(pluggableGzip, v6Gzip)} |`,
+    `| ${title} | ${integer.format(v6Gzip)} B | ${integer.format(pluggableGzip)} B | ${formatChange(pluggableGzip, v6Gzip)} |`,
   )
 }
 lines.push(
   '',
-  'The pluggable read-only list retains the query client, cache, query and observer. Its production build drops the mutation cache and observer, polling scheduler, infinite-query behavior, selection, placeholder data, serial scopes and bulk cache operations. Both bookmark apps retain the mutation cache and observer.',
+  'The pluggable read-only list retains the query client, cache, query and observer. Its production build drops the Suspense builder and policy, mutation cache and observer, polling scheduler, infinite-query behavior, selection, placeholder data, serial scopes and bulk cache operations. Both bookmark apps retain the mutation cache and observer.',
   '',
-  `Baseline adapter at \`${base}\` (${baseCheckout ? 'base checkout' : 'current checkout'}). Alternatives and fixture at \`${head}\`.`,
+  `Baseline adapter and core at \`${base}\` (${baseCheckout ? 'base checkout' : 'current checkout'}). Pluggable adapter, core and fixture at \`${head}\`.`,
 )
 function addTable(key, heading, description) {
   lines.push(
@@ -453,7 +511,7 @@ function addTable(key, heading, description) {
 addTable(
   'library',
   'Query runtime sizes · minified JS, gzip and Brotli',
-  'The app entry drives tree-shaking. This build externalizes React and React DOM and groups retained Query modules into one ESM chunk. The baseline includes query-core. Each cell measures the isolated chunk directly.',
+  'The app entry drives tree-shaking. This build externalizes React and React DOM and groups the adapter and its retained query-core modules into one ESM chunk for each package. Each cell measures the isolated chunk directly.',
 )
 addTable(
   'app',

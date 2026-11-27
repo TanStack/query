@@ -10,10 +10,8 @@
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",
-    "@tanstack/query-types": "workspace:*",
     "@tanstack/react-query": "workspace:*",
-    "@tanstack/react-query-no-core": "workspace:*",
-    "@tanstack/react-query-no-core-pluggable": "workspace:*"
+    "@tanstack/react-query-pluggable": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.3.0"

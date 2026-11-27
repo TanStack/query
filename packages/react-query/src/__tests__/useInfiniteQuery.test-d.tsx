@@ -1,6 +1,5 @@
 import { QueryClient } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { selectOption } from '@tanstack/query-test-utils/projection'
 import { describe, expectTypeOf, it } from 'vitest'
 import { useInfiniteQuery } from '../useInfiniteQuery'
@@ -21,7 +20,7 @@ describe('pageParam', () => {
 
   it('should define type of param passed to queryFunctionContext with initialPageParam for infiniteQuery', () => {
     const queryClient = new QueryClient()
-    cacheOperations(queryClient).infiniteQuery({
+    queryClient.infiniteQuery({
       queryKey: ['key'],
       queryFn: ({ pageParam }) => {
         expectTypeOf(pageParam).toEqualTypeOf<number>()

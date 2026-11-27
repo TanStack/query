@@ -1,5 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   CancelledError,
@@ -489,13 +488,13 @@ describe('InfiniteQueryBehavior', () => {
       return String(pageParam)
     }
 
-    await cacheOperations(queryClient).infiniteQuery({
+    await queryClient.infiniteQuery({
       queryKey: key,
       queryFn,
       initialPageParam: null,
       getNextPageParam: () => undefined,
     })
-    await cacheOperations(queryClient).infiniteQuery({
+    await queryClient.infiniteQuery({
       queryKey: key,
       queryFn,
       initialPageParam: 'replacement',

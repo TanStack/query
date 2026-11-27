@@ -1,8 +1,7 @@
 import reactQueryDevtools from './packages/react-query-devtools/package.json'
 import reactQueryNextExperimental from './packages/react-query-next-experimental/package.json'
-import reactQueryPluggable from './packages/react-query-no-core-pluggable/package.json'
-import reactQueryNoCore from './packages/react-query-no-core/package.json'
 import reactQueryPersistClient from './packages/react-query-persist-client/package.json'
+import reactQueryPluggable from './packages/react-query-pluggable/package.json'
 import reactQuery from './packages/react-query/package.json'
 import type { KnipConfig } from 'knip'
 
@@ -15,13 +14,6 @@ const optionalPeerDependencies = (pkg: {
   Object.keys(pkg.peerDependenciesMeta)
     .filter((dependency) => dependency in pkg.peerDependencies)
     .map((dependency) => `${dependency}!`)
-
-// The compatibility runner creates test entry points for the adapter and runtime
-// modules imported by the upstream suites.
-const compatibilityEntries = [
-  'src/suspense.ts',
-  'src/runtime/{query,notifyManager,retryer,timeoutManager,utils}.ts',
-]
 
 export default {
   ignore: [
@@ -50,12 +42,13 @@ export default {
     'packages/react-query': {
       ignoreDependencies: optionalPeerDependencies(reactQuery),
     },
-    'packages/react-query-no-core': {
-      entry: compatibilityEntries,
-      ignoreDependencies: optionalPeerDependencies(reactQueryNoCore),
-    },
-    'packages/react-query-no-core-pluggable': {
-      entry: [...compatibilityEntries, 'tests/compat-*.ts'],
+    'packages/react-query-pluggable': {
+      // These internal imports are exercised by the upstream compatibility suites.
+      entry: [
+        'src/suspense.ts',
+        'src/runtime/{query,notifyManager,utils}.ts',
+        'tests/compat-*.ts',
+      ],
       ignoreDependencies: optionalPeerDependencies(reactQueryPluggable),
     },
     'packages/react-query-devtools': {

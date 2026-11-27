@@ -1,4 +1,4 @@
-// Run the original runtime and type suites against each adapter. The temporary
+// Run the original runtime and type suites against the pluggable adapter. The temporary
 // projects preserve the suites' relative imports without duplicating test cases.
 import { execFileSync } from 'node:child_process'
 import {
@@ -11,13 +11,26 @@ import {
 } from 'node:fs'
 import { createRequire } from 'node:module'
 import { basename, join, relative, resolve, sep } from 'node:path'
+import { queryClientTestPort } from './port-query-client-tests.mjs'
 import { portProjectionOptions } from './port-query-projection-tests.mjs'
 
 const adapter = process.cwd()
 const repository = resolve(import.meta.dirname, '..')
 const require = createRequire(import.meta.url)
 const entry = join(adapter, 'src/index.ts')
-const pluggable = basename(adapter) === 'react-query-no-core-pluggable'
+const packageName = '@tanstack/react-query-pluggable'
+const shared = [
+  'environmentManager',
+  'focusManager',
+  'onlineManager',
+  'removable',
+  'retryer',
+  'subscribable',
+  'timeoutManager',
+]
+
+// Only adapt imports in copies of the upstream tests and their setup. The
+// implementation and its workspace dependencies resolve the real core package.
 function importPath(from, to) {
   return './' + relative(from, to).split(sep).join('/')
 }
@@ -39,9 +52,32 @@ for (const suite of ['query-core', 'react-query']) {
       filter: (path) =>
         suite !== 'query-core' || basename(path) !== 'frameworkAdapters',
     })
-    if (pluggable) {
-      portProjectionOptions(join(source, '__tests__'))
+    const tests = join(source, '__tests__')
+    const originals = join(upstream, 'src/__tests__')
+    const testFiles = readdirSync(tests, { recursive: true }).filter((file) =>
+      /\.tsx?$/.test(file),
+    )
+    const configFiles =
+      suite === 'react-query'
+        ? [
+            join(upstream, 'test-setup.ts'),
+            join(
+              repository,
+              'packages/query-persist-client-core/src/createPersister.ts',
+            ),
+          ]
+        : []
+    const port = queryClientTestPort(
+      upstream,
+      [...testFiles.map((file) => join(originals, file)), ...configFiles],
+      packageName,
+    )
+    function copyTestModule(from, to) {
+      writeFileSync(to, port(from))
     }
+    for (const file of testFiles)
+      copyTestModule(join(originals, file), join(tests, file))
+    portProjectionOptions(tests)
 
     for (const file of readdirSync(implementation, { withFileTypes: true })) {
       if (!file.isFile() || !/\.tsx?$/.test(file.name)) continue
@@ -49,7 +85,13 @@ for (const suite of ['query-core', 'react-query']) {
       writeFileSync(join(source, file.name), `export * from '${target}'\n`)
     }
     if (suite === 'query-core') {
-      // The React runtimes expose the page fetcher directly.
+      for (const name of shared) {
+        writeFileSync(
+          join(source, name + '.ts'),
+          "export * from '@tanstack/query-core/primitives'\n",
+        )
+      }
+      // The pluggable runtime exposes the page fetcher directly.
       writeFileSync(
         join(source, '__tests__/infiniteFetch.ts'),
         `export { prepareInfiniteFetch } from '../infiniteQueryBehavior'\n`,
@@ -61,7 +103,18 @@ for (const suite of ['query-core', 'react-query']) {
       )
     }
 
-    const setup = join(repository, 'packages/react-query/test-setup.ts')
+    const setup = join(project, 'test-setup.ts')
+    const persister = join(source, 'createPersister.ts')
+    if (suite === 'react-query') {
+      copyTestModule(join(upstream, 'test-setup.ts'), setup)
+      copyTestModule(
+        join(
+          repository,
+          'packages/query-persist-client-core/src/createPersister.ts',
+        ),
+        persister,
+      )
+    }
     const tsconfig = {
       extends: join(adapter, 'tsconfig.json'),
       compilerOptions: {
@@ -71,27 +124,17 @@ for (const suite of ['query-core', 'react-query']) {
         emitDeclarationOnly: false,
         noEmit: true,
         paths: {
-          '@tanstack/query-core': [entry],
-          // The React suite uses per-query persistence. The separate whole-client
-          // persister subscribes through the original client's mutation-cache method.
-          ...(pluggable &&
-            suite === 'react-query' && {
-              '@tanstack/query-persist-client-core': [
-                join(
-                  repository,
-                  'packages/query-persist-client-core/src/createPersister.ts',
-                ),
-              ],
-            }),
-          ...(pluggable &&
-            Object.fromEntries(
-              ['polling', 'cacheOperations', 'projection', 'scope'].map(
-                (name) => [
-                  `@tanstack/query-test-utils/${name}`,
-                  [join(adapter, `tests/compat-${name}.ts`)],
-                ],
-              ),
-            )),
+          [packageName]: [entry],
+          // This suite exercises only the per-query persistence implementation.
+          ...(suite === 'react-query' && {
+            '@tanstack/query-persist-client-core': [persister],
+          }),
+          ...Object.fromEntries(
+            ['polling', 'projection', 'scope'].map((name) => [
+              `@tanstack/query-test-utils/${name}`,
+              [join(adapter, `tests/compat-${name}.ts`)],
+            ]),
+          ),
         },
       },
       include: suite === 'react-query' ? ['src', setup] : ['src'],

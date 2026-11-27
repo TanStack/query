@@ -4,10 +4,5 @@
     "outDir": "./dist-ts",
     "rootDir": "."
   },
-  "include": ["src", "*.config.ts", "*.config.js", "package.json"],
-  "references": [
-    {
-      "path": "../query-types"
-    }
-  ]
+  "include": ["src", "*.config.ts", "*.config.js", "package.json"]
 }

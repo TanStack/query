@@ -1,5 +1,5 @@
 /**
- * Supplies the interval directly to v6 and the integrated React adapter.
+ * Supplies the interval directly to the v6 query options.
  * The pluggable compatibility suite uses its own public factory here.
  * @param option - Interval setting from a shared test case.
  * @returns The supplied setting with its original type.
