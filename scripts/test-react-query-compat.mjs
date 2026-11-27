@@ -11,6 +11,7 @@ import {
 } from 'node:fs'
 import { createRequire } from 'node:module'
 import { basename, join, relative, resolve, sep } from 'node:path'
+import { portProjectionOptions } from './port-query-projection-tests.mjs'
 
 const adapter = process.cwd()
 const repository = resolve(import.meta.dirname, '..')
@@ -38,6 +39,9 @@ for (const suite of ['query-core', 'react-query']) {
       filter: (path) =>
         suite !== 'query-core' || basename(path) !== 'frameworkAdapters',
     })
+    if (pluggable) {
+      portProjectionOptions(join(source, '__tests__'))
+    }
 
     for (const file of readdirSync(implementation, { withFileTypes: true })) {
       if (!file.isFile() || !/\.tsx?$/.test(file.name)) continue
@@ -45,6 +49,11 @@ for (const suite of ['query-core', 'react-query']) {
       writeFileSync(join(source, file.name), `export * from '${target}'\n`)
     }
     if (suite === 'query-core') {
+      // The React runtimes expose the page fetcher directly.
+      writeFileSync(
+        join(source, '__tests__/infiniteFetch.ts'),
+        `export { prepareInfiniteFetch } from '../infiniteQueryBehavior'\n`,
+      )
       // Upstream tests use ".." for the public package and "../foo" for internals.
       writeFileSync(
         join(source, 'index.ts'),
@@ -63,11 +72,15 @@ for (const suite of ['query-core', 'react-query']) {
         noEmit: true,
         paths: {
           '@tanstack/query-core': [entry],
-          ...(pluggable && {
-            '@tanstack/query-test-utils/polling': [
-              join(adapter, 'tests/compat-polling.ts'),
-            ],
-          }),
+          ...(pluggable &&
+            Object.fromEntries(
+              ['polling', 'cacheOperations', 'projection', 'scope'].map(
+                (name) => [
+                  `@tanstack/query-test-utils/${name}`,
+                  [join(adapter, `tests/compat-${name}.ts`)],
+                ],
+              ),
+            )),
         },
       },
       include: suite === 'react-query' ? ['src', setup] : ['src'],

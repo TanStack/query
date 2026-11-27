@@ -1,3 +1,5 @@
+import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
+import { selectOption } from '@tanstack/query-test-utils/projection'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
@@ -79,6 +81,8 @@ const untypedFilterKey = untypedQueryFilters.queryKey!
 const untypedMutationKey = untypedMutationOptions.mutationKey!
 
 type SuccessCallback = () => unknown
+
+type CacheOperations = ReturnType<typeof cacheOperations<QueryClient>>
 
 describe('queryClient', () => {
   describe('getQueryData', () => {
@@ -284,12 +288,13 @@ describe('queryClient', () => {
     it('should resolve QueryKey and unknown for a tagged filter', () => {
       const queryClient = new QueryClient()
       // TODO: types here are wrong and coming up undefined
-      const data = queryClient.setQueriesData(typedQueryFilters, { foo: '' })
+      const operations = cacheOperations(queryClient)
+      const data = operations.setQueriesData(typedQueryFilters, { foo: '' })
 
       expectTypeOf(data).toEqualTypeOf<Array<[QueryKey, unknown]>>()
       expectTypeOf<
         Parameters<
-          typeof queryClient.setQueriesData<unknown, typeof typedQueryFilters>
+          typeof operations.setQueriesData<unknown, typeof typedQueryFilters>
         >[1]
       >().toEqualTypeOf<Updater<unknown, unknown>>()
     })
@@ -297,12 +302,13 @@ describe('queryClient', () => {
     it('should resolve QueryKey and unknown for an untyped filter', () => {
       const queryClient = new QueryClient()
       // TODO: types here are wrong and coming up undefined
-      const data = queryClient.setQueriesData(untypedQueryFilters, { foo: '' })
+      const operations = cacheOperations(queryClient)
+      const data = operations.setQueriesData(untypedQueryFilters, { foo: '' })
 
       expectTypeOf(data).toEqualTypeOf<Array<[QueryKey, unknown]>>()
       expectTypeOf<
         Parameters<
-          typeof queryClient.setQueriesData<unknown, typeof untypedQueryFilters>
+          typeof operations.setQueriesData<unknown, typeof untypedQueryFilters>
         >[1]
       >().toEqualTypeOf<Updater<unknown, unknown>>()
     })
@@ -360,7 +366,7 @@ describe('queryClient', () => {
       const result = new QueryClient().query({
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
-        select: (data) => data.length,
+        [selectOption]: (data) => data.length,
       })
 
       expectTypeOf(result).toEqualTypeOf<Promise<number>>()
@@ -370,7 +376,7 @@ describe('queryClient', () => {
       const result = new QueryClient().query({
         queryKey: ['key'],
         queryFn: skipToken,
-        select: (data: string) => data.length,
+        [selectOption]: (data: string) => data.length,
       })
 
       expectTypeOf(result).toEqualTypeOf<Promise<number | undefined>>()
@@ -404,12 +410,12 @@ describe('queryClient', () => {
 
   describe('infiniteQuery', () => {
     it('should allow passing select option', () => {
-      const result = new QueryClient().infiniteQuery({
+      const result = cacheOperations(new QueryClient()).infiniteQuery({
         queryKey: ['key'],
         queryFn: () => Promise.resolve({ count: 1 }),
         initialPageParam: 1,
         getNextPageParam: () => 2,
-        select: (data) => ({
+        [selectOption]: (data) => ({
           pages: data.pages.map((x) => `count: ${x.count}`),
         }),
       })
@@ -418,7 +424,7 @@ describe('queryClient', () => {
     })
 
     it('should allow passing pages', async () => {
-      const result = await new QueryClient().infiniteQuery({
+      const result = await cacheOperations(new QueryClient()).infiniteQuery({
         queryKey: ['key'],
         queryFn: () => Promise.resolve({ count: 1 }),
         getNextPageParam: () => 1,
@@ -444,7 +450,11 @@ describe('queryClient', () => {
     })
 
     it('should allow passing getNextPageParam without pages', () => {
-      assertType<Parameters<QueryClient['infiniteQuery']>>([
+      assertType<
+        Parameters<
+          ReturnType<typeof cacheOperations<QueryClient>>['infiniteQuery']
+        >
+      >([
         {
           queryKey: ['key'],
           queryFn: () => Promise.resolve({ count: 1 }),
@@ -455,7 +465,11 @@ describe('queryClient', () => {
     })
 
     it('should require getNextPageParam even without pages', () => {
-      assertType<Parameters<QueryClient['infiniteQuery']>>([
+      assertType<
+        Parameters<
+          ReturnType<typeof cacheOperations<QueryClient>>['infiniteQuery']
+        >
+      >([
         // @ts-expect-error Property 'getNextPageParam' is missing
         {
           queryKey: ['key'],
@@ -467,7 +481,7 @@ describe('queryClient', () => {
 
     it('should default its page param to unknown', () => {
       const queryClient = new QueryClient()
-      const result = queryClient.infiniteQuery({
+      const result = cacheOperations(queryClient).infiniteQuery({
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
         initialPageParam: 1,
@@ -478,15 +492,18 @@ describe('queryClient', () => {
         Promise<InfiniteData<string, number>>
       >()
 
+      const { infiniteQuery } = cacheOperations(queryClient)
       type PageParam = Parameters<
-        typeof queryClient.infiniteQuery<string, Error>
+        typeof infiniteQuery<string, Error>
       >[0]['initialPageParam']
       expectTypeOf<PageParam>().toEqualTypeOf<unknown>()
     })
 
     it('should resolve with InfiniteData of the data type', async () => {
       const queryClient = new QueryClient()
-      const data = await queryClient.infiniteQuery(typedInfiniteQueryOptions)
+      const data = await cacheOperations(queryClient).infiniteQuery(
+        typedInfiniteQueryOptions,
+      )
 
       expectTypeOf(data).toEqualTypeOf<
         InfiniteData<TypedData, unknown> | undefined
@@ -495,7 +512,9 @@ describe('queryClient', () => {
 
     it('should resolve with InfiniteData of unknown when untyped', async () => {
       const queryClient = new QueryClient()
-      const data = await queryClient.infiniteQuery(untypedInfiniteQueryOptions)
+      const data = await cacheOperations(queryClient).infiniteQuery(
+        untypedInfiniteQueryOptions,
+      )
 
       expectTypeOf(data).toEqualTypeOf<
         InfiniteData<unknown, unknown> | undefined
@@ -505,18 +524,18 @@ describe('queryClient', () => {
 
   describe('invalidateQueries', () => {
     it('should reject a non-array queryKey', () => {
-      assertType<Parameters<QueryClient['invalidateQueries']>>([])
-      assertType<Parameters<QueryClient['invalidateQueries']>>([
+      assertType<Parameters<CacheOperations['invalidateQueries']>>([])
+      assertType<Parameters<CacheOperations['invalidateQueries']>>([
         { queryKey: ['1'] },
       ])
-      assertType<Parameters<QueryClient['invalidateQueries']>>([
+      assertType<Parameters<CacheOperations['invalidateQueries']>>([
         // @ts-expect-error
         { queryKey: '1' },
       ])
     })
 
     it('should reject an object queryKey (#8684)', () => {
-      assertType<Parameters<QueryClient['invalidateQueries']>>([
+      assertType<Parameters<CacheOperations['invalidateQueries']>>([
         // @ts-expect-error key is not an array
         { queryKey: { foo: true } },
       ])
@@ -525,7 +544,7 @@ describe('queryClient', () => {
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      queryClient.invalidateQueries({
+      cacheOperations(queryClient).invalidateQueries({
         queryKey: key,
         predicate: (query) => {
           expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
@@ -538,14 +557,14 @@ describe('queryClient', () => {
     it('should return a promise of void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.invalidateQueries()).toEqualTypeOf<
-        Promise<void>
-      >()
+      expectTypeOf(
+        cacheOperations(queryClient).invalidateQueries(),
+      ).toEqualTypeOf<Promise<void>>()
     })
 
     it('should accept a refetchType that QueryFilters does not have', () => {
       type RefetchType = NonNullable<
-        Parameters<QueryClient['invalidateQueries']>[0]
+        Parameters<CacheOperations['invalidateQueries']>[0]
       >['refetchType']
       expectTypeOf<RefetchType>().toEqualTypeOf<
         'all' | 'active' | 'inactive' | 'none' | undefined
@@ -554,7 +573,7 @@ describe('queryClient', () => {
 
     it('should accept the refetch options it inherits as its second argument', () => {
       expectTypeOf<
-        NonNullable<Parameters<QueryClient['invalidateQueries']>[1]>
+        NonNullable<Parameters<CacheOperations['invalidateQueries']>[1]>
       >().toEqualTypeOf<{
         throwOnError?: boolean
         cancelRefetch?: boolean
@@ -566,7 +585,7 @@ describe('queryClient', () => {
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      queryClient.cancelQueries({
+      cacheOperations(queryClient).cancelQueries({
         queryKey: key,
         predicate: (query) => {
           expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
@@ -577,13 +596,15 @@ describe('queryClient', () => {
     })
 
     it('should accept being called without filters', () => {
-      assertType<Parameters<QueryClient['cancelQueries']>>([])
+      assertType<Parameters<CacheOperations['cancelQueries']>>([])
     })
 
     it('should return a promise of void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.cancelQueries()).toEqualTypeOf<Promise<void>>()
+      expectTypeOf(cacheOperations(queryClient).cancelQueries()).toEqualTypeOf<
+        Promise<void>
+      >()
     })
   })
 
@@ -591,7 +612,7 @@ describe('queryClient', () => {
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      queryClient.removeQueries({
+      cacheOperations(queryClient).removeQueries({
         queryKey: key,
         predicate: (query) => {
           expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
@@ -602,13 +623,15 @@ describe('queryClient', () => {
     })
 
     it('should accept being called without filters', () => {
-      assertType<Parameters<QueryClient['removeQueries']>>([])
+      assertType<Parameters<CacheOperations['removeQueries']>>([])
     })
 
     it('should return void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.removeQueries()).toEqualTypeOf<void>()
+      expectTypeOf(
+        cacheOperations(queryClient).removeQueries(),
+      ).toEqualTypeOf<void>()
     })
   })
 
@@ -616,7 +639,7 @@ describe('queryClient', () => {
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      queryClient.refetchQueries({
+      cacheOperations(queryClient).refetchQueries({
         queryKey: key,
         predicate: (query) => {
           expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
@@ -627,13 +650,15 @@ describe('queryClient', () => {
     })
 
     it('should accept being called without filters', () => {
-      assertType<Parameters<QueryClient['refetchQueries']>>([])
+      assertType<Parameters<CacheOperations['refetchQueries']>>([])
     })
 
     it('should return a promise of void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.refetchQueries()).toEqualTypeOf<Promise<void>>()
+      expectTypeOf(cacheOperations(queryClient).refetchQueries()).toEqualTypeOf<
+        Promise<void>
+      >()
     })
   })
 
@@ -641,7 +666,7 @@ describe('queryClient', () => {
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      queryClient.resetQueries({
+      cacheOperations(queryClient).resetQueries({
         queryKey: key,
         predicate: (query) => {
           expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
@@ -652,18 +677,20 @@ describe('queryClient', () => {
     })
 
     it('should accept being called without filters', () => {
-      assertType<Parameters<QueryClient['resetQueries']>>([])
+      assertType<Parameters<CacheOperations['resetQueries']>>([])
     })
 
     it('should return a promise of void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.resetQueries()).toEqualTypeOf<Promise<void>>()
+      expectTypeOf(cacheOperations(queryClient).resetQueries()).toEqualTypeOf<
+        Promise<void>
+      >()
     })
 
     it('should accept the refetch options it inherits as its second argument', () => {
       expectTypeOf<
-        NonNullable<Parameters<QueryClient['resetQueries']>[1]>
+        NonNullable<Parameters<CacheOperations['resetQueries']>[1]>
       >().toEqualTypeOf<{
         throwOnError?: boolean
         cancelRefetch?: boolean
@@ -800,23 +827,26 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(
-        queryClient.getQueriesData({ queryKey: ['key'] }),
+        cacheOperations(queryClient).getQueriesData({ queryKey: ['key'] }),
       ).toEqualTypeOf<Array<[QueryKey, unknown]>>()
 
       // @ts-expect-error filters are required
-      queryClient.getQueriesData()
+      cacheOperations(queryClient).getQueriesData()
     })
 
     it('should infer the passed generic as the tuple data', () => {
       const queryClient = new QueryClient()
-      const data = queryClient.getQueriesData<number>({ queryKey: ['key'] })
+      const data = cacheOperations(queryClient).getQueriesData<number>({
+        queryKey: ['key'],
+      })
 
       expectTypeOf(data).toEqualTypeOf<Array<[QueryKey, number | undefined]>>()
     })
 
     it('should widen the tuple to the filter key and unknown when tagged', () => {
       const queryClient = new QueryClient()
-      const data = queryClient.getQueriesData(typedQueryFilters)
+      const data =
+        cacheOperations(queryClient).getQueriesData(typedQueryFilters)
 
       expectTypeOf(data).toEqualTypeOf<
         Array<[ReadonlyArray<unknown>, unknown]>
@@ -825,7 +855,8 @@ describe('queryClient', () => {
 
     it('should resolve QueryKey and unknown when untyped', () => {
       const queryClient = new QueryClient()
-      const data = queryClient.getQueriesData(untypedQueryFilters)
+      const data =
+        cacheOperations(queryClient).getQueriesData(untypedQueryFilters)
 
       expectTypeOf(data).toEqualTypeOf<Array<[QueryKey, unknown]>>()
     })

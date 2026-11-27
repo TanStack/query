@@ -168,13 +168,13 @@ export function useQuery<
  * `select` derives whatever `data` a component needs from the cached value, without changing what's
  * actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
  * ```tsx
- * import { useQuery } from '@tanstack/react-query-no-core-pluggable'
+ * import { select, useQuery } from '@tanstack/react-query-no-core-pluggable'
  *
  * function PostCount() {
  *   const { data, isPending, isError, error } = useQuery({
  *     queryKey: ['posts'],
  *     queryFn: fetchPosts,
- *     select: (posts) => posts.length,
+ *     select: [select, (posts) => posts.length],
  *   })
  *
  *   if (isPending) return 'Loading...'
@@ -253,7 +253,7 @@ export function useQuery<
  * @example
  * Paginated data, keeping the previous page's data visible while the next page loads:
  * ```tsx
- * import { keepPreviousData, useQuery } from '@tanstack/react-query-no-core-pluggable'
+ * import { keepPreviousData, placeholderData, useQuery } from '@tanstack/react-query-no-core-pluggable'
  * import { useState } from 'react'
  *
  * function Posts() {
@@ -262,7 +262,7 @@ export function useQuery<
  *   const { data, isPlaceholderData, isError, error } = useQuery({
  *     queryKey: ['posts', page],
  *     queryFn: () => fetchPosts(page),
- *     placeholderData: keepPreviousData,
+ *     placeholderData: placeholderData(keepPreviousData),
  *   })
  *
  *   if (isError) return <span>Error: {error.message}</span>

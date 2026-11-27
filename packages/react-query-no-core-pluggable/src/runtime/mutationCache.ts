@@ -33,13 +33,11 @@ type MutationCacheListener = Shared.MutationCacheListener<QueryRuntime>
  */
 export class MutationCache extends Subscribable<MutationCacheListener> {
   #mutations: Set<Mutation<any, any, any, any>>
-  #scopes: Map<string | undefined, Array<Mutation<any, any, any, any>>>
   #mutationId: number
 
   constructor(public config: MutationCacheConfig = {}) {
     super()
     this.#mutations = new Set()
-    this.#scopes = new Map()
     this.#mutationId = 0
   }
 
@@ -64,15 +62,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    */
   add(mutation: Mutation<any, any, any, any>): void {
     this.#mutations.add(mutation)
-    const scope = scopeFor(mutation)
-    if (typeof scope === 'string') {
-      const scopedMutations = this.#scopes.get(scope)
-      if (scopedMutations) {
-        scopedMutations.push(mutation)
-      } else {
-        this.#scopes.set(scope, [mutation])
-      }
-    }
+    mutation.options.scope?.add(this, mutation)
     this.notify({ type: 'added', mutation })
   }
 
@@ -84,17 +74,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   remove(mutation: Mutation<any, any, any, any>): void {
     if (this.#mutations.delete(mutation)) {
       mutation.destroy()
-      const scope = scopeFor(mutation)
-      const scopedMutations = this.#scopes.get(scope)
-      if (scopedMutations) {
-        const index = scopedMutations.indexOf(mutation)
-        if (index !== -1) {
-          scopedMutations.splice(index, 1)
-          if (!scopedMutations.length) {
-            this.#scopes.delete(scope)
-          }
-        }
-      }
+      mutation.options.scope?.remove(this, mutation)
     }
 
     // Currently we notify the removal even if the mutation was already removed.
@@ -120,10 +100,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * ahead of it.
    */
   canRun(mutation: Mutation<any, any, any, any>): boolean {
-    const firstPendingMutation = this.#scopes
-      .get(scopeFor(mutation))
-      ?.find((candidate) => candidate.state.status === 'pending')
-    return !firstPendingMutation || firstPendingMutation === mutation
+    return mutation.options.scope?.canRun(this, mutation) ?? true
   }
 
   /**
@@ -134,11 +111,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * or immediately if there is none.
    */
   runNext(mutation: Mutation<any, any, any, any>): Promise<unknown> {
-    const next = this.#scopes
-      .get(scopeFor(mutation))
-      ?.find((entry) => entry !== mutation && entry.state.isPaused)
-
-    return next?.continue() ?? Promise.resolve()
+    return mutation.options.scope?.runNext(this, mutation) ?? Promise.resolve()
   }
 
   /**
@@ -155,8 +128,10 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     notifyManager.batch(() => {
       const mutations = this.getAll()
       this.#mutations.clear()
-      this.#scopes.clear()
-      mutations.forEach((mutation) => mutation.destroy())
+      mutations.forEach((mutation) => {
+        mutation.options.scope?.remove(this, mutation)
+        mutation.destroy()
+      })
       mutations.forEach((mutation) => {
         this.notify({ type: 'removed', mutation })
       })
@@ -260,13 +235,4 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       ),
     )
   }
-}
-
-/**
- * Returns the scope id of a mutation, used to run mutations with the same scope one after another.
- * @param mutation - The mutation to read the scope of.
- * @returns The mutation's `scope.id`, or `undefined` if it has no scope.
- */
-function scopeFor(mutation: Mutation<any, any, any, any>) {
-  return mutation.options.scope?.id
 }

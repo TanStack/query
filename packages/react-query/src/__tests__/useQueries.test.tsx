@@ -1,4 +1,6 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
+import { selectOption } from '@tanstack/query-test-utils/projection'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -70,7 +72,7 @@ describe('useQueries', () => {
           {
             queryKey: key,
             queryFn: () => Promise.resolve([1, 2, 3]),
-            select,
+            [selectOption]: select,
             staleTime: Infinity,
             structuralSharing: false,
           },
@@ -141,7 +143,7 @@ describe('useQueries', () => {
             {
               queryKey,
               queryFn,
-              select: (value: string) => {
+              [selectOption]: (value: string) => {
                 if (throws) throw new Error(value + ' with a select error')
                 return new Set([value])
               },
@@ -901,7 +903,7 @@ describe('useQueries', () => {
     // both pending, one pending, both resolved
     expect(spy).toHaveBeenCalledTimes(3)
 
-    client.refetchQueries()
+    cacheOperations(client).refetchQueries()
 
     await vi.advanceTimersByTimeAsync(21)
     // no increase because result hasn't changed
@@ -914,7 +916,7 @@ describe('useQueries', () => {
 
     value = 1
 
-    client.refetchQueries()
+    cacheOperations(client).refetchQueries()
 
     await vi.advanceTimersByTimeAsync(21)
     expect(

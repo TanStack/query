@@ -1,6 +1,6 @@
 # React Query app bundle size
 
-This workspace builds three browser apps against each adapter’s public package entry point. The read-only app fetches a book list. The paginated app uses the query, infinite-query and mutation option factories to fetch additional pages and save bookmarks in browser storage. The polling app refreshes all four regular and suspense query hooks. All builds include React and React DOM and use the default client. The original and standalone adapters accept a numeric interval. The pluggable adapter imports its interval scheduler through the `refetchInterval` option helper. The benchmark checks that only the polling build of that adapter includes the scheduler.
+This workspace builds four browser apps against each adapter’s public package entry point. The read-only app fetches a book list. The paginated app uses the query, infinite-query and mutation option factories to fetch additional pages and save bookmarks in browser storage. The polling app refreshes all four regular and suspense query hooks. The options app keeps the previous page while fetching, selects the displayed titles, saves bookmarks in a serial scope, and invalidates the bookmark list. All builds include React and React DOM and use the default client. The original and standalone adapters accept a numeric interval. The pluggable adapter imports its interval scheduler through the `refetchInterval` option helper. The benchmark checks retained modules in each app and bundles individual public exports to check that selection, placeholder data and serial queues can be removed independently. The React hydration boundary only restores queries. The universal `hydrate` also restores serial queues from saved mutations.
 
 CI builds the original adapter and its dependencies from the PR's base commit. The two alternatives, the app code, the bundler and both React packages come from the PR head. The report records both commit IDs.
 
@@ -22,7 +22,7 @@ QUERY_BASE_CHECKOUT="$PWD/../query-bundle-base" pnpm --filter @tanstack/query-in
 
 The report at `integrations/react/bundle-size/dist/report.md` shows total emitted JavaScript bytes and the sum of individually compressed chunks for gzip and Brotli. Each percentage uses the original adapter’s application size for that workload as its denominator. Serve a directory under `dist/<workload>/<adapter>` to try the built app.
 
-Run the nine production app scenarios in Chromium after measuring:
+Run the twelve production app scenarios in Chromium after measuring:
 
 ```sh
 cd integrations/react/bundle-size

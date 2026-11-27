@@ -1,4 +1,5 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import * as React from 'react'
 import { renderToString } from 'react-dom/server'
 import {
@@ -175,7 +176,7 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    void queryClient
+    void cacheOperations(queryClient)
       .infiniteQuery({
         queryKey: key,
         queryFn,

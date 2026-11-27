@@ -8,6 +8,8 @@ import type {
   QueriesPlaceholderDataFunction,
   QueryKey,
 } from '@tanstack/query-types/bindings'
+import type { placeholderData } from './runtime/placeholderData'
+import type { Select } from './runtime/projectionTypes'
 import type { QueryClient } from './runtime/queryClient'
 import type { QueryFunction, ThrowOnError } from './runtime/types'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
@@ -22,7 +24,10 @@ type UseSuspenseQueryOptionsForUseSuspenseQueries<
   UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?: readonly [
+    typeof placeholderData,
+    TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>,
+  ]
 }
 
 // Avoid TS depth-limit error in case of large array literal
@@ -59,7 +64,7 @@ type GetUseSuspenseQueryOptions<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
+                    select?: Select<any, infer TData>
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? UseSuspenseQueryOptionsForUseSuspenseQueries<
@@ -103,7 +108,7 @@ type GetUseSuspenseQueryResult<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
+                    select?: Select<any, infer TData>
                     throwOnError?: ThrowOnError<any, infer TError, any, any>
                   }
                 ? UseSuspenseQueryResult<

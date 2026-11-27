@@ -1,5 +1,9 @@
 import { keepPreviousData, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
+import {
+  placeholderOption,
+  selectOption,
+} from '@tanstack/query-test-utils/projection'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { useSuspenseQuery } from '../useSuspenseQuery'
 
@@ -32,7 +36,7 @@ describe('useSuspenseQuery', () => {
     const result = useSuspenseQuery({
       queryKey: createKey(),
       queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
-      select: (data) => data.toString(),
+      [selectOption]: (data) => data.toString(),
     })
 
     expectTypeOf(result.data).toEqualTypeOf<string | undefined>()
@@ -48,7 +52,7 @@ describe('useSuspenseQuery', () => {
     const query = useSuspenseQuery({
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
-      placeholderData: (previousData, previousQuery) => {
+      [placeholderOption]: (previousData, previousQuery) => {
         expectTypeOf(previousData).toEqualTypeOf<number | undefined>()
         expectTypeOf(previousQuery).not.toBeAny()
         return previousData ?? 0
@@ -62,15 +66,15 @@ describe('useSuspenseQuery', () => {
       useSuspenseQuery({
         queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
-        placeholderData: keepPreviousData,
+        [placeholderOption]: keepPreviousData,
       }),
     )
 
     const selected = useSuspenseQuery({
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
-      placeholderData: 0,
-      select: (data) => data.toString(),
+      [placeholderOption]: 0,
+      [selectOption]: (data) => data.toString(),
     })
 
     expectTypeOf(selected.data).toEqualTypeOf<string>()
@@ -86,7 +90,7 @@ describe('useSuspenseQuery', () => {
       useSuspenseQuery({
         queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
-        placeholderData: 5,
+        [placeholderOption]: 5,
         // @ts-expect-error TS2345
         enabled: true,
       }),

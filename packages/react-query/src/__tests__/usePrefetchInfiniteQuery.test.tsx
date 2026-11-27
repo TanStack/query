@@ -1,4 +1,5 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -113,7 +114,9 @@ describe('usePrefetchInfiniteQuery', () => {
         allPages.length < data.length ? allPages.length : undefined,
     }
 
-    void queryClient.infiniteQuery({ ...queryOpts, pages: 3 }).catch(noop)
+    void cacheOperations(queryClient)
+      .infiniteQuery({ ...queryOpts, pages: 3 })
+      .catch(noop)
     await vi.advanceTimersByTimeAsync(30)
     queryOpts.queryFn.mockClear()
 

@@ -104,7 +104,7 @@ export type UsePrefetchQueryOptions<
 }
 
 /**
- * The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `queryClient.infiniteQuery`,
+ * The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `infiniteQuery(client, options)`,
  * with a required `queryFn`. Pass `defaultQueryFn` to use the client defaults.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.

@@ -1,4 +1,5 @@
 import { createKey } from '@tanstack/query-test-utils'
+import { selectOption } from '@tanstack/query-test-utils/projection'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { defaultQueryFn } from '..'
 import { queryOptions } from '../queryOptions'
@@ -229,7 +230,7 @@ describe('useQuery', () => {
 
         const query = useQuery({
           ...options,
-          select: (data) => data > 1,
+          [selectOption]: (data) => data > 1,
         })
 
         expectTypeOf(query.data).toEqualTypeOf<boolean | undefined>()

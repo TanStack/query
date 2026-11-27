@@ -5,4 +5,4 @@
 '@tanstack/react-query-no-core-pluggable': minor
 ---
 
-Add experimental ESM React Query adapters with an integrated query runtime. The pluggable adapter provides optional polling through the `refetchInterval` option factory. All three runtimes share their TypeScript definitions through `@tanstack/query-types`.
+Add experimental ESM React Query adapters with an integrated query runtime. The pluggable adapter lets apps import polling, selection, placeholder data, and scoped mutation queues at the point of use. It also exports imperative infinite queries and bulk cache operations as standalone functions. Both adapters and `@tanstack/query-core` share TypeScript definitions through `@tanstack/query-types`.

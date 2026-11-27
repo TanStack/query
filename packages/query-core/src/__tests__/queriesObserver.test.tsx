@@ -1,6 +1,11 @@
 import { setFlagsFromString } from 'node:v8'
 import { runInNewContext } from 'node:vm'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
+import {
+  placeholderOption,
+  selectOption,
+} from '@tanstack/query-test-utils/projection'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueriesObserver, QueryClient, QueryObserver, defaultQueryFn } from '..'
 import type { QueryObserverResult } from '..'
@@ -135,7 +140,7 @@ describe('queriesObserver', () => {
         queryKey: keyB,
         queryFn: defaultQueryFn,
         staleTime: Infinity,
-        select,
+        [selectOption]: select,
         structuralSharing: false,
       } as const
       const observer = new QueriesObserver(queryClient, [optionsA])
@@ -162,7 +167,7 @@ describe('queriesObserver', () => {
       const options = {
         queryKey: key,
         queryFn: defaultQueryFn,
-        select,
+        [selectOption]: select,
         structuralSharing: false,
       } as const
       const observer = new QueriesObserver(queryClient, [])
@@ -200,7 +205,7 @@ describe('queriesObserver', () => {
       const reader = observer.createResultReader(
         queries.map((query) => ({
           ...query,
-          select: (data: number) => data * 10,
+          [selectOption]: (data: number) => data * 10,
         })),
         { combine },
       )
@@ -234,7 +239,7 @@ describe('queriesObserver', () => {
       })
       first.commit()
       const second = observer.createResultReader(
-        [{ ...options, select: (data: number) => data * 3 }],
+        [{ ...options, [selectOption]: (data: number) => data * 3 }],
         { combine },
       )
       expect(second.combineResult(second.getSnapshot())).toStrictEqual({
@@ -243,7 +248,7 @@ describe('queriesObserver', () => {
       expect(observer.getCurrentResult()[0]!.data).toBe(2)
       second.commit()
       const third = observer.createResultReader(
-        [{ ...options, select: (data: number) => data * 3 }],
+        [{ ...options, [selectOption]: (data: number) => data * 3 }],
         { combine },
       )
       expect(third.combineResult(third.getSnapshot())).toStrictEqual({
@@ -257,26 +262,26 @@ describe('queriesObserver', () => {
     const first = {
       queryKey: createKey(),
       enabled: false,
-      placeholderData: 1,
+      [placeholderOption]: 1,
       queryFn: defaultQueryFn,
     } as const
     const second = {
       queryKey: createKey(),
       enabled: false,
-      placeholderData: 2,
+      [placeholderOption]: 2,
       queryFn: defaultQueryFn,
     } as const
     const third = {
       queryKey: createKey(),
       enabled: false,
-      placeholderData: 3,
+      [placeholderOption]: 3,
       queryFn: defaultQueryFn,
     } as const
     const observer = new QueriesObserver(queryClient, [first, second])
     const current = observer.getCurrentResult()
 
     const optimistic = observer
-      .createResultReader([{ ...first, placeholderData: 4 }, third])
+      .createResultReader([{ ...first, [placeholderOption]: 4 }, third])
       .getSnapshot()
 
     expect(optimistic.map((result) => result.data)).toStrictEqual([4, 3])
@@ -656,12 +661,12 @@ describe('queriesObserver', () => {
       {
         queryKey: key1,
         queryFn: queryFn1,
-        select: (d: any) => d + 100,
+        [selectOption]: (d: any) => d + 100,
       },
       {
         queryKey: key2,
         queryFn: queryFn2,
-        select: (d: any) => d + 100,
+        [selectOption]: (d: any) => d + 100,
       },
     ])
 
@@ -751,7 +756,7 @@ describe('queriesObserver', () => {
 
     const unsubscribe = observer.subscribe(() => undefined)
 
-    void queryClient.resetQueries({ queryKey: key })
+    void cacheOperations(queryClient).resetQueries({ queryKey: key })
     expect(combine).toHaveBeenCalledTimes(1)
 
     unsubscribe()
@@ -797,7 +802,7 @@ describe('queriesObserver', () => {
       { combine },
     )
 
-    void queryClient.resetQueries({ queryKey: key })
+    void cacheOperations(queryClient).resetQueries({ queryKey: key })
     expect(combine).toHaveBeenCalledTimes(1)
 
     unsubscribe()
@@ -968,7 +973,7 @@ describe('queriesObserver', () => {
       expect.objectContaining({ status: 'success', data: 'data' }),
     ])
 
-    void queryClient.refetchQueries({ queryKey: key })
+    void cacheOperations(queryClient).refetchQueries({ queryKey: key })
     await vi.advanceTimersByTimeAsync(10)
     expect(listener).toHaveBeenCalledTimes(2)
     expect(listener).toHaveBeenLastCalledWith([
@@ -979,7 +984,7 @@ describe('queriesObserver', () => {
       }),
     ])
 
-    void queryClient.refetchQueries({ queryKey: key })
+    void cacheOperations(queryClient).refetchQueries({ queryKey: key })
     await vi.advanceTimersByTimeAsync(0)
     expect(observer.getCurrentResult()[0]).toMatchObject({
       status: 'error',
@@ -1340,7 +1345,7 @@ describe('queriesObserver', () => {
     )
 
     observer.setQueries([{ queryKey: createKey(), queryFn: () => 2 }])
-    queryClient.removeQueries({ queryKey: oldKey })
+    cacheOperations(queryClient).removeQueries({ queryKey: oldKey })
     // A WeakRef keeps its target alive until the current job ends.
     await vi.advanceTimersByTimeAsync(0)
     gc()

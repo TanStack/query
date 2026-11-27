@@ -1,4 +1,9 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
+import {
+  placeholderOption,
+  selectOption,
+} from '@tanstack/query-test-utils/projection'
 import { fireEvent, render } from '@testing-library/react'
 import { createRenderStream } from '@testing-library/react-render-stream'
 import * as React from 'react'
@@ -187,7 +192,7 @@ describe('useInfiniteQuery', () => {
           sleep(10).then(() => `${pageParam}-${order}`),
         getNextPageParam: () => 1,
         initialPageParam: 0,
-        placeholderData: keepPreviousData,
+        [placeholderOption]: keepPreviousData,
         notifyOnChangeProps: 'all',
       })
 
@@ -271,7 +276,7 @@ describe('useInfiniteQuery', () => {
       const state = useInfiniteQuery({
         queryKey: key,
         queryFn: () => sleep(10).then(() => ({ count: 1 })),
-        select: (data) => ({
+        [selectOption]: (data) => ({
           pages: data.pages.map((x) => `count: ${x.count}`),
           pageParams: data.pageParams,
         }),
@@ -310,13 +315,16 @@ describe('useInfiniteQuery', () => {
       const state = useInfiniteQuery({
         queryKey: key,
         queryFn: () => sleep(10).then(() => ({ count: 1 })),
-        select: React.useCallback((data: InfiniteData<{ count: number }>) => {
-          selectCalled++
-          return {
-            pages: data.pages.map((x) => ({ ...x, id: Math.random() })),
-            pageParams: data.pageParams,
-          }
-        }, []),
+        [selectOption]: React.useCallback(
+          (data: InfiniteData<{ count: number }>) => {
+            selectCalled++
+            return {
+              pages: data.pages.map((x) => ({ ...x, id: Math.random() })),
+              pageParams: data.pageParams,
+            }
+          },
+          [],
+        ),
         getNextPageParam: () => undefined,
         initialPageParam: 0,
       })
@@ -356,7 +364,7 @@ describe('useInfiniteQuery', () => {
       const state = useInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
-        select: (data) => ({
+        [selectOption]: (data) => ({
           pages: [...data.pages].reverse(),
           pageParams: [...data.pageParams].reverse(),
         }),
@@ -1429,7 +1437,7 @@ describe('useInfiniteQuery', () => {
         queryKey: key,
         queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         getNextPageParam: (lastPage) => (lastPage === 1 ? 2 : undefined),
-        select: (data) => ({
+        [selectOption]: (data) => ({
           pages: data.pages.map((x) => x.toString()),
           pageParams: data.pageParams,
         }),
@@ -1534,7 +1542,9 @@ describe('useInfiniteQuery', () => {
                     // makes an actual network request
                     // and calls invalidateQueries in an onSuccess
                     items.splice(4, 1)
-                    queryClient.invalidateQueries({ queryKey: key })
+                    cacheOperations(queryClient).invalidateQueries({
+                      queryKey: key,
+                    })
                   }}
                 >
                   Remove item

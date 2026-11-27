@@ -1,4 +1,8 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import {
+  placeholderOption,
+  selectOption,
+} from '@tanstack/query-test-utils/projection'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   InfiniteQueryObserver,
@@ -35,7 +39,7 @@ describe('query observer result readers', () => {
     const options = client.defaultQueryOptions({
       queryKey: keyA,
       enabled: false,
-      select,
+      [selectOption]: select,
     })
     const observer = new QueryObserver(client, options)
     const listener = vi.fn<() => void>()
@@ -51,7 +55,7 @@ describe('query observer result readers', () => {
         ...options,
         queryKey: keyB,
         queryHash: undefined,
-        select: (data) => ({ selected: data.value * 10 }),
+        [selectOption]: (data) => ({ selected: data.value * 10 }),
       }),
     )
 
@@ -177,7 +181,7 @@ describe('query observer result readers', () => {
       queryKey: createKey(),
       initialData: { value: 1 },
       enabled: false,
-      select: (data: { value: number }) => data.value,
+      [selectOption]: (data: { value: number }) => data.value,
     })
     const observer = new QueryObserver(client, options)
     const current = observer.getCurrentResult()
@@ -185,7 +189,10 @@ describe('query observer result readers', () => {
     const select = vi.fn<() => never>(() => {
       throw error
     })
-    const reader = observer.createResultReader({ ...options, select })
+    const reader = observer.createResultReader({
+      ...options,
+      [selectOption]: select,
+    })
     const snapshot = reader.getSnapshot()
     await vi.advanceTimersByTimeAsync(10)
     expect(reader.getSnapshot()).toBe(snapshot)
@@ -207,7 +214,7 @@ describe('query observer result readers', () => {
     const options = client.defaultQueryOptions({
       queryKey: key,
       enabled: false,
-      select,
+      [selectOption]: select,
       structuralSharing: false,
     })
     const observer = new QueryObserver(client, options)
@@ -243,7 +250,7 @@ describe('query observer result readers', () => {
     const options = client.defaultQueryOptions({
       queryKey: key,
       enabled: false,
-      select,
+      [selectOption]: select,
     })
     const observer = new QueryObserver(client, options)
     const reader = observer.createResultReader(options)
@@ -261,7 +268,7 @@ describe('query observer result readers', () => {
       queryKey: createKey(),
       queryFn: () => ({ value: 1 }),
       enabled: false,
-      select: (data: { value: number }) => data.value,
+      [selectOption]: (data: { value: number }) => data.value,
     })
     const observer = new QueryObserver(client, options)
     const placeholderData = vi.fn<() => { value: number }>(() => ({ value: 2 }))
@@ -270,8 +277,8 @@ describe('query observer result readers', () => {
     })
     const reader = observer.createResultReader({
       ...options,
-      placeholderData,
-      select,
+      [placeholderOption]: placeholderData,
+      [selectOption]: select,
     })
     const snapshot = reader.getSnapshot()
     await vi.advanceTimersByTimeAsync(10)
@@ -285,7 +292,7 @@ describe('query observer result readers', () => {
       queryKey: createKey(),
       initialData: { value: 1 },
       enabled: false,
-      select: (data: { value: number }) => ({ selected: data.value }),
+      [selectOption]: (data: { value: number }) => ({ selected: data.value }),
     })
     const observer = new QueryObserver(client, options)
     const select = vi.fn<(data: { value: number }) => { selected: number }>(
@@ -295,7 +302,10 @@ describe('query observer result readers', () => {
     )
     const listener = vi.fn<() => void>()
     const unsubscribe = observer.subscribe(listener)
-    const reader = observer.createResultReader({ ...options, select })
+    const reader = observer.createResultReader({
+      ...options,
+      [selectOption]: select,
+    })
     const snapshot = reader.getSnapshot()
     reader.commit()
     expect(observer.getCurrentResult().data).toBe(snapshot.data)
@@ -323,7 +333,7 @@ describe('query observer result readers', () => {
         initialData: undefined,
         queryKey: createKey(),
         enabled: false,
-        placeholderData,
+        [placeholderOption]: placeholderData,
       }),
     )
     const snapshot = reader.getSnapshot()
@@ -349,7 +359,7 @@ describe('query observer result readers', () => {
       queryKey: createKey(),
       queryFn: () => ({ value: 0 }),
       enabled: false,
-      placeholderData,
+      [placeholderOption]: placeholderData,
     })
     const observer = new QueryObserver(client, options)
     expect(
@@ -359,7 +369,7 @@ describe('query observer result readers', () => {
     })
     const withoutPlaceholder = observer.createResultReader({
       ...options,
-      placeholderData: undefined,
+      [placeholderOption]: undefined,
     })
     withoutPlaceholder.commit()
     expect(withoutPlaceholder.getSnapshot().data).toBeUndefined()

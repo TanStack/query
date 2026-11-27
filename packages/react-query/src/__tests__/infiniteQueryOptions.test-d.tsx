@@ -1,5 +1,7 @@
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
+import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
+import { selectOption } from '@tanstack/query-test-utils/projection'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { defaultQueryFn } from '..'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
@@ -43,7 +45,7 @@ describe('infiniteQueryOptions', () => {
       staleTime: 1000,
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      select: (data) => {
+      [selectOption]: (data) => {
         expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
       },
     })
@@ -71,7 +73,7 @@ describe('infiniteQueryOptions', () => {
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      select: (data) => data.pages,
+      [selectOption]: (data) => data.pages,
     })
 
     const { data } = useInfiniteQuery(options)
@@ -99,7 +101,7 @@ describe('infiniteQueryOptions', () => {
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      select: (data) => data.pages,
+      [selectOption]: (data) => data.pages,
     })
 
     const { data } = useSuspenseInfiniteQuery(options)
@@ -115,7 +117,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await cacheOperations(new QueryClient()).infiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
@@ -126,10 +128,10 @@ describe('infiniteQueryOptions', () => {
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      select: (data) => data.pages,
+      [selectOption]: (data) => data.pages,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await cacheOperations(new QueryClient()).infiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<Array<string>>()
   })
@@ -143,7 +145,7 @@ describe('infiniteQueryOptions', () => {
       enabled: false,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await cacheOperations(new QueryClient()).infiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
   })
@@ -156,7 +158,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await cacheOperations(new QueryClient()).infiniteQuery(options)
 
     expectTypeOf(data).toEqualTypeOf<
       InfiniteData<unknown, number> | undefined
@@ -189,7 +191,7 @@ describe('infiniteQueryOptions', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve('string'),
-      select: (data) => data.pages,
+      [selectOption]: (data) => data.pages,
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })

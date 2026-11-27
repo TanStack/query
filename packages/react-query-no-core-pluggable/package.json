@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/react-query-no-core-pluggable",
   "version": "5.108.4",
-  "description": "React Query with a standalone runtime and opt-in polling per query observer",
+  "description": "Experimental ESM React Query adapter with per-option features and tree-shakable cache operations",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": {

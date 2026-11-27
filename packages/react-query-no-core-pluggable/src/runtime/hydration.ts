@@ -1,4 +1,6 @@
+import { prepareInfiniteFetch } from './infiniteQueryBehavior'
 import { Mutation } from './mutation'
+import { serialScope } from './serialScope'
 import { noop } from './utils'
 import type * as Shared from '@tanstack/query-types/bindings'
 import type {
@@ -54,7 +56,7 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
   return {
     mutationKey: mutation.options.mutationKey,
     state: mutation.state,
-    ...(mutation.options.scope && { scope: mutation.options.scope }),
+    ...(mutation.options.scope && { scope: { id: mutation.options.scope.id } }),
     ...(mutation.meta && { meta: mutation.meta }),
   }
 }
@@ -241,24 +243,41 @@ export function hydrate(
   dehydratedState: Partial<DehydratedState>,
   options?: HydrateOptions,
 ): void {
-  const queryCache = client.getQueryCache()
-  const deserializeData =
-    options?.defaultOptions?.deserializeData ??
-    client.getDefaultOptions().hydrate?.deserializeData
-
-  dehydratedState.mutations?.forEach(({ state, ...mutationOptions }) => {
+  dehydratedState.mutations?.forEach(({ state, scope, ...mutationOptions }) => {
     Mutation.build(
       client,
       {
         ...client.getDefaultOptions().hydrate?.mutations,
         ...options?.defaultOptions?.mutations,
         ...mutationOptions,
+        ...(scope && { scope: serialScope(scope.id) }),
       },
       state,
     )
   })
 
-  dehydratedState.queries?.forEach(
+  if (dehydratedState.queries)
+    hydrateQueries(client, dehydratedState.queries, options)
+}
+
+/**
+ * Restores just the queries accepted by a React hydration boundary.
+ * @internal
+ * @param client - The client receiving the entries.
+ * @param queries - The serialized query entries.
+ * @param options - Query restoration settings.
+ */
+export function hydrateQueries(
+  client: QueryClient,
+  queries: Array<DehydratedQuery>,
+  options?: HydrateOptions,
+): void {
+  const queryCache = client.getQueryCache()
+  const deserializeData =
+    options?.defaultOptions?.deserializeData ??
+    client.getDefaultOptions().hydrate?.deserializeData
+
+  queries.forEach(
     ({
       queryKey,
       state,
@@ -320,7 +339,10 @@ export function hydrate(
             queryKey,
             queryHash,
             meta,
-            _type: queryType,
+            ...(queryType === 'infinite' && {
+              _type: queryType,
+              _prepareInfiniteFetch: prepareInfiniteFetch,
+            }),
           },
           // Reset fetch status to idle to avoid
           // query being stuck in fetching state upon hydration

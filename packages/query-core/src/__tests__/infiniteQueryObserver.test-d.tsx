@@ -1,4 +1,8 @@
 import { createKey } from '@tanstack/query-test-utils'
+import {
+  projectionInput,
+  selectOption,
+} from '@tanstack/query-test-utils/projection'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { InfiniteQueryObserver, QueryClient } from '..'
 import type {
@@ -298,7 +302,7 @@ describe('infiniteQueryObserver', () => {
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
-          select: (data) => {
+          [selectOption]: (data) => {
             expectTypeOf(data).toEqualTypeOf<
               InfiniteData<{ value: string }, number>
             >()
@@ -313,7 +317,7 @@ describe('infiniteQueryObserver', () => {
           queryFn: () => Promise.resolve({ count: 1 }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
-          select: (data) => data.pages.length,
+          [selectOption]: (data) => data.pages.length,
         })
 
         expectTypeOf(observer.getCurrentResult().data).toEqualTypeOf<
@@ -951,7 +955,7 @@ describe('infiniteQueryObserver', () => {
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        select: (data) => {
+        [selectOption]: (data) => {
           expectTypeOf(data).toEqualTypeOf<
             InfiniteData<{ value: string }, number>
           >()
@@ -1004,7 +1008,7 @@ describe('infiniteQueryObserver', () => {
         getNextPageParam: () => 1,
       })
 
-      expectTypeOf(observer.options.select).toEqualTypeOf<
+      expectTypeOf(projectionInput(observer.options.select)).toEqualTypeOf<
         | ((
             data: InfiniteData<{ value: string }, number>,
           ) => InfiniteData<{ value: string }, unknown>)

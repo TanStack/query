@@ -2,14 +2,22 @@ import type { RuntimeBinding } from '@tanstack/query-types/bindings'
 import type { Mutation } from './mutation'
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
+import type { PlaceholderData, Select } from './projectionTypes'
 import type { Query } from './query'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type { QueryObserver } from './queryObserver'
 import type { RefetchInterval } from './refetchInterval'
+import type { SerialScope } from './serialScope'
 
 /** Binds shared option and callback types to the concrete classes in this runtime. */
 export interface QueryRuntime extends RuntimeBinding {
+  /** The optional selector implementation carried by a select option. */
+  selectFeature: Select<unknown, unknown>[0]
+  /** The optional placeholder implementation carried by a placeholderData option. */
+  placeholderFeature: PlaceholderData<unknown, unknown>[0]
+  /** Per-mutation queueing behavior, installed with serialScope. */
+  mutationScope: SerialScope
   /** Polling can be installed independently on each observed query. */
   refetchInterval:
     | false

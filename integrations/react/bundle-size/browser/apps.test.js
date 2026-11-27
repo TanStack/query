@@ -20,6 +20,7 @@ async function openApp(scenario, adapter) {
 afterEach(() => {
   document.querySelector('iframe')?.remove()
   localStorage.removeItem('bookmark')
+  localStorage.removeItem('bookmarks')
 })
 
 describe.each(adapters)('@tanstack/%s', (adapter) => {
@@ -44,6 +45,46 @@ describe.each(adapters)('@tanstack/%s', (adapter) => {
       .poll(() => app.body.textContent)
       .toContain('Bookmarked: Villette')
     expect(localStorage.getItem('bookmark')).toBe('Villette')
+  })
+
+  it('retains the previous selection, queues bookmarks and refreshes the cache', async () => {
+    const app = await openApp('options', adapter)
+    const view = app.defaultView
+    const originalFetch = view.fetch.bind(view)
+    const gate = Promise.withResolvers()
+    view.fetch = async (...args) => {
+      if (String(args[0]).endsWith('books-2.json')) await gate.promise
+      return originalFetch(...args)
+    }
+    const button = (label) =>
+      Array.from(app.querySelectorAll('button')).find(
+        (item) => item.textContent === label,
+      )
+    try {
+      button('Next page').click()
+      await expect
+        .poll(() => app.querySelector('[role="status"]')?.textContent)
+        .toBe('Showing the previous page')
+      expect(app.querySelector('ul').textContent).toContain('Middlemarch')
+    } finally {
+      gate.resolve()
+      view.fetch = originalFetch
+    }
+    await expect
+      .poll(() => app.querySelector('ul').textContent)
+      .toContain('Villette')
+    button('Bookmark this page').click()
+    await expect
+      .poll(() => app.body.textContent)
+      .toContain('Bookmarks: Villette, North and South')
+    expect(
+      Array.from(app.querySelectorAll('ol li'), (item) => item.textContent),
+    ).toEqual([
+      'Saving Villette',
+      'Saved Villette',
+      'Saving North and South',
+      'Saved North and South',
+    ])
   })
 
   it('periodically refetches regular, infinite and suspense queries', async () => {

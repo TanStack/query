@@ -1,4 +1,5 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { serialScope } from '@tanstack/query-test-utils/scope'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { MutationCache, QueryClient, focusManager, onlineManager } from '..'
 import { Mutation } from '../mutation'
@@ -524,9 +525,7 @@ describe('mutation', () => {
         queryClient,
         {
           mutationKey: key1,
-          scope: {
-            id: 'scope',
-          },
+          scope: serialScope('scope'),
           mutationFn: async () => {
             results.push('start-A')
             await sleep(10)
@@ -547,9 +546,7 @@ describe('mutation', () => {
         queryClient,
         {
           mutationKey: key2,
-          scope: {
-            id: 'scope',
-          },
+          scope: serialScope('scope'),
           mutationFn: async () => {
             results.push('start-B')
             await sleep(10)
@@ -587,9 +584,7 @@ describe('mutation', () => {
           queryClient,
           {
             mutationKey: key1,
-            scope: {
-              id: 'scope',
-            },
+            scope: serialScope('scope'),
             networkMode: 'always',
             mutationFn: async () => {
               results.push('start-A')
@@ -605,9 +600,7 @@ describe('mutation', () => {
           queryClient,
           {
             mutationKey: key2,
-            scope: {
-              id: 'scope',
-            },
+            scope: serialScope('scope'),
             networkMode: 'always',
             mutationFn: async () => {
               results.push('start-B')
@@ -648,9 +641,7 @@ describe('mutation', () => {
           queryClient,
           {
             mutationKey: key1,
-            scope: {
-              id: 'scope',
-            },
+            scope: serialScope('scope'),
             mutationFn: async () => {
               results.push('start-A')
               await sleep(10)
@@ -665,9 +656,7 @@ describe('mutation', () => {
           queryClient,
           {
             mutationKey: key2,
-            scope: {
-              id: 'scope',
-            },
+            scope: serialScope('scope'),
             mutationFn: async () => {
               results.push('start-B')
               await sleep(10)
@@ -716,9 +705,7 @@ describe('mutation', () => {
         queryClient,
         {
           mutationKey: key1,
-          scope: {
-            id: 'scope',
-          },
+          scope: serialScope('scope'),
           mutationFn: async () => {
             results.push('start-A')
             await sleep(10)
@@ -733,9 +720,7 @@ describe('mutation', () => {
         queryClient,
         {
           mutationKey: key2,
-          scope: {
-            id: 'scope',
-          },
+          scope: serialScope('scope'),
           mutationFn: async () => {
             results.push('start-B')
             await sleep(10)
@@ -781,9 +766,7 @@ describe('mutation', () => {
       executeMutation(
         queryClient,
         {
-          scope: {
-            id: 'scope',
-          },
+          scope: serialScope('scope'),
           mutationFn: () => sleep(20).then(() => 'a'),
         },
         'vars1',
@@ -791,9 +774,7 @@ describe('mutation', () => {
       executeMutation(
         queryClient,
         {
-          scope: {
-            id: 'scope',
-          },
+          scope: serialScope('scope'),
           onMutate: () => sleep(10),
           mutationFn: () => sleep(10).then(() => 'b'),
         },
@@ -892,9 +873,7 @@ describe('mutation', () => {
     executeMutation(
       queryClient,
       {
-        scope: {
-          id: '1',
-        },
+        scope: serialScope('1'),
         mutationFn: async () => {
           results.push('start-A1')
           await sleep(10)
@@ -908,9 +887,7 @@ describe('mutation', () => {
     executeMutation(
       queryClient,
       {
-        scope: {
-          id: '1',
-        },
+        scope: serialScope('1'),
         mutationFn: async () => {
           results.push('start-B1')
           await sleep(10)
@@ -924,9 +901,7 @@ describe('mutation', () => {
     executeMutation(
       queryClient,
       {
-        scope: {
-          id: '2',
-        },
+        scope: serialScope('2'),
         mutationFn: async () => {
           results.push('start-A2')
           await sleep(10)
@@ -940,9 +915,7 @@ describe('mutation', () => {
     executeMutation(
       queryClient,
       {
-        scope: {
-          id: '2',
-        },
+        scope: serialScope('2'),
         mutationFn: async () => {
           results.push('start-B2')
           await sleep(10)
