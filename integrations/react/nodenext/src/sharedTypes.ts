@@ -3,10 +3,12 @@ import { QueryClient, getQueryData } from '@tanstack/query-core-pluggable'
 import { queryOptions as stockOptions } from '@tanstack/react-query'
 import {
   infiniteQueryOptions,
+  isSuccess,
   queryOptions,
   skipToken,
   suspenseInfiniteQueryOptions,
   suspenseQueryOptions,
+  useQuery,
 } from '@tanstack/react-query-pluggable'
 import type { QueryMeta as StockMeta } from '@tanstack/react-query'
 import type { QueryMeta as PluggableMeta } from '@tanstack/react-query-pluggable'
@@ -64,3 +66,11 @@ export const fromPluggable: string | undefined = getQueryData(
   new QueryClient(),
   book.queryKey,
 )
+
+export function useFirstBookPage() {
+  const feed = useQuery(paged)
+  if (isSuccess(feed)) {
+    const cursor: number | undefined = feed.data.pageParams[0]
+    return { cursor, first: feed.data.pages[0] }
+  }
+}

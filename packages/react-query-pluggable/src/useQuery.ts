@@ -1,17 +1,25 @@
 'use client'
 
+import {
+  defaultQueryOptions,
+  getQueryCache,
+} from '@tanstack/query-core-pluggable'
+import * as React from 'react'
+import { useIsRestoring } from './IsRestoringProvider'
+import { useQueryClient } from './QueryClientProvider'
+import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
+import { getHasError, useClearResetErrorBoundary } from './errorBoundaryUtils'
 import { observerKey } from './queryDescriptor'
-import { useBaseQuery } from './useBaseQuery'
+import { useObserverSnapshot } from './useObserverSnapshot'
 import type {
   InfiniteData,
   QueryClient,
+  QueryKey,
   QueryObserver,
 } from '@tanstack/query-core-pluggable'
 import type { InfiniteQueryMode } from './infiniteQueryOptions'
 import type { QueryMode } from './queryOptions'
-import type { suspenseQueryPolicy } from './suspense'
 import type {
-  AnyUseInfiniteQueryOptions,
   AnyUseQueryOptions,
   DefinedUseInfiniteQueryResult,
   DefinedUseQueryResult,
@@ -24,9 +32,14 @@ import type {
 } from './types'
 
 /** A regular or paginated observer descriptor produced by the React option factories. */
-export type PreparedQuery =
-  | (AnyUseQueryOptions & QueryMode)
-  | (AnyUseInfiniteQueryOptions & InfiniteQueryMode)
+export type PreparedQuery = (QueryMode | InfiniteQueryMode) & {
+  /** The cache key attached to the prepared fetcher. */
+  queryKey: QueryKey
+  /** The fetcher or query function token supplied to the factory. */
+  queryFn: unknown
+  /** Whether this reader should subscribe to future updates. */
+  subscribed?: boolean
+}
 
 type HasInitialData<T, TQueryData> = T extends {
   initialData: TQueryData | (() => TQueryData)
@@ -42,7 +55,7 @@ type PreparedQueryResult<T> = T extends InfiniteQueryMode &
     any,
     infer TPageParam
   >
-  ? T extends { renderPolicy: typeof suspenseQueryPolicy }
+  ? T extends { renderPolicy: { suspense: true } }
     ? UseSuspenseInfiniteQueryResult<TData, TError>
     : HasInitialData<T, InfiniteData<TPage, TPageParam>> extends true
       ? DefinedUseInfiniteQueryResult<TData, TError>
@@ -53,12 +66,14 @@ type PreparedQueryResult<T> = T extends InfiniteQueryMode &
         infer TData,
         any
       >
-    ? T extends { renderPolicy: typeof suspenseQueryPolicy }
+    ? T extends { renderPolicy: { suspense: true } }
       ? UseSuspenseQueryResult<TData, TError>
       : HasInitialData<T, Exclude<TQueryFnData, undefined>> extends true
         ? DefinedUseQueryResult<TData, TError>
         : UseQueryResult<TData, TError>
-    : never
+    : T extends InfiniteQueryMode
+      ? UseInfiniteQueryResult
+      : UseQueryResult
 
 /**
  * Reads a descriptor produced by queryOptions, suspenseQueryOptions, infiniteQueryOptions, or suspenseInfiniteQueryOptions. Its factory selects the observer and render policy.
@@ -72,27 +87,72 @@ export function useQuery<T extends PreparedQuery>(
 ): PreparedQueryResult<T>
 
 export function useQuery(
-  options:
-    | ((AnyUseQueryOptions | AnyUseInfiniteQueryOptions) & {
-        [observerKey]?: PreparedQuery[typeof observerKey]
-        renderPolicy?: typeof suspenseQueryPolicy
-      })
-    | null
-    | undefined,
+  options: PreparedQuery | null | undefined,
   queryClient?: QueryClient,
 ) {
-  const Observer = options?.[observerKey]
-  if (!Observer) {
+  if (!options?.[observerKey]) {
     throw new TypeError(
       process.env.NODE_ENV === 'production'
         ? 'Expected a query options descriptor.'
         : 'Bad argument type. Pass a descriptor from queryOptions, suspenseQueryOptions, infiniteQueryOptions, or suspenseInfiniteQueryOptions.',
     )
   }
-  return useBaseQuery(
-    options as AnyUseQueryOptions,
-    Observer as typeof QueryObserver,
-    queryClient,
-    options.renderPolicy,
+
+  const Observer = options[observerKey] as typeof QueryObserver
+  const client = useQueryClient(queryClient)
+  const isRestoring = useIsRestoring()
+  const boundary = useQueryErrorResetBoundary()
+  useClearResetErrorBoundary(boundary)
+
+  const policy = options.renderPolicy
+  const defaulted = defaultQueryOptions(client, {
+    ...(options as AnyUseQueryOptions),
+    suspense: policy.suspense,
+  })
+  if (process.env.NODE_ENV !== 'production' && !defaulted.queryFn) {
+    console.error(
+      `[${defaulted.queryHash}]: No query function was provided or configured in the query defaults. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
+    )
+  }
+  const subscribed = options.subscribed !== false
+  defaulted._optimisticResults = isRestoring
+    ? 'isRestoring'
+    : subscribed
+      ? 'optimistic'
+      : undefined
+  const query = getQueryCache(client).get(defaulted.queryHash)
+  policy.prepare(defaulted, boundary, query)
+
+  const createObserver = () => ({
+    client,
+    Observer,
+    observer: new Observer(client, defaulted),
+  })
+  const [saved, setSaved] = React.useState(createObserver)
+  let current = saved
+  if (current.Observer !== Observer || current.client !== client) {
+    current = createObserver()
+    setSaved(current)
+  }
+
+  const { observer } = current
+  const reader = observer.createResultReader(defaulted)
+  policy.readQuery?.(defaulted, reader, observer, client, boundary)
+  const result = useObserverSnapshot(
+    observer,
+    reader,
+    !isRestoring && subscribed,
+    refreshQuery,
   )
+  if (getHasError(policy, result, defaulted, query, boundary))
+    throw result.error
+  return defaulted.notifyOnChangeProps ? result : observer.trackResult(result)
+}
+
+/**
+ * Reads updates queued between render and subscription.
+ * @param observer - The newly subscribed observer.
+ */
+function refreshQuery(observer: Pick<QueryObserver, 'updateResult'>) {
+  observer.updateResult()
 }

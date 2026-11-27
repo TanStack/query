@@ -4,6 +4,9 @@ import {
   QueryObserver,
   dataTagSymbol,
   infiniteQueryOptions,
+  isLoadingError,
+  isPending,
+  isSuccess,
   queryOptions,
   select,
   skipToken,
@@ -11,7 +14,7 @@ import {
   suspenseQueryOptions,
   useQuery,
 } from '..'
-import type { InfiniteData } from '..'
+import type { InfiniteData, PreparedQuery } from '..'
 
 describe('query render modes', () => {
   it('infers data for each render mode from the same query', () => {
@@ -65,6 +68,56 @@ describe('query render modes', () => {
     ).toEqualTypeOf<{ title: string } | undefined>()
     // @ts-expect-error Suspense manages whether the query runs.
     suspenseQueryOptions({ ...options, enabled: false })
+  })
+
+  it('can read a descriptor with erased data types', () => {
+    function usePrepared(options: PreparedQuery) {
+      const result = useQuery(options)
+      expectTypeOf(result.data).toEqualTypeOf<unknown>()
+      return result
+    }
+    expectTypeOf(usePrepared).toBeFunction()
+  })
+
+  it('accepts a fetcher that always rejects', () => {
+    const input = {
+      queryKey: ['broken'],
+      queryFn: () => Promise.reject(new Error('broken')),
+    }
+    const regular = useQuery(queryOptions(input))
+    const suspended = useQuery(suspenseQueryOptions(input))
+    expectTypeOf(regular.data).toEqualTypeOf<undefined>()
+    expectTypeOf(suspended.data).toEqualTypeOf<never>()
+    expectTypeOf(suspended.error).toEqualTypeOf<Error | null>()
+  })
+
+  it('narrows the hook result from its status and retains undefined in selected data', () => {
+    const result = useQuery(
+      queryOptions({
+        queryKey: ['post'],
+        queryFn: () => ({ title: 'Dune' }),
+      }),
+    )
+    // @ts-expect-error Query status flags are imported as predicates.
+    result.isPending
+    if (isPending(result)) {
+      expectTypeOf(result.data).toEqualTypeOf<undefined>()
+    } else if (isLoadingError(result)) {
+      expectTypeOf(result.error).toEqualTypeOf<Error>()
+    } else {
+      expectTypeOf(result.data).toEqualTypeOf<{ title: string }>()
+    }
+
+    const selected = useQuery(
+      queryOptions({
+        queryKey: ['books'],
+        queryFn: (): Array<string> => [],
+        select: [select, (titles) => titles.at(0)],
+      }),
+    )
+    if (isSuccess(selected)) {
+      expectTypeOf(selected.data).toEqualTypeOf<string | undefined>()
+    }
   })
 
   it('infers the raw page and cursor inside one suspense factory call', () => {

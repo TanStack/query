@@ -7,6 +7,7 @@ import {
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
+import type { NumericPageParam } from '@tanstack/query-test-utils/descriptors'
 import type { UseSuspenseInfiniteQueryOptions } from '../types'
 
 describe('useSuspenseInfiniteQuery', () => {
@@ -18,7 +19,7 @@ describe('useSuspenseInfiniteQuery', () => {
       getNextPageParam: () => 1,
     })
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<number, NumericPageParam>>()
   })
 
   it('should allow undefined data when queryFn can be skipToken', () => {
@@ -61,7 +62,9 @@ describe('useSuspenseInfiniteQuery', () => {
       [placeholderOption]: keepPreviousData,
     })
 
-    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<number, unknown>>()
+    expectTypeOf(query.data).toEqualTypeOf<
+      InfiniteData<number, NumericPageParam>
+    >()
     expectTypeOf(query.isPlaceholderData).toEqualTypeOf<boolean>()
 
     const selected = useSuspenseInfiniteQuery({

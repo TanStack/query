@@ -70,6 +70,30 @@ describe('query render modes', () => {
     view.unmount()
   })
 
+  it('switches observers when a mounted reader receives a different client', () => {
+    const first = new QueryClient()
+    const second = new QueryClient()
+    const queryFn = vi.fn<() => string>(() => 'fetched')
+    const descriptor = queryOptions({
+      queryKey: ['book'],
+      queryFn,
+      staleTime: Infinity,
+    })
+    setQueryData(first, descriptor.queryKey, 'Dune')
+    setQueryData(second, descriptor.queryKey, 'Silo')
+
+    function Reader({ client }: { client: QueryClient }) {
+      return <p>{useQuery(descriptor, client).data}</p>
+    }
+
+    const view = render(<Reader client={first} />)
+    screen.getByText('Dune')
+    view.rerender(<Reader client={second} />)
+    screen.getByText('Silo')
+    expect(queryFn).not.toHaveBeenCalled()
+    view.unmount()
+  })
+
   it('can switch the mounted hook to a paginated reader and back', async () => {
     const client = new QueryClient()
     const post = queryOptions({

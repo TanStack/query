@@ -8,11 +8,8 @@ import * as React from 'react'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
-import {
-  ensurePreventErrorBoundaryRetry,
-  getHasError,
-  useClearResetErrorBoundary,
-} from './errorBoundaryUtils'
+import { getHasError, useClearResetErrorBoundary } from './errorBoundaryUtils'
+import { queryPolicy } from './queryPolicy'
 import { useObserverSnapshot } from './useObserverSnapshot'
 import type {
   DefaultError,
@@ -304,8 +301,8 @@ type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
  *   return (
  *     <ul>
  *       {postQueries.map((query, index) => {
- *         if (query.isPending) return <li key={ids[index]}>Loading...</li>
- *         if (query.isError) return <li key={ids[index]}>Error: {query.error.message}</li>
+ *         if (query.status === 'pending') return <li key={ids[index]}>Loading...</li>
+ *         if (query.status === 'error') return <li key={ids[index]}>Error: {query.error.message}</li>
  *         return <li key={ids[index]}>{query.data.title}</li>
  *       })}
  *     </ul>
@@ -326,8 +323,8 @@ type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
  *     combine: (postQueries) => {
  *       return {
  *         data: postQueries.map((query) => query.data),
- *         isPending: postQueries.some((query) => query.isPending),
- *         isError: postQueries.some((query) => query.isError),
+ *         isPending: postQueries.some((query) => query.status === 'pending'),
+ *         isError: postQueries.some((query) => query.status === 'error'),
  *       }
  *     },
  *   })
@@ -434,10 +431,10 @@ export function useBaseQueries<
     [queries, client, isRestoring, subscribed, suspense],
   )
 
+  const policy = suspense ?? queryPolicy
   defaultedQueries.forEach((queryOptions) => {
-    suspense?.prepare(queryOptions)
     const query = getQueryCache(client).get(queryOptions.queryHash)
-    ensurePreventErrorBoundaryRetry(queryOptions, errorResetBoundary, query)
+    policy.prepare(queryOptions, errorResetBoundary, query)
   })
 
   useClearResetErrorBoundary(errorResetBoundary)
@@ -468,13 +465,13 @@ export function useBaseQueries<
     const query = defaultedQueries[index]
     return (
       query &&
-      getHasError({
+      getHasError(
+        policy,
         result,
+        query,
+        getQueryCache(client).get(query.queryHash),
         errorResetBoundary,
-        throwOnError: query.throwOnError,
-        query: getQueryCache(client).get(query.queryHash),
-        suspense: query.suspense,
-      })
+      )
     )
   })
 

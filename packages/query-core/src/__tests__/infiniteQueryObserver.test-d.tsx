@@ -6,6 +6,11 @@ import {
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { InfiniteQueryObserver, QueryClient } from '..'
 import type {
+  PageDirectionResultKeys,
+  PageFailureDuringFullRefetch,
+  PageFailureDuringLoad,
+} from '@tanstack/query-test-utils/descriptors'
+import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
   FetchNextPageOptions,
@@ -395,10 +400,7 @@ describe('infiniteQueryObserver', () => {
           | 'fetchPreviousPage'
           | 'hasNextPage'
           | 'hasPreviousPage'
-          | 'isFetchNextPageError'
-          | 'isFetchPreviousPageError'
-          | 'isFetchingNextPage'
-          | 'isFetchingPreviousPage'
+          | PageDirectionResultKeys
         >()
       })
 
@@ -715,8 +717,12 @@ describe('infiniteQueryObserver', () => {
           expectTypeOf(result.isLoading).toEqualTypeOf<false>()
           expectTypeOf(result.isLoadingError).toEqualTypeOf<true>()
           expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-          expectTypeOf(result.isFetchNextPageError).toEqualTypeOf<false>()
-          expectTypeOf(result.isFetchPreviousPageError).toEqualTypeOf<false>()
+          expectTypeOf(
+            result.isFetchNextPageError,
+          ).toEqualTypeOf<PageFailureDuringLoad>()
+          expectTypeOf(
+            result.isFetchPreviousPageError,
+          ).toEqualTypeOf<PageFailureDuringLoad>()
           expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
           expectTypeOf(result.status).toEqualTypeOf<'error'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
@@ -740,7 +746,7 @@ describe('infiniteQueryObserver', () => {
         expectTypeOf<RefetchError['isRefetchError']>().toEqualTypeOf<true>()
       })
 
-      it('should leave the page error flags unpinned', () => {
+      it('should expose the page error types during a full refetch', () => {
         type RefetchError = Extract<
           InfiniteQueryObserverResult<InfiniteData<{ value: string }, number>>,
           { isRefetchError: true }
@@ -748,10 +754,10 @@ describe('infiniteQueryObserver', () => {
 
         expectTypeOf<
           RefetchError['isFetchNextPageError']
-        >().toEqualTypeOf<boolean>()
+        >().toEqualTypeOf<PageFailureDuringFullRefetch>()
         expectTypeOf<
           RefetchError['isFetchPreviousPageError']
-        >().toEqualTypeOf<boolean>()
+        >().toEqualTypeOf<PageFailureDuringFullRefetch>()
       })
 
       it('should pin every flag along with its data and error types', () => {

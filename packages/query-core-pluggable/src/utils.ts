@@ -1,3 +1,4 @@
+import { isQueryActive, isQueryStale } from './queryPredicates'
 import { timeoutManager } from './timeoutManager'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
@@ -227,7 +228,7 @@ export function matchQuery(
   }
 
   if (type !== 'all') {
-    const isActive = query.isActive()
+    const isActive = isQueryActive(query)
     if (type === 'active' && !isActive) {
       return false
     }
@@ -236,7 +237,7 @@ export function matchQuery(
     }
   }
 
-  if (typeof stale === 'boolean' && query.isStale() !== stale) {
+  if (typeof stale === 'boolean' && isQueryStale(query) !== stale) {
     return false
   }
 

@@ -11,6 +11,7 @@ export {
 } from './cacheOperations'
 export { environmentManager } from './environmentManager'
 export { fetchInfiniteQuery } from './fetchInfiniteQuery'
+export { fetchOptimistic } from './fetchOptimistic'
 export { focusManager } from './focusManager'
 export type { FocusManager } from './focusManager'
 export {
@@ -48,13 +49,24 @@ export type {
 export { Query } from './query'
 export type { QueryState } from './query'
 export { QueryCache } from './queryCache'
+export {
+  clearQueryCache,
+  findCachedQuery,
+  findCachedQueries,
+} from './queryCacheOperations'
+export {
+  isQueryActive,
+  isQueryDisabled,
+  isQueryStale,
+  isQueryStatic,
+} from './queryPredicates'
 export type { QueryCacheNotifyEvent, QueryCacheConfig } from './queryCache'
 export {
   getQueryCache,
   mountQueryClient,
   unmountQueryClient,
   QueryClient,
-  isFetching,
+  countFetchingQueries,
   isMutating,
   getQueryData,
   setQueryData,
@@ -73,6 +85,22 @@ export {
 } from './queryClient'
 export { QueryObserver } from './queryObserver'
 export type { QueryObserverResultReader } from './queryObserver'
+export {
+  isPending,
+  isSuccess,
+  isError,
+  isFetching,
+  isPaused,
+  isLoading,
+  isRefetching,
+  isLoadingError,
+  isRefetchError,
+  isFetched,
+  isFetchingNextPage,
+  isFetchingPreviousPage,
+  isFetchNextPageError,
+  isFetchPreviousPageError,
+} from './queryResult'
 export { refetchInterval } from './refetchInterval'
 export type { RefetchInterval } from './refetchInterval'
 export { CancelledError } from './retryer'

@@ -59,8 +59,8 @@ type InfiniteObserverOptionsInput<
  * An `InfiniteQueryObserver` extends `QueryObserver` to observe and switch
  * between infinite queries. It augments the base `QueryObserverResult` with
  * infinite-query-specific fields and methods, such as `hasNextPage` and
- * `fetchNextPage`, and is the primitive that framework adapters (e.g.
- * `useInfiniteQuery`) build their hooks on top of.
+ * `fetchNextPage`. The React adapter uses this observer for
+ * `useQuery(infiniteQueryOptions(options))` and `useQuery(suspenseInfiniteQueryOptions(options))`.
  * @example
  * ```ts
  * const observer = new InfiniteQueryObserver(queryClient, {
@@ -234,7 +234,16 @@ export class InfiniteQueryObserver<
     })
   }
 
-  protected override createResult(
+  /**
+   * Adds pagination controls and fetch direction to the observer result.
+   * @internal
+   * @param query - The cached infinite query.
+   * @param options - Options used to read the pages.
+   * @param context - Selection and placeholder state for this read.
+   * @param prevResult - The preceding result for structural sharing.
+   * @returns The observer snapshot with page controls and direction-specific status.
+   */
+  override createResult(
     query: Query<
       TQueryFnData,
       TError,
@@ -260,29 +269,13 @@ export class InfiniteQueryObserver<
     const { state } = query
     const parentResult = super.createResult(query, options, context, prevResult)
 
-    const { isFetching, isRefetching, isError, isRefetchError } = parentResult
-    const fetchDirection = state.fetchMeta?.fetchMore?.direction
-
-    const isFetchNextPageError = isError && fetchDirection === 'forward'
-    const isFetchingNextPage = isFetching && fetchDirection === 'forward'
-
-    const isFetchPreviousPageError = isError && fetchDirection === 'backward'
-    const isFetchingPreviousPage = isFetching && fetchDirection === 'backward'
-
     const result: InfiniteQueryObserverBaseResult<TData, TError> = {
       ...parentResult,
       fetchNextPage: this.fetchNextPage,
       fetchPreviousPage: this.fetchPreviousPage,
       hasNextPage: hasNextPage(options, state.data),
       hasPreviousPage: hasPreviousPage(options, state.data),
-      isFetchNextPageError,
-      isFetchingNextPage,
-      isFetchPreviousPageError,
-      isFetchingPreviousPage,
-      isRefetchError:
-        isRefetchError && !isFetchNextPageError && !isFetchPreviousPageError,
-      isRefetching:
-        isRefetching && !isFetchingNextPage && !isFetchingPreviousPage,
+      fetchDirection: state.fetchMeta?.fetchMore?.direction,
     }
 
     return result as InfiniteQueryObserverResult<TData, TError>

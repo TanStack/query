@@ -1,5 +1,7 @@
 import { notifyManager } from './notifyManager'
+import { findCachedQueries } from './queryCacheOperations'
 import { getQueryCache, setQueryData } from './queryClient'
+import { isQueryDisabled, isQueryStatic } from './queryPredicates'
 import { noop } from './utils'
 import type { QueryClient } from './queryClient'
 import type {
@@ -40,12 +42,12 @@ export function getQueriesData<
   client: QueryClient,
   filters: TQueryFilters,
 ): Array<[QueryKey, TQueryFnData | undefined]> {
-  return getQueryCache(client)
-    .findAll(filters)
-    .map(({ queryKey, state }) => {
+  return findCachedQueries(getQueryCache(client), filters).map(
+    ({ queryKey, state }) => {
       const data = state.data as TQueryFnData | undefined
       return [queryKey, data]
-    })
+    },
+  )
 }
 
 /**
@@ -79,12 +81,10 @@ export function setQueriesData<
   options?: SetDataOptions,
 ): Array<[QueryKey, TQueryFnData | undefined]> {
   return notifyManager.batch(() =>
-    getQueryCache(client)
-      .findAll(filters)
-      .map(({ queryKey }) => [
-        queryKey,
-        setQueryData<TQueryFnData>(client, queryKey, updater, options),
-      ]),
+    findCachedQueries(getQueryCache(client), filters).map(({ queryKey }) => [
+      queryKey,
+      setQueryData<TQueryFnData>(client, queryKey, updater, options),
+    ]),
   )
 }
 
@@ -107,7 +107,7 @@ export function removeQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
 ): void {
   const queryCache = getQueryCache(client)
   notifyManager.batch(() => {
-    queryCache.findAll(filters).forEach((query) => {
+    findCachedQueries(queryCache, filters).forEach((query) => {
       queryCache.remove(query)
     })
   })
@@ -136,7 +136,7 @@ export function resetQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
   const queryCache = getQueryCache(client)
 
   return notifyManager.batch(() => {
-    const matched = queryCache.findAll(filters)
+    const matched = findCachedQueries(queryCache, filters)
     const queriesToRefetch = new Set(matched)
     matched.forEach((query) => {
       query.reset()
@@ -178,9 +178,9 @@ export function cancelQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
   const defaultedCancelOptions = { revert: true, ...cancelOptions }
 
   const promises = notifyManager.batch(() =>
-    getQueryCache(client)
-      .findAll(filters)
-      .map((query) => query.cancel(defaultedCancelOptions)),
+    findCachedQueries(getQueryCache(client), filters).map((query) =>
+      query.cancel(defaultedCancelOptions),
+    ),
   )
 
   return Promise.all(promises).then(noop, noop)
@@ -211,11 +211,9 @@ export function invalidateQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
   options?: InvalidateOptions,
 ): Promise<void> {
   return notifyManager.batch(() => {
-    getQueryCache(client)
-      .findAll(filters)
-      .forEach((query) => {
-        query.invalidate()
-      })
+    findCachedQueries(getQueryCache(client), filters).forEach((query) => {
+      query.invalidate()
+    })
 
     if (filters?.refetchType === 'none') {
       return Promise.resolve()
@@ -265,9 +263,8 @@ export function refetchQueries<TTaggedQueryKey extends QueryKey = QueryKey>(
     cancelRefetch: options?.cancelRefetch ?? true,
   }
   const promises = notifyManager.batch(() =>
-    getQueryCache(client)
-      .findAll(filters)
-      .filter((query) => !query.isDisabled() && !query.isStatic())
+    findCachedQueries(getQueryCache(client), filters)
+      .filter((query) => !isQueryDisabled(query) && !isQueryStatic(query))
       .map((query) => {
         let promise = query.fetch(undefined, fetchOptions)
         const isPaused = query.state.fetchStatus === 'paused'

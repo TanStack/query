@@ -1,12 +1,12 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import {
+  infiniteQueryOptions,
   queryOptions,
   refetchInterval,
   select,
-  useInfiniteQuery,
+  suspenseInfiniteQueryOptions,
+  suspenseQueryOptions,
   useQuery,
-  useSuspenseInfiniteQuery,
-  useSuspenseQuery,
 } from '..'
 import type { InfiniteData } from '..'
 
@@ -23,13 +23,15 @@ describe('refetchInterval types', () => {
         },
       }),
     )
-    useSuspenseQuery({
-      ...options,
-      refetchInterval: (query) => {
-        expectTypeOf(query.state.data).toEqualTypeOf<string | undefined>()
-        return undefined
-      },
-    })
+    useQuery(
+      suspenseQueryOptions({
+        ...options,
+        refetchInterval: (query) => {
+          expectTypeOf(query.state.data).toEqualTypeOf<string | undefined>()
+          return undefined
+        },
+      }),
+    )
   })
 
   it('infers cached pages in both infinite query hooks', () => {
@@ -39,23 +41,27 @@ describe('refetchInterval types', () => {
       queryFn: () => 'Dune',
       getNextPageParam: () => 2,
     }
-    useInfiniteQuery({
-      ...options,
-      refetchInterval: (query) => {
-        expectTypeOf(query.state.data).toEqualTypeOf<
-          InfiniteData<string, number> | undefined
-        >()
-        return refetchInterval(3000)
-      },
-    })
-    useSuspenseInfiniteQuery({
-      ...options,
-      refetchInterval: (query) => {
-        expectTypeOf(query.state.data).toEqualTypeOf<
-          InfiniteData<string, number> | undefined
-        >()
-        return refetchInterval(3000)
-      },
-    })
+    useQuery(
+      infiniteQueryOptions({
+        ...options,
+        refetchInterval: (query) => {
+          expectTypeOf(query.state.data).toEqualTypeOf<
+            InfiniteData<string, number> | undefined
+          >()
+          return refetchInterval(3000)
+        },
+      }),
+    )
+    useQuery(
+      suspenseInfiniteQueryOptions({
+        ...options,
+        refetchInterval: (query) => {
+          expectTypeOf(query.state.data).toEqualTypeOf<
+            InfiniteData<string, number> | undefined
+          >()
+          return refetchInterval(3000)
+        },
+      }),
+    )
   })
 })

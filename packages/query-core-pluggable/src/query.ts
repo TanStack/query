@@ -8,8 +8,6 @@ import {
   fetchSignal,
   noop,
   replaceData,
-  resolveQueryValue,
-  skipToken,
   timeUntilStale,
 } from './utils'
 import type { prepareInfiniteFetch } from './infiniteQueryBehavior'
@@ -110,11 +108,11 @@ export interface QueryBehavior<
  * Instances are created and managed internally by `QueryCache`; application
  * code typically interacts with queries indirectly through `QueryClient` or
  * a framework hook like `useQuery`. Direct access to a `Query` instance is
- * possible via `queryCache.find()`/`findAll()` for inspecting cache state.
+ * possible via `findCachedQuery` or `findCachedQueries` for inspecting cache state.
  * @example
  * ```ts
  * const queryCache = getQueryCache(queryClient)
- * const query = queryCache.find({ queryKey: ['posts'] })
+ * const query = findCachedQuery(queryCache, { queryKey: ['posts'] })
  *
  * if (query) {
  *   console.log(query.state.dataUpdatedAt)
@@ -313,88 +311,12 @@ export class Query<
   }
 
   /**
-   * Returns `true` if the query has at least one observer for which `enabled`
-   * does not resolve to `false`.
-   * @returns `true` if the query has an enabled observer.
-   */
-  isActive(): boolean {
-    return this.observers.some(
-      (observer) => resolveQueryValue(observer.options.enabled, this) !== false,
-    )
-  }
-
-  /**
-   * Returns `true` if the query is disabled, meaning it will not fetch
-   * automatically.
-   * - If the query has observers, it is disabled when none of them are active
-   *   (see `isActive`).
-   * - If the query has no observers, it is disabled when its `queryFn` is
-   *   `skipToken` or it has never been fetched.
-   * @returns `true` if the query is disabled.
-   */
-  isDisabled(): boolean {
-    if (this.getObserversCount() > 0) {
-      return !this.isActive()
-    }
-    // if a query has no observers, it should still be considered disabled if it never attempted a fetch
-    return this.options.queryFn === skipToken || !this.isFetched()
-  }
-
-  /**
    * Returns `true` if the query has been fetched, i.e. it has resolved with
    * either data or an error at least once.
    * @returns `true` if the query has been fetched.
    */
   isFetched() {
     return this.state.dataUpdateCount + this.state.errorUpdateCount > 0
-  }
-
-  /**
-   * Returns `true` if the query has data and at least one observer configured with
-   * `staleTime: 'static'`, meaning it is treated as never stale.
-   * @returns `true` if the query is static.
-   */
-  isStatic(): boolean {
-    if (this.state.data === undefined) {
-      return false
-    }
-
-    if (this.getObserversCount() > 0) {
-      return this.observers.some(
-        (observer) =>
-          resolveQueryValue(observer.options.staleTime, this) === 'static',
-      )
-    }
-
-    return false
-  }
-
-  /**
-   * Returns `true` if the query is stale.
-   * - If the query has observers, defers to whether any observer's current
-   *   result reports `isStale` (which accounts for each observer's own
-   *   `staleTime` and `enabled` state).
-   * - If the query has no observers, it is considered stale when it has no
-   *   data or has been invalidated.
-   * @returns `true` if the query is stale.
-   * @see {@link Query#isStaleByTime}
-   * @example
-   * ```ts
-   * if (query.isStale()) {
-   *   // refetch or otherwise treat the cached data as outdated
-   * }
-   * ```
-   */
-  isStale(): boolean {
-    // check observers first, their `isStale` has the source of truth
-    // calculated with `isStaleByTime` and it takes `enabled` into account
-    if (this.getObserversCount() > 0) {
-      return this.observers.some(
-        (observer) => observer.getCurrentResult().isStale,
-      )
-    }
-
-    return this.state.data === undefined || this.state.isInvalidated
   }
 
   /**
@@ -407,7 +329,7 @@ export class Query<
    * @param staleTime - The time, in milliseconds, after which data is considered stale, or
    * `'static'` to never treat existing data as stale. A query without data is stale either way.
    * @returns `true` if the query's data is stale.
-   * @see {@link Query#isStale}
+   * @see {@link isQueryStale}
    * @example
    * ```ts
    * const isStale = query.isStaleByTime(60 * 1000)

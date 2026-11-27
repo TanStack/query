@@ -1,5 +1,6 @@
 import { skipToken } from '@tanstack/query-core-pluggable'
 import { observerKey } from './queryDescriptor'
+import { queryPolicy } from './queryPolicy'
 import { defaultThrowOnError, suspenseQueryPolicy } from './suspense'
 import type { QueryDescriptor } from './queryDescriptor'
 
@@ -19,7 +20,7 @@ export interface SuspenseQueryMode<TSkippable extends boolean = false> {
   readonly throwOnError: typeof defaultThrowOnError
   /** The reader uses this policy when the query is enabled. */
   readonly renderPolicy: TSkippable extends true
-    ? typeof suspenseQueryPolicy | undefined
+    ? typeof suspenseQueryPolicy | typeof queryPolicy
     : typeof suspenseQueryPolicy
 }
 
@@ -42,6 +43,6 @@ export function prepareSuspenseOptions<
     [observerKey]: Observer,
     enabled,
     throwOnError: defaultThrowOnError,
-    renderPolicy: enabled ? suspenseQueryPolicy : undefined,
+    renderPolicy: enabled ? suspenseQueryPolicy : queryPolicy,
   }
 }

@@ -1,7 +1,7 @@
 'use client'
 import {
+  countFetchingQueries,
   getQueryCache,
-  isFetching,
   notifyManager,
 } from '@tanstack/query-core-pluggable'
 import * as React from 'react'
@@ -54,7 +54,7 @@ export function useIsFetching(
         queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
       [queryCache],
     ),
-    () => isFetching(client, filters),
-    () => isFetching(client, filters),
+    () => countFetchingQueries(client, filters),
+    () => countFetchingQueries(client, filters),
   )
 }

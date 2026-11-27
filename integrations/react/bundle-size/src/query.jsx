@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useBookQuery } from '#query-hooks'
+import { isError, isPending, useBookQuery } from '#query-hooks'
 import { fetchBooks } from './books.js'
 
 export function ReadingList() {
@@ -7,8 +7,8 @@ export function ReadingList() {
     queryKey: ['books', 1],
     queryFn: ({ signal }) => fetchBooks(1, signal),
   })
-  if (books.isPending) return <p>Loading books…</p>
-  if (books.isError) return <p role="alert">{books.error.message}</p>
+  if (isPending(books)) return <p>Loading books…</p>
+  if (isError(books)) return <p role="alert">{books.error.message}</p>
   return (
     <ul>
       {books.data.titles.map((title) => (

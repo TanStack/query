@@ -230,8 +230,7 @@ export type SuspenseQueriesResults<
  * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
- * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
- * flags set accordingly).
+ * defined and `status` is either `success` or `error`.
  *
  * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
  * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
@@ -249,7 +248,7 @@ export type SuspenseQueriesResults<
  * } from '@tanstack/react-query-pluggable'
  *
  * function Posts({ ids }: { ids: Array<number> }) {
- *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
+ *   // Every result is guaranteed to be defined — no pending-state check for each query needed.
  *   const postQueries = useSuspenseQueries({
  *     queries: ids.map((id) => ({
  *       queryKey: ['post', id],
@@ -289,7 +288,7 @@ export type SuspenseQueriesResults<
  * }
  * ```
  * @example
- * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+ * Several different queries — use `useSuspenseQueries` instead of multiple `useQuery(suspenseQueryOptions(...))` calls, so
  * they fetch in parallel rather than suspending one after another:
  * ```tsx
  * import { Suspense } from 'react'
@@ -356,7 +355,7 @@ export type SuspenseQueriesResults<
  *       { queryKey: ['users'], queryFn: fetchUsers },
  *       { queryKey: ['teams'], queryFn: fetchTeams },
  *     ],
- *     combine: (results) => results.some((result) => result.isFetching),
+ *     combine: (results) => results.some((result) => result.fetchStatus === 'fetching'),
  *   })
  *
  *   return anyFetching ? <span>Refreshing…</span> : null
@@ -391,7 +390,7 @@ export function useSuspenseQueries<
 >(
   options: {
     /**
-     * An array with query option objects identical to `useSuspenseQuery`.
+     * An array with query option objects identical to `useQuery(suspenseQueryOptions(...))`.
      */
     queries:
       | readonly [...SuspenseQueriesOptions<T>]
@@ -412,8 +411,7 @@ export function useSuspenseQueries<
  * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
- * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
- * flags set accordingly).
+ * defined and `status` is either `success` or `error`.
  *
  * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
  * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
@@ -431,7 +429,7 @@ export function useSuspenseQueries<
  * } from '@tanstack/react-query-pluggable'
  *
  * function Posts({ ids }: { ids: Array<number> }) {
- *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
+ *   // Every result is guaranteed to be defined — no pending-state check for each query needed.
  *   const postQueries = useSuspenseQueries({
  *     queries: ids.map((id) => ({
  *       queryKey: ['post', id],
@@ -471,7 +469,7 @@ export function useSuspenseQueries<
  * }
  * ```
  * @example
- * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+ * Several different queries — use `useSuspenseQueries` instead of multiple `useQuery(suspenseQueryOptions(...))` calls, so
  * they fetch in parallel rather than suspending one after another:
  * ```tsx
  * import { Suspense } from 'react'
@@ -528,7 +526,7 @@ export function useSuspenseQueries<
 >(
   options: {
     /**
-     * An array with query option objects identical to `useSuspenseQuery`.
+     * An array with query option objects identical to `useQuery(suspenseQueryOptions(...))`.
      */
     queries: readonly [...SuspenseQueriesOptions<T>]
     /**

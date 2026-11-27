@@ -377,8 +377,8 @@ export class QueriesObserver<
         const result = this.#result[index]
         return (
           (observer.options.suspense && result?.data === undefined) ||
-          (!!result?.isError &&
-            !result.isFetching &&
+          (result?.status === 'error' &&
+            result.fetchStatus !== 'fetching' &&
             shouldThrowError(observer.options.throwOnError, [
               result.error,
               observer.getCurrentQuery(),

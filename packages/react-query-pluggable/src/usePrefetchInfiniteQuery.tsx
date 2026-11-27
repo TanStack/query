@@ -14,7 +14,7 @@ import type { UsePrefetchInfiniteQueryOptions } from './types'
 
 /**
  * `usePrefetchInfiniteQuery` does not return anything, it should be used just to fire a prefetch during render,
- * before a suspense boundary that wraps a component that uses `useSuspenseInfiniteQuery`. You can pass
+ * before a suspense boundary that wraps a component that uses `useQuery(suspenseInfiniteQueryOptions(...))`. You can pass
  * everything to `usePrefetchInfiniteQuery` that you can pass to `fetchInfiniteQuery(client, options)`, though
  * `queryKey`, `initialPageParam`, and `getNextPageParam` are always required, and `queryFn` is required. Pass `defaultQueryFn` to use the client defaults.
  *

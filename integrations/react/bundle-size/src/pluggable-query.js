@@ -21,3 +21,5 @@ export function useBookPages(options) {
 export function useSuspenseBookPages(options) {
   return useQuery(suspenseInfiniteQueryOptions(options))
 }
+
+export { isPending, isError, isFetching } from '#adapter'

@@ -1,3 +1,4 @@
+import { findCachedQuery } from './queryCacheOperations'
 import { getQueryCache, getQueryData, setQueryData } from './queryClient'
 import { addConsumeAwareSignal, fetchSignal } from './utils'
 import type {
@@ -93,7 +94,7 @@ export function streamedQuery<
       return initialValue
     }
 
-    const query = getQueryCache(context.client).find({
+    const query = findCachedQuery(getQueryCache(context.client), {
       queryKey: context.queryKey,
       exact: true,
     })

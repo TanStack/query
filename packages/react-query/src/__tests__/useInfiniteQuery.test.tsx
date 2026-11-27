@@ -1485,21 +1485,16 @@ describe('useInfiniteQuery', () => {
 
     function Page() {
       const fetchCountRef = React.useRef(0)
-      const {
-        status,
-        data,
-        error,
-        isFetchingNextPage,
-        fetchNextPage,
-        hasNextPage,
-        refetch,
-      } = useInfiniteQuery({
+      const result = useInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) =>
           fetchItemsWithLimit(pageParam, fetchCountRef.current++),
         initialPageParam: 0,
         getNextPageParam: (lastPage) => lastPage.nextId,
       })
+      const { status, data, error, fetchNextPage, hasNextPage, refetch } =
+        result
+      const isFetchingNextPage = result.isFetchingNextPage
 
       return (
         <div>
@@ -1613,16 +1608,7 @@ describe('useInfiniteQuery', () => {
       const fetchCountRef = React.useRef(0)
       const [isRemovedLastPage, setIsRemovedLastPage] =
         React.useState<boolean>(false)
-      const {
-        status,
-        data,
-        error,
-        isFetching,
-        isFetchingNextPage,
-        fetchNextPage,
-        hasNextPage,
-        refetch,
-      } = useInfiniteQuery({
+      const result = useInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }): Promise<Result> => {
           const noNext =
@@ -1639,6 +1625,10 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: (lastPage) => lastPage.nextId,
         initialPageParam: 0,
       })
+      const { status, data, error, fetchNextPage, hasNextPage, refetch } =
+        result
+      const isFetching = result.isFetching
+      const isFetchingNextPage = result.isFetchingNextPage
 
       return (
         <div>
@@ -1812,12 +1802,14 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const [postId, setPostId] = React.useState<string>()
 
-      const { data, isFetching } = useInfiniteQuery({
+      const result = useInfiniteQuery({
         queryKey: key,
         queryFn: postId != null ? queryFn : skipToken,
         initialPageParam: 0,
         getNextPageParam: () => 12,
       })
+      const { data } = result
+      const isFetching = result.isFetching
 
       return (
         <div>

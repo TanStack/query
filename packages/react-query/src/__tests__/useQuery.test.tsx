@@ -4294,31 +4294,27 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     rendered.getByText('Data: data')
 
-    expect(states).toMatchObject([
+    expect(
+      states.map(({ count, state }) => ({
+        count,
+        data: state.data,
+        isPlaceholderData: state.isPlaceholderData,
+        isSuccess: state.isSuccess,
+      })),
+    ).toStrictEqual([
       {
-        state: {
-          isSuccess: true,
-          isPlaceholderData: true,
-          data: 'placeholder',
-        },
         count: 0,
+        data: 'placeholder',
+        isPlaceholderData: true,
+        isSuccess: true,
       },
       {
-        state: {
-          isSuccess: true,
-          isPlaceholderData: true,
-          data: 'placeholder',
-        },
         count: 1,
+        data: 'placeholder',
+        isPlaceholderData: true,
+        isSuccess: true,
       },
-      {
-        state: {
-          isSuccess: true,
-          isPlaceholderData: false,
-          data: 'data',
-        },
-        count: 1,
-      },
+      { count: 1, data: 'data', isPlaceholderData: false, isSuccess: true },
     ])
   })
 
@@ -4916,7 +4912,7 @@ describe('useQuery', () => {
     )
 
     function Page({ enabled }: { enabled: boolean }) {
-      const { error, isPending } = useQuery({
+      const result = useQuery({
         queryKey: key,
         queryFn,
         enabled,
@@ -4925,6 +4921,8 @@ describe('useQuery', () => {
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
+      const { error } = result
+      const isPending = result.isPending
 
       if (isPending) {
         return <div>status: pending</div>
@@ -4971,7 +4969,7 @@ describe('useQuery', () => {
 
   it('should refetch when query key changed when previous status is error', async () => {
     function Page({ id }: { id: number }) {
-      const { error, isPending } = useQuery({
+      const result = useQuery({
         queryKey: [id],
         queryFn: () =>
           sleep(10).then(() => {
@@ -4986,6 +4984,8 @@ describe('useQuery', () => {
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
+      const { error } = result
+      const isPending = result.isPending
 
       if (isPending) {
         return <div>status: pending</div>
@@ -5031,7 +5031,7 @@ describe('useQuery', () => {
 
   it('should refetch when query key changed when switching between erroneous queries', async () => {
     function Page({ id }: { id: boolean }) {
-      const { error, isFetching } = useQuery({
+      const result = useQuery({
         queryKey: [id],
         queryFn: () =>
           sleep(10).then(() => Promise.reject<unknown>(new Error('Error'))),
@@ -5040,6 +5040,8 @@ describe('useQuery', () => {
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
+      const { error } = result
+      const isFetching = result.isFetching
 
       if (isFetching) {
         return <div>status: fetching</div>

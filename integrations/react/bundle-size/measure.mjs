@@ -145,21 +145,77 @@ function renderedModules(chunks) {
   )
 }
 
-// Each bulk operation may retain the other public operations it calls.
+// These operations can retain the named helpers they use internally.
+const filterPredicates = ['isQueryActive', 'isQueryStale']
+const filteredQueries = ['findCachedQueries', ...filterPredicates]
+const refetchFilters = [...filteredQueries, 'isQueryDisabled', 'isQueryStatic']
 const bulkOperations = {
-  getQueriesData: [],
-  setQueriesData: ['setQueryData'],
-  removeQueries: [],
-  resetQueries: ['refetchQueries'],
-  cancelQueries: [],
-  invalidateQueries: ['refetchQueries'],
-  refetchQueries: [],
+  getQueriesData: filteredQueries,
+  setQueriesData: ['setQueryData', ...filteredQueries],
+  removeQueries: filteredQueries,
+  resetQueries: ['refetchQueries', ...refetchFilters],
+  cancelQueries: filteredQueries,
+  invalidateQueries: ['refetchQueries', ...refetchFilters],
+  refetchQueries: refetchFilters,
+}
+const cacheHelpers = {
+  findCachedQuery: filterPredicates,
+  findCachedQueries: filterPredicates,
+  clearQueryCache: [],
+  isQueryActive: [],
+  isQueryDisabled: ['isQueryActive'],
+  isQueryStatic: [],
+  isQueryStale: [],
+}
+
+const resultHelpers = [
+  'isPending',
+  'isSuccess',
+  'isError',
+  'isFetching',
+  'isPaused',
+  'isLoading',
+  'isRefetching',
+  'isLoadingError',
+  'isRefetchError',
+  'isFetched',
+  'isFetchingNextPage',
+  'isFetchingPreviousPage',
+  'isFetchNextPageError',
+  'isFetchPreviousPageError',
+]
+
+function checkResultHelpers(modules, expected, context) {
+  const included = modules
+    .filter(([id]) => rendersFeature(id, 'queryResult'))
+    .flatMap(([, module]) => module.renderedExports)
+  assert.deepEqual(
+    new Set(included),
+    new Set(expected),
+    `${context} retained unexpected query result helpers`,
+  )
+}
+
+function checkOptimisticFetch(chunks, expected, context) {
+  // Inspect the emitted Query JS. This catches a race left inside an otherwise
+  // essential class even if the dedicated Suspense module was tree-shaken.
+  const included = chunks.some(({ code }) => /\bPromise\.race\s*\(/.test(code))
+  assert.equal(
+    included,
+    expected,
+    `${context} retained optimistic fetch race: ${included}`,
+  )
 }
 
 function checkClientOperations(modules, workload, required) {
   const operations = new Set(
     modules.flatMap(([id, module]) => {
-      if (rendersFeature(id, 'cacheOperations')) return module.renderedExports
+      if (
+        ['cacheOperations', 'queryCacheOperations', 'queryPredicates'].some(
+          (file) => rendersFeature(id, file),
+        )
+      )
+        return module.renderedExports
       if (rendersFeature(id, 'queryClient')) {
         return module.renderedExports.filter(
           (name) => name === 'fetchQuery' || name === 'setQueryData',
@@ -168,7 +224,10 @@ function checkClientOperations(modules, workload, required) {
       return []
     }),
   )
-  const allowed = [required, ...(bulkOperations[required] ?? [])]
+  const allowed = [
+    required,
+    ...(bulkOperations[required] ?? cacheHelpers[required] ?? []),
+  ]
   for (const name of operations) {
     assert(
       allowed.includes(name),
@@ -206,11 +265,15 @@ function checkApp(chunks, packageName, screen) {
     }
     if (
       chunks.some((chunk) =>
-        chunk.moduleIds.some((id) => id.endsWith('/build/runtime/index.js')),
+        chunk.moduleIds.some(
+          (id) =>
+            id.endsWith('/build/runtime/index.js') ||
+            rendersFeature(id, 'useBaseQuery'),
+        ),
       )
     ) {
       throw new Error(
-        `${packageName} included an internal runtime barrel in the app`,
+        `${packageName} included an internal runtime barrel or useBaseQuery in the app`,
       )
     }
     const usesMutations = screen === 'paginated' || screen === 'options'
@@ -225,6 +288,7 @@ function checkApp(chunks, packageName, screen) {
       suspenseQueryOptions: screen === 'polling',
       suspenseInfiniteQueryOptions: screen === 'polling',
       suspense: screen === 'polling',
+      fetchOptimistic: screen === 'polling',
       refetchInterval: screen === 'polling',
       fetchInfiniteQuery: false,
       queryOptions: true,
@@ -235,6 +299,8 @@ function checkApp(chunks, packageName, screen) {
       placeholderData: screen === 'options',
       serialScope: screen === 'options',
       cacheOperations: screen === 'options',
+      queryCacheOperations: screen === 'options',
+      queryPredicates: screen === 'options',
     }
     for (const [feature, expected] of Object.entries(features)) {
       const included = modules.some((id) => rendersFeature(id, feature))
@@ -244,6 +310,9 @@ function checkApp(chunks, packageName, screen) {
         )
       }
     }
+    const selectedStatus = screen === 'polling' ? [] : ['isPending', 'isError']
+    if (screen === 'paginated') selectedStatus.push('isFetching')
+    checkResultHelpers(renderedModules(chunks), selectedStatus, screen)
     checkClientOperations(
       renderedModules(chunks),
       screen,
@@ -300,6 +369,8 @@ async function measure(packageName, screen) {
     1,
     `Expected one Query chunk in ${packageName} ${screen}`,
   )
+  if (packageName === pluggable)
+    checkOptimisticFetch(library, screen === 'polling', screen)
   const actual = renderedModules(library)
   const expected = renderedModules(app).filter(([id]) => belongsToAdapter(id))
   for (const dir of owners) {
@@ -338,7 +409,16 @@ async function measure(packageName, screen) {
 async function checkPluggableExports() {
   const adapter = await import(pluggable)
   const { QueryClient, QueriesObserver, notifyManager } = adapter
-  for (const alias of ['query', 'infiniteQuery', 'suspense', 'suspenseQuery']) {
+  for (const alias of [
+    'query',
+    'infiniteQuery',
+    'suspense',
+    'suspenseQuery',
+    'useBaseQuery',
+    'useInfiniteQuery',
+    'useSuspenseQuery',
+    'useSuspenseInfiniteQuery',
+  ]) {
     assert(
       !Object.hasOwn(adapter, alias),
       `Unexpected query mode export ${alias}`,
@@ -357,6 +437,17 @@ async function checkPluggableExports() {
       `${pluggable} exposed another adapter's observer or batch notification API`,
     )
   }
+  for (const [type, members] of [
+    [adapter.QueryObserver, ['fetchOptimistic']],
+    [adapter.QueryCache, ['find', 'findAll', 'clear']],
+    [adapter.Query, ['isActive', 'isDisabled', 'isStatic', 'isStale']],
+  ]) {
+    for (const member of members)
+      assert(
+        !(member in type.prototype),
+        `${type.name}.${member} would ship to every consumer`,
+      )
+  }
   const reactExports = {
     useQuery: [],
     queryOptions: ['queryOptions', 'queryObserver'],
@@ -367,17 +458,25 @@ async function checkPluggableExports() {
       'infiniteQueryBehavior',
     ],
     mutationOptions: [],
-    suspenseQueryOptions: ['suspenseQueryOptions', 'queryObserver', 'suspense'],
+    suspenseQueryOptions: [
+      'suspenseQueryOptions',
+      'queryObserver',
+      'suspense',
+      'fetchOptimistic',
+    ],
     suspenseInfiniteQueryOptions: [
       'suspenseInfiniteQueryOptions',
       'infiniteQueryObserver',
       'queryObserver',
       'infiniteQueryBehavior',
       'suspense',
+      'fetchOptimistic',
     ],
     HydrationBoundary: ['infiniteQueryBehavior'],
   }
   const coreExports = {
+    ...Object.fromEntries(resultHelpers.map((name) => [name, ['queryResult']])),
+    fetchOptimistic: ['fetchOptimistic'],
     fetchInfiniteQuery: ['fetchInfiniteQuery', 'infiniteQueryBehavior'],
     QueryClient: [],
     fetchQuery: [],
@@ -386,8 +485,18 @@ async function checkPluggableExports() {
     select: ['select', 'projectResult'],
     placeholderData: ['placeholderData', 'projectResult'],
     serialScope: ['serialScope'],
+    findCachedQuery: ['queryCacheOperations', 'queryPredicates'],
+    findCachedQueries: ['queryCacheOperations', 'queryPredicates'],
+    clearQueryCache: ['queryCacheOperations'],
+    isQueryActive: ['queryPredicates'],
+    isQueryDisabled: ['queryPredicates'],
+    isQueryStatic: ['queryPredicates'],
+    isQueryStale: ['queryPredicates'],
     ...Object.fromEntries(
-      Object.keys(bulkOperations).map((name) => [name, ['cacheOperations']]),
+      Object.keys(bulkOperations).map((name) => [
+        name,
+        ['cacheOperations', 'queryCacheOperations', 'queryPredicates'],
+      ]),
     ),
     dehydrate: [],
     hydrate: [
@@ -466,9 +575,13 @@ async function checkPluggableExports() {
         )
       }
     }
+    if (resultHelpers.includes(name)) checkResultHelpers(modules, [name], name)
+    if (!coreOnly || name === 'fetchOptimistic')
+      checkOptimisticFetch(chunks, required.includes('fetchOptimistic'), name)
     if (
       ['QueryClient', 'fetchQuery', 'setQueryData'].includes(name) ||
-      Object.hasOwn(bulkOperations, name)
+      Object.hasOwn(bulkOperations, name) ||
+      Object.hasOwn(cacheHelpers, name)
     ) {
       checkClientOperations(
         modules,
@@ -526,7 +639,7 @@ for (const { screen, title } of workloads) {
 }
 lines.push(
   '',
-  'The pluggable read-only list retains the query client, cache, query and observer. Its production build drops both Suspense factories and their policy, mutation cache and observer, polling scheduler, infinite-query behavior, selection, placeholder data, serial scopes and bulk cache operations. Both bookmark apps retain the mutation cache and observer.',
+  'The pluggable read-only list retains the query client, query cache, observer and two status helpers (`isPending` and `isError`). Its Query chunk excludes optimistic Suspense fetching, mutations, infinite queries, polling, selection, placeholder data, serial scopes, cache searches and bulk operations. Both bookmark apps retain mutation support. The polling screen retains the Suspense fetch path and uses no status helpers.',
   '',
   `Baseline adapter and core at \`${base}\` (${baseCheckout ? 'base checkout' : 'current checkout'}). Pluggable adapter, core and fixture at \`${head}\`.`,
 )

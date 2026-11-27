@@ -478,65 +478,6 @@ export class QueryObserver<
   }
 
   /**
-   * Fetches a query defined by the given options without affecting this
-   * observer's own tracked query or result, and returns a promise that
-   * resolves with the `QueryObserverResult` for that fetch. This is useful
-   * for prefetching data that another observer (e.g. a query about to be
-   * navigated to) will need, ahead of time.
-   * @param options - The observer options of the query to fetch.
-   * @returns A promise that resolves with the result for the fetched query.
-   * @example
-   * ```ts
-   * const result = await observer.fetchOptimistic({
-   *   queryKey: ['posts', 2],
-   *   queryFn: () => fetchPost(2),
-   * })
-   * console.log(result.data)
-   * ```
-   */
-  fetchOptimistic(
-    options: ObserverOptionsInput<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >,
-  ): Promise<QueryObserverResult<TData, TError>> {
-    const defaultedOptions = defaultQueryOptions(this.#client, options)
-
-    const query = getQueryCache(this.#client).build(
-      this.#client,
-      defaultedOptions,
-    )
-
-    const cached = Promise.withResolvers<QueryObserverResult<TData, TError>>()
-    const unsubscribe = getQueryCache(this.#client).subscribe((event) => {
-      if (
-        event.type === 'updated' &&
-        event.query.queryHash === query.queryHash &&
-        query.state.data !== undefined
-      ) {
-        unsubscribe()
-        cached.resolve(this.createResult(query, defaultedOptions))
-      }
-    })
-
-    return Promise.race([
-      query
-        .fetch(defaultedOptions)
-        .then(() => {
-          const result = this.createResult(query, defaultedOptions)
-          // Resolve the cache wait when the fetch succeeds.
-          cached.resolve(result)
-          return result
-        })
-        .finally(unsubscribe),
-      cached.promise,
-    ])
-  }
-
-  /**
    * Fetches the observed query and updates the result once the fetch settles. Used by `refetch` and,
    * in `InfiniteQueryObserver`, to fetch more pages.
    * @param fetchOptions - Options for this fetch. `cancelRefetch` defaults to `true`.
@@ -634,14 +575,15 @@ export class QueryObserver<
 
   /**
    * Computes the result for a query and options from the query's state, applying `select`,
-   * `placeholderData`, and the derived flags. Subclasses override it to add their own fields.
+   * `placeholderData`, and observer-specific values. Subclasses add their own fields.
+   * @internal
    * @param query - The query to compute the result for.
    * @param options - The observer options to compute the result with.
    * @param context - The selection and placeholder state reused between computations.
    * @param prevResult - The previous result used for structural sharing.
    * @returns The computed result.
    */
-  protected createResult(
+  createResult(
     query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
     options: QueryObserverOptionsBase<
       TQueryFnData,
@@ -690,37 +632,21 @@ export class QueryObserver<
       ? projection.data
       : (newState.data as unknown as TData | undefined)
     const isPlaceholderData = projection?.isPlaceholderData ?? false
-    const isFetching = fetchStatus === 'fetching'
-    const isPending = status === 'pending'
-    const isError = status === 'error'
-
-    const isLoading = isPending && isFetching
-    const hasData = data !== undefined
-
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
       fetchStatus,
-      isPending,
-      isSuccess: status === 'success',
-      isError,
-      isLoading,
       data,
       dataUpdatedAt: newState.dataUpdatedAt,
+      dataUpdateCount: newState.dataUpdateCount,
       error,
       errorUpdatedAt,
       failureCount: newState.fetchFailureCount,
       failureReason: newState.fetchFailureReason,
       errorUpdateCount: newState.errorUpdateCount,
-      isFetched: query.isFetched(),
       isFetchedAfterMount:
         newState.dataUpdateCount > queryInitialState.dataUpdateCount ||
         newState.errorUpdateCount > queryInitialState.errorUpdateCount,
-      isFetching,
-      isRefetching: isFetching && !isPending,
-      isLoadingError: isError && !hasData,
-      isPaused: fetchStatus === 'paused',
       isPlaceholderData,
-      isRefetchError: isError && hasData,
       isStale: isStale(query, options),
       refetch: this.refetch,
       isEnabled: resolveQueryValue(options.enabled, query) !== false,

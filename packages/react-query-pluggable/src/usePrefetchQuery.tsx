@@ -9,7 +9,7 @@ import type { UsePrefetchQueryOptions } from './types'
 
 /**
  * `usePrefetchQuery` does not return anything, it should be used just to fire a prefetch during render, before
- * a suspense boundary that wraps a component that uses `useSuspenseQuery`. You can pass everything to
+ * a suspense boundary that wraps a component that uses `useQuery(suspenseQueryOptions(...))`. You can pass everything to
  * `usePrefetchQuery` that you can pass to `fetchQuery`, though `queryKey` is always required, and
  * `queryFn` is required. Pass `defaultQueryFn` to use the client defaults.
  *

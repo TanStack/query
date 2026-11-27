@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { queryOptions, mutationOptions, useMutation, useQuery } from '#adapter'
-import { useBookPages } from '#query-hooks'
+import { isError, isFetching, isPending, useBookPages } from '#query-hooks'
 import { fetchBooks } from './books.js'
 
 export function ReadingList() {
@@ -22,8 +22,8 @@ export function ReadingList() {
       onSuccess: () => bookmark.refetch(),
     }),
   )
-  if (books.isPending) return <p>Loading books…</p>
-  if (books.isError) return <p role="alert">{books.error.message}</p>
+  if (isPending(books)) return <p>Loading books…</p>
+  if (isError(books)) return <p role="alert">{books.error.message}</p>
   return (
     <>
       {bookmark.data && <p>Bookmarked: {bookmark.data}</p>}
@@ -39,7 +39,7 @@ export function ReadingList() {
       </ul>
       {books.hasNextPage && (
         <button
-          disabled={books.isFetching}
+          disabled={isFetching(books)}
           onClick={() => books.fetchNextPage()}
         >
           Load more

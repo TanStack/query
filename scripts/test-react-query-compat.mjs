@@ -28,7 +28,11 @@ function importPath(from, to) {
   return './' + relative(from, to).split(sep).join('/')
 }
 
-for (const suite of ['query-core', 'react-query']) {
+const args = process.argv.slice(2)
+const selected = args.find((arg) => arg.startsWith('--suite='))?.slice(8)
+if (selected && !['query-core', 'react-query'].includes(selected))
+  throw new Error('Unknown test suite ' + selected)
+for (const suite of selected ? [selected] : ['query-core', 'react-query']) {
   const upstream = join(repository, 'packages', suite)
   const cache = join(upstream, '.cache')
   mkdirSync(cache, { recursive: true })
@@ -121,10 +125,12 @@ for (const suite of ['query-core', 'react-query']) {
             '@tanstack/query-persist-client-core': [persister],
           }),
           ...Object.fromEntries(
-            ['polling', 'projection', 'scope', 'descriptors'].map((name) => [
-              `@tanstack/query-test-utils/${name}`,
-              [join(adapter, `tests/compat-${name}.ts`)],
-            ]),
+            ['polling', 'projection', 'scope', 'descriptors', 'result'].map(
+              (name) => [
+                `@tanstack/query-test-utils/${name}`,
+                [join(adapter, `tests/compat-${name}.ts`)],
+              ],
+            ),
           ),
         },
       },
@@ -138,7 +144,7 @@ for (const suite of ['query-core', 'react-query']) {
         'run',
         '--config',
         join(import.meta.dirname, 'react-query-compat.config.ts'),
-        ...process.argv.slice(2),
+        ...args.filter((arg) => !arg.startsWith('--suite=')),
       ],
       {
         cwd: project,

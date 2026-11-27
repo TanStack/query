@@ -9,3 +9,7 @@ export {
 export function useBookPages(options) {
   return useInfiniteQuery(infiniteQueryOptions(options))
 }
+
+export const isPending = (result) => result.isPending
+export const isError = (result) => result.isError
+export const isFetching = (result) => result.isFetching

@@ -17,11 +17,11 @@ describe('query descriptors', () => {
     expect(Reflect.get(regular, key!)).toBe(QueryObserver)
     expect(Reflect.get({ ...regular }, key!)).toBe(QueryObserver)
     expect(regular.queryFn).toBe(input.queryFn)
-    expect(suspenseQueryOptions(input).renderPolicy).toBeDefined()
+    expect(suspenseQueryOptions(input).renderPolicy.suspense).toBe(true)
     expect(
       suspenseQueryOptions({ ...input, queryFn: skipToken }).renderPolicy,
-    ).toBeUndefined()
-    expect(regular).not.toHaveProperty('renderPolicy')
+    ).toBe(regular.renderPolicy)
+    expect(regular.renderPolicy.suspense).toBe(false)
     expect(Object.getOwnPropertySymbols(input)).toHaveLength(0)
   })
 
@@ -38,6 +38,8 @@ describe('query descriptors', () => {
     expect(Reflect.get(suspenseInfiniteQueryOptions(input), key!)).toBe(
       InfiniteQueryObserver,
     )
+    expect(options.renderPolicy.suspense).toBe(false)
+    expect(suspenseInfiniteQueryOptions(input).renderPolicy.suspense).toBe(true)
     expect(Object.getOwnPropertySymbols(input)).toHaveLength(0)
   })
 })

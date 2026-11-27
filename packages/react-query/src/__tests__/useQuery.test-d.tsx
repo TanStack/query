@@ -280,7 +280,7 @@ describe('useQuery', () => {
       })
 
       it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
-        const { data, isSuccess } = useQuery({
+        const result = useQuery({
           queryKey: createKey(),
           queryFn: () => {
             return {
@@ -290,8 +290,8 @@ describe('useQuery', () => {
           initialData: () => undefined as { wow: boolean } | undefined,
         })
 
-        if (isSuccess) {
-          expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        if (result.isSuccess) {
+          expectTypeOf(result.data).toEqualTypeOf<{ wow: boolean }>()
         }
       })
 

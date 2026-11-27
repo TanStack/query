@@ -6,7 +6,7 @@ import {
   refreshBookmarks,
   selectTitles,
 } from '#feature-options'
-import { useBookQuery } from '#query-hooks'
+import { isError, isPending, useBookQuery } from '#query-hooks'
 import { fetchBooks } from './books.js'
 
 function savedBooks() {
@@ -37,8 +37,8 @@ export function ReadingList() {
     },
     onSuccess: () => refreshBookmarks(client),
   })
-  if (books.isPending) return <p>Loading books…</p>
-  if (books.isError) return <p role="alert">{books.error.message}</p>
+  if (isPending(books)) return <p>Loading books…</p>
+  if (isError(books)) return <p role="alert">{books.error.message}</p>
   return (
     <>
       <ul>

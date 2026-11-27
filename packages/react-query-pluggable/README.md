@@ -35,7 +35,7 @@ export function App() {
 }
 ```
 
-`useQuery`, `useInfiniteQuery`, `useSuspenseQuery` and `useSuspenseInfiniteQuery` accept the same helper, as do query defaults. Pass a callback to compute the next interval from the cached query. Return `false` or `undefined` to stop polling.
+All four single-query option factories accept the same interval helper. Query defaults also accept it. Pass a callback to compute the next interval from the cached query. Return `false` or `undefined` to stop polling.
 
 ```ts
 useQuery(
@@ -63,6 +63,7 @@ You can spread a descriptor to override options at a hook call. In a library tha
 
 ```tsx
 import {
+  isPending,
   queryOptions,
   suspenseQueryOptions,
   useQuery,
@@ -75,7 +76,7 @@ const postOptions = (id: number) => ({
 
 function PostPreview({ id }: { id: number }) {
   const post = useQuery(queryOptions(postOptions(id)))
-  return <p>{post.isPending ? 'Loading…' : post.data?.title}</p>
+  return <p>{isPending(post) ? 'Loading…' : post.data?.title}</p>
 }
 
 // Render inside <Suspense fallback={<p>Loading…</p>}>.
@@ -86,8 +87,40 @@ function PostTitle({ id }: { id: number }) {
 ```
 
 The Suspense policy sends a failed query without cached data to the nearest error boundary.
-Passing `skipToken` skips the fetch and can yield undefined data. `useSuspenseQuery(options)`
-accepts raw options and prepares its own descriptor. Suspense factories own `enabled` and `throwOnError`. Use `skipToken` for a conditional Suspense query.
+Suspense factories own `enabled` and `throwOnError`. Pass `skipToken` as the fetcher for a conditional Suspense query. A skipped query renders with cached data or `undefined`. An ordinary query may set `throwOnError` to a boolean or a predicate. Both modes support retries through `QueryErrorResetBoundary`.
+
+### Reading query state
+
+Read `status` (`pending`, `error`, or `success`) and `fetchStatus` (`idle`, `fetching`, or `paused`) directly, or import the predicates your component uses. The predicates work on single, infinite, and parallel query results. TypeScript narrows the result along with its `data` and `error`. For example, a failed background refetch can retain data. A loading error has no data.
+
+```tsx
+import {
+  isLoadingError,
+  isPending,
+  queryOptions,
+  useQuery,
+} from '@tanstack/react-query-pluggable'
+
+function Article() {
+  const article = useQuery(
+    queryOptions({ queryKey: ['article'], queryFn: fetchArticle }),
+  )
+  if (isPending(article)) return <p>Loading…</p>
+  if (isLoadingError(article)) return <p>{article.error.message}</p>
+  return <h1>{article.data.title}</h1>
+}
+```
+
+| Result question             | Named predicates                                                                                   |
+| --------------------------- | -------------------------------------------------------------------------------------------------- |
+| Query status                | `isPending`, `isError`, `isSuccess`                                                                |
+| Fetch status and history    | `isFetching`, `isPaused`, `isLoading`, `isRefetching`, `isFetched`                                 |
+| Initial or background error | `isLoadingError`, `isRefetchError`                                                                 |
+| Page request direction      | `isFetchingNextPage`, `isFetchingPreviousPage`, `isFetchNextPageError`, `isFetchPreviousPageError` |
+
+Predicates read through the tracked result. For example, `isFetching(result)` subscribes a component to `fetchStatus`. If a component supplies `notifyOnChangeProps`, list the source fields there. A change to a source field can trigger a render even when the predicate still returns the same boolean.
+
+`isFetchedAfterMount`, `isPlaceholderData`, `isStale`, and `isEnabled` describe the observer and remain result properties. Mutation results retain their existing status flags. To count fetching queries across a client, call `countFetchingQueries(client, filters)` or subscribe with `useIsFetching(filters)`.
 
 ### Paginated queries with the same hook
 
@@ -151,7 +184,29 @@ function Dashboard() {
 }
 ```
 
-Use `useQueries` when individual entries can be disabled or skipped. Filter conditional entries before passing the list to `useSuspenseQueries`.
+Use `useQueries` when the number of keys changes between renders or individual entries can be disabled or skipped. Here the dashboard subscribes to a different set of books whenever the user changes their selection.
+
+```tsx
+import { useQueries } from '@tanstack/react-query-pluggable'
+
+function BookList({ ids }: { ids: number[] }) {
+  const books = useQueries({
+    queries: ids.map((id) => ({
+      queryKey: ['book', id],
+      queryFn: () => fetchBook(id),
+    })),
+  })
+  return (
+    <ul>
+      {books.map((book, index) => (
+        <li key={ids[index]}>{book.data?.title ?? book.status}</li>
+      ))}
+    </ul>
+  )
+}
+```
+
+Filter conditional entries before passing a list to `useSuspenseQueries`.
 
 ## Selecting and keeping data
 
@@ -200,7 +255,7 @@ await invalidateQueries(client, { queryKey: ['orders'] })
 
 For example, `client.query(options)` becomes `fetchQuery(client, options)` and `client.clear()` becomes `clearQueryClient(client)`. The provider manages mounting for React users. Integrations that managed the v6 lifecycle directly can call `mountQueryClient(client)` and `unmountQueryClient(client)`. The same client-first convention applies to defaults, mutation resumption and bulk cache operations.
 
-Use `getQueryCache(client)` and `getMutationCache(client)` for direct cache access. Cache objects keep methods such as `.subscribe(listener)`, `.find(filters)`, and `.getAll()`. The stock `@tanstack/query-persist-client-core` subscription calls `client.getQueryCache()` and `client.getMutationCache()`. A custom persistence integration for this adapter must subscribe through the named accessors and use this adapter’s `hydrate` and `dehydrate`.
+Use `getQueryCache(client)` and `getMutationCache(client)` for direct cache access. Use `findCachedQuery(cache, filters)`, `findCachedQueries(cache, filters)`, or `clearQueryCache(cache)` for query cache searches and clearing. Query caches expose `.subscribe(listener)`, `.get(hash)`, and `.getAll()`. The stock `@tanstack/query-persist-client-core` subscription calls `client.getQueryCache()` and `client.getMutationCache()`. A custom persistence integration for this adapter must subscribe through the named accessors and use this adapter’s `hydrate` and `dehydrate`.
 
 ## Mutations
 

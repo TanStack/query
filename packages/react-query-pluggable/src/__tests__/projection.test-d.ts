@@ -1,13 +1,13 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import {
+  infiniteQueryOptions,
   keepPreviousData,
   placeholderData,
   queryOptions,
   select,
-  useInfiniteQuery,
+  suspenseInfiniteQueryOptions,
+  suspenseQueryOptions,
   useQuery,
-  useSuspenseInfiniteQuery,
-  useSuspenseQuery,
 } from '..'
 import type { InfiniteData } from '..'
 
@@ -24,16 +24,18 @@ describe('projection feature types', () => {
       }),
     )
     expectTypeOf(result.data).toEqualTypeOf<number | undefined>()
-    const suspense = useSuspenseQuery({
-      ...options,
-      select: [
-        select,
-        (order) => {
-          expectTypeOf(order).toEqualTypeOf<{ count: number }>()
-          return order.count
-        },
-      ],
-    })
+    const suspense = useQuery(
+      suspenseQueryOptions({
+        ...options,
+        select: [
+          select,
+          (order) => {
+            expectTypeOf(order).toEqualTypeOf<{ count: number }>()
+            return order.count
+          },
+        ],
+      }),
+    )
     expectTypeOf(suspense.data).toEqualTypeOf<number>()
   })
 
@@ -43,22 +45,26 @@ describe('projection feature types', () => {
       initialPageParam: 0,
       getNextPageParam: () => 1,
     }
-    const regular = useInfiniteQuery({
-      ...paging,
-      select: [
-        select,
-        (data) => {
-          expectTypeOf(data).toEqualTypeOf<
-            InfiniteData<{ count: number }, number>
-          >()
-          return data.pages.length
-        },
-      ],
-    })
-    const suspense = useSuspenseInfiniteQuery({
-      ...paging,
-      select: [select, (data) => data.pageParams.join(',')],
-    })
+    const regular = useQuery(
+      infiniteQueryOptions({
+        ...paging,
+        select: [
+          select,
+          (data) => {
+            expectTypeOf(data).toEqualTypeOf<
+              InfiniteData<{ count: number }, number>
+            >()
+            return data.pages.length
+          },
+        ],
+      }),
+    )
+    const suspense = useQuery(
+      suspenseInfiniteQueryOptions({
+        ...paging,
+        select: [select, (data) => data.pageParams.join(',')],
+      }),
+    )
     expectTypeOf(regular.data).toEqualTypeOf<number | undefined>()
     expectTypeOf(suspense.data).toEqualTypeOf<string>()
   })

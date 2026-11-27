@@ -30,13 +30,11 @@ export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
 export type { PreparedQuery } from './useQuery'
 export { useQuery } from './useQuery'
-export { useSuspenseQuery } from './useSuspenseQuery'
 export { suspenseQueryOptions } from './suspenseQueryOptions'
 export type { SkippableSuspenseQueryOptions } from './suspenseQueryOptions'
 export { suspenseInfiniteQueryOptions } from './suspenseInfiniteQueryOptions'
 export type { SkippableSuspenseInfiniteQueryOptions } from './suspenseInfiniteQueryOptions'
 export type { SuspenseControls, SuspenseQueryMode } from './suspenseQuery'
-export { useSuspenseInfiniteQuery } from './useSuspenseInfiniteQuery'
 export { useSuspenseQueries } from './useSuspenseQueries'
 export type {
   SuspenseQueriesResults,
@@ -80,7 +78,6 @@ export { useIsFetching } from './useIsFetching'
 export { useIsMutating, useMutationState } from './useMutationState'
 export { useMutation } from './useMutation'
 export { mutationOptions } from './mutationOptions'
-export { useInfiniteQuery } from './useInfiniteQuery'
 export { useIsRestoring, IsRestoringProvider } from './IsRestoringProvider'
 
 export {
@@ -102,6 +99,7 @@ export {
   dehydrateQuery,
   hydrate,
   fetchInfiniteQuery,
+  fetchOptimistic,
   InfiniteQueryObserver,
   MutationCache,
   getMutationCache,
@@ -113,7 +111,21 @@ export {
   QueryClient,
   mountQueryClient,
   unmountQueryClient,
+  countFetchingQueries,
+  isPending,
+  isSuccess,
+  isError,
   isFetching,
+  isPaused,
+  isLoading,
+  isRefetching,
+  isLoadingError,
+  isRefetchError,
+  isFetched,
+  isFetchingNextPage,
+  isFetchingPreviousPage,
+  isFetchNextPageError,
+  isFetchPreviousPageError,
   isMutating,
   getQueryData,
   setQueryData,
@@ -121,6 +133,13 @@ export {
   fetchQuery,
   resumePausedMutations,
   getQueryCache,
+  findCachedQuery,
+  findCachedQueries,
+  clearQueryCache,
+  isQueryActive,
+  isQueryDisabled,
+  isQueryStatic,
+  isQueryStale,
   getDefaultOptions,
   setDefaultOptions,
   setQueryDefaults,

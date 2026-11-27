@@ -1,5 +1,6 @@
 import { QueryObserver } from '@tanstack/query-core-pluggable'
 import { observerKey } from './queryDescriptor'
+import { queryPolicy } from './queryPolicy'
 import type {
   DefaultError,
   DefaultQueryFn,
@@ -122,11 +123,11 @@ type QueryOptionsFactory<TPolicy> = {
    * function Posts() {
    *   // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
    *   // so the list stays visible alongside the error.
-   *   const { data, isError, error } = useQuery(postsOptions)
+   *   const { data, status, error } = useQuery(postsOptions)
    *
    *   return (
    *     <div>
-   *       {isError ? <span>Error: {error.message}</span> : null}
+   *       {status === 'error' ? <span>Error: {error.message}</span> : null}
    *       <ul>
    *         {data.map((post) => <li key={post.id}>{post.title}</li>)}
    *       </ul>
@@ -167,10 +168,10 @@ type QueryOptionsFactory<TPolicy> = {
    *   })
    *
    * function Post({ id }: { id: string }) {
-   *   const { data, isPending, isError, error } = useQuery(postOptions(id))
+   *   const { data, status, error } = useQuery(postOptions(id))
    *
-   *   if (isPending) return 'Loading...'
-   *   if (isError) return <span>Error: {error.message}</span>
+   *   if (status === 'pending') return 'Loading...'
+   *   if (status === 'error') return <span>Error: {error.message}</span>
    *
    *   return <h1>{data.title}</h1>
    * }
@@ -209,10 +210,10 @@ type QueryOptionsFactory<TPolicy> = {
    *   })
    *
    * function Post({ id }: { id: string }) {
-   *   const { data, isPending, isError, error } = useQuery(postOptions(id))
+   *   const { data, status, error } = useQuery(postOptions(id))
    *
-   *   if (isPending) return 'Loading...'
-   *   if (isError) return <span>Error: {error.message}</span>
+   *   if (status === 'pending') return 'Loading...'
+   *   if (status === 'error') return <span>Error: {error.message}</span>
    *
    *   return <h1>{data.title}</h1>
    * }
@@ -229,11 +230,11 @@ type QueryOptionsFactory<TPolicy> = {
    *   })
    *
    * function Post({ postId }: { postId: number | undefined }) {
-   *   const { data, isLoading, isError, error } = useQuery(postOptions(postId))
+   *   const { data, status, fetchStatus, error } = useQuery(postOptions(postId))
    *
    *   if (postId == null) return 'Select a post'
-   *   if (isLoading) return 'Loading...'
-   *   if (isError) return <span>Error: {error.message}</span>
+   *   if (status === 'pending' && fetchStatus === 'fetching') return 'Loading...'
+   *   if (status === 'error') return <span>Error: {error.message}</span>
    *
    *   return <h1>{data?.title}</h1>
    * }
@@ -266,5 +267,6 @@ type QueryOptionsFactory<TPolicy> = {
 export const queryOptions: QueryOptionsFactory<SuspenseControls> &
   QueryOptionsFactory<unknown> = <T extends object>(options: T) => ({
   ...options,
+  renderPolicy: queryPolicy,
   [observerKey]: QueryObserver,
 })

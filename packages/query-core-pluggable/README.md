@@ -27,6 +27,8 @@ await invalidateQueries(client, { queryKey: ['books'] })
 
 Import `fetchInfiniteQuery` for pagination, `refetchInterval` for observer polling, or `getMutationCache` to access the client's mutation cache. Pass the same client to the React adapter's `QueryClientProvider` to share cached data between direct calls and components.
 
+Use `findCachedQuery(cache, filters)` to look up a key, `findCachedQueries(cache, filters)` to filter a cache, and `clearQueryCache(cache)` to remove its queries. The predicates `isQueryActive(query)`, `isQueryDisabled(query)`, `isQueryStatic(query)`, and `isQueryStale(query)` inspect individual queries. Import `fetchOptimistic(client, observer, options)` when an observer needs a result as soon as data becomes available during a fetch.
+
 ## Register application types
 
 Augment `Register` on `@tanstack/query-core-pluggable` to configure default errors, query and mutation keys, or metadata across the pluggable package pair.

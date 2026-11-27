@@ -34,7 +34,7 @@ export type AnyUseBaseQueryOptions = UseBaseQueryOptions<
   any
 >
 /**
- * The options shared by `useQuery` and `useSuspenseQuery`. Extends {@link QueryObserverOptions}
+ * The options shared by `useQuery` and `useQuery(suspenseQueryOptions(...))`. Extends {@link QueryObserverOptions}
  * with the React-specific `subscribed` option.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -176,7 +176,7 @@ export type AnyUseSuspenseQueryOptions = UseSuspenseQueryOptions<
   any
 >
 /**
- * Options for a `useSuspenseQuery` call whose data is defined. The options match those of
+ * Options for a `useQuery(suspenseQueryOptions(...))` call whose data is defined. The options match those of
  * {@link UseQueryOptions} except for `throwOnError` and `enabled`.
  * Use the other overload for a query function that can be `skipToken`.
  * @template TQueryFnData - The type your `queryFn` resolves to.
@@ -215,7 +215,7 @@ export type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<
   any
 >
 /**
- * The options accepted by `useInfiniteQuery`. Extends {@link InfiniteQueryObserverOptions}
+ * The options accepted by `useQuery(infiniteQueryOptions(...))`. Extends {@link InfiniteQueryObserverOptions}
  * with the React-specific `subscribed` option. {@link infiniteQueryOptions} and {@link suspenseInfiniteQueryOptions} select the render policy.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -254,7 +254,7 @@ export interface UseInfiniteQueryOptions<
 export type AnyUseSuspenseInfiniteQueryOptions =
   UseSuspenseInfiniteQueryOptions<any, any, any, any, any>
 /**
- * The options accepted by `useSuspenseInfiniteQuery`. Same as {@link UseInfiniteQueryOptions}, except for
+ * The options accepted by `useQuery(suspenseInfiniteQueryOptions(...))`. Same as {@link UseInfiniteQueryOptions}, except for
  * `enabled` and `throwOnError`. If `placeholderData` provides data, the query can render while the fetch runs.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -290,7 +290,7 @@ export interface UseSuspenseInfiniteQueryOptions<
 
 /**
  * The result of `useQuery` when `initialData` isn't set — `data` may be `undefined` while the query is
- * `pending`. Re-exports {@link QueryObserverResult}. `useInfiniteQuery` returns
+ * `pending`. Re-exports {@link QueryObserverResult}. `useQuery(infiniteQueryOptions(...))` returns
  * {@link UseInfiniteQueryResult} instead.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -310,7 +310,7 @@ export type UseQueryResult<
   TError = DefaultError,
 > = UseBaseQueryResult<TData, TError>
 
-/** The result of `useSuspenseQuery`, including defined placeholder data when configured. */
+/** The result of `useQuery(suspenseQueryOptions(...))`, including defined placeholder data when configured. */
 export type UseSuspenseQueryResult<TData = unknown, TError = DefaultError> =
   | DefinedQueryObserverResult<TData, TError>
   | QueryObserverPlaceholderResult<TData, TError>
@@ -327,7 +327,7 @@ export type DefinedUseQueryResult<
 > = DefinedQueryObserverResult<TData, TError>
 
 /**
- * The result of `useInfiniteQuery` when `initialData` isn't set — `data` may be `undefined` while the query is
+ * The result of `useQuery(infiniteQueryOptions(...))` when `initialData` isn't set — `data` may be `undefined` while the query is
  * `pending`. Re-exports {@link InfiniteQueryObserverResult}.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -338,7 +338,7 @@ export type UseInfiniteQueryResult<
 > = InfiniteQueryObserverResult<TData, TError>
 
 /**
- * The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined` (unless a
+ * The result of `useQuery(infiniteQueryOptions(...))` when `initialData` is set — `data` is never `undefined` (unless a
  * `select` changes `TData` to include `undefined`). Re-exports {@link DefinedInfiniteQueryObserverResult}
  *.
  * @template TData - The type `data` ends up as after `select` runs.
@@ -350,7 +350,7 @@ export type DefinedUseInfiniteQueryResult<
 > = DefinedInfiniteQueryObserverResult<TData, TError>
 
 /**
- * The result of `useSuspenseInfiniteQuery`, including defined placeholder data when configured.
+ * The result of `useQuery(suspenseInfiniteQueryOptions(...))`, including defined placeholder data when configured.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */

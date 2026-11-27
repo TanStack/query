@@ -1,6 +1,7 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { QueryCache } from './queryCache'
+import { clearQueryCache, findCachedQueries } from './queryCacheOperations'
 import {
   defaultQueryFn,
   functionalUpdate,
@@ -151,16 +152,16 @@ export function unmountQueryClient(client: QueryClient): void {
  * @returns The number of matching queries whose `fetchStatus` is `'fetching'`.
  * @example
  * ```ts
- * if (isFetching(queryClient)) {
+ * if (countFetchingQueries(queryClient)) {
  *   console.log('At least one query is fetching!')
  * }
  * ```
  */
-export function isFetching(
+export function countFetchingQueries(
   client: QueryClient,
   filters?: Omit<QueryFilters, 'fetchStatus'>,
 ): number {
-  return client[clientState].queryCache.findAll({
+  return findCachedQueries(client[clientState].queryCache, {
     ...filters,
     fetchStatus: 'fetching',
   }).length
@@ -473,7 +474,7 @@ export function resumePausedMutations(client: QueryClient): Promise<unknown> {
  *
  * const queryClient = new QueryClient()
  * const queryCache = getQueryCache(queryClient)
- * const queries = queryCache.findAll({ queryKey: ['posts'] })
+ * const queries = findCachedQueries(queryCache, { queryKey: ['posts'] })
  * ```
  */
 export function getQueryCache(client: QueryClient): QueryCache {
@@ -777,6 +778,6 @@ export function defaultMutationOptions<
  * ```
  */
 export function clearQueryClient(client: QueryClient): void {
-  client[clientState].queryCache.clear()
+  clearQueryCache(client[clientState].queryCache)
   client[mutationCacheKey]?.clear()
 }

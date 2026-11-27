@@ -1,104 +1,42 @@
 'use client'
 
-import { shouldThrowError } from '@tanstack/query-core-pluggable'
 import * as React from 'react'
-import type {
-  DefaultedQueryObserverOptions,
-  Query,
-  QueryKey,
-  QueryObserverResult,
-  ThrowOnError,
-} from '@tanstack/query-core-pluggable'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
+import type { QueryRenderPolicy } from './queryDescriptor'
 
 /**
- * Turns off `retryOnMount` for a query that throws its errors (with `suspense` or `throwOnError`),
- * unless the error boundary has been reset, so a remount doesn't retry the failed query before the
- * user resets the boundary. Mutates the options.
- * @param options - The defaulted query options to adjust.
- * @param errorResetBoundary - The value of the nearest `QueryErrorResetBoundary`.
- * @param query - The query, used to evaluate a `throwOnError` function against its error.
+ * Clears a boundary reset after a successful commit so later errors can reach the boundary again.
+ * @param boundary - The nearest query error boundary.
  */
-export const ensurePreventErrorBoundaryRetry = <
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey extends QueryKey,
->(
-  options: DefaultedQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >,
-  errorResetBoundary: QueryErrorResetBoundaryValue,
-  query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
-) => {
-  const throwOnError =
-    query?.state.status === 'error' &&
-    typeof options.throwOnError === 'function'
-      ? shouldThrowError(options.throwOnError, [
-          query.state.error as TError,
-          query,
-        ])
-      : options.throwOnError
-
-  if (options.suspense || throwOnError) {
-    // Prevent retrying failed query if the error boundary has not been reset yet
-    if (!errorResetBoundary.isReset()) {
-      options.retryOnMount = false
-    }
-  }
-}
-
-/**
- * Clears the reset state of the error boundary after the component mounts, so later errors are
- * thrown to the boundary again.
- * @param errorResetBoundary - The value of the nearest `QueryErrorResetBoundary`.
- */
-export const useClearResetErrorBoundary = (
-  errorResetBoundary: QueryErrorResetBoundaryValue,
-) => {
+export function useClearResetErrorBoundary(
+  boundary: QueryErrorResetBoundaryValue,
+) {
   React.useEffect(() => {
-    errorResetBoundary.clearReset()
-  }, [errorResetBoundary])
+    boundary.clearReset()
+  }, [boundary])
 }
 
 /**
- * Checks whether the query error should be thrown to the nearest error boundary: the query errored
- * and isn't fetching, the boundary hasn't been reset, and either `suspense` is enabled with no data
- * or `throwOnError` says so.
- * @param params - The observer `result`, the `errorResetBoundary`, the `throwOnError` option, the
- * `query`, and the `suspense` option.
- * @returns `true` if the error should be thrown.
+ * Applies the factory's policy once a query has settled in an error state.
+ * @param policy - The render policy selected for this query.
+ * @param result - The current snapshot.
+ * @param options - The observer's defaulted options.
+ * @param query - The cache entry, if it already existed at the start of the render.
+ * @param boundary - The nearest query error boundary.
+ * @returns Whether the query error should be thrown during render.
  */
-export const getHasError = <
-  TData,
-  TError,
-  TQueryFnData,
-  TQueryData,
-  TQueryKey extends QueryKey,
->({
-  result,
-  errorResetBoundary,
-  throwOnError,
-  query,
-  suspense,
-}: {
-  result: QueryObserverResult<TData, TError>
-  errorResetBoundary: QueryErrorResetBoundaryValue
-  throwOnError: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
-  query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined
-  suspense: boolean | undefined
-}) => {
+export function getHasError(
+  policy: QueryRenderPolicy,
+  result: Parameters<QueryRenderPolicy['shouldThrow']>[0],
+  options: Parameters<QueryRenderPolicy['shouldThrow']>[1],
+  query: Parameters<QueryRenderPolicy['shouldThrow']>[2] | undefined,
+  boundary: QueryErrorResetBoundaryValue,
+) {
   return (
-    result.isError &&
-    !errorResetBoundary.isReset() &&
-    !result.isFetching &&
-    query &&
-    ((suspense && result.data === undefined) ||
-      shouldThrowError(throwOnError, [result.error, query]))
+    result.status === 'error' &&
+    !boundary.isReset() &&
+    result.fetchStatus !== 'fetching' &&
+    !!query &&
+    policy.shouldThrow(result, options, query)
   )
 }
