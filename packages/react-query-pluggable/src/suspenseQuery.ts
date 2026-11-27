@@ -12,7 +12,7 @@ export type SuspenseControls = {
   throwOnError?: undefined
 }
 
-/** A skipped query can render without cached data, so its policy is optional. */
+/** A skipped query uses the ordinary render policy and can render without cached data. */
 export interface SuspenseQueryMode<TSkippable extends boolean = false> {
   /** Running queries suspend, and skipped queries can read cached data. */
   readonly enabled: TSkippable extends true ? boolean : true
@@ -28,7 +28,7 @@ export interface SuspenseQueryMode<TSkippable extends boolean = false> {
  * Attaches the selected observer and its Suspense policy in one copy.
  * @param options - The fetcher and options supplied by the caller.
  * @param Observer - The observer selected by the public factory.
- * @returns A query descriptor. A skipped fetcher disables the render policy.
+ * @returns A descriptor that uses the ordinary render policy for a skipped fetcher.
  */
 export function prepareSuspenseOptions<
   TOptions extends { queryFn?: unknown },
