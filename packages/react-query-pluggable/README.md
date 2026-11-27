@@ -69,19 +69,26 @@ import {
   useQuery,
 } from '@tanstack/react-query-pluggable'
 
-const postOptions = (id: number) => ({
-  queryKey: ['post', id],
-  queryFn: () => fetchPost(id),
-})
+const postQueryOptions = (id: number) =>
+  queryOptions({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+  })
+
+const postSuspenseQueryOptions = (id: number) =>
+  suspenseQueryOptions({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id),
+  })
 
 function PostPreview({ id }: { id: number }) {
-  const post = useQuery(queryOptions(postOptions(id)))
+  const post = useQuery(postQueryOptions(id))
   return <p>{isPending(post) ? 'Loading…' : post.data?.title}</p>
 }
 
 // Render inside <Suspense fallback={<p>Loading…</p>}>.
 function PostTitle({ id }: { id: number }) {
-  const post = useQuery(suspenseQueryOptions(postOptions(id)))
+  const post = useQuery(postSuspenseQueryOptions(id))
   return <h1>{post.data.title}</h1>
 }
 ```
@@ -101,10 +108,14 @@ import {
   useQuery,
 } from '@tanstack/react-query-pluggable'
 
-function Article() {
-  const article = useQuery(
-    queryOptions({ queryKey: ['article'], queryFn: fetchArticle }),
-  )
+const articleQueryOptions = (id: number) =>
+  queryOptions({
+    queryKey: ['article', id],
+    queryFn: () => fetchArticle(id),
+  })
+
+function Article({ id }: { id: number }) {
+  const article = useQuery(articleQueryOptions(id))
   if (isPending(article)) return <p>Loading…</p>
   if (isLoadingError(article)) return <p>{article.error.message}</p>
   return <h1>{article.data.title}</h1>
