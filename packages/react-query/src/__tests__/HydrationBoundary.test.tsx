@@ -2,6 +2,7 @@ import * as coreModule from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/react'
 import * as React from 'react'
+import { renderToString } from 'react-dom/server'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   HydrationBoundary,
@@ -449,6 +450,57 @@ describe('React hydration', () => {
     await vi.advanceTimersByTimeAsync(11)
     expect(queryFn).toHaveBeenCalledTimes(0)
     expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
+
+    queryClient.clear()
+  })
+
+  it('should refetch on the client cache when refetch is called from a mount effect while hydrating', async () => {
+    const queryFn = vi.fn<() => Promise<Array<string>>>(() =>
+      sleep(10).then(() => ['string']),
+    )
+    const dehydratedState = JSON.parse(stringifiedState)
+
+    function Page() {
+      const { data, refetch } = useQuery({
+        queryKey: ['string'],
+        queryFn,
+        staleTime: Infinity,
+      })
+      React.useEffect(() => {
+        void refetch()
+      }, [refetch])
+      return <div>{JSON.stringify(data)}</div>
+    }
+
+    function App({ queryClient }: { queryClient: QueryClient }) {
+      return (
+        <QueryClientProvider client={queryClient}>
+          <HydrationBoundary state={dehydratedState}>
+            <Page />
+          </HydrationBoundary>
+        </QueryClientProvider>
+      )
+    }
+
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    container.innerHTML = renderToString(
+      <App queryClient={new QueryClient()} />,
+    )
+    expect(queryFn).toHaveBeenCalledTimes(0)
+
+    const queryClient = new QueryClient()
+    const rendered = render(<App queryClient={queryClient} />, {
+      container,
+      hydrate: true,
+    })
+
+    expect(rendered.getByText('["stringCached"]')).toBeInTheDocument()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryClient.isFetching({ queryKey: ['string'] })).toBe(1)
+    await vi.advanceTimersByTimeAsync(11)
+    expect(rendered.getByText('["string"]')).toBeInTheDocument()
+    expect(queryClient.getQueryData(['string'])).toStrictEqual(['string'])
 
     queryClient.clear()
   })

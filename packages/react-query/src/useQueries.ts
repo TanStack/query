@@ -1,9 +1,15 @@
 'use client'
-import { QueriesObserver, noop, notifyManager } from '@tanstack/query-core'
+import {
+  QueriesObserver,
+  QueryObserver,
+  noop,
+  notifyManager,
+} from '@tanstack/query-core'
 import * as React from 'react'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
+import { getDehydratedResult, useGetServerSnapshot } from './dehydratedSnapshot'
 import {
   ensurePreventErrorBoundaryRetry,
   getHasError,
@@ -445,6 +451,27 @@ export function useBaseQueries<
     reader.commit()
   }, [reader])
 
+  const getServerSnapshot = useGetServerSnapshot(
+    defaultedQueries.map((query) => query.queryHash).join(),
+    reader.getSnapshot,
+    (snapshot) => {
+      const liveResults = reader.getSnapshot()
+      const dehydratedResults = liveResults.map((liveResult, index) =>
+        getDehydratedResult(
+          snapshot,
+          QueryObserver,
+          defaultedQueries[index]!,
+          liveResult,
+        ),
+      )
+      return dehydratedResults.some(Boolean)
+        ? dehydratedResults.map(
+            (result, index) => result ?? liveResults[index]!,
+          )
+        : undefined
+    },
+  )
+
   const shouldSubscribe = !isRestoring && subscribed
   const results = React.useSyncExternalStore(
     React.useCallback(
@@ -462,7 +489,7 @@ export function useBaseQueries<
       [observer, shouldSubscribe],
     ),
     reader.getSnapshot,
-    reader.getSnapshot,
+    getServerSnapshot,
   )
 
   const firstErrorResult = results.find((result, index) => {

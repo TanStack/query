@@ -4,6 +4,7 @@ import * as React from 'react'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
+import { getDehydratedResult, useGetServerSnapshot } from './dehydratedSnapshot'
 import {
   ensurePreventErrorBoundaryRetry,
   getHasError,
@@ -115,6 +116,18 @@ export function useBaseQuery<
     reader.commit()
   }, [reader])
 
+  const getServerSnapshot = useGetServerSnapshot(
+    defaultedOptions.queryHash,
+    reader.getSnapshot,
+    (snapshot) =>
+      getDehydratedResult(
+        snapshot,
+        Observer,
+        defaultedOptions,
+        reader.getSnapshot(),
+      ) as QueryObserverResult<TData, TError> | undefined,
+  )
+
   const shouldSubscribe = !isRestoring && subscribed
   const result = React.useSyncExternalStore(
     React.useCallback(
@@ -132,7 +145,7 @@ export function useBaseQuery<
       [observer, shouldSubscribe],
     ),
     reader.getSnapshot,
-    reader.getSnapshot,
+    getServerSnapshot,
   )
 
   // Handle error boundary

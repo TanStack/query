@@ -2,6 +2,10 @@
 import { hydrate } from '@tanstack/query-core'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
+import {
+  DehydratedSnapshotContext,
+  createDehydratedSnapshot,
+} from './dehydratedSnapshot'
 import type {
   DehydratedState,
   HydrateOptions,
@@ -136,5 +140,24 @@ export const HydrationBoundary = ({
     }
   }, [client, hydrationQueue])
 
-  return children as React.ReactElement
+  // Hooks below render this state on the server and while hydrating, so both agree.
+  const parentSnapshot = React.useContext(DehydratedSnapshotContext)
+  const snapshot = React.useMemo(
+    () =>
+      createDehydratedSnapshot(
+        state,
+        // oxlint-disable-next-line react-hooks-js/refs -- 'options' is read through a ref when a hook asks for its server snapshot, so that a new 'options' object does not give every hook below a new context value
+        () =>
+          optionsRef.current.defaultOptions?.deserializeData ??
+          client.getDefaultOptions().hydrate?.deserializeData,
+        parentSnapshot,
+      ),
+    [client, state, parentSnapshot],
+  )
+
+  return (
+    <DehydratedSnapshotContext.Provider value={snapshot}>
+      {children}
+    </DehydratedSnapshotContext.Provider>
+  )
 }
