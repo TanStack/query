@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { timeoutManager } from '..'
-import { defaultTimeoutProvider, systemSetTimeoutZero } from '../timeoutManager'
+import { defaultTimeoutProvider } from '../timeoutManager'
 import type {
   ManagedTimerId,
   TimeoutCallback,
@@ -258,28 +258,6 @@ describe('timeoutManager', () => {
         | 'setInterval'
         | 'clearInterval'
       >()
-    })
-  })
-
-  describe('systemSetTimeoutZero', () => {
-    it('should take a callback and return void', () => {
-      expectTypeOf(systemSetTimeoutZero).toEqualTypeOf<
-        (callback: TimeoutCallback) => void
-      >()
-    })
-
-    it('should require the callback', () => {
-      // @ts-expect-error the callback is required
-      systemSetTimeoutZero()
-
-      expectTypeOf(systemSetTimeoutZero(() => {})).toEqualTypeOf<void>()
-    })
-
-    it('should reject a callback that requires a value argument', () => {
-      // @ts-expect-error a timeout callback cannot require a value argument
-      systemSetTimeoutZero((_: number) => {})
-
-      expectTypeOf(systemSetTimeoutZero(() => {})).toEqualTypeOf<void>()
     })
   })
 })
