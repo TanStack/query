@@ -1,4 +1,9 @@
 'use client'
+import {
+  QueriesObserver,
+  defaultQueryOptions,
+  getQueryCache,
+} from '@tanstack/query-core-pluggable'
 import * as React from 'react'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
@@ -8,27 +13,24 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { QueriesObserver } from './runtime/queriesObserver'
-import { defaultQueryOptions, getQueryCache } from './runtime/queryClient'
 import { useObserverSnapshot } from './useObserverSnapshot'
 import type {
   DefaultError,
   OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
-  QueryKey,
-} from '@tanstack/query-core'
-import type { placeholderData } from './runtime/placeholderData'
-import type { Select } from './runtime/projectionTypes'
-import type { QueryClient } from './runtime/queryClient'
-import type {
+  QueryClient,
   QueryFunction,
+  QueryKey,
   QueryObserverOptions,
+  Select,
   ThrowOnError,
-} from './runtime/types'
+  placeholderData,
+} from '@tanstack/query-core-pluggable'
 import type { suspenseQueriesPolicy } from './suspense'
 import type {
   DefinedUseQueryResult,
+  TaggedQueryError,
   UseQueryOptions,
   UseQueryResult,
 } from './types'
@@ -85,7 +87,10 @@ type GetUseQueryOptionsForUseQueries<T> =
                   }
                 ? UseQueryOptionsForUseQueries<
                     TQueryFnData,
-                    unknown extends TError ? DefaultError : TError,
+                    TaggedQueryError<
+                      T,
+                      unknown extends TError ? DefaultError : TError
+                    >,
                     unknown extends TData ? TQueryFnData : TData,
                     TQueryKey
                   >
@@ -135,7 +140,10 @@ type GetUseQueryResult<T> =
                 ? GetDefinedOrUndefinedQueryResult<
                     T,
                     unknown extends TData ? TQueryFnData : TData,
-                    unknown extends TError ? DefaultError : TError
+                    TaggedQueryError<
+                      T,
+                      unknown extends TError ? DefaultError : TError
+                    >
                   >
                 : // Fallback
                   UseQueryResult

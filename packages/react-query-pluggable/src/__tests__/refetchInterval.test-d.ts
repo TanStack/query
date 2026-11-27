@@ -1,5 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import {
+  queryOptions,
   refetchInterval,
   select,
   useInfiniteQuery,
@@ -12,14 +13,16 @@ import type { InfiniteData } from '..'
 describe('refetchInterval types', () => {
   it('infers cached data in polling callbacks for regular and suspense hooks', () => {
     const options = { queryKey: ['book'], queryFn: () => 'Dune' }
-    useQuery({
-      ...options,
-      select: [select, (book) => book.length],
-      refetchInterval: (query) => {
-        expectTypeOf(query.state.data).toEqualTypeOf<string | undefined>()
-        return refetchInterval(query.state.data ? false : 3000)
-      },
-    })
+    useQuery(
+      queryOptions({
+        ...options,
+        select: [select, (book) => book.length],
+        refetchInterval: (query) => {
+          expectTypeOf(query.state.data).toEqualTypeOf<string | undefined>()
+          return refetchInterval(query.state.data ? false : 3000)
+        },
+      }),
+    )
     useSuspenseQuery({
       ...options,
       refetchInterval: (query) => {

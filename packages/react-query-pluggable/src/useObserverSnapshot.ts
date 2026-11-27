@@ -1,8 +1,7 @@
 'use client'
-import { noop } from '@tanstack/query-core/primitives'
+import { noop, notifyManager } from '@tanstack/query-core-pluggable'
 import * as React from 'react'
-import { notifyManager } from './runtime/notifyManager'
-import type { QueryObserverResultReader } from './runtime/queryObserver'
+import type { QueryObserverResultReader } from '@tanstack/query-core-pluggable'
 
 interface ObserverStore {
   subscribe: (listener: () => void) => () => void

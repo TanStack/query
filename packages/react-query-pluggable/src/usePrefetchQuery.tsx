@@ -1,8 +1,10 @@
-import { noop } from '@tanstack/query-core/primitives'
+import { fetchQuery, getQueryState, noop } from '@tanstack/query-core-pluggable'
 import { useQueryClient } from './QueryClientProvider'
-import { fetchQuery, getQueryState } from './runtime/queryClient'
-import type { DefaultError, QueryKey } from '@tanstack/query-core'
-import type { QueryClient } from './runtime/queryClient'
+import type {
+  DefaultError,
+  QueryClient,
+  QueryKey,
+} from '@tanstack/query-core-pluggable'
 import type { UsePrefetchQueryOptions } from './types'
 
 /**

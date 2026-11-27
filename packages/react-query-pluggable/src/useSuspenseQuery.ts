@@ -1,26 +1,18 @@
 'use client'
 
-import { suspenseQuery } from './suspenseQuery'
+import { suspenseQueryOptions } from './suspenseQueryOptions'
 import { useQuery } from './useQuery'
-import type { DefaultError, OmitKeyof, QueryKey } from '@tanstack/query-core'
-import type { QueryClient } from './runtime/queryClient'
 import type {
-  UseQueryOptions,
+  DefaultError,
+  QueryClient,
+  QueryKey,
+} from '@tanstack/query-core-pluggable'
+import type { SkippableSuspenseQueryOptions } from './suspenseQueryOptions'
+import type {
   UseQueryResult,
   UseSuspenseQueryOptions,
   UseSuspenseQueryResult,
 } from './types'
-
-/** Options for a Suspense reader whose query function can be skipped. */
-export type SkippableSuspenseQueryOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey extends QueryKey,
-> = OmitKeyof<
-  UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'enabled' | 'throwOnError'
->
 
 /**
  * Runs a query with Suspense. The options match those of `useQuery` except for `throwOnError` and `enabled`.
@@ -118,19 +110,9 @@ export function useSuspenseQuery<
   queryClient?: QueryClient,
 ): UseQueryResult<TData, TError>
 
-export function useSuspenseQuery<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: SkippableSuspenseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey
-  >,
+export function useSuspenseQuery(
+  options: SkippableSuspenseQueryOptions<any, any, any, any>,
   queryClient?: QueryClient,
-): UseQueryResult<TData, TError> {
-  return useQuery(suspenseQuery(options), queryClient)
+) {
+  return useQuery(suspenseQueryOptions(options), queryClient)
 }

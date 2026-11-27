@@ -1,13 +1,17 @@
 'use client'
 
-import { infiniteQuery } from './infiniteQuery'
+import { infiniteQueryOptions } from './infiniteQueryOptions'
 import { useQuery } from './useQuery'
-import type { DefaultError, InfiniteData, QueryKey } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  InfiniteData,
+  QueryClient,
+  QueryKey,
+} from '@tanstack/query-core-pluggable'
 import type {
   DefinedInitialDataInfiniteOptions,
   UndefinedInitialDataInfiniteOptions,
 } from './infiniteQueryOptions'
-import type { QueryClient } from './runtime/queryClient'
 import type {
   DefinedUseInfiniteQueryResult,
   UseInfiniteQueryOptions,
@@ -352,5 +356,5 @@ export function useInfiniteQuery(
   options: UseInfiniteQueryOptions,
   queryClient?: QueryClient,
 ) {
-  return useQuery(infiniteQuery(options), queryClient)
+  return useQuery(infiniteQueryOptions(options), queryClient)
 }

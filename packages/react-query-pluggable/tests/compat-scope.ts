@@ -1,1 +1,1 @@
-export { serialScope } from '../src/runtime/serialScope'
+export { serialScope } from '@tanstack/query-core-pluggable'

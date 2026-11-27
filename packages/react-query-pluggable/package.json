@@ -49,7 +49,7 @@
     "!src/__tests__"
   ],
   "dependencies": {
-    "@tanstack/query-core": "workspace:*"
+    "@tanstack/query-core-pluggable": "workspace:*"
   },
   "devDependencies": {
     "@eslint-react/eslint-plugin": "catalog:",

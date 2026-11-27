@@ -1,33 +1,20 @@
 'use client'
 
-import { infiniteQuery } from './infiniteQuery'
-import { suspenseQuery } from './suspenseQuery'
+import { suspenseInfiniteQueryOptions } from './suspenseInfiniteQueryOptions'
 import { useQuery } from './useQuery'
 import type {
   DefaultError,
   InfiniteData,
-  OmitKeyof,
+  QueryClient,
   QueryKey,
-} from '@tanstack/query-core'
-import type { QueryClient } from './runtime/queryClient'
+} from '@tanstack/query-core-pluggable'
+import type { SkippableSuspenseInfiniteQueryOptions } from './suspenseInfiniteQueryOptions'
 import type {
   AnyUseInfiniteQueryOptions,
-  UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
   UseSuspenseInfiniteQueryOptions,
   UseSuspenseInfiniteQueryResult,
 } from './types'
-
-type SkippableSuspenseInfiniteQueryOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey extends QueryKey,
-  TPageParam,
-> = OmitKeyof<
-  UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
-  'enabled' | 'throwOnError'
->
 
 /**
  * The options for `useSuspenseInfiniteQuery` are the same as for `useInfiniteQuery`, except for `throwOnError`
@@ -155,8 +142,8 @@ export function useSuspenseInfiniteQuery<
 ): UseInfiniteQueryResult<TData, TError>
 
 export function useSuspenseInfiniteQuery(
-  options: AnyUseInfiniteQueryOptions,
+  options: Omit<AnyUseInfiniteQueryOptions, 'enabled' | 'throwOnError'>,
   queryClient?: QueryClient,
 ) {
-  return useQuery(suspenseQuery(infiniteQuery(options)), queryClient)
+  return useQuery(suspenseInfiniteQueryOptions(options), queryClient)
 }

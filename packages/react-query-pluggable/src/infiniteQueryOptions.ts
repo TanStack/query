@@ -1,4 +1,5 @@
-import { identity } from './runtime/identity'
+import { InfiniteQueryObserver } from '@tanstack/query-core-pluggable'
+import { observerKey } from './queryDescriptor'
 import type {
   DefaultError,
   InfiniteData,
@@ -7,8 +8,10 @@ import type {
   OmitKeyof,
   QueryKey,
   QueryKeyWithDataTag,
-} from '@tanstack/query-core'
-import type { SkipToken } from '@tanstack/query-core/primitives'
+  SkipToken,
+} from '@tanstack/query-core-pluggable'
+import type { QueryDescriptor } from './queryDescriptor'
+import type { SuspenseControls } from './suspenseQuery'
 import type { UseInfiniteQueryOptions } from './types'
 
 /**
@@ -119,7 +122,20 @@ export type DefinedInitialDataInfiniteOptions<
     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
 }
 
-type InfiniteQueryOptionsFn = {
+/** Identifies the observer selected at definition time by infiniteQueryOptions. */
+export type InfiniteQueryMode = QueryDescriptor<typeof InfiniteQueryObserver>
+
+// A private type-only default distinguishes an omitted selector output from an
+// explicitly selected value while keeping the public v6 generic parameter order.
+declare const unselectedPages: unique symbol
+/** Marks an omitted selector type while allowing an inferred page parameter in its default. */
+export type UnselectedPages = typeof unselectedPages
+/** Preserves a custom projection or supplies the cached pages with their inferred cursor type. */
+export type ResolvedPages<TData, TPage, TParam> = TData extends UnselectedPages
+  ? InfiniteData<TPage, TParam>
+  : TData
+
+type InfiniteQueryOptionsFactory<TPolicy> = {
   /**
    * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
    * These options can be shared across hooks and imperative APIs such as `fetchInfiniteQuery(client, options)`.
@@ -127,7 +143,7 @@ type InfiniteQueryOptionsFn = {
    *
    * This overload is selected when `initialData` is known to be defined.
    * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` known to be defined.
-   * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+   * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
    * @remarks See {@link useInfiniteQuery} for examples that fetch further pages, from a button click or
    * automatically as the user scrolls.
    * @see {@link useInfiniteQuery} to run an infinite query with these options.
@@ -162,7 +178,7 @@ type InfiniteQueryOptionsFn = {
   <
     TQueryFnData,
     TError = DefaultError,
-    TData = InfiniteData<TQueryFnData>,
+    TData = UnselectedPages,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
@@ -172,22 +188,29 @@ type InfiniteQueryOptionsFn = {
       TData,
       TQueryKey,
       TPageParam
-    >,
+    > &
+      TPolicy,
   ): DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
-    TData,
+    ResolvedPages<TData, TQueryFnData, TPageParam>,
     TQueryKey,
     TPageParam
   > &
-    QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+    QueryKeyWithDataTag<
+      TQueryKey,
+      InfiniteData<TQueryFnData, TPageParam>,
+      TError
+    > &
+    InfiniteQueryMode &
+    TPolicy
 
   /**
    * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
    * These options can be shared across hooks and imperative APIs such as `fetchInfiniteQuery(client, options)`.
    * `options.queryKey` is required and is the query key to generate options for.
    * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
-   * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+   * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
    * @remarks See {@link useInfiniteQuery} for examples that fetch further pages, from a button click or
    * automatically as the user scrolls.
    * @see {@link useInfiniteQuery} to run an infinite query with these options.
@@ -221,7 +244,7 @@ type InfiniteQueryOptionsFn = {
   <
     TQueryFnData,
     TError = DefaultError,
-    TData = InfiniteData<TQueryFnData>,
+    TData = UnselectedPages,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
@@ -231,22 +254,29 @@ type InfiniteQueryOptionsFn = {
       TData,
       TQueryKey,
       TPageParam
-    >,
+    > &
+      TPolicy,
   ): UnusedSkipTokenInfiniteOptions<
     TQueryFnData,
     TError,
-    TData,
+    ResolvedPages<TData, TQueryFnData, TPageParam>,
     TQueryKey,
     TPageParam
   > &
-    QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+    QueryKeyWithDataTag<
+      TQueryKey,
+      InfiniteData<TQueryFnData, TPageParam>,
+      TError
+    > &
+    InfiniteQueryMode &
+    TPolicy
 
   /**
    * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
    * These options can be shared across hooks and imperative APIs such as `fetchInfiniteQuery(client, options)`.
    * `options.queryKey` is required and is the query key to generate options for.
    * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
-   * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+   * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
    * @remarks See {@link useInfiniteQuery} for examples that fetch further pages (from a button click or
    * automatically as the user scrolls) and that use `skipToken` to disable the query until `postId` is set.
    * @see {@link useInfiniteQuery} to run an infinite query with these options.
@@ -280,7 +310,7 @@ type InfiniteQueryOptionsFn = {
   <
     TQueryFnData,
     TError = DefaultError,
-    TData = InfiniteData<TQueryFnData>,
+    TData = UnselectedPages,
     TQueryKey extends QueryKey = QueryKey,
     TPageParam = unknown,
   >(
@@ -290,16 +320,31 @@ type InfiniteQueryOptionsFn = {
       TData,
       TQueryKey,
       TPageParam
-    >,
+    > &
+      TPolicy,
   ): UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
-    TData,
+    ResolvedPages<TData, TQueryFnData, TPageParam>,
     TQueryKey,
     TPageParam
   > &
-    QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+    QueryKeyWithDataTag<
+      TQueryKey,
+      InfiniteData<TQueryFnData, TPageParam>,
+      TError
+    > &
+    InfiniteQueryMode &
+    TPolicy
 }
 
-/** Preserves infinite query options and tags their key with the inferred pages and error types. */
-export const infiniteQueryOptions: InfiniteQueryOptionsFn = identity
+/**
+ * Prepares a descriptor and tags its cache key with the data and error types.
+ * @param options - The fetcher and its configuration for the selected observer.
+ * @returns A new descriptor backed by InfiniteQueryObserver.
+ */
+export const infiniteQueryOptions: InfiniteQueryOptionsFactory<SuspenseControls> &
+  InfiniteQueryOptionsFactory<unknown> = <T extends object>(options: T) => ({
+  ...options,
+  [observerKey]: InfiniteQueryObserver,
+})

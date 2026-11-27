@@ -1,4 +1,4 @@
-import { placeholderData, select } from '../src'
+import { placeholderData, select } from '@tanstack/query-core-pluggable'
 
 export { select, placeholderData }
 export const selectOption = 'select'

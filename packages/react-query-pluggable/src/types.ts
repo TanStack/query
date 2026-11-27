@@ -3,25 +3,24 @@ import type {
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   DistributiveOmit,
+  InferErrorFromTag,
   InfiniteData,
-  InfiniteQueryObserverPlaceholderResult,
-  InfiniteQueryObserverResult,
-  OmitKeyof,
-  Override,
-  QueryKey,
-  QueryObserverPlaceholderResult,
-  QueryObserverResult,
-} from '@tanstack/query-core'
-import type { SkipToken } from '@tanstack/query-core/primitives'
-import type {
   InfiniteQueryExecuteOptions,
   InfiniteQueryObserverOptions,
+  InfiniteQueryObserverPlaceholderResult,
+  InfiniteQueryObserverResult,
   MutateFunction,
   MutationObserverOptions,
   MutationObserverResult,
+  OmitKeyof,
+  Override,
   QueryExecuteOptions,
+  QueryKey,
   QueryObserverOptions,
-} from './runtime/types'
+  QueryObserverPlaceholderResult,
+  QueryObserverResult,
+  SkipToken,
+} from '@tanstack/query-core-pluggable'
 
 /**
  * {@link UseBaseQueryOptions} with all type parameters set to `any`, useful when the specific types aren't
@@ -149,8 +148,7 @@ export type UsePrefetchInfiniteQueryOptions<
  */
 export type AnyUseQueryOptions = UseQueryOptions<any, any, any, any>
 /**
- * The options accepted by `useQuery`. Same as {@link UseBaseQueryOptions}, minus `suspense` (which
- * `react-query` derives from which hook you call rather than exposing as an option).
+ * The ordinary options accepted by {@link queryOptions}. The factory selects the render policy for `useQuery`.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
@@ -218,8 +216,7 @@ export type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<
 >
 /**
  * The options accepted by `useInfiniteQuery`. Extends {@link InfiniteQueryObserverOptions}
- * with the React-specific `subscribed` option, minus `suspense` (which
- * `react-query` derives from which hook you call rather than exposing as an option).
+ * with the React-specific `subscribed` option. {@link infiniteQueryOptions} and {@link suspenseInfiniteQueryOptions} select the render policy.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
@@ -469,3 +466,10 @@ export type UseMutationResult<
   TVariables = unknown,
   TOnMutateResult = unknown,
 > = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>
+
+/** Recovers the error type retained in a prepared query key when an error handler is absent. */
+export type TaggedQueryError<T, TFallback> = T extends {
+  queryKey: infer K extends QueryKey
+}
+  ? InferErrorFromTag<TFallback, K>
+  : TFallback

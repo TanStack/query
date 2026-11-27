@@ -19,15 +19,8 @@ const repository = resolve(import.meta.dirname, '..')
 const require = createRequire(import.meta.url)
 const entry = join(adapter, 'src/index.ts')
 const packageName = '@tanstack/react-query-pluggable'
-const shared = [
-  'environmentManager',
-  'focusManager',
-  'onlineManager',
-  'removable',
-  'retryer',
-  'subscribable',
-  'timeoutManager',
-]
+const coreName = '@tanstack/query-core-pluggable'
+const coreSource = join(repository, 'packages/query-core-pluggable/src')
 
 // Only adapt imports in copies of the upstream tests and their setup. The
 // implementation and its workspace dependencies resolve the real core package.
@@ -43,9 +36,7 @@ for (const suite of ['query-core', 'react-query']) {
   try {
     const source = join(project, 'src')
     const implementation =
-      suite === 'query-core'
-        ? join(adapter, 'src/runtime')
-        : join(adapter, 'src')
+      suite === 'query-core' ? coreSource : join(adapter, 'src')
     cpSync(join(upstream, 'src/__tests__'), join(source, '__tests__'), {
       recursive: true,
       // Only query-core exposes the extension points for non-React adapters.
@@ -70,7 +61,7 @@ for (const suite of ['query-core', 'react-query']) {
     const port = queryClientTestPort(
       upstream,
       [...testFiles.map((file) => join(originals, file)), ...configFiles],
-      packageName,
+      coreName,
     )
     function copyTestModule(from, to) {
       writeFileSync(to, port(from))
@@ -85,22 +76,21 @@ for (const suite of ['query-core', 'react-query']) {
       writeFileSync(join(source, file.name), `export * from '${target}'\n`)
     }
     if (suite === 'query-core') {
-      for (const name of shared) {
-        writeFileSync(
-          join(source, name + '.ts'),
-          "export * from '@tanstack/query-core/primitives'\n",
-        )
-      }
       // The pluggable runtime exposes the page fetcher directly.
       writeFileSync(
         join(source, '__tests__/infiniteFetch.ts'),
         `export { prepareInfiniteFetch } from '../infiniteQueryBehavior'\n`,
       )
-      // Upstream tests use ".." for the public package and "../foo" for internals.
-      writeFileSync(
-        join(source, 'index.ts'),
-        `export * from '${importPath(source, entry)}'\n`,
-      )
+    } else {
+      // Exercise the same upstream cases through the required descriptor API.
+      const compat = join(adapter, 'tests/compat-useQuery.ts')
+      for (const module of ['index', 'useQuery']) {
+        const real = importPath(source, join(implementation, module))
+        writeFileSync(
+          join(source, module + '.ts'),
+          `export * from '${real}'\nexport { useQuery } from '${importPath(source, compat)}'\n`,
+        )
+      }
     }
 
     const setup = join(project, 'test-setup.ts')
@@ -125,12 +115,13 @@ for (const suite of ['query-core', 'react-query']) {
         noEmit: true,
         paths: {
           [packageName]: [entry],
+          [coreName]: [join(coreSource, 'index.ts')],
           // This suite exercises only the per-query persistence implementation.
           ...(suite === 'react-query' && {
             '@tanstack/query-persist-client-core': [persister],
           }),
           ...Object.fromEntries(
-            ['polling', 'projection', 'scope'].map((name) => [
+            ['polling', 'projection', 'scope', 'descriptors'].map((name) => [
               `@tanstack/query-test-utils/${name}`,
               [join(adapter, `tests/compat-${name}.ts`)],
             ]),

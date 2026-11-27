@@ -1,15 +1,14 @@
+import { QueryObserver, getQueryCache } from '@tanstack/query-core-pluggable'
 import { use } from 'react'
-import { getQueryCache } from './runtime/queryClient'
-import { QueryObserver } from './runtime/queryObserver'
 import type {
   DefaultError,
+  DefaultedQueryObserverOptions,
+  Query,
+  QueryClient,
   QueryKey,
   QueryObserverResult,
-} from '@tanstack/query-core'
+} from '@tanstack/query-core-pluggable'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
-import type { Query } from './runtime/query'
-import type { QueryClient } from './runtime/queryClient'
-import type { DefaultedQueryObserverOptions } from './runtime/types'
 
 type SuspensePromiseEntry = {
   fetchPromise: Promise<unknown>

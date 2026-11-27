@@ -26,7 +26,8 @@
     "./package.json": "./package.json",
     "./polling": "./src/polling.ts",
     "./scope": "./src/scope.ts",
-    "./projection": "./src/projection.ts"
+    "./projection": "./src/projection.ts",
+    "./descriptors": "./src/descriptors.ts"
   },
   "scripts": {
     "clean": "premove ./build ./coverage ./dist-ts ./.cache/test-types",

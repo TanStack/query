@@ -1,5 +1,4 @@
-import { identity } from './runtime/identity'
-import type { DefaultError, WithRequired } from '@tanstack/query-core'
+import type { DefaultError, WithRequired } from '@tanstack/query-core-pluggable'
 import type { UseMutationOptions } from './types'
 
 type MutationOptionsFn = {
@@ -85,5 +84,9 @@ type MutationOptionsFn = {
   >
 }
 
-/** Preserves mutation option types when reusing the same options in multiple places. */
-export const mutationOptions: MutationOptionsFn = identity
+/**
+ * Preserves mutation option types when reusing the same options in multiple places.
+ * @param options - The mutation function, its key and lifecycle callbacks.
+ * @returns The supplied options.
+ */
+export const mutationOptions: MutationOptionsFn = <T>(options: T) => options

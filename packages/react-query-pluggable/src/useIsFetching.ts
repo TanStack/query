@@ -1,10 +1,12 @@
 'use client'
+import {
+  getQueryCache,
+  isFetching,
+  notifyManager,
+} from '@tanstack/query-core-pluggable'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
-import { notifyManager } from './runtime/notifyManager'
-import { getQueryCache, isFetching } from './runtime/queryClient'
-import type { QueryClient } from './runtime/queryClient'
-import type { QueryFilters } from './runtime/utils'
+import type { QueryClient, QueryFilters } from '@tanstack/query-core-pluggable'
 
 /**
  * The `useIsFetching` hook returns the `number` of the queries that your application is loading or fetching in

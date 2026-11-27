@@ -1,13 +1,14 @@
-import { CancelledError, onlineManager } from '@tanstack/query-core'
-import { describe, expect, it } from 'vitest'
-import { QueryClient, cancelQueries } from '..'
 import {
+  CancelledError,
   clearQueryClient,
   fetchQuery,
   getQueryState,
   mountQueryClient,
+  onlineManager,
   unmountQueryClient,
-} from '../runtime/queryClient'
+} from '@tanstack/query-core-pluggable'
+import { describe, expect, it } from 'vitest'
+import { QueryClient, cancelQueries } from '..'
 
 describe('shared query-core runtime', () => {
   it('pauses when core goes offline and resumes when core reconnects', async () => {

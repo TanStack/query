@@ -1,7 +1,10 @@
 'use client'
+import {
+  mountQueryClient,
+  unmountQueryClient,
+} from '@tanstack/query-core-pluggable'
 import * as React from 'react'
-import { mountQueryClient, unmountQueryClient } from './runtime/queryClient'
-import type { QueryClient } from './runtime/queryClient'
+import type { QueryClient } from '@tanstack/query-core-pluggable'
 
 /**
  * The context that `useQueryClient` reads from. `QueryClientProvider` is the normal way to set it.

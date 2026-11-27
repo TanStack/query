@@ -29,7 +29,9 @@ export default defineConfig({
     coverage: {
       ...base.test?.coverage,
       include: [
-        join(adapter, isReact ? 'src/*.{ts,tsx}' : 'src/runtime/**/*.ts'),
+        isReact
+          ? join(adapter, 'src/*.{ts,tsx}')
+          : join(adapter, '../query-core-pluggable/src/**/*.ts'),
       ],
       reportsDirectory: join(adapter, 'coverage', suite),
       allowExternal: true,

@@ -1,19 +1,24 @@
 'use client'
 
-import { skipToken } from '@tanstack/query-core/primitives'
+import { skipToken } from '@tanstack/query-core-pluggable'
 import { defaultThrowOnError, suspenseQueriesPolicy } from './suspense'
 import { useBaseQueries } from './useQueries'
 import type {
   DefaultError,
   OmitKeyof,
   QueriesPlaceholderDataFunction,
+  QueryClient,
+  QueryFunction,
   QueryKey,
-} from '@tanstack/query-core'
-import type { placeholderData } from './runtime/placeholderData'
-import type { Select } from './runtime/projectionTypes'
-import type { QueryClient } from './runtime/queryClient'
-import type { QueryFunction, ThrowOnError } from './runtime/types'
-import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
+  Select,
+  ThrowOnError,
+  placeholderData,
+} from '@tanstack/query-core-pluggable'
+import type {
+  TaggedQueryError,
+  UseSuspenseQueryOptions,
+  UseSuspenseQueryResult,
+} from './types'
 
 // `placeholderData` functions in useQueries never receive previous query data.
 type UseSuspenseQueryOptionsForUseSuspenseQueries<
@@ -70,7 +75,7 @@ type GetUseSuspenseQueryOptions<T> =
                   }
                 ? UseSuspenseQueryOptionsForUseSuspenseQueries<
                     TQueryFnData,
-                    TError,
+                    TaggedQueryError<T, TError>,
                     TData,
                     TQueryKey
                   >
@@ -82,7 +87,7 @@ type GetUseSuspenseQueryOptions<T> =
                     }
                   ? UseSuspenseQueryOptionsForUseSuspenseQueries<
                       TQueryFnData,
-                      TError,
+                      TaggedQueryError<T, TError>,
                       TQueryFnData,
                       TQueryKey
                     >
@@ -114,7 +119,10 @@ type GetUseSuspenseQueryResult<T> =
                   }
                 ? UseSuspenseQueryResult<
                     unknown extends TData ? TQueryFnData : TData,
-                    unknown extends TError ? DefaultError : TError
+                    TaggedQueryError<
+                      T,
+                      unknown extends TError ? DefaultError : TError
+                    >
                   >
                 : T extends {
                       queryFn?:
@@ -124,7 +132,10 @@ type GetUseSuspenseQueryResult<T> =
                     }
                   ? UseSuspenseQueryResult<
                       TQueryFnData,
-                      unknown extends TError ? DefaultError : TError
+                      TaggedQueryError<
+                        T,
+                        unknown extends TError ? DefaultError : TError
+                      >
                     >
                   : // Fallback
                     UseSuspenseQueryResult

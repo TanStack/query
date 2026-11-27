@@ -1,9 +1,15 @@
-import { noop } from '@tanstack/query-core/primitives'
+import {
+  fetchInfiniteQuery,
+  getQueryState,
+  noop,
+} from '@tanstack/query-core-pluggable'
 import { useQueryClient } from './QueryClientProvider'
-import { fetchInfiniteQuery } from './runtime/fetchInfiniteQuery'
-import { getQueryState } from './runtime/queryClient'
-import type { DefaultError, InfiniteData, QueryKey } from '@tanstack/query-core'
-import type { QueryClient } from './runtime/queryClient'
+import type {
+  DefaultError,
+  InfiniteData,
+  QueryClient,
+  QueryKey,
+} from '@tanstack/query-core-pluggable'
 import type { UsePrefetchInfiniteQueryOptions } from './types'
 
 /**

@@ -2,6 +2,7 @@ import { describe, expectTypeOf, it } from 'vitest'
 import {
   keepPreviousData,
   placeholderData,
+  queryOptions,
   select,
   useInfiniteQuery,
   useQuery,
@@ -15,11 +16,13 @@ describe('projection feature types', () => {
   const count = (order: { count: number }) => order.count
 
   it('infers the output of a typed selector and preserves the query function data', () => {
-    const result = useQuery({
-      ...options,
-      placeholderData: placeholderData(keepPreviousData),
-      select: select(count),
-    })
+    const result = useQuery(
+      queryOptions({
+        ...options,
+        placeholderData: placeholderData(keepPreviousData),
+        select: select(count),
+      }),
+    )
     expectTypeOf(result.data).toEqualTypeOf<number | undefined>()
     const suspense = useSuspenseQuery({
       ...options,
@@ -65,8 +68,8 @@ describe('projection feature types', () => {
       readonly [typeof select, typeof count]
     >()
     // @ts-expect-error Plain selector callbacks do not install the projection feature.
-    useQuery({ ...options, select: count })
+    useQuery(queryOptions({ ...options, select: count }))
     // @ts-expect-error Plain placeholder data does not install the placeholder feature.
-    useQuery({ ...options, placeholderData: { count: 1 } })
+    useQuery(queryOptions({ ...options, placeholderData: { count: 1 } }))
   })
 })

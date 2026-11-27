@@ -1,8 +1,8 @@
 ---
-'@tanstack/query-core': minor
+'@tanstack/query-core-pluggable': minor
 '@tanstack/react-query-pluggable': minor
 ---
 
-Add an experimental ESM-only React Query adapter backed by `@tanstack/query-core`. Apps can import polling, selection, placeholder data, and serial mutation queues where they use them. Use `useQuery(query(options))` for a regular read and `useQuery(suspenseQuery(options))` to suspend on the same cache. Compose `infiniteQuery(options)` with the same hook and Suspense policy to read pages. For imperative fetching, import `fetchInfiniteQuery(client, options)`. Client operations are named functions with the client as their first argument, including `getQueryData(client, key)` and `invalidateQueries(client, filters)`.
+Add an experimental ESM-only pair for React. `@tanstack/react-query-pluggable` depends on `@tanstack/query-core-pluggable`. Prepare each `useQuery` call with `queryOptions`, `suspenseQueryOptions`, `infiniteQueryOptions`, or `suspenseInfiniteQueryOptions`. Each factory selects the observer and return type. The Suspense factories delegate an initial fetch to the nearest boundary.
 
-Mutation hooks acquire a cache on first use. For direct access, import `getMutationCache` and call `getMutationCache(client)`. Clients configured with a custom cache return that instance.
+Import optional features such as `refetchInterval`, `select`, `placeholderData`, and `serialScope` where the application uses them. Import client operations as named functions, with the client first, such as `invalidateQueries(client, filters)`. Mutation hooks acquire their cache on demand. Use `getMutationCache(client)` for direct access.

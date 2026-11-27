@@ -1,4 +1,8 @@
 'use client'
+import {
+  defaultQueryOptions,
+  getQueryCache,
+} from '@tanstack/query-core-pluggable'
 import * as React from 'react'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
@@ -8,11 +12,13 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
-import { defaultQueryOptions, getQueryCache } from './runtime/queryClient'
 import { useObserverSnapshot } from './useObserverSnapshot'
-import type { QueryKey, QueryObserverResult } from '@tanstack/query-core'
-import type { QueryClient } from './runtime/queryClient'
-import type { QueryObserver } from './runtime/queryObserver'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserver,
+  QueryObserverResult,
+} from '@tanstack/query-core-pluggable'
 import type { suspenseQueryPolicy } from './suspense'
 import type { UseBaseQueryOptions } from './types'
 

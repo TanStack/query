@@ -1,27 +1,50 @@
 // @vitest-environment jsdom
 
+import { setQueryData } from '@tanstack/query-core-pluggable'
 import { fireEvent, render, screen } from '@testing-library/react'
 import * as React from 'react'
 import { describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   QueryClientProvider,
-  infiniteQuery,
-  query,
-  suspenseQuery,
+  QueryObserver,
+  infiniteQueryOptions,
+  queryOptions,
+  suspenseQueryOptions,
   useQuery,
 } from '..'
-import { setQueryData } from '../runtime/queryClient'
 
 describe('query render modes', () => {
+  it.each([
+    undefined,
+    null,
+    { queryKey: ['post'], queryFn: (): string => 'Dune' },
+    { queryKey: ['post'], queryFn: (): string => 'Dune', Observer: QueryObserver },
+  ])('explains the required factory for an unchecked input', (options) => {
+    function Page() {
+      // @ts-expect-error Exercise an unchecked JavaScript caller.
+      useQuery(options)
+      return null
+    }
+    expect(() => render(<Page />)).toThrow(
+      'Pass a descriptor from queryOptions, suspenseQueryOptions, infiniteQueryOptions, or suspenseInfiniteQueryOptions',
+    )
+  })
+
   it('uses the same cached result when a reader starts suspending', () => {
     const client = new QueryClient()
     const queryFn = vi.fn<() => string>(() => 'fetched post')
-    const options = query({ queryKey: ['post'], queryFn, staleTime: Infinity })
+    const options = {
+      queryKey: ['post'],
+      queryFn,
+      staleTime: Infinity,
+    }
     setQueryData(client, options.queryKey, 'cached post')
 
     function Post({ suspend }: { suspend: boolean }) {
-      const result = useQuery(suspend ? suspenseQuery(options) : options)
+      const result = useQuery(
+        suspend ? suspenseQueryOptions(options) : queryOptions(options),
+      )
       return <p>{result.data}</p>
     }
 
@@ -45,8 +68,11 @@ describe('query render modes', () => {
 
   it('can switch the mounted hook to a paginated reader and back', async () => {
     const client = new QueryClient()
-    const post = query({ queryKey: ['post'], queryFn: () => 'single post' })
-    const pages = infiniteQuery({
+    const post = queryOptions({
+      queryKey: ['post'],
+      queryFn: () => 'single post',
+    })
+    const pages = infiniteQueryOptions({
       queryKey: ['pages'],
       initialPageParam: 1,
       queryFn: ({ pageParam }) => 'page ' + pageParam,

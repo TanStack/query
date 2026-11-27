@@ -1,137 +1,3 @@
-/* istanbul ignore file */
-
-// Public cache and observer API
-export {
-  focusManager,
-  environmentManager,
-  onlineManager,
-  CancelledError,
-  timeoutManager,
-  hashKey,
-  noop,
-  partialMatchKey,
-  replaceEqualDeep,
-  shouldThrowError,
-  defaultQueryFn,
-  skipToken,
-} from '@tanstack/query-core/primitives'
-export type {
-  FocusManager,
-  OnlineManager,
-  TimeoutManager,
-  ManagedTimerId,
-  TimeoutCallback,
-  TimeoutProvider,
-  DefaultQueryFn,
-  SkipToken,
-  Updater,
-} from '@tanstack/query-core/primitives'
-export {
-  defaultShouldDehydrateMutation,
-  defaultShouldDehydrateQuery,
-  dehydrate,
-  dehydrateQuery,
-  hydrate,
-} from './runtime/hydration'
-export { infiniteQuery } from './infiniteQuery'
-export type { InfiniteQueryMode } from './infiniteQuery'
-export { fetchInfiniteQuery } from './runtime/fetchInfiniteQuery'
-export { InfiniteQueryObserver } from './runtime/infiniteQueryObserver'
-export { MutationCache, getMutationCache } from './runtime/mutationCache'
-export type {
-  MutationCacheNotifyEvent,
-  MutationCacheConfig,
-} from './runtime/mutationCache'
-export { MutationObserver } from './runtime/mutationObserver'
-export { defaultScheduler, notifyManager } from './runtime/notifyManager'
-export { QueriesObserver } from './runtime/queriesObserver'
-export { QueryCache } from './runtime/queryCache'
-export type {
-  QueryCacheNotifyEvent,
-  QueryCacheConfig,
-} from './runtime/queryCache'
-export {
-  QueryClient,
-  mountQueryClient,
-  unmountQueryClient,
-  isFetching,
-  isMutating,
-  getQueryData,
-  setQueryData,
-  getQueryState,
-  fetchQuery,
-  resumePausedMutations,
-  getQueryCache,
-  getDefaultOptions,
-  setDefaultOptions,
-  setQueryDefaults,
-  getQueryDefaults,
-  setMutationDefaults,
-  getMutationDefaults,
-  defaultQueryOptions,
-  defaultMutationOptions,
-  clearQueryClient,
-} from './runtime/queryClient'
-export {
-  getQueriesData,
-  setQueriesData,
-  removeQueries,
-  resetQueries,
-  cancelQueries,
-  invalidateQueries,
-  refetchQueries,
-} from './runtime/cacheOperations'
-
-export { serialScope } from './runtime/serialScope'
-export type { SerialScope } from './runtime/serialScope'
-export { select } from './runtime/select'
-export { placeholderData } from './runtime/placeholderData'
-export type { Select, PlaceholderData } from './runtime/projectionTypes'
-export { refetchInterval } from './runtime/refetchInterval'
-export type { RefetchInterval } from './runtime/refetchInterval'
-export { QueryObserver } from './runtime/queryObserver'
-
-export { keepPreviousData, matchMutation, matchQuery } from './runtime/utils'
-export type { MutationFilters, QueryFilters } from './runtime/utils'
-export { streamedQuery } from './runtime/streamedQuery'
-export type { DehydrateOptions, HydrateOptions } from './runtime/hydration'
-export { Mutation } from './runtime/mutation'
-export { Query } from './runtime/query'
-export { dataTagSymbol, dataTagErrorSymbol, unsetMarker } from './runtime/types'
-export type {
-  QueryFunction,
-  StaleTimeFunction,
-  QueryBooleanOption,
-  QueryPersister,
-  QueryFunctionContext,
-  PlaceholderDataFunction,
-  QueryOptions,
-  ThrowOnError,
-  QueryObserverOptions,
-  DefaultedQueryObserverOptions,
-  InfiniteQueryObserverOptions,
-  DefaultedInfiniteQueryObserverOptions,
-  QueryExecuteOptions,
-  InfiniteQueryExecuteOptions,
-  InvalidateQueryFilters,
-  RefetchQueryFilters,
-  MutationFunctionContext,
-  MutationFunction,
-  MutationOptions,
-  MutationObserverOptions,
-  MutateOptions,
-  MutateFunctionRest,
-  MutateFunction,
-  MutationObserverBaseResult,
-  MutationObserverIdleResult,
-  MutationObserverLoadingResult,
-  MutationObserverErrorResult,
-  MutationObserverSuccessResult,
-  MutationObserverResult,
-  QueryClientConfig,
-  DefaultOptions,
-} from './runtime/types'
-
 // React Query
 export type {
   AnyUseBaseQueryOptions,
@@ -162,10 +28,12 @@ export type {
 } from './types'
 export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
+export type { PreparedQuery } from './useQuery'
 export { useQuery } from './useQuery'
 export { useSuspenseQuery } from './useSuspenseQuery'
-export { suspenseQuery } from './suspenseQuery'
-export type { SuspenseQueryMode, SuspenseQueryOptions } from './suspenseQuery'
+export { suspenseQueryOptions } from './suspenseQueryOptions'
+export { suspenseInfiniteQueryOptions } from './suspenseInfiniteQueryOptions'
+export type { SuspenseControls, SuspenseQueryMode } from './suspenseQuery'
 export { useSuspenseInfiniteQuery } from './useSuspenseInfiniteQuery'
 export { useSuspenseQueries } from './useSuspenseQueries'
 export type {
@@ -174,9 +42,10 @@ export type {
 } from './useSuspenseQueries'
 export { usePrefetchQuery } from './usePrefetchQuery'
 export { usePrefetchInfiniteQuery } from './usePrefetchInfiniteQuery'
-export { queryOptions, queryOptions as query } from './queryOptions'
+export { queryOptions } from './queryOptions'
 export type {
   DefinedInitialDataOptions,
+  QueryMode,
   UndefinedInitialDataOptions,
   UnusedSkipTokenOptions,
 } from './queryOptions'
@@ -212,7 +81,128 @@ export { mutationOptions } from './mutationOptions'
 export { useInfiniteQuery } from './useInfiniteQuery'
 export { useIsRestoring, IsRestoringProvider } from './IsRestoringProvider'
 
+export {
+  focusManager,
+  environmentManager,
+  onlineManager,
+  CancelledError,
+  timeoutManager,
+  hashKey,
+  noop,
+  partialMatchKey,
+  replaceEqualDeep,
+  shouldThrowError,
+  defaultQueryFn,
+  skipToken,
+  defaultShouldDehydrateMutation,
+  defaultShouldDehydrateQuery,
+  dehydrate,
+  dehydrateQuery,
+  hydrate,
+  fetchInfiniteQuery,
+  InfiniteQueryObserver,
+  MutationCache,
+  getMutationCache,
+  MutationObserver,
+  defaultScheduler,
+  notifyManager,
+  QueriesObserver,
+  QueryCache,
+  QueryClient,
+  mountQueryClient,
+  unmountQueryClient,
+  isFetching,
+  isMutating,
+  getQueryData,
+  setQueryData,
+  getQueryState,
+  fetchQuery,
+  resumePausedMutations,
+  getQueryCache,
+  getDefaultOptions,
+  setDefaultOptions,
+  setQueryDefaults,
+  getQueryDefaults,
+  setMutationDefaults,
+  getMutationDefaults,
+  defaultQueryOptions,
+  defaultMutationOptions,
+  clearQueryClient,
+  getQueriesData,
+  setQueriesData,
+  removeQueries,
+  resetQueries,
+  cancelQueries,
+  invalidateQueries,
+  refetchQueries,
+  serialScope,
+  select,
+  placeholderData,
+  refetchInterval,
+  QueryObserver,
+  keepPreviousData,
+  matchMutation,
+  matchQuery,
+  streamedQuery,
+  Mutation,
+  Query,
+  dataTagSymbol,
+  dataTagErrorSymbol,
+  unsetMarker,
+} from '@tanstack/query-core-pluggable'
 export type {
+  FocusManager,
+  OnlineManager,
+  TimeoutManager,
+  ManagedTimerId,
+  TimeoutCallback,
+  TimeoutProvider,
+  DefaultQueryFn,
+  SkipToken,
+  Updater,
+  MutationCacheNotifyEvent,
+  MutationCacheConfig,
+  QueryCacheNotifyEvent,
+  QueryCacheConfig,
+  SerialScope,
+  Select,
+  PlaceholderData,
+  RefetchInterval,
+  MutationFilters,
+  QueryFilters,
+  DehydrateOptions,
+  HydrateOptions,
+  QueryFunction,
+  StaleTimeFunction,
+  QueryBooleanOption,
+  QueryPersister,
+  QueryFunctionContext,
+  PlaceholderDataFunction,
+  QueryOptions,
+  ThrowOnError,
+  QueryObserverOptions,
+  DefaultedQueryObserverOptions,
+  InfiniteQueryObserverOptions,
+  DefaultedInfiniteQueryObserverOptions,
+  QueryExecuteOptions,
+  InfiniteQueryExecuteOptions,
+  InvalidateQueryFilters,
+  RefetchQueryFilters,
+  MutationFunctionContext,
+  MutationFunction,
+  MutationOptions,
+  MutationObserverOptions,
+  MutateOptions,
+  MutateFunctionRest,
+  MutateFunction,
+  MutationObserverBaseResult,
+  MutationObserverIdleResult,
+  MutationObserverLoadingResult,
+  MutationObserverErrorResult,
+  MutationObserverSuccessResult,
+  MutationObserverResult,
+  QueryClientConfig,
+  DefaultOptions,
   QueryObserverResultReader,
   DehydratedState,
   MutationState,
@@ -281,4 +271,5 @@ export type {
   SetDataOptions,
   NotifyEventType,
   NotifyEvent,
-} from '@tanstack/query-core'
+} from '@tanstack/query-core-pluggable'
+export type { InfiniteQueryMode } from './infiniteQueryOptions'

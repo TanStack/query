@@ -7384,6 +7384,9 @@ importers:
       '@tanstack/query-core':
         specifier: workspace:*
         version: link:../../../packages/query-core
+      '@tanstack/query-core-pluggable':
+        specifier: workspace:*
+        version: link:../../../packages/query-core-pluggable
       '@tanstack/react-query':
         specifier: workspace:*
         version: link:../../../packages/react-query
@@ -8045,6 +8048,12 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
+  packages/query-core-pluggable:
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
   packages/query-devtools:
     dependencies:
       '@kobalte/core':
@@ -8254,9 +8263,9 @@ importers:
 
   packages/react-query-pluggable:
     dependencies:
-      '@tanstack/query-core':
+      '@tanstack/query-core-pluggable':
         specifier: workspace:*
-        version: link:../query-core
+        version: link:../query-core-pluggable
     devDependencies:
       '@eslint-react/eslint-plugin':
         specifier: 'catalog:'

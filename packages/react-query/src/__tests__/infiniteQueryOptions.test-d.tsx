@@ -12,6 +12,7 @@ import type {
   InfiniteData,
   InitialDataFunction,
 } from '@tanstack/query-core'
+import type { NumericPageParam } from '@tanstack/query-test-utils/descriptors'
 
 // Regression test for exported infiniteQueryOptions inference under declaration emit.
 // TypeScript should be able to name the return type without expanding the
@@ -60,9 +61,9 @@ describe('infiniteQueryOptions', () => {
 
     const { data } = useInfiniteQuery(options)
 
-    // known issue: type of pageParams is unknown when returned from useInfiniteQuery
+    // The original v6 factory erases the page parameter in its tagged result.
     expectTypeOf(data).toEqualTypeOf<
-      InfiniteData<string, unknown> | undefined
+      InfiniteData<string, NumericPageParam> | undefined
     >()
   })
 
@@ -77,7 +78,7 @@ describe('infiniteQueryOptions', () => {
 
     const { data } = useInfiniteQuery(options)
 
-    // known issue: type of pageParams is unknown when returned from useInfiniteQuery
+    // The original v6 factory erases the page parameter in its tagged result.
     expectTypeOf(data).toEqualTypeOf<Array<string> | undefined>()
   })
 
@@ -91,7 +92,7 @@ describe('infiniteQueryOptions', () => {
 
     const { data } = useSuspenseInfiniteQuery(options)
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, NumericPageParam>>()
   })
 
   it('should work when passed to useSuspenseInfiniteQuery with select', () => {
@@ -172,7 +173,9 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
+    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<
+      InfiniteData<string, NumericPageParam>
+    >()
   })
 
   it('should tag the queryKey even if no promise is returned', () => {
@@ -183,7 +186,9 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
+    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<
+      InfiniteData<string, NumericPageParam>
+    >()
   })
 
   it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
@@ -195,7 +200,9 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
+    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<
+      InfiniteData<string, NumericPageParam>
+    >()
   })
 
   it('should return the proper type when passed to getQueryData', () => {
@@ -210,7 +217,7 @@ describe('infiniteQueryOptions', () => {
     const data = queryClient.getQueryData(tagged)
 
     expectTypeOf(data).toEqualTypeOf<
-      InfiniteData<string, unknown> | undefined
+      InfiniteData<string, NumericPageParam> | undefined
     >()
   })
 
@@ -225,13 +232,13 @@ describe('infiniteQueryOptions', () => {
     const queryClient = new QueryClient()
     const data = queryClient.setQueryData(tagged, (prev) => {
       expectTypeOf(prev).toEqualTypeOf<
-        InfiniteData<string, unknown> | undefined
+        InfiniteData<string, NumericPageParam> | undefined
       >()
       return prev
     })
 
     expectTypeOf(data).toEqualTypeOf<
-      InfiniteData<string, unknown> | undefined
+      InfiniteData<string, NumericPageParam> | undefined
     >()
   })
 
@@ -245,7 +252,7 @@ describe('infiniteQueryOptions', () => {
     })
     const { data } = useSuspenseInfiniteQuery(options)
     expectTypeOf(data).toEqualTypeOf<
-      InfiniteData<string, unknown> | undefined
+      InfiniteData<string, NumericPageParam> | undefined
     >()
   })
 
@@ -317,7 +324,7 @@ describe('infiniteQueryOptions', () => {
 
     const { data } = useInfiniteQuery(options)
     expectTypeOf(data).toEqualTypeOf<
-      InfiniteData<{ example: boolean }, unknown> | undefined
+      InfiniteData<{ example: boolean }, NumericPageParam> | undefined
     >()
   })
 
@@ -332,7 +339,7 @@ describe('infiniteQueryOptions', () => {
     })
 
     expectTypeOf(options.queryKey).toEqualTypeOf<
-      DataTag<MyQueryKey, InfiniteData<number>, Error>
+      DataTag<MyQueryKey, InfiniteData<number, NumericPageParam>, Error>
     >()
   })
 

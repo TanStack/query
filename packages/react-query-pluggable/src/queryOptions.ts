@@ -1,14 +1,18 @@
-import { identity } from './runtime/identity'
+import { QueryObserver } from '@tanstack/query-core-pluggable'
+import { observerKey } from './queryDescriptor'
 import type {
   DefaultError,
+  DefaultQueryFn,
   InitialDataFunction,
   NonUndefinedGuard,
   OmitKeyof,
+  QueryFunction,
   QueryKey,
   QueryKeyWithDataTag,
-} from '@tanstack/query-core'
-import type { DefaultQueryFn, SkipToken } from '@tanstack/query-core/primitives'
-import type { QueryFunction } from './runtime/types'
+  SkipToken,
+} from '@tanstack/query-core-pluggable'
+import type { QueryDescriptor } from './queryDescriptor'
+import type { SuspenseControls } from './suspenseQuery'
 import type { UseQueryOptions } from './types'
 
 /**
@@ -91,16 +95,18 @@ export type DefinedInitialDataOptions<
   queryFn: QueryFunction<TQueryFnData, TQueryKey> | DefaultQueryFn
 }
 
-type QueryOptionsFn = {
+/** Identifies the observer selected at definition time by queryOptions. */
+export type QueryMode = QueryDescriptor<typeof QueryObserver>
+
+type QueryOptionsFactory<TPolicy> = {
   /**
-   * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
-   * be shared across hooks and imperative APIs such as `fetchQuery`. `options.queryKey` is required and
-   * is the query key to generate options for.
+   * Creates a regular query descriptor for `useQuery`. The tagged key also carries the cache data
+   * and error types into client operations.
    *
    * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
    * `undefined` (unless a `select` changes `TData` to include `undefined`).
    * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` known to be defined.
-   * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+   * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
    * @see {@link useQuery} to run a query with these options.
    * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
    * @example
@@ -135,16 +141,18 @@ type QueryOptionsFn = {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
+      TPolicy,
   ): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
-    QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
+    QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError> &
+    QueryMode &
+    TPolicy
 
   /**
-   * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
-   * be shared across hooks and imperative APIs such as `fetchQuery`. `options.queryKey` is required and
-   * is the query key to generate options for.
+   * Creates a regular query descriptor for `useQuery`. The tagged key also carries the cache data
+   * and error types into client operations.
    * @param options - The {@link UnusedSkipTokenOptions} to use — everything you can pass to `useQuery`.
-   * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+   * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
    * @see {@link useQuery} to run a query with these options.
    * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
    * @example
@@ -174,16 +182,18 @@ type QueryOptionsFn = {
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
-    options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> &
+      TPolicy,
   ): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> &
-    QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
+    QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError> &
+    QueryMode &
+    TPolicy
 
   /**
-   * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
-   * be shared across hooks and imperative APIs such as `fetchQuery`. `options.queryKey` is required and
-   * is the query key to generate options for.
+   * Creates a regular query descriptor for `useQuery`. The tagged key also carries the cache data
+   * and error types into client operations.
    * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
-   * @returns The same options object, typed so that `queryKey` carries the inferred data type.
+   * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
    * @remarks This is the only overload that accepts `queryFn: skipToken`, shown below.
    * @see {@link useQuery} to run a query with these options.
    * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
@@ -240,10 +250,21 @@ type QueryOptionsFn = {
       TError,
       TData,
       TQueryKey
-    >,
+    > &
+      TPolicy,
   ): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
-    QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
+    QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError> &
+    QueryMode &
+    TPolicy
 }
 
-/** Preserves query options and tags their key with the inferred data and error types. */
-export const queryOptions: QueryOptionsFn = identity
+/**
+ * Prepares a descriptor and tags its cache key with the data and error types.
+ * @param options - The fetcher and its configuration for the selected observer.
+ * @returns A new descriptor backed by QueryObserver.
+ */
+export const queryOptions: QueryOptionsFactory<SuspenseControls> &
+  QueryOptionsFactory<unknown> = <T extends object>(options: T) => ({
+  ...options,
+  [observerKey]: QueryObserver,
+})
