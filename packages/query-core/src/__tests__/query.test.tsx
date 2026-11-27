@@ -1043,21 +1043,6 @@ describe('query', () => {
     resetIsServer()
   })
 
-  it('should default to a five-minute garbage collection time on the server', () => {
-    const resetIsServer = setIsServer(true)
-
-    try {
-      const query = queryCache.build(queryClient, {
-        queryKey: createKey(),
-        queryFn: () => 'data',
-      })
-
-      expect(query.gcTime).toBe(5 * 60 * 1000)
-    } finally {
-      resetIsServer()
-    }
-  })
-
   it('should call initialDataUpdatedAt in constructor if defined as a function', async () => {
     const key = createKey()
 

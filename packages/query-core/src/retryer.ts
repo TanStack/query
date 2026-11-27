@@ -250,14 +250,12 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
           (typeof retry === 'number' && failureCount < retry) ||
           (typeof retry === 'function' && retry(failureCount, error))
 
-        if (isRetryCancelled || !shouldRetry) {
-          // We are done if the query does not need to be retried
-          reject(error)
-          return
-        }
-
-        const retryWait = Promise.withResolvers<void>()
-        if (timeoutManager.setTimeout(retryWait.resolve, delay) === undefined) {
+        const retryWait =
+          !isRetryCancelled && shouldRetry && Promise.withResolvers<void>()
+        if (
+          !retryWait ||
+          timeoutManager.setTimeout(retryWait.resolve, delay) === undefined
+        ) {
           reject(error)
           return
         }
