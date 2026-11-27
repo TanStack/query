@@ -202,7 +202,7 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
 /**
  * Singleton instance of {@link TimeoutManager}, used throughout TanStack Query to schedule and cancel timers.
  */
-export const timeoutManager = new TimeoutManager()
+export const timeoutManager = /* @__PURE__ */ new TimeoutManager()
 
 /**
  * In many cases code wants to delay to the next event loop tick; this is not

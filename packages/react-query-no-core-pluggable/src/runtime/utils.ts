@@ -1,3 +1,4 @@
+import { identity } from './identity'
 import { timeoutManager } from './timeoutManager'
 import type * as Shared from '@tanstack/query-types/bindings'
 import type {
@@ -559,11 +560,9 @@ export function replaceData<
  * })
  * ```
  */
-export function keepPreviousData<T>(
+export const keepPreviousData: <T>(
   previousData: T | undefined,
-): T | undefined {
-  return previousData
-}
+) => T | undefined = identity
 
 /**
  * Adds an item to one end of a new array. If the result exceeds `max`, removes

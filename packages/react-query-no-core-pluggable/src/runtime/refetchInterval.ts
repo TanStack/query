@@ -40,6 +40,7 @@ export function refetchInterval(value: Delay): RefetchInterval<object>
 export function refetchInterval<TQuery extends object>(
   value: Delay | ((query: TQuery) => Delay),
 ): RefetchInterval<TQuery>
+/* @__NO_SIDE_EFFECTS__ */
 export function refetchInterval<TQuery extends object>(
   value: Delay | ((query: TQuery) => Delay),
 ): RefetchInterval<TQuery> {

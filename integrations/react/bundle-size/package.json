@@ -5,7 +5,8 @@
   "scripts": {
     "measure": "node measure.mjs",
     "test:browser": "vitest run --config vitest.browser.config.js",
-    "test:browser:ui": "vitest --watch --ui --config vitest.browser.config.js"
+    "test:browser:ui": "vitest --watch --ui --config vitest.browser.config.js",
+    "browser:install": "playwright install --with-deps --only-shell chromium"
   },
   "dependencies": {
     "@tanstack/react-query": "workspace:*",
