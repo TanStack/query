@@ -54,6 +54,8 @@ Polling runs while an enabled observer has subscribers and the window is focused
 
 Choose an option factory for the data you read and the loading behavior you want. Pass its result to `useQuery`. Each factory attaches the observer and tags the key with the cached data and error types. Ordinary and Suspense readers can use the same client and cache key.
 
+You can spread a descriptor to override options at a hook call. In a library that emits TypeScript declarations, export the factory call, or annotate an exported copy with `typeof originalDescriptor`. That gives the declaration emitter a name for its tagged key and observer type.
+
 | Reader                                        | Ordinary query                            | Paginated query                                   |
 | --------------------------------------------- | ----------------------------------------- | ------------------------------------------------- |
 | Component handles pending state               | `useQuery(queryOptions(options))`         | `useQuery(infiniteQueryOptions(options))`         |

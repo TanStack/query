@@ -31,6 +31,7 @@ export type AdapterMetadata = [
 
 const options = { queryKey: ['book'], queryFn: () => 'Dune' }
 export const book = queryOptions(options)
+export const cachedBook: typeof book = { ...book, staleTime: 30_000 }
 const pageOptions = {
   queryKey: ['books', 'pages'],
   initialPageParam: 1,
