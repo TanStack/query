@@ -19,7 +19,11 @@ describe('query render modes', () => {
     undefined,
     null,
     { queryKey: ['post'], queryFn: (): string => 'Dune' },
-    { queryKey: ['post'], queryFn: (): string => 'Dune', Observer: QueryObserver },
+    {
+      queryKey: ['post'],
+      queryFn: (): string => 'Dune',
+      Observer: QueryObserver,
+    },
   ])('explains the required factory for an unchecked input', (options) => {
     function Page() {
       // @ts-expect-error Exercise an unchecked JavaScript caller.
