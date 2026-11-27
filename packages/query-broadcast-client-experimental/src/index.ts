@@ -192,7 +192,14 @@ export function broadcastQueryClient({
         }
       } else if (type === 'added') {
         if (query) {
-          if (query.state.data === undefined) {
+          // Only adopt the sender's initial state for a query that has not
+          // settled yet. A query that already settled in error has no data
+          // either, but overwriting it with the sender's brand-new state
+          // would drop the error and leave it looking pending forever.
+          if (
+            query.state.data === undefined &&
+            query.state.errorUpdatedAt === 0
+          ) {
             query.setState(state)
           }
           return
