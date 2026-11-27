@@ -3,7 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "measure": "node measure.mjs"
+    "measure": "node measure.mjs",
+    "test:browser": "vitest run --config vitest.browser.config.js",
+    "test:browser:ui": "vitest --watch --ui --config vitest.browser.config.js"
   },
   "dependencies": {
     "@tanstack/react-query": "workspace:*",
@@ -13,6 +15,10 @@
     "react-dom": "catalog:"
   },
   "devDependencies": {
-    "vite": "^8.3.8"
+    "@vitest/browser-playwright": "5.0.5",
+    "@vitest/ui": "5.0.5",
+    "playwright": "1.65.1",
+    "vite": "^8.3.8",
+    "vitest": "^5.0.5"
   }
 }

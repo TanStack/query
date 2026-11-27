@@ -48,15 +48,38 @@ async function measure(packageName, screen) {
   if (!chunks.some((chunk) => chunk.isEntry)) {
     throw new Error(`Missing browser entry chunk for ${packageName}`)
   }
+  const modules = chunks.flatMap((chunk) =>
+    Object.entries(chunk.modules)
+      .filter(([, module]) => module.renderedLength > 0)
+      .map(([id]) => id),
+  )
+  if (
+    modules.some((id) =>
+      /\/(?:packages|node_modules\/@tanstack)\/query-types\//.test(id),
+    )
+  ) {
+    throw new Error(
+      `${packageName} shipped runtime code from @tanstack/query-types`,
+    )
+  }
   if (
     packageName !== baseline &&
-    chunks.some((chunk) =>
-      Object.keys(chunk.modules).some((id) =>
-        /\/(?:packages|node_modules\/@tanstack)\/query-core\//.test(id),
-      ),
+    modules.some((id) =>
+      /\/(?:packages|node_modules\/@tanstack)\/query-core\//.test(id),
     )
   ) {
     throw new Error(`${packageName} bundled @tanstack/query-core`)
+  }
+  if (
+    packageName === pluggable &&
+    screen === 'query' &&
+    modules.some((id) =>
+      /\/runtime\/(mutation|mutationCache|infiniteQueryBehavior)\.js$/.test(id),
+    )
+  ) {
+    throw new Error(
+      'The query-only client bundled an optional plugin implementation',
+    )
   }
 
   const sizes = { raw: 0, gzip: 0, brotli: 0 }

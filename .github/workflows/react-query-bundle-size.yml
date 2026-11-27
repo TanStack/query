@@ -43,6 +43,12 @@ jobs:
           pnpm run measure
           cat dist/report.md >> "$GITHUB_STEP_SUMMARY"
           jq -Rsr '"report=" + tojson' dist/report.md >> "$GITHUB_OUTPUT"
+      - name: Install Chromium
+        working-directory: integrations/react/bundle-size
+        run: pnpm exec playwright install --with-deps --only-shell chromium
+      - name: Exercise production apps in Chromium
+        working-directory: integrations/react/bundle-size
+        run: pnpm run test:browser
   comment:
     if: github.event.pull_request.head.repo.full_name == github.repository
     needs: measure
