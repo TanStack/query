@@ -93,31 +93,16 @@ customElements.define('users-view', UsersView)
 This repo includes runnable Lit examples under the top-level `examples/lit`
 directory so they can be surfaced in the docs:
 
-- `examples/lit/basic`: Vite Lit app covering query and mutation primitives.
-- `examples/lit/pagination`: pagination, prefetching, optimistic updates, and error recovery.
+- `examples/lit/basic`: a list of posts and a post detail view, with visited posts marked from the query cache.
+- `examples/lit/pagination`: paginated queries with `placeholderData: keepPreviousData` and next-page prefetching.
 - `examples/lit/ssr`: Lit SSR render, dehydrate, and hydrate flow.
 
 Run an example from the repo root:
 
-```bash
+```sh
 pnpm --dir examples/lit/basic run dev
 pnpm --dir examples/lit/pagination run dev
 pnpm --dir examples/lit/ssr run dev
-```
-
-Open:
-
-- `http://127.0.0.1:4173/` (basic example)
-- `http://127.0.0.1:4183/` (pagination example app)
-- `http://127.0.0.1:4174/` (SSR example app)
-
-Use a different port (optional):
-
-```bash
-DEMO_PORT=4180 pnpm --dir examples/lit/basic run dev
-PAGINATION_DEMO_PORT=4181 PAGINATION_API_PORT=4182 pnpm --dir examples/lit/pagination run dev
-SSR_PORT=4180 pnpm --dir examples/lit/ssr run dev
-SSR_HOST=0.0.0.0 pnpm --dir examples/lit/ssr run dev
 ```
 
 ## Integration Smoke
