@@ -6,4 +6,5 @@ const resolve = { conditions: ['@tanstack/custom-condition'] }
 export default defineConfig({
   resolve,
   environments: { ssr: { resolve } },
+  test: { dir: './src' },
 })
