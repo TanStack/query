@@ -1,11 +1,12 @@
 import * as React from 'react'
-import { useMutation, useQuery, useQueryClient } from '#adapter'
+import { useMutation, useQueryClient } from '#adapter'
 import {
   bookmarkScope,
   previousPage,
   refreshBookmarks,
   selectTitles,
 } from '#feature-options'
+import { useBookQuery } from '#query-hooks'
 import { fetchBooks } from './books.js'
 
 function savedBooks() {
@@ -16,13 +17,13 @@ export function ReadingList() {
   const client = useQueryClient()
   const [page, setPage] = React.useState(1)
   const [events, setEvents] = React.useState([])
-  const books = useQuery({
+  const books = useBookQuery({
     queryKey: ['books', page],
     queryFn: ({ signal }) => fetchBooks(page, signal),
     select: selectTitles,
     placeholderData: previousPage,
   })
-  const saved = useQuery({ queryKey: ['bookmarks'], queryFn: savedBooks })
+  const saved = useBookQuery({ queryKey: ['bookmarks'], queryFn: savedBooks })
   const bookmark = useMutation({
     scope: bookmarkScope,
     mutationFn: async (title) => {

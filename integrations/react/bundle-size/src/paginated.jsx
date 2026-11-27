@@ -1,23 +1,15 @@
 import * as React from 'react'
-import {
-  queryOptions,
-  infiniteQueryOptions,
-  mutationOptions,
-  useMutation,
-  useQuery,
-} from '#adapter'
+import { queryOptions, mutationOptions, useMutation, useQuery } from '#adapter'
 import { useBookPages } from '#query-hooks'
 import { fetchBooks } from './books.js'
 
 export function ReadingList() {
-  const books = useBookPages(
-    infiniteQueryOptions({
-      queryKey: ['books'],
-      queryFn: ({ pageParam, signal }) => fetchBooks(pageParam, signal),
-      initialPageParam: 1,
-      getNextPageParam: (lastPage) => lastPage.next,
-    }),
-  )
+  const books = useBookPages({
+    queryKey: ['books'],
+    queryFn: ({ pageParam, signal }) => fetchBooks(pageParam, signal),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => lastPage.next,
+  })
   const bookmark = useQuery(
     queryOptions({
       queryKey: ['bookmark'],

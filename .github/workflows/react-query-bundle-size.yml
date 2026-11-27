@@ -6,6 +6,7 @@ on:
       - '.github/workflows/react-query-bundle-size.yml'
       - 'integrations/react/bundle-size/**'
       - 'packages/query-core/**'
+      - 'packages/query-core-pluggable/**'
       - 'packages/react-query/**'
       - 'packages/react-query-pluggable/**'
       - 'scripts/getTsdownConfig.js'

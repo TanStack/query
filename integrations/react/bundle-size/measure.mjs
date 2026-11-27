@@ -5,6 +5,7 @@ import path from 'node:path'
 import { brotliCompressSync, constants, gzipSync } from 'node:zlib'
 import { build, normalizePath } from 'vite'
 import { adapterTreemap } from './analyze.mjs'
+import { measureMicrofrontends } from './microfrontends.mjs'
 
 const root = import.meta.dirname
 const checkout = path.resolve(root, '../../..')
@@ -15,6 +16,7 @@ const basePackage =
   baseCheckout && path.join(baseCheckout, 'packages/react-query')
 const baseline = '@tanstack/react-query'
 const pluggable = '@tanstack/react-query-pluggable'
+const pluggableCore = '@tanstack/query-core-pluggable'
 const packages = [baseline, pluggable]
 const workloads = [
   { screen: 'query', title: 'Read-only list' },
@@ -34,14 +36,21 @@ const otherFrameworks = [
   /\/node_modules\/(?:@angular|@lit|@vue|lit|lit-element|lit-html|preact|solid-js|svelte|vue)\//,
 ]
 
-function runtimeOwners(directory, packageName) {
-  return [packageName.split('/')[1], 'query-core'].map(
-    (name) =>
-      normalizePath(path.join(directory, 'packages', name, 'build')) + '/',
+function buildDirectory(directory, packageName) {
+  return (
+    normalizePath(
+      path.join(directory, 'packages', packageName.split('/')[1], 'build'),
+    ) + '/'
   )
 }
 
+function runtimeOwners(directory, adapter) {
+  const core = adapter === baseline ? '@tanstack/query-core' : pluggableCore
+  return [adapter, core].map((name) => buildDirectory(directory, name))
+}
+
 const pluggableOwners = runtimeOwners(checkout, pluggable)
+const pluggableCoreDirectory = buildDirectory(checkout, pluggableCore)
 function rendersFeature(id, feature) {
   return (
     id.endsWith(`/${feature}.js`) &&
@@ -170,17 +179,22 @@ function checkClientOperations(modules, workload, required) {
     assert(operations.has(required), `${workload} is missing ${required}`)
 }
 
+// Query modules may only come from the two packages built in the selected checkout.
+function checkPairOwnership(modules, owners, context) {
+  const foreign = modules.find(
+    ([id]) =>
+      /\/(?:packages|node_modules\/@tanstack)\/(?:query-core|react-query)(?:-pluggable)?\//.test(
+        id,
+      ) && !owners.some((dir) => id.startsWith(dir)),
+  )
+  if (foreign)
+    throw new Error(
+      `${context} retained Query code outside the selected package pair: ${foreign[0]}`,
+    )
+}
+
 function checkApp(chunks, packageName, screen) {
   const modules = renderedModules(chunks).map(([id]) => id)
-  if (
-    packageName === baseline &&
-    basePackage &&
-    !modules.some((id) => id.startsWith(normalizePath(basePackage) + '/build/'))
-  ) {
-    throw new Error(
-      `Missing built @tanstack/react-query from base checkout ${basePackage}`,
-    )
-  }
   if (packageName === pluggable) {
     const foreignRuntime = modules.find((id) =>
       otherFrameworks.some((pattern) => pattern.test(id)),
@@ -208,11 +222,13 @@ function checkApp(chunks, packageName, screen) {
       mutationCache: usesMutations,
       mutation: usesMutations,
       mutationObserver: usesMutations,
-      suspenseQuery: screen === 'polling',
+      suspenseQueryOptions: screen === 'polling',
+      suspenseInfiniteQueryOptions: screen === 'polling',
       suspense: screen === 'polling',
       refetchInterval: screen === 'polling',
       fetchInfiniteQuery: false,
-      infiniteQuery: screen === 'paginated' || screen === 'polling',
+      queryOptions: true,
+      infiniteQueryOptions: screen === 'paginated' || screen === 'polling',
       infiniteQueryObserver: screen === 'paginated' || screen === 'polling',
       infiniteQueryBehavior: screen === 'paginated' || screen === 'polling',
       select: screen === 'options',
@@ -267,7 +283,17 @@ async function measure(packageName, screen) {
     packageName === baseline && baseCheckout ? baseCheckout : checkout
   const owners = runtimeOwners(source, packageName)
   const belongsToAdapter = (id) => owners.some((dir) => id.startsWith(dir))
+  checkPairOwnership(
+    renderedModules(app),
+    owners,
+    `${packageName} ${screen} app`,
+  )
   const attributed = await buildApp(packageName, screen, belongsToAdapter)
+  checkPairOwnership(
+    renderedModules(attributed),
+    owners,
+    `${packageName} ${screen} attribution`,
+  )
   const library = attributed.filter((chunk) => chunk.name === 'query-runtime')
   assert.equal(
     library.length,
@@ -310,15 +336,14 @@ async function measure(packageName, screen) {
 // A combined app cannot tell whether each projection pulls in its sibling,
 // or whether rendering a boundary pulls in paused-mutation restoration.
 async function checkPluggableExports() {
-  const {
-    QueryClient,
-    query,
-    queryOptions,
-    mutationOptions,
-    infiniteQueryOptions,
-    QueriesObserver,
-    notifyManager,
-  } = await import(pluggable)
+  const adapter = await import(pluggable)
+  const { QueryClient, QueriesObserver, notifyManager } = adapter
+  for (const alias of ['query', 'infiniteQuery', 'suspense', 'suspenseQuery']) {
+    assert(
+      !Object.hasOwn(adapter, alias),
+      `Unexpected query mode export ${alias}`,
+    )
+  }
   assert.deepEqual(
     Object.getOwnPropertyNames(QueryClient.prototype),
     ['constructor'],
@@ -332,25 +357,27 @@ async function checkPluggableExports() {
       `${pluggable} exposed another adapter's observer or batch notification API`,
     )
   }
-  if (
-    typeof queryOptions !== 'function' ||
-    queryOptions !== query ||
-    queryOptions !== mutationOptions ||
-    queryOptions !== infiniteQueryOptions
-  ) {
-    throw new Error(
-      `${pluggable} must use the same identity function for query and the three option factories`,
-    )
-  }
-
-  const expected = {
-    query: [],
-    suspenseQuery: ['suspenseQuery', 'suspense'],
-    infiniteQuery: [
-      'infiniteQuery',
+  const reactExports = {
+    useQuery: [],
+    queryOptions: ['queryOptions', 'queryObserver'],
+    infiniteQueryOptions: [
+      'infiniteQueryOptions',
       'infiniteQueryObserver',
+      'queryObserver',
       'infiniteQueryBehavior',
     ],
+    mutationOptions: [],
+    suspenseQueryOptions: ['suspenseQueryOptions', 'queryObserver', 'suspense'],
+    suspenseInfiniteQueryOptions: [
+      'suspenseInfiniteQueryOptions',
+      'infiniteQueryObserver',
+      'queryObserver',
+      'infiniteQueryBehavior',
+      'suspense',
+    ],
+    HydrationBoundary: ['infiniteQueryBehavior'],
+  }
+  const coreExports = {
     fetchInfiniteQuery: ['fetchInfiniteQuery', 'infiniteQueryBehavior'],
     QueryClient: [],
     fetchQuery: [],
@@ -362,7 +389,6 @@ async function checkPluggableExports() {
     ...Object.fromEntries(
       Object.keys(bulkOperations).map((name) => [name, ['cacheOperations']]),
     ),
-    HydrationBoundary: ['infiniteQueryBehavior'],
     dehydrate: [],
     hydrate: [
       'infiniteQueryBehavior',
@@ -371,9 +397,12 @@ async function checkPluggableExports() {
       'serialScope',
     ],
   }
+  const expected = { ...reactExports, ...coreExports }
   const features = new Set(Object.values(expected).flat())
   const entry = path.join(root, 'public-export-probe.js')
   for (const [name, required] of Object.entries(expected)) {
+    const coreOnly = Object.hasOwn(coreExports, name)
+    const source = coreOnly ? pluggableCore : pluggable
     const results = await build({
       root,
       configFile: false,
@@ -383,9 +412,16 @@ async function checkPluggableExports() {
           name: 'import-one-public-export',
           resolveId(id) {
             if (id === entry) return id
+            if (id === pluggableCore) {
+              const importer = path.join(
+                checkout,
+                'packages/react-query-pluggable/package.json',
+              )
+              return this.resolve(id, importer, { skipSelf: true })
+            }
           },
           load(id) {
-            if (id === entry) return `export { ${name} } from '${pluggable}'`
+            if (id === entry) return `export { ${name} } from '${source}'`
           },
         },
       ],
@@ -393,18 +429,35 @@ async function checkPluggableExports() {
         write: false,
         lib: { entry, formats: ['es'], fileName: 'probe' },
         rolldownOptions: {
-          external: ['react', 'react/jsx-runtime'],
+          external: reactPeer,
           checks: { moduleLevelDirective: false },
         },
       },
     })
-    const modules = results
-      .flatMap(({ output }) =>
-        output
-          .filter((file) => file.type === 'chunk')
-          .flatMap((chunk) => Object.entries(chunk.modules)),
+    const chunks = results.flatMap(({ output }) =>
+      output.filter((file) => file.type === 'chunk'),
+    )
+    const modules = renderedModules(chunks)
+    const owners = coreOnly ? [pluggableCoreDirectory] : pluggableOwners
+    checkPairOwnership(modules, owners, `Importing ${name} from ${source}`)
+    if (
+      coreOnly &&
+      !modules.some(([id]) => id.startsWith(pluggableCoreDirectory))
+    ) {
+      throw new Error(
+        `Core export ${name} did not render any code from ${source}`,
       )
-      .filter(([, module]) => module.renderedLength > 0)
+    }
+    if (
+      coreOnly &&
+      chunks.some((chunk) =>
+        [...chunk.imports, ...chunk.dynamicImports].some((id) =>
+          reactPeer.test(id),
+        ),
+      )
+    ) {
+      throw new Error(`Core export ${name} imported React`)
+    }
     for (const feature of features) {
       const included = modules.some(([id]) => rendersFeature(id, feature))
       if (included !== required.includes(feature)) {
@@ -473,7 +526,7 @@ for (const { screen, title } of workloads) {
 }
 lines.push(
   '',
-  'The pluggable read-only list retains the query client, cache, query and observer. Its production build drops the Suspense builder and policy, mutation cache and observer, polling scheduler, infinite-query behavior, selection, placeholder data, serial scopes and bulk cache operations. Both bookmark apps retain the mutation cache and observer.',
+  'The pluggable read-only list retains the query client, cache, query and observer. Its production build drops both Suspense factories and their policy, mutation cache and observer, polling scheduler, infinite-query behavior, selection, placeholder data, serial scopes and bulk cache operations. Both bookmark apps retain the mutation cache and observer.',
   '',
   `Baseline adapter and core at \`${base}\` (${baseCheckout ? 'base checkout' : 'current checkout'}). Pluggable adapter, core and fixture at \`${head}\`.`,
 )
@@ -511,7 +564,7 @@ function addTable(key, heading, description) {
 addTable(
   'library',
   'Query runtime sizes · minified JS, gzip and Brotli',
-  'The app entry drives tree-shaking. This build externalizes React and React DOM and groups the adapter and its retained query-core modules into one ESM chunk for each package. Each cell measures the isolated chunk directly.',
+  'The app entry drives tree-shaking. Each isolated ESM chunk includes the React adapter and its matching core: `react-query` with `query-core` or `react-query-pluggable` with `query-core-pluggable`. React and React DOM are external. Each cell measures the chunk directly.',
 )
 addTable(
   'app',
@@ -521,6 +574,18 @@ addTable(
 lines.push(
   '',
   'All sizes are bytes. Each JavaScript chunk is compressed separately with gzip level 9 and Brotli quality 11, then summed.',
+  '',
+)
+lines.push(
+  await measureMicrofrontends({
+    root,
+    checkout,
+    baseCheckout,
+    baseline,
+    pluggable,
+    runtimeOwners,
+    formatChange,
+  }),
   '',
 )
 const report = lines.join('\n')

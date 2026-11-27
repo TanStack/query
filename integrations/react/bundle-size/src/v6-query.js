@@ -1,6 +1,11 @@
+import { infiniteQueryOptions, useInfiniteQuery } from '#adapter'
+
 export {
-  useInfiniteQuery as useBookPages,
   useQuery as useBookQuery,
   useSuspenseInfiniteQuery as useSuspenseBookPages,
   useSuspenseQuery as useSuspenseBookQuery,
 } from '#adapter'
+
+export function useBookPages(options) {
+  return useInfiniteQuery(infiniteQueryOptions(options))
+}
