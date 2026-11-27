@@ -40,7 +40,7 @@ describe('cache operations', () => {
 describe('cached query operations', () => {
   it('invalidates an observed query once without starting a fetch', () => {
     const client = new QueryClient()
-    const queryFn = vi.fn(() => 'fetched')
+    const queryFn = vi.fn<() => string>(() => 'fetched')
     const options = {
       queryKey: ['book'],
       initialData: 'seed',
