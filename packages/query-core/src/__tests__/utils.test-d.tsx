@@ -24,12 +24,11 @@ import {
   sleep,
   timeUntilStale,
 } from '../utils'
+import type { DataTag, MutationStatus } from '..'
 import type { Mutation } from '../mutation'
 import type { Query } from '../query'
 import type {
-  DataTag,
   EqualityFn,
-  MutationStatus,
   QueryFunction,
   QueryKey,
   QueryOptions,

@@ -1,10 +1,9 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { InfiniteQueryObserver, QueryClient } from '..'
+import type { GetNextPageParamFunction, GetPreviousPageParamFunction } from '..'
 import type {
   DefaultedInfiniteQueryObserverOptions,
-  GetNextPageParamFunction,
-  GetPreviousPageParamFunction,
   InfiniteData,
 } from '../types'
 
