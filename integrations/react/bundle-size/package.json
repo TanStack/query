@@ -19,6 +19,7 @@
     "@vitest/browser-playwright": "5.0.5",
     "@vitest/ui": "5.0.5",
     "playwright": "1.65.1",
+    "rollup-plugin-visualizer": "7.1.1",
     "vite": "^8.3.8",
     "vitest": "^5.0.5"
   }
