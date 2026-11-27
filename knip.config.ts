@@ -39,16 +39,21 @@ export default {
       entry: ['src/v4/**/*.cjs', 'src/v5/**/*.cjs'],
       ignore: ['**/__testfixtures__/**'],
     },
+    'packages/query-core-pluggable': {
+      // Copied v6 compatibility suites import helpers and types directly from these modules.
+      entry: [
+        'src/notifyManager.ts',
+        'src/query.ts',
+        'src/timeoutManager.ts',
+        'src/utils.ts',
+      ],
+    },
     'packages/react-query': {
       ignoreDependencies: optionalPeerDependencies(reactQuery),
     },
     'packages/react-query-pluggable': {
       // These internal imports are exercised by the upstream compatibility suites.
-      entry: [
-        'src/suspense.ts',
-        'src/runtime/{query,notifyManager,utils}.ts',
-        'tests/compat-*.ts',
-      ],
+      entry: ['src/suspense.ts', 'tests/compat-*.ts'],
       ignoreDependencies: optionalPeerDependencies(reactQueryPluggable),
     },
     'packages/react-query-devtools': {

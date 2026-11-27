@@ -40,11 +40,6 @@
       "types": "./build/index.d.ts",
       "default": "./build/index.js"
     },
-    "./primitives": {
-      "@tanstack/custom-condition": "./src/primitives.ts",
-      "types": "./build/primitives.d.ts",
-      "default": "./build/primitives.js"
-    },
     "./package.json": "./package.json"
   },
   "sideEffects": false,

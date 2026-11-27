@@ -595,7 +595,7 @@ export function sleep(timeout: number): Promise<void> {
  */
 export function replaceData<
   TData,
-  TOptions extends Pick<QueryOptions, 'structuralSharing' | 'queryHash'>,
+  TOptions extends QueryOptions<any, any, any, any>,
 >(prevData: TData | undefined, data: TData, options: TOptions): TData {
   if (typeof options.structuralSharing === 'function') {
     return options.structuralSharing(prevData, data) as TData

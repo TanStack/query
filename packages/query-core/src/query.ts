@@ -1,8 +1,7 @@
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import { notifyManager } from './notifyManager'
-import { fetchState, getDefaultQueryState, successState } from './queryState'
 import { Removable } from './removable'
-import { CancelledError, createRetryer } from './retryer'
+import { CancelledError, canFetch, createRetryer } from './retryer'
 import {
   ensureQueryFn,
   fetchSignal,
@@ -20,6 +19,7 @@ import type {
   CancelOptions,
   DefaultError,
   FetchStatus,
+  InitialDataFunction,
   QueryKey,
   QueryMeta,
   QueryOptions,
@@ -312,7 +312,7 @@ export class Query<
     this.#cache = this.#client.getQueryCache()
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
-    this.#initialState = getDefaultQueryState(this.options)
+    this.#initialState = getDefaultState(this.options)
     this.state = config.state ?? this.#initialState
     this.scheduleGc()
   }
@@ -361,7 +361,7 @@ export class Query<
 
     // oxlint-disable-next-line typescript/no-unnecessary-condition -- the constructor calls 'setOptions' before it assigns 'state'
     if (this.state && this.state.data === undefined) {
-      const defaultState = getDefaultQueryState(this.options)
+      const defaultState = getDefaultState(this.options)
       if (defaultState.data !== undefined) {
         this.setState(
           successState(defaultState.data, defaultState.dataUpdatedAt),
@@ -1018,4 +1018,90 @@ export class Query<
   }
 }
 
-export { fetchState } from './queryState'
+/**
+ * Returns the state changes applied when a query starts fetching.
+ * @param data - The query's current data. If it is `undefined`, the query is also reset to
+ * `'pending'` with no error.
+ * @param options - The query options, whose `networkMode` decides whether the query is `'fetching'`
+ * or `'paused'`.
+ * @returns The partial query state for a starting fetch.
+ */
+export function fetchState<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey,
+>(
+  data: TData | undefined,
+  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+) {
+  return {
+    fetchFailureCount: 0,
+    fetchFailureReason: null,
+    fetchStatus: canFetch(options.networkMode) ? 'fetching' : 'paused',
+    ...(data === undefined &&
+      ({
+        error: null,
+        status: 'pending',
+      } as const)),
+  } as const
+}
+
+/**
+ * Returns the state changes applied when a query receives data.
+ * @param data - The new data.
+ * @param dataUpdatedAt - The timestamp the data is recorded with. Defaults to the current time.
+ * @returns The partial query state for a successful update.
+ */
+function successState<TData>(data: TData | undefined, dataUpdatedAt?: number) {
+  return {
+    data,
+    dataUpdatedAt: dataUpdatedAt ?? Date.now(),
+    error: null,
+    isInvalidated: false,
+    status: 'success' as const,
+  }
+}
+
+/**
+ * Returns the initial state of a query, based on its `initialData` and `initialDataUpdatedAt`
+ * options.
+ * @param options - The query options.
+ * @returns The initial query state: `'success'` if `initialData` is set, otherwise `'pending'`.
+ */
+function getDefaultState<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey,
+>(
+  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+): QueryState<TData, TError> {
+  const data =
+    typeof options.initialData === 'function'
+      ? (options.initialData as InitialDataFunction<TData>)()
+      : options.initialData
+
+  const hasData = data !== undefined
+
+  const initialDataUpdatedAt = hasData
+    ? typeof options.initialDataUpdatedAt === 'function'
+      ? options.initialDataUpdatedAt()
+      : options.initialDataUpdatedAt
+    : 0
+
+  return {
+    data,
+    dataUpdateCount: 0,
+    dataUpdatedAt: hasData ? (initialDataUpdatedAt ?? Date.now()) : 0,
+    error: null,
+    errorUpdateCount: 0,
+    errorUpdatedAt: 0,
+    fetchFailureCount: 0,
+    fetchFailureReason: null,
+    fetchMeta: null,
+    isInvalidated: false,
+    status: hasData ? 'success' : 'pending',
+    fetchStatus: 'idle',
+  }
+}

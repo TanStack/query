@@ -1,7 +1,7 @@
 import { isServer as isServerEnvironment } from './environmentManager'
 import { focusManager } from './focusManager'
 import { notifyManager } from './notifyManager'
-import { fetchState } from './queryState'
+import { fetchState } from './query'
 import { Subscribable } from './subscribable'
 import { timeoutManager } from './timeoutManager'
 import {
