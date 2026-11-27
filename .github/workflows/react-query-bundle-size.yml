@@ -34,10 +34,23 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
       - uses: TanStack/config/.github/setup@e4b48f16568324f76f467aa4c2aac2f05db632c3
+      - name: Check out the unmodified PR base
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .bundle-base
+          persist-credentials: false
+      - name: Install and build the baseline adapter
+        working-directory: .bundle-base
+        run: |
+          pnpm --filter root --filter '@tanstack/react-query...' install --frozen-lockfile
+          pnpm --filter '@tanstack/react-query...' run build
       - name: Build workspace dependencies
         run: pnpm --filter '@tanstack/query-integration-react-bundle-size^...' run build
       - name: Build and measure production apps
         id: measure
+        env:
+          QUERY_BASE_CHECKOUT: ${{ github.workspace }}/.bundle-base
         working-directory: integrations/react/bundle-size
         run: |
           pnpm run measure
@@ -61,7 +74,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.number }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           REPORT: ${{ needs.measure.outputs.report }}
         run: |
           comments="repos/$REPO/issues/$PR_NUMBER/comments"
@@ -74,6 +86,6 @@ jobs:
             endpoint="repos/$REPO/issues/comments/$id"
             method=PATCH
           fi
-          jq -n --arg marker "$marker" --arg sha "$HEAD_SHA" --argjson report "$REPORT" \
-            '{body: ($marker + "\n" + $report + "\nMeasured commit `" + $sha + "`.")}' |
+          jq -n --arg marker "$marker" --argjson report "$REPORT" \
+            '{body: ($marker + "\n" + $report)}' |
             gh api --silent --method "$method" "$endpoint" --input -

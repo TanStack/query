@@ -1,9 +1,15 @@
-import { readFile, writeFile } from 'node:fs/promises'
+import { execFileSync } from 'node:child_process'
+import { readFile, realpath, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { brotliCompressSync, constants, gzipSync } from 'node:zlib'
-import { build } from 'vite'
+import { build, normalizePath } from 'vite'
 
 const root = import.meta.dirname
+const baseCheckout = process.env.QUERY_BASE_CHECKOUT
+  ? await realpath(process.env.QUERY_BASE_CHECKOUT)
+  : undefined
+const basePackage =
+  baseCheckout && path.join(baseCheckout, 'packages/react-query')
 const baseline = '@tanstack/react-query'
 const pluggable = '@tanstack/react-query-no-core-pluggable'
 const packages = [baseline, '@tanstack/react-query-no-core', pluggable]
@@ -20,6 +26,11 @@ const workloads = [
   },
 ]
 
+const excludedFromStandaloneApps = [
+  /\/(?:packages|node_modules\/@tanstack)\/(?:query-core|(?:angular|lit|preact|solid|svelte|vue)-query[^/]*)\//,
+  /\/node_modules\/(?:@angular|@lit|@vue|lit|lit-element|lit-html|preact|solid-js|svelte|vue)\//,
+]
+
 async function measure(packageName, screen) {
   const outDir = path.join(root, 'dist', screen, packageName.split('/')[1])
   const result = await build({
@@ -28,9 +39,24 @@ async function measure(packageName, screen) {
     configFile: false,
     mode: 'production',
     logLevel: 'warn',
+    plugins: [
+      {
+        name: 'resolve-benchmark-adapter',
+        enforce: 'pre',
+        resolveId(id, importer) {
+          if (id !== '#adapter') return
+          // Resolve the public browser export using the requested checkout's package scope.
+          const from =
+            packageName === baseline && basePackage
+              ? path.join(basePackage, 'package.json')
+              : importer
+          return this.resolve(packageName, from, { skipSelf: true })
+        },
+      },
+    ],
     resolve: {
+      dedupe: ['react', 'react-dom'],
       alias: {
-        '#adapter': packageName,
         '#polling-option': path.join(
           root,
           'src',
@@ -59,6 +85,15 @@ async function measure(packageName, screen) {
       .map(([id]) => id),
   )
   if (
+    packageName === baseline &&
+    basePackage &&
+    !modules.some((id) => id.startsWith(normalizePath(basePackage) + '/build/'))
+  ) {
+    throw new Error(
+      `Missing built @tanstack/react-query from base checkout ${basePackage}`,
+    )
+  }
+  if (
     modules.some((id) =>
       /\/(?:packages|node_modules\/@tanstack)\/query-types\//.test(id),
     )
@@ -67,13 +102,24 @@ async function measure(packageName, screen) {
       `${packageName} shipped runtime code from @tanstack/query-types`,
     )
   }
-  if (
-    packageName !== baseline &&
-    modules.some((id) =>
-      /\/(?:packages|node_modules\/@tanstack)\/query-core\//.test(id),
+  if (packageName !== baseline) {
+    const foreignRuntime = modules.find((id) =>
+      excludedFromStandaloneApps.some((pattern) => pattern.test(id)),
     )
-  ) {
-    throw new Error(`${packageName} bundled @tanstack/query-core`)
+    if (foreignRuntime) {
+      throw new Error(
+        `${packageName} bundled unexpected runtime code: ${foreignRuntime}`,
+      )
+    }
+    if (
+      chunks.some((chunk) =>
+        chunk.moduleIds.some((id) => id.endsWith('/build/runtime/index.js')),
+      )
+    ) {
+      throw new Error(
+        `${packageName} included an internal runtime barrel in the app`,
+      )
+    }
   }
   if (packageName === pluggable) {
     const includesPolling = modules.some((id) =>
@@ -108,11 +154,23 @@ function formatSize(bytes, baselineBytes, isBaseline) {
   return `${size} (${sign}${integer.format(difference)} B, ${sign}${percent}%)`
 }
 
-// These public typing helpers share one callable in each standalone ESM package.
+// Inspect the published ESM entry points as a consumer would.
 for (const name of packages.filter((name) => name !== baseline)) {
-  const { queryOptions, mutationOptions, infiniteQueryOptions } = await import(
-    name
-  )
+  const {
+    queryOptions,
+    mutationOptions,
+    infiniteQueryOptions,
+    QueriesObserver,
+    notifyManager,
+  } = await import(name)
+  if (
+    'getQueries' in QueriesObserver.prototype ||
+    'setBatchNotifyFunction' in notifyManager
+  ) {
+    throw new Error(
+      `${name} exposed another adapter's observer or batch notification API`,
+    )
+  }
   if (
     typeof queryOptions !== 'function' ||
     queryOptions !== mutationOptions ||
@@ -124,10 +182,20 @@ for (const name of packages.filter((name) => name !== baseline)) {
   }
 }
 
+function revision(directory) {
+  return execFileSync('git', ['-C', directory, 'rev-parse', 'HEAD'], {
+    encoding: 'utf8',
+  }).trim()
+}
+
+const head = revision(root)
+const base = baseCheckout ? revision(baseCheckout) : head
 const lines = [
   '## React Query app bundle size',
   '',
-  'Each row includes React, React DOM and the same production Vite app. Changes are relative to `@tanstack/react-query` in the same workload and commit. A negative change is a saving.',
+  `Baseline adapter at \`${base}\` (${baseCheckout ? 'base checkout' : 'current checkout'}). Alternatives and fixture at \`${head}\`.`,
+  '',
+  'Each row includes the same React, React DOM and production Vite app. Changes are relative to the baseline for that workload. A negative change is a saving.',
 ]
 for (const { screen, title } of workloads) {
   lines.push(
