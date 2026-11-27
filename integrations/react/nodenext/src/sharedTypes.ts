@@ -4,6 +4,7 @@ import { queryOptions as stockOptions } from '@tanstack/react-query'
 import {
   infiniteQueryOptions,
   queryOptions,
+  skipToken,
   suspenseInfiniteQueryOptions,
   suspenseQueryOptions,
 } from '@tanstack/react-query-pluggable'
@@ -44,6 +45,18 @@ const pageOptions = {
 export const paged = infiniteQueryOptions(pageOptions)
 export const suspendedBook = suspenseQueryOptions(options)
 export const suspendedPages = suspenseInfiniteQueryOptions(pageOptions)
+export function optionalBook(enabled: boolean) {
+  return suspenseQueryOptions({
+    ...options,
+    queryFn: enabled ? options.queryFn : skipToken,
+  })
+}
+export function optionalPages(enabled: boolean) {
+  return suspenseInfiniteQueryOptions({
+    ...pageOptions,
+    queryFn: enabled ? pageOptions.queryFn : skipToken,
+  })
+}
 export const fromStock: string | undefined = new StockClient().getQueryData(
   stockOptions(options).queryKey,
 )
