@@ -1,7 +1,4 @@
-/**
- * A function that returns whether the code is running on the server.
- */
-export type IsServerValue = () => boolean
+import type { IsServerValue } from '@tanstack/query-types/bindings'
 
 const defaultIsServer = typeof window === 'undefined' || 'Deno' in globalThis
 
@@ -40,3 +37,5 @@ export const environmentManager = {
     isServerFn = isServerValue
   },
 }
+
+export type { IsServerValue } from '@tanstack/query-types/bindings'

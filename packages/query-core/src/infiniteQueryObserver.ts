@@ -1,11 +1,17 @@
 import { hasNextPage, hasPreviousPage } from './infiniteQueryBehavior'
 import { QueryObserver } from './queryObserver'
+import type * as Shared from '@tanstack/query-types/bindings'
+import type {
+  InfiniteQueryObserverListener,
+  ReplaceReturnType,
+} from '@tanstack/query-types/bindings'
 import type { Query } from './query'
 import type { QueryClient } from './queryClient'
 import type {
   QueryObserverResultContext,
   QueryObserverResultReader,
 } from './queryObserver'
+import type { QueryRuntime } from './runtimeBinding'
 import type { Subscribable } from './subscribable'
 import type {
   DefaultError,
@@ -14,15 +20,10 @@ import type {
   FetchPreviousPageOptions,
   InfiniteData,
   InfiniteQueryObserverBaseResult,
-  InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   QueryKey,
   QueryObserverResult,
 } from './types'
-
-type InfiniteQueryObserverListener<TData, TError> = (
-  result: InfiniteQueryObserverResult<TData, TError>,
-) => void
 
 type InfiniteObserverOptionsInput<
   TQueryFnData,
@@ -30,21 +31,14 @@ type InfiniteObserverOptionsInput<
   TData,
   TQueryKey extends QueryKey,
   TPageParam,
-> =
-  | InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
-  | DefaultedInfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryKey,
-      TPageParam
-    >
+> = Shared.InfiniteObserverOptionsInput<
+  QueryRuntime,
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  TPageParam
+>
 
 /**
  * An `InfiniteQueryObserver` extends `QueryObserver` to observe and switch
@@ -281,8 +275,3 @@ export class InfiniteQueryObserver<
     return result as InfiniteQueryObserverResult<TData, TError>
   }
 }
-
-type ReplaceReturnType<
-  TFunction extends (...args: Array<any>) => unknown,
-  TReturn,
-> = (...args: Parameters<TFunction>) => TReturn

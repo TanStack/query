@@ -1,114 +1,41 @@
 import { timeoutManager } from './timeoutManager'
+import type * as Shared from '@tanstack/query-types/bindings'
+import type {
+  DefaultQueryFn,
+  DefaultQueryFn as defaultQueryFnType,
+  FetchSignal as fetchSignalType,
+  SkipToken,
+  SkipToken as skipTokenType,
+  Updater,
+} from '@tanstack/query-types/bindings'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
+import type { QueryRuntime } from './runtimeBinding'
 import type {
   CacheKeyConfig,
   DefaultError,
   EqualityFn,
-  FetchStatus,
   MutationKey,
-  MutationStatus,
   QueryFunction,
   QueryKey,
   QueryOptions,
 } from './types'
 
-// TYPES
+export type QueryFilters<TQueryKey extends QueryKey = QueryKey> =
+  Shared.QueryFilters<QueryRuntime, TQueryKey>
 
-type DropLast<T extends ReadonlyArray<unknown>> = T extends readonly [
-  ...infer R,
-  unknown,
-]
-  ? readonly [...R]
-  : never
-
-type TuplePrefixes<T extends ReadonlyArray<unknown>> = T extends readonly []
-  ? readonly []
-  : TuplePrefixes<DropLast<T>> | T
-
-/**
- * Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
- * All provided filters must match; filters that are left unspecified are ignored.
- */
-export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
-  /**
-   * Filter to active queries, inactive queries or all queries
-   * @defaultValue 'all'
-   */
-  type?: QueryTypeFilter
-  /**
-   * Match query key exactly
-   */
-  exact?: boolean
-  /**
-   * Include queries matching this predicate function
-   */
-  predicate?: (query: Query) => boolean
-  /**
-   * Include queries matching this query key
-   */
-  queryKey?: TQueryKey | TuplePrefixes<TQueryKey>
-  /**
-   * Include or exclude stale queries
-   */
-  stale?: boolean
-  /**
-   * Include queries matching their fetchStatus
-   */
-  fetchStatus?: FetchStatus
-}
-
-/**
- * Filters used to select mutations, for example in `mutationCache.findAll` or `queryClient.isMutating`.
- * All provided filters must match; filters that are left unspecified are ignored.
- */
-export interface MutationFilters<
+export type MutationFilters<
   TData = unknown,
   TError = DefaultError,
   TVariables = unknown,
   TOnMutateResult = unknown,
-> {
-  /**
-   * Match mutation key exactly
-   */
-  exact?: boolean
-  /**
-   * Include mutations matching this predicate function
-   */
-  predicate?: (
-    mutation: Mutation<TData, TError, TVariables, TOnMutateResult>,
-  ) => boolean
-  /**
-   * Include mutations matching this mutation key
-   */
-  mutationKey?: TuplePrefixes<MutationKey>
-  /**
-   * Filter by mutation status
-   */
-  status?: MutationStatus
-}
-
-/**
- * Either a plain value of type `TOutput`, or a function that receives `TInput` and returns `TOutput`.
- * Used for example by `setQueryData`-style updaters, which accept either the new data directly or a
- * function that computes it from the previous data. See {@link functionalUpdate}.
- * @example
- * ```ts
- * queryClient.setQueryData(['posts'], newPosts)
- *
- * // Or, using an updater function that receives the current data:
- * queryClient.setQueryData(['posts'], (oldPosts) =>
- *   oldPosts ? [...oldPosts, newPost] : oldPosts,
- * )
- * ```
- */
-export type Updater<TInput, TOutput> = TOutput | ((input: TInput) => TOutput)
-
-/**
- * Which queries a filter matches: all of them, only active ones (with enabled observers), or only
- * inactive ones.
- */
-export type QueryTypeFilter = 'all' | 'active' | 'inactive'
+> = Shared.MutationFilters<
+  QueryRuntime,
+  TData,
+  TError,
+  TVariables,
+  TOnMutateResult
+>
 
 // UTILS
 
@@ -673,21 +600,18 @@ export function addToArray<T>(
  * })
  * ```
  */
-export const skipToken = Symbol()
-/**
- * The type of the {@link skipToken} sentinel value.
- */
-export type SkipToken = typeof skipToken
+export const skipToken: skipTokenType = Symbol.for(
+  '@tanstack/query/skipToken',
+) as skipTokenType
 
 /**
  * Pass this as `queryFn` to use the query function configured on the client.
  * The defaults for the query key take precedence over the client's global query defaults.
  * If no query function is configured, a fetch fails with a `Missing queryFn` error.
  */
-export const defaultQueryFn = Symbol()
-
-/** The type of the {@link defaultQueryFn} sentinel value. */
-export type DefaultQueryFn = typeof defaultQueryFn
+export const defaultQueryFn: defaultQueryFnType = Symbol.for(
+  '@tanstack/query/defaultQueryFn',
+) as defaultQueryFnType
 
 /**
  * Returns the function to call for a fetch. If there is no `queryFn` but the fetch was started from
@@ -767,15 +691,9 @@ export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
   return !!throwOnError
 }
 
-export const fetchSignal = Symbol()
-
-/** Internal view of a context that can expose its signal without consuming it. */
-export type FetchSignalContext = {
-  /** The public signal, whose getter can mark it consumed. */
-  readonly signal: AbortSignal
-  /** The original fetch signal, absent on application-created contexts. */
-  readonly [fetchSignal]?: AbortSignal
-}
+export const fetchSignal: fetchSignalType = Symbol.for(
+  '@tanstack/query/fetchSignal',
+) as fetchSignalType
 
 /**
  * Adds a lazy `signal` getter to an object, such as a query function context. The first time
@@ -820,3 +738,11 @@ export function addConsumeAwareSignal<T extends object>(
 
   return object as T & { signal: AbortSignal }
 }
+
+export type {
+  Updater,
+  QueryTypeFilter,
+  SkipToken,
+  DefaultQueryFn,
+  FetchSignalContext,
+} from '@tanstack/query-types/bindings'

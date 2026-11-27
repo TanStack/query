@@ -1,7 +1,8 @@
 import { Subscribable } from './subscribable'
-
-type Listener = (online: boolean) => void
-type SetupFn = (setOnline: Listener) => (() => void) | undefined
+import type {
+  OnlineManagerListener as Listener,
+  OnlineManagerSetupFn as SetupFn,
+} from '@tanstack/query-types/bindings'
 
 /**
  * The `OnlineManager` manages the online state within TanStack Query. It can

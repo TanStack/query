@@ -7258,6 +7258,28 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3
 
+  integrations/react/bundle-size:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: workspace:*
+        version: link:../../../packages/react-query
+      '@tanstack/react-query-no-core':
+        specifier: workspace:*
+        version: link:../../../packages/react-query-no-core
+      '@tanstack/react-query-no-core-pluggable':
+        specifier: workspace:*
+        version: link:../../../packages/react-query-no-core-pluggable
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.1(react@19.3.1)
+    devDependencies:
+      vite:
+        specifier: ^8.3.8
+        version: 8.3.8(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.108.2)(sass@1.108.2)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
+
   integrations/react/next-14:
     dependencies:
       '@tanstack/react-query':
@@ -7347,9 +7369,21 @@ importers:
 
   integrations/react/nodenext:
     dependencies:
+      '@tanstack/query-core':
+        specifier: workspace:*
+        version: link:../../../packages/query-core
+      '@tanstack/query-types':
+        specifier: workspace:*
+        version: link:../../../packages/query-types
       '@tanstack/react-query':
         specifier: workspace:*
         version: link:../../../packages/react-query
+      '@tanstack/react-query-no-core':
+        specifier: workspace:*
+        version: link:../../../packages/react-query-no-core
+      '@tanstack/react-query-no-core-pluggable':
+        specifier: workspace:*
+        version: link:../../../packages/react-query-no-core-pluggable
     devDependencies:
       '@types/react':
         specifier: ^19.3.0
@@ -7997,6 +8031,10 @@ importers:
         version: 17.4.0(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@10.2.2))(supports-color@10.2.2))(supports-color@10.2.2)
 
   packages/query-core:
+    dependencies:
+      '@tanstack/query-types':
+        specifier: workspace:*
+        version: link:../query-types
     devDependencies:
       '@tanstack/query-test-utils':
         specifier: workspace:*
@@ -8069,6 +8107,12 @@ importers:
       vitest:
         specifier: ^5.0.5
         version: 5.0.5(@types/node@24.19.2)(@vitest/coverage-istanbul@5.0.5)(jsdom@27.4.0(supports-color@7.2.0))(msw@2.15.0(@types/node@24.19.2)(typescript@6.0.3))(vite@8.3.8(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.108.2)(sass@1.108.2)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.0))
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
+  packages/query-types:
     devDependencies:
       typescript:
         specifier: 'catalog:'
@@ -8174,6 +8218,62 @@ importers:
       react:
         specifier: 'catalog:'
         version: 19.3.1
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
+  packages/react-query-no-core:
+    dependencies:
+      '@tanstack/query-types':
+        specifier: workspace:*
+        version: link:../query-types
+    devDependencies:
+      '@eslint-react/eslint-plugin':
+        specifier: 'catalog:'
+        version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@types/react':
+        specifier: ^19.3.0
+        version: 19.3.0
+      eslint-plugin-react-hooks:
+        specifier: 'catalog:'
+        version: 7.1.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
+  packages/react-query-no-core-pluggable:
+    dependencies:
+      '@tanstack/query-types':
+        specifier: workspace:*
+        version: link:../query-types
+    devDependencies:
+      '@eslint-react/eslint-plugin':
+        specifier: 'catalog:'
+        version: 5.28.8(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@6.0.3)
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@testing-library/react-render-stream':
+        specifier: ^2.0.2
+        version: 2.0.2(@jest/globals@30.3.0(supports-color@10.2.2))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(expect@30.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(supports-color@10.2.2)
+      '@types/react':
+        specifier: ^19.3.0
+        version: 19.3.0
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 6.2.1(babel-plugin-react-compiler@1.0.0)(vite@8.3.8(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.108.2)(sass@1.108.2)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      eslint-plugin-react-hooks:
+        specifier: 'catalog:'
+        version: 7.1.1(eslint@9.39.5(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.1(react@19.3.1)
       typescript:
         specifier: 'catalog:'
         version: 6.0.3

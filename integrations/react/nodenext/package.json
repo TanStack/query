@@ -9,7 +9,11 @@
     "test:types:ts71": "node ../../../node_modules/typescript71/lib/tsc.js --pretty false --project tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/react-query": "workspace:*"
+    "@tanstack/query-core": "workspace:*",
+    "@tanstack/query-types": "workspace:*",
+    "@tanstack/react-query": "workspace:*",
+    "@tanstack/react-query-no-core": "workspace:*",
+    "@tanstack/react-query-no-core-pluggable": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.3.0"

@@ -1,121 +1,31 @@
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
 import { createRetryer } from './retryer'
+import type * as Shared from '@tanstack/query-types/bindings'
+import type {
+  MutationAction as Action,
+  MutationState,
+} from '@tanstack/query-types/bindings'
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
 import type { QueryClient } from './queryClient'
 import type { Retryer } from './retryer'
+import type { QueryRuntime } from './runtimeBinding'
 import type {
   DefaultError,
   MutationFunctionContext,
   MutationMeta,
   MutationOptions,
-  MutationStatus,
 } from './types'
 
-// TYPES
-
-interface MutationConfig<TData, TError, TVariables, TOnMutateResult> {
-  client: QueryClient
-  mutationId: number
-  mutationCache: MutationCache
-  options: MutationOptions<TData, TError, TVariables, TOnMutateResult>
-  state?: MutationState<TData, TError, TVariables, TOnMutateResult>
-}
-
-/**
- * The raw state stored on a `Mutation` instance. This is the underlying state
- * that observer results (e.g. `MutationObserverResult`) are derived from.
- */
-export interface MutationState<
-  TData = unknown,
-  TError = DefaultError,
-  TVariables = unknown,
-  TOnMutateResult = unknown,
-> {
-  /**
-   * The value returned by `onMutate`, if defined. Passed to `onSuccess`,
-   * `onError` and `onSettled` as the mutation's context.
-   */
-  context: TOnMutateResult | undefined
-  /**
-   * The last successfully resolved data for the mutation.
-   */
-  data: TData | undefined
-  /**
-   * The error object for the mutation, if the last attempt resulted in an error.
-   * - Defaults to `null`.
-   */
-  error: TError | null
-  /**
-   * The number of times the mutation function has failed for the current attempt.
-   */
-  failureCount: number
-  /**
-   * The reason the current attempt failed, as reported by the retryer.
-   */
-  failureReason: TError | null
-  /**
-   * Whether the mutation is currently paused (see network mode), or is
-   * waiting for another mutation with the same `scope` to finish.
-   */
-  isPaused: boolean
-  /**
-   * The status of the mutation.
-   */
-  status: MutationStatus
-  /**
-   * The variables the mutation was last called with.
-   */
-  variables: TVariables | undefined
-  /**
-   * The timestamp for when the mutation was submitted.
-   */
-  submittedAt: number
-}
-
-interface FailedAction<TError> {
-  type: 'failed'
-  failureCount: number
-  error: TError | null
-}
-
-interface PendingAction<TVariables, TOnMutateResult> {
-  type: 'pending'
-  isPaused: boolean
-  variables?: TVariables
-  context?: TOnMutateResult
-}
-
-interface SuccessAction<TData> {
-  type: 'success'
-  data: TData
-}
-
-interface ErrorAction<TError> {
-  type: 'error'
-  error: TError
-}
-
-interface PauseAction {
-  type: 'pause'
-}
-
-interface ContinueAction {
-  type: 'continue'
-}
-
-/**
- * The actions a mutation dispatches to update its state, e.g. when it starts, fails, pauses, or
- * succeeds.
- */
-export type Action<TData, TError, TVariables, TOnMutateResult> =
-  | ContinueAction
-  | ErrorAction<TError>
-  | FailedAction<TError>
-  | PendingAction<TVariables, TOnMutateResult>
-  | PauseAction
-  | SuccessAction<TData>
+type MutationConfig<TData, TError, TVariables, TOnMutateResult> =
+  Shared.MutationConfig<
+    QueryRuntime,
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  >
 
 // CLASS
 
@@ -586,3 +496,8 @@ export function getDefaultState<
     submittedAt: 0,
   }
 }
+
+export type {
+  MutationState,
+  MutationAction as Action,
+} from '@tanstack/query-types/bindings'

@@ -1,10 +1,8 @@
 import { Subscribable } from './subscribable'
-
-type Listener = (focused: boolean) => void
-
-type SetupFn = (
-  setFocused: (focused?: boolean) => void,
-) => (() => void) | undefined
+import type {
+  FocusManagerListener as Listener,
+  FocusManagerSetupFn as SetupFn,
+} from '@tanstack/query-types/bindings'
 
 /**
  * The `FocusManager` manages the focus state within TanStack Query.

@@ -24,6 +24,17 @@
       "!{projectRoot}/tests/**/*",
       "!{projectRoot}/eslint.config.js",
       "!{projectRoot}/oxlint.config.ts"
+    ],
+    "reactQueryCompatibility": [
+      "{workspaceRoot}/scripts/test-react-query-compat.mjs",
+      "{workspaceRoot}/scripts/react-query-compat.config.ts",
+      "{workspaceRoot}/packages/query-core/src/__tests__/**/*",
+      "{workspaceRoot}/packages/query-core/vite.config.ts",
+      "{workspaceRoot}/packages/react-query/src/__tests__/**/*",
+      "{workspaceRoot}/packages/react-query/test-setup.ts",
+      "{workspaceRoot}/packages/react-query/vite.config.ts",
+      "{workspaceRoot}/packages/query-persist-client-core/src/**/*",
+      "{workspaceRoot}/packages/query-test-utils/src/**/*"
     ]
   },
   "targetDefaults": {

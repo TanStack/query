@@ -2,129 +2,25 @@ import { notifyManager } from './notifyManager'
 import { Query } from './query'
 import { Subscribable } from './subscribable'
 import { hashKeyByOptions, matchQuery } from './utils'
-import type { Action, QueryState } from './query'
+import type * as Shared from '@tanstack/query-types/bindings'
+import type { QueryState } from './query'
 import type { QueryClient } from './queryClient'
-import type { QueryObserver } from './queryObserver'
+import type { QueryRuntime } from './runtimeBinding'
 import type {
-  CacheKeyConfig,
   DefaultError,
-  NotifyEvent,
   QueryKey,
   QueryOptions,
   WithRequired,
 } from './types'
 import type { QueryFilters } from './utils'
 
-// TYPES
+export type QueryCacheConfig = Shared.QueryCacheConfig<QueryRuntime>
 
-/**
- * Global callbacks that fire for every query handled by a `QueryCache`, regardless of which
- * component or observer triggered it. Unlike `QueryClient`'s `defaultOptions`, which a query can
- * override, these callbacks are always called. Unlike `MutationCacheConfig`'s callbacks, these
- * are fire-and-forget: their return value is not awaited before the query settles.
- */
-export interface QueryCacheConfig {
-  /**
-   * Configures query key comparison and hashing globally.
-   * `equalityFn` compares individual values during partial matching and defaults to strict equality.
-   * `hashFn` hashes query keys and defaults to `hashKey`.
-   */
-  queryKey?: CacheKeyConfig<QueryKey>
-  /** Called when any query in the cache encounters an error. */
-  onError?: (
-    error: DefaultError,
-    query: Query<unknown, unknown, unknown>,
-  ) => void
-  /** Called when any query in the cache is successful. */
-  onSuccess?: (data: unknown, query: Query<unknown, unknown, unknown>) => void
-  /** Called when any query in the cache is settled, either successfully or with an error. */
-  onSettled?: (
-    data: unknown | undefined,
-    error: DefaultError | null,
-    query: Query<unknown, unknown, unknown>,
-  ) => void
-}
+export type QueryCacheNotifyEvent = Shared.QueryCacheNotifyEvent<QueryRuntime>
 
-interface NotifyEventQueryAdded extends NotifyEvent {
-  type: 'added'
-  query: Query<any, any, any, any>
-}
+type QueryCacheListener = Shared.QueryCacheListener<QueryRuntime>
 
-interface NotifyEventQueryRemoved extends NotifyEvent {
-  type: 'removed'
-  query: Query<any, any, any, any>
-}
-
-interface NotifyEventQueryUpdated extends NotifyEvent {
-  type: 'updated'
-  query: Query<any, any, any, any>
-  action: Action<any, any>
-}
-
-interface NotifyEventQueryObserverAdded extends NotifyEvent {
-  type: 'observerAdded'
-  query: Query<any, any, any, any>
-  observer: QueryObserver<any, any, any, any, any>
-}
-
-interface NotifyEventQueryObserverRemoved extends NotifyEvent {
-  type: 'observerRemoved'
-  query: Query<any, any, any, any>
-  observer: QueryObserver<any, any, any, any, any>
-}
-
-interface NotifyEventQueryObserverResultsUpdated extends NotifyEvent {
-  type: 'observerResultsUpdated'
-  query: Query<any, any, any, any>
-}
-
-interface NotifyEventQueryObserverOptionsUpdated extends NotifyEvent {
-  type: 'observerOptionsUpdated'
-  query: Query<any, any, any, any>
-  observer: QueryObserver<any, any, any, any, any>
-}
-
-/**
- * The event passed to a `QueryCache` subscriber. Fired whenever a query is added or removed from
- * the cache, its state is updated (e.g. via `query.setState` or `queryClient.removeQueries`), or
- * one of its observers is added, removed, or has its results or options updated.
- */
-export type QueryCacheNotifyEvent =
-  | NotifyEventQueryAdded
-  | NotifyEventQueryRemoved
-  | NotifyEventQueryUpdated
-  | NotifyEventQueryObserverAdded
-  | NotifyEventQueryObserverRemoved
-  | NotifyEventQueryObserverResultsUpdated
-  | NotifyEventQueryObserverOptionsUpdated
-
-type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
-
-/**
- * The store a `QueryCache` keeps its queries in, keyed by query hash.
- */
-export interface QueryStore {
-  /**
-   * Returns whether a query with the given hash is stored.
-   */
-  has: (queryHash: string) => boolean
-  /**
-   * Stores a query under its hash.
-   */
-  set: (queryHash: string, query: Query) => void
-  /**
-   * Returns the query with the given hash, if any.
-   */
-  get: (queryHash: string) => Query | undefined
-  /**
-   * Removes the query with the given hash.
-   */
-  delete: (queryHash: string) => void
-  /**
-   * Returns an iterator over all stored queries.
-   */
-  values: () => IterableIterator<Query>
-}
+export type QueryStore = Shared.QueryStore<QueryRuntime>
 
 // CLASS
 

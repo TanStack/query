@@ -48,6 +48,9 @@
     "src",
     "!src/__tests__"
   ],
+  "dependencies": {
+    "@tanstack/query-types": "workspace:*"
+  },
   "devDependencies": {
     "@tanstack/query-test-utils": "workspace:*",
     "typescript": "catalog:"

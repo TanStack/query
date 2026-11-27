@@ -1,0 +1,148 @@
+import type {
+  BatchCallsCallback,
+  BatchNotifyFunction,
+  NotifyCallback,
+  NotifyFunction,
+  ScheduleFunction,
+} from '@tanstack/query-types/bindings'
+
+/**
+ * Default scheduling function used by the notify manager.
+ * Schedules the callback in a microtask with `queueMicrotask`.
+ */
+export const defaultScheduler: ScheduleFunction = queueMicrotask
+
+/**
+ * Creates a notify manager, which schedules and batches notifications to subscribers. Query uses a
+ * single instance of it, exported as {@link notifyManager}.
+ * @returns A new notify manager.
+ */
+export function createNotifyManager() {
+  let queue: Array<NotifyCallback> = []
+  let transactions = 0
+  let notifyFn: NotifyFunction = (callback) => {
+    callback()
+  }
+  let batchNotifyFn: BatchNotifyFunction = (callback: () => void) => {
+    callback()
+  }
+  let scheduleFn = defaultScheduler
+
+  const schedule = (callback: NotifyCallback): void => {
+    if (transactions) {
+      queue.push(callback)
+    } else {
+      scheduleFn(() => {
+        notifyFn(callback)
+      })
+    }
+  }
+  const flush = (): void => {
+    const originalQueue = queue
+    queue = []
+    if (originalQueue.length) {
+      scheduleFn(() => {
+        batchNotifyFn(() => {
+          originalQueue.forEach((callback) => {
+            notifyFn(callback)
+          })
+        })
+      })
+    }
+  }
+
+  return {
+    /**
+     * Batches all updates scheduled inside the passed callback.
+     * This is mainly used internally to optimize query client updating.
+     * Batches can be nested; the queue is only flushed once the outermost `batch` call finishes.
+     * The return value of `callback` is passed through.
+     * @param callback - The function to run in the batch.
+     * @returns The return value of `callback`.
+     */
+    batch: <T>(callback: () => T): T => {
+      let result
+      transactions++
+      try {
+        result = callback()
+      } finally {
+        transactions--
+        if (!transactions) {
+          flush()
+        }
+      }
+      return result
+    },
+    /**
+     * All calls to the wrapped function will be batched.
+     * @param callback - The function to wrap.
+     * @returns A function that schedules a call to `callback` with the given arguments.
+     */
+    batchCalls: <T extends Array<unknown>>(
+      callback: BatchCallsCallback<T>,
+    ): BatchCallsCallback<T> => {
+      return (...args) => {
+        schedule(() => {
+          callback(...args)
+        })
+      }
+    },
+    /**
+     * Schedules a function to be run on the next batch.
+     * By default, the batch runs in a microtask. Use `setScheduler` to change when it runs.
+     */
+    schedule,
+    /**
+     * Use this method to set a custom notify function.
+     * This can be used to for example wrap notifications with `React.act` while running tests.
+     * @param fn - Receives each notification callback and must call it.
+     */
+    setNotifyFunction: (fn: NotifyFunction) => {
+      notifyFn = fn
+    },
+    /**
+     * Use this method to set a custom function to batch notifications together into a single tick.
+     * Framework adapters use this to plug in their own batching primitive, so that a single query
+     * update only triggers one re-render instead of one per subscriber.
+     * @param fn - Receives a function that runs a batch of notifications and must call it.
+     * @example
+     * ```ts
+     * import { notifyManager } from '@tanstack/react-query-no-core'
+     * import { batch } from 'solid-js'
+     *
+     * notifyManager.setBatchNotifyFunction(batch)
+     * ```
+     */
+    setBatchNotifyFunction: (fn: BatchNotifyFunction) => {
+      batchNotifyFn = fn
+    },
+    /**
+     * Configures a custom callback that schedules when the next batch runs.
+     * The default behavior is `queueMicrotask(callback)`.
+     * @param fn - Receives a callback that runs the next batch, and schedules it.
+     * @example
+     * ```ts
+     * import { notifyManager } from '@tanstack/react-query-no-core'
+     *
+     * // Use the v5 timer-based scheduler
+     * notifyManager.setScheduler((cb) => setTimeout(cb, 0))
+     *
+     * // Schedule batches before the next frame is rendered
+     * notifyManager.setScheduler(requestAnimationFrame)
+     *
+     * // Schedule batches some time in the future
+     * notifyManager.setScheduler((cb) => setTimeout(cb, 10))
+     * ```
+     */
+    setScheduler: (fn: ScheduleFunction) => {
+      scheduleFn = fn
+    },
+  } as const
+}
+
+// SINGLETON
+
+/**
+ * Handles scheduling and batching callbacks in TanStack Query.
+ */
+export const notifyManager = createNotifyManager()

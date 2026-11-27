@@ -6,15 +6,18 @@ import {
   shallowEqualObjects,
   shouldThrowError,
 } from './utils'
+import type * as Shared from '@tanstack/query-types/bindings'
+import type {
+  CombineContext,
+  CombineFn,
+  QueriesObserverListener,
+  QueriesObserverOptions,
+  QueriesObserverResultReader,
+} from '@tanstack/query-types/bindings'
 import type { QueryClient } from './queryClient'
-import type {
-  ObserverOptionsInput,
-  QueryObserverResultReader,
-} from './queryObserver'
-import type {
-  DefaultedQueryObserverOptions,
-  QueryObserverResult,
-} from './types'
+import type { ObserverOptionsInput } from './queryObserver'
+import type { QueryRuntime } from './runtimeBinding'
+import type { QueryObserverResult } from './types'
 
 /**
  * Returns the items of `array1` that are not in `array2`.
@@ -42,44 +45,6 @@ function equalResults(
     result.length === previous.length &&
     result.every((value, index) => shallowEqualObjects(value, previous[index]))
   )
-}
-
-type QueriesObserverListener = (result: Array<QueryObserverResult>) => void
-
-type CombineFn<TCombinedResult> = (
-  result: Array<QueryObserverResult>,
-) => TCombinedResult
-
-/** A cached reader for multiple query results and their combined value. */
-export interface QueriesObserverResultReader<
-  TCombinedResult,
-> extends QueryObserverResultReader<Array<QueryObserverResult>> {
-  /** Track result properties and combine the results with this reader's options. */
-  combineResult: (result: Array<QueryObserverResult>) => TCombinedResult
-}
-
-type CombineContext<TCombinedResult> = {
-  result?: Array<QueryObserverResult>
-  combine?: CombineFn<TCombinedResult>
-  value?: TCombinedResult
-  queryHashes?: Array<string>
-}
-
-/**
- * Options for a `QueriesObserver` that apply to all of its queries at once.
- */
-export interface QueriesObserverOptions<
-  TCombinedResult = Array<QueryObserverResult>,
-> {
-  /**
-   * A function that combines the array of `QueryObserverResult`s (one per
-   * observed query) into a single value. The combined value is memoized and
-   * only recomputed when one of the underlying results, the query hashes, or
-   * the `combine` function itself changes.
-   *
-   * Defaults to returning the array of `QueryObserverResult`s unchanged.
-   */
-  combine?: CombineFn<TCombinedResult>
 }
 
 /**
@@ -495,8 +460,9 @@ export class QueriesObserver<
   }
 }
 
-type QueryObserverMatch = {
-  defaultedQueryOptions: DefaultedQueryObserverOptions
-  observer: QueryObserver
-  reader?: QueryObserverResultReader<QueryObserverResult>
-}
+type QueryObserverMatch = Shared.QueryObserverMatch<QueryRuntime>
+
+export type {
+  QueriesObserverResultReader,
+  QueriesObserverOptions,
+} from '@tanstack/query-types/bindings'

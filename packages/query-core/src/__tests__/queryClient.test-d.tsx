@@ -26,6 +26,7 @@ import type {
   UnsetMarker,
 } from '../types'
 import type { MutationFilters, QueryFilters, Updater } from '../utils'
+import type { AdapterClientOptions } from './clientOptions'
 
 type TypedData = { foo: string }
 type TypedError = DefaultError & { bar: string }
@@ -1157,9 +1158,9 @@ describe('queryClient', () => {
       assertType<ConstructorParameters<typeof QueryClient>>([])
     })
 
-    it('should declare exactly its three options', () => {
+    it('should declare exactly its supported options', () => {
       expectTypeOf<keyof QueryClientConfig>().toEqualTypeOf<
-        'queryCache' | 'mutationCache' | 'defaultOptions'
+        'queryCache' | 'mutationCache' | 'defaultOptions' | AdapterClientOptions
       >()
     })
 

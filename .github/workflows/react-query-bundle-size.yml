@@ -1,0 +1,73 @@
+name: React Query app bundle size
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/react-query-bundle-size.yml'
+      - 'integrations/react/bundle-size/**'
+      - 'packages/query-core/**'
+      - 'packages/query-types/**'
+      - 'packages/react-query/**'
+      - 'packages/react-query-no-core*/**'
+      - 'scripts/getTsdownConfig.js'
+      - '.nvmrc'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      report: ${{ steps.measure.outputs.report }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: TanStack/config/.github/setup@e4b48f16568324f76f467aa4c2aac2f05db632c3
+      - name: Build workspace dependencies
+        run: pnpm --filter '@tanstack/query-integration-react-bundle-size^...' run build
+      - name: Build and measure production apps
+        id: measure
+        working-directory: integrations/react/bundle-size
+        run: |
+          pnpm run measure
+          cat dist/report.md >> "$GITHUB_STEP_SUMMARY"
+          jq -Rsr '"report=" + tojson' dist/report.md >> "$GITHUB_OUTPUT"
+  comment:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    needs: measure
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Update bundle size comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPORT: ${{ needs.measure.outputs.report }}
+        run: |
+          comments="repos/$REPO/issues/$PR_NUMBER/comments"
+          marker='<!-- react-query-app-bundle-size -->'
+          id=$(gh api --paginate --slurp "$comments?per_page=100" |
+            jq -r --arg marker "$marker" '[.[][] | select(.user.login == "github-actions[bot]" and (.body | startswith($marker)))][0].id // empty')
+          endpoint="$comments"
+          method=POST
+          if [[ -n "$id" ]]; then
+            endpoint="repos/$REPO/issues/comments/$id"
+            method=PATCH
+          fi
+          jq -n --arg marker "$marker" --arg sha "$HEAD_SHA" --argjson report "$REPORT" \
+            '{body: ($marker + "\n" + $report + "\nMeasured commit `" + $sha + "`.")}' |
+            gh api --silent --method "$method" "$endpoint" --input -

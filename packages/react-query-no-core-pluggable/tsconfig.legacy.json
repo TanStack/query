@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "outDir": "./dist-ts/legacy"
+  },
+  "include": ["src"],
+  "exclude": ["src/__tests__"]
+}

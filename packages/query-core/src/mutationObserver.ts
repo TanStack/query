@@ -2,8 +2,10 @@ import { Mutation, getDefaultState } from './mutation'
 import { notifyManager } from './notifyManager'
 import { Subscribable } from './subscribable'
 import { hashKeyByOptions, shallowEqualObjects } from './utils'
+import type * as Shared from '@tanstack/query-types/bindings'
 import type { Action } from './mutation'
 import type { QueryClient } from './queryClient'
+import type { QueryRuntime } from './runtimeBinding'
 import type {
   DefaultError,
   MutateOptions,
@@ -12,11 +14,14 @@ import type {
   MutationObserverResult,
 } from './types'
 
-// TYPES
-
-type MutationObserverListener<TData, TError, TVariables, TOnMutateResult> = (
-  result: MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
-) => void
+type MutationObserverListener<TData, TError, TVariables, TOnMutateResult> =
+  Shared.MutationObserverListener<
+    QueryRuntime,
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  >
 
 // CLASS
 
