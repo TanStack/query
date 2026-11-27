@@ -37,6 +37,12 @@ or
 deno add @tanstack/react-query
 ```
 
+or
+
+```sh
+vlt install @tanstack/react-query
+```
+
 [//]: # 'Compatibility'
 
 React Query is compatible with React v18+ and works with ReactDOM and React Native.
