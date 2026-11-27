@@ -6,12 +6,14 @@ CI builds the original adapter and its dependencies from the PR's base commit. T
 
 ## What the PR comment measures
 
+The opening table compares the gzipped Query runtime for each workload. It shows the v6 baseline in bytes and the signed change in bytes and percent for each alternative. Expand either detail table to see absolute sizes and changes for all three packages.
+
 1. **Query runtime used by the app.** Vite builds the same HTML and React entry points with React, React DOM and their subpaths external. Rolldown groups the adapter’s retained modules into one ESM chunk, including `@tanstack/query-core` for the original adapter. The app and its workload-specific helpers stay in a separate entry chunk. The benchmark directly measures the minified Query chunk, including its ESM import and export bindings. Its gzip and Brotli sizes describe compressing this chunk on its own. Percentages use the original adapter’s isolated chunk for that workload and encoding.
 2. **Whole production app.** Vite builds the deployable application with its ordinary chunk layout, including React, React DOM, the app and the adapter. Each percentage uses the original adapter’s full app for that workload and encoding. Compressing these complete chunks accounts for compression shared between the app and its dependencies.
 
 Both tables show the emitted JS byte length, gzip at level 9 and Brotli at quality 11. The benchmark compresses each emitted JS chunk independently and sums the lengths. HTML, source maps and analysis reports are excluded.
 
-For each app, the benchmark verifies that the isolated Query chunk contains the same retained Query module IDs and exports as the whole production app and imports only React peer entry points. The production app checks also cover feature-specific modules. Individual public export probes check that selection, placeholder data and serial queues can be removed independently. The React hydration boundary only restores queries. The universal `hydrate` also restores serial queues from saved mutations.
+For each app, the benchmark verifies that the isolated Query chunk contains the same retained Query module IDs and exports as the whole production app and imports only React peer entry points. Both the read-only and polling apps construct a `QueryClient` and use queries. The pluggable build must retain the query cache and observer and exclude the mutation cache, mutation and mutation observer. Both bookmark apps call `useMutation` and must retain all three mutation modules. Additional checks cover polling, infinite queries, selection, placeholder data, serial queues and bulk cache operations. Individual public export probes check that selection, placeholder data and serial queues can be removed independently. The React hydration boundary only restores queries. The universal `hydrate` also restores serial queues from saved mutations.
 
 The PR comment links to the workflow artifact containing an interactive HTML bundle analyzer for each package and workload. Open `dist/analyzer/<workload>/<adapter>.html` locally after running the benchmark. Select the `query-runtime` chunk to explore its constituent sources. The treemap shows module contributions from source maps. The tables use actual compressed chunk bytes.
 
@@ -33,7 +35,7 @@ pnpm --dir ../query-bundle-base --filter '@tanstack/react-query...' run build
 QUERY_BASE_CHECKOUT="$PWD/../query-bundle-base" pnpm --filter @tanstack/query-integration-react-bundle-size run measure
 ```
 
-Read both tables in `integrations/react/bundle-size/dist/report.md`. Serve a directory under `dist/<workload>/<adapter>` to try the built app.
+Read the summary and detailed tables in `integrations/react/bundle-size/dist/report.md`. Serve a directory under `dist/<workload>/<adapter>` to try the built app.
 
 Run the twelve production app scenarios in Chromium after measuring:
 

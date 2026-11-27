@@ -156,7 +156,15 @@ function checkApp(chunks, packageName, screen) {
     }
   }
   if (packageName === pluggable) {
+    const usesMutations = screen === 'paginated' || screen === 'options'
     const features = {
+      queryClient: true,
+      queryCache: true,
+      query: true,
+      queryObserver: true,
+      mutationCache: usesMutations,
+      mutation: usesMutations,
+      mutationObserver: usesMutations,
       refetchInterval: screen === 'polling',
       infiniteQueryBehavior: screen === 'paginated' || screen === 'polling',
       select: screen === 'options',
@@ -256,12 +264,20 @@ async function measure(packageName, screen) {
 // or whether rendering a boundary pulls in paused-mutation restoration.
 async function checkStandaloneExports() {
   const expected = {
+    QueryClient: [],
+    getMutationCache: ['mutationCache'],
     select: ['select', 'projectResult'],
     placeholderData: ['placeholderData', 'projectResult'],
     serialScope: ['serialScope'],
     invalidateQueries: ['cacheOperations'],
     HydrationBoundary: ['infiniteQueryBehavior'],
-    hydrate: ['infiniteQueryBehavior', 'mutation', 'serialScope'],
+    dehydrate: [],
+    hydrate: [
+      'infiniteQueryBehavior',
+      'mutation',
+      'mutationCache',
+      'serialScope',
+    ],
   }
   const features = new Set(Object.values(expected).flat())
   const entry = path.join(root, 'public-export-probe.js')
@@ -324,13 +340,17 @@ async function checkStandaloneExports() {
 await checkStandaloneExports()
 
 const integer = new Intl.NumberFormat('en-US')
-function formatSize(bytes, baselineBytes, isBaseline) {
-  const size = `${integer.format(bytes)} B`
-  if (isBaseline) return size
+function formatChange(bytes, baselineBytes) {
   const difference = bytes - baselineBytes
   const sign = difference > 0 ? '+' : ''
   const percent = ((100 * difference) / baselineBytes).toFixed(2)
-  return `${size} (${sign}${integer.format(difference)} B, ${sign}${percent}%)`
+  return `${sign}${integer.format(difference)} B (${sign}${percent}%)`
+}
+
+function formatSize(bytes, baselineBytes, isBaseline) {
+  const size = `${integer.format(bytes)} B`
+  if (isBaseline) return size
+  return `${size}<br>${formatChange(bytes, baselineBytes)}`
 }
 
 // Inspect the published ESM entry points as a consumer would.
@@ -372,9 +392,12 @@ const base = baseCheckout ? revision(baseCheckout) : head
 const lines = [
   '## React Query bundle size',
   '',
-  `Baseline adapter at \`${base}\` (${baseCheckout ? 'base checkout' : 'current checkout'}). Alternatives and fixture at \`${head}\`.`,
+  '### Gzipped Query runtime',
   '',
-  'Changes are relative to the original adapter for the same workload and measurement. A negative change is a saving.',
+  'Each row compares the Query JavaScript used by the same app. The change is measured against v6 for that row. Negative values mean fewer bytes.',
+  '',
+  '| Workload | v6 | no-core change | no-core-pluggable change |',
+  '| --- | ---: | ---: | ---: |',
 ]
 const results = []
 for (const { screen, title } of workloads) {
@@ -383,11 +406,24 @@ for (const { screen, title } of workloads) {
     rows.push({ name, ...(await measure(name, screen)) })
   }
   results.push({ screen, title, rows })
+  const [v6Gzip, standaloneGzip, pluggableGzip] = rows.map(
+    (row) => row.library.gzip,
+  )
+  lines.push(
+    `| ${title} | ${integer.format(v6Gzip)} B | ${formatChange(standaloneGzip, v6Gzip)} | ${formatChange(pluggableGzip, v6Gzip)} |`,
+  )
 }
+lines.push(
+  '',
+  'The pluggable read-only list retains the query client, cache, query and observer. Its production build drops the mutation cache and observer, polling scheduler, infinite-query behavior, selection, placeholder data, serial scopes and bulk cache operations. Both bookmark apps retain the mutation cache and observer.',
+  '',
+  `Baseline adapter at \`${base}\` (${baseCheckout ? 'base checkout' : 'current checkout'}). Alternatives and fixture at \`${head}\`.`,
+)
 function addTable(key, heading, description) {
   lines.push(
     '',
-    `### ${heading}`,
+    '<details>',
+    `<summary>${heading}</summary>`,
     '',
     description,
     '',
@@ -403,22 +439,25 @@ function addTable(key, heading, description) {
       lines.push(`| ${title} | \`${row.name}\` | ${cells.join(' | ')} |`)
     }
   }
+  if (key === 'library') {
+    const readOnly = results
+      .find(({ screen }) => screen === 'query')
+      .rows.find(({ name }) => name === pluggable)
+    lines.push(
+      '',
+      `Largest modules in the read-only pluggable chunk, by rendered size before minification: ${readOnly.largestModules.map((name) => `\`${name}\``).join(', ')}.`,
+    )
+  }
+  lines.push('', '</details>')
 }
 addTable(
   'library',
-  'Query runtime used by the app',
+  'Query runtime sizes · minified JS, gzip and Brotli',
   'The app entry drives tree-shaking. This build externalizes React and React DOM and groups retained Query modules into one ESM chunk. The baseline includes query-core. Each cell measures the isolated chunk directly.',
-)
-const readOnly = results
-  .find(({ screen }) => screen === 'query')
-  .rows.find(({ name }) => name === pluggable)
-lines.push(
-  '',
-  `Largest modules in the read-only pluggable chunk, by rendered size before minification: ${readOnly.largestModules.map((name) => `\`${name}\``).join(', ')}.`,
 )
 addTable(
   'app',
-  'Whole production app',
+  'Whole production app sizes · minified JS, gzip and Brotli',
   'Each build includes the app, React, React DOM and Query. This measures the JavaScript delivered to the browser.',
 )
 lines.push(

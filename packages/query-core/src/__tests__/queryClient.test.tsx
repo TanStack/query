@@ -1,5 +1,8 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
+import {
+  cacheOperations,
+  getMutationCache,
+} from '@tanstack/query-test-utils/cacheOperations'
 import { selectOption } from '@tanstack/query-test-utils/projection'
 import { serialScope } from '@tanstack/query-test-utils/scope'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -2393,7 +2396,7 @@ describe('queryClient', () => {
         'onOnline',
       )
       const mutationCacheResumePausedMutationsSpy = vi.spyOn(
-        testClient.getMutationCache(),
+        getMutationCache(testClient),
         'resumePausedMutations',
       )
 
@@ -2422,7 +2425,7 @@ describe('queryClient', () => {
         'onOnline',
       )
       const mutationCacheResumePausedMutationsSpy = vi.spyOn(
-        testClient.getMutationCache(),
+        getMutationCache(testClient),
         'resumePausedMutations',
       )
 
@@ -2586,15 +2589,15 @@ describe('queryClient', () => {
       hydrate(newQueryClient, state)
 
       // still paused because we are still offline
-      expect(
-        newQueryClient.getMutationCache().getAll()[0]?.state.isPaused,
-      ).toBe(true)
+      expect(getMutationCache(newQueryClient).getAll()[0]?.state.isPaused).toBe(
+        true,
+      )
 
       await newQueryClient.resumePausedMutations()
 
       onlineManager.setOnline(true)
       await vi.advanceTimersByTimeAsync(0)
-      expect(newQueryClient.getMutationCache().getAll()[0]?.state.status).toBe(
+      expect(getMutationCache(newQueryClient).getAll()[0]?.state.status).toBe(
         'success',
       )
 
@@ -2695,7 +2698,7 @@ describe('queryClient', () => {
         'onOnline',
       )
       const mutationCacheResumePausedMutationsSpy = vi.spyOn(
-        testClient.getMutationCache(),
+        getMutationCache(testClient),
         'resumePausedMutations',
       )
 
@@ -2730,7 +2733,7 @@ describe('queryClient', () => {
         'onOnline',
       )
       const mutationCacheResumePausedMutationsSpy = vi.spyOn(
-        testClient.getMutationCache(),
+        getMutationCache(testClient),
         'resumePausedMutations',
       )
 

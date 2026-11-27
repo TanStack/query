@@ -1,5 +1,6 @@
 import { Mutation } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
+import { getMutationCache } from '@tanstack/query-test-utils/cacheOperations'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -251,7 +252,7 @@ describe('useMutationState', () => {
     const queryClient = new QueryClient()
     const key1 = createKey()
     const key2 = createKey()
-    const cache = queryClient.getMutationCache()
+    const cache = getMutationCache(queryClient)
     Mutation.build(queryClient, { mutationKey: key1 })
     Mutation.build(queryClient, { mutationKey: key2 })
     const onCacheChange = vi.fn<(event: MutationCacheNotifyEvent) => void>()
@@ -308,7 +309,7 @@ describe('useMutationState', () => {
     (resultType) => {
       const queryClient = new QueryClient()
       const key = createKey()
-      const cache = queryClient.getMutationCache()
+      const cache = getMutationCache(queryClient)
       const existingMutation = Mutation.build(queryClient, {
         mutationKey: key,
         meta: { time: 0 },
@@ -512,8 +513,8 @@ describe('useMutationState', () => {
     expect(
       rendered.getByText(`keys: ${JSON.stringify([key2])}`),
     ).toBeInTheDocument()
-    expect(client1.getMutationCache().hasListeners()).toBe(false)
-    expect(client2.getMutationCache().hasListeners()).toBe(true)
+    expect(getMutationCache(client1).hasListeners()).toBe(false)
+    expect(getMutationCache(client2).hasListeners()).toBe(true)
   })
 
   it('should remove successful mutations when the query client is cleared', async () => {
@@ -544,7 +545,7 @@ describe('useMutationState', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: 'clear' }))
     await vi.advanceTimersByTimeAsync(1)
-    expect(queryClient.getMutationCache().getAll()).toStrictEqual([])
+    expect(getMutationCache(queryClient).getAll()).toStrictEqual([])
     expect(rendered.getByText('data: []')).toBeInTheDocument()
   })
 

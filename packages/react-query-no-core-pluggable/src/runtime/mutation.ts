@@ -1,3 +1,4 @@
+import { getMutationCache } from './mutationCache'
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
 import { createRetryer } from './retryer'
@@ -40,7 +41,7 @@ type MutationConfig<TData, TError, TVariables, TOnMutateResult> =
  * is possible via `mutationCache.find()`/`getAll()` for inspecting cache state.
  * @example
  * ```ts
- * const mutationCache = queryClient.getMutationCache()
+ * const mutationCache = getMutationCache(queryClient)
  *
  * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
  * ```
@@ -74,7 +75,7 @@ export class Mutation<
     options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
     state?: MutationState<TData, TError, TVariables, TOnMutateResult>,
   ): Mutation<TData, TError, TVariables, TOnMutateResult> {
-    const cache = client.getMutationCache()
+    const cache = getMutationCache(client)
     return cache.register(
       (mutationId) =>
         new Mutation({

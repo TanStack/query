@@ -1,5 +1,4 @@
 import { focusManager } from './focusManager'
-import { MutationCache } from './mutationCache'
 import { onlineManager } from './onlineManager'
 import { QueryCache } from './queryCache'
 import {
@@ -11,6 +10,7 @@ import {
   skipToken,
 } from './utils'
 import type { WithoutSkipToken } from '@tanstack/query-types/bindings'
+import type { MutationCache } from './mutationCache'
 import type { QueryState } from './query'
 import type {
   CacheKeyConfig,
@@ -56,12 +56,15 @@ class KeyDefaults<
   }
 }
 
-// CLASS
+/** @internal */
+export const mutationCacheKey = Symbol.for(
+  '@tanstack/react-query-no-core-pluggable/mutationCache',
+)
 
 /**
- * `QueryClient` is used to interact with a cache of queries and mutations. It owns a
- * `QueryCache` and a `MutationCache` (creating default ones if none are passed in) and holds
- * the default options that are applied to queries and mutations created through it.
+ * Stores the query cache and default options for this client's queries and mutations.
+ * Pass a custom mutation cache in the constructor or let mutation hooks and
+ * `getMutationCache(client)` create one on first use.
  * @example
  * ```ts
  * const queryClient = new QueryClient({
@@ -76,8 +79,9 @@ class KeyDefaults<
  * ```
  */
 export class QueryClient {
+  /** @internal */
+  [mutationCacheKey]?: MutationCache
   #queryCache: QueryCache
-  #mutationCache: MutationCache
   #defaultOptions: DefaultOptions
   #queryDefaults = new KeyDefaults<QueryKey, QueryDefaults>()
   #mutationDefaults = new KeyDefaults<MutationKey, MutationDefaults>()
@@ -87,7 +91,7 @@ export class QueryClient {
 
   constructor(config: QueryClientConfig = {}) {
     this.#queryCache = config.queryCache || new QueryCache()
-    this.#mutationCache = config.mutationCache || new MutationCache()
+    this[mutationCacheKey] = config.mutationCache
     this.#defaultOptions = config.defaultOptions || {}
     this.#mountCount = 0
   }
@@ -170,7 +174,10 @@ export class QueryClient {
       any
     >,
   >(filters?: NoInfer<Omit<TMutationFilters, 'status'>>): number {
-    return this.#mutationCache.findAll({ ...filters, status: 'pending' }).length
+    return (
+      this[mutationCacheKey]?.findAll({ ...filters, status: 'pending' })
+        .length ?? 0
+    )
   }
 
   /**
@@ -417,7 +424,9 @@ export class QueryClient {
    */
   resumePausedMutations(): Promise<unknown> {
     if (onlineManager.isOnline()) {
-      return this.#mutationCache.resumePausedMutations()
+      return (
+        this[mutationCacheKey]?.resumePausedMutations() ?? Promise.resolve([])
+      )
     }
     return Promise.resolve()
   }
@@ -436,22 +445,6 @@ export class QueryClient {
    */
   getQueryCache(): QueryCache {
     return this.#queryCache
-  }
-
-  /**
-   * Returns the mutation cache this client is connected to.
-   * @returns The {@link MutationCache} instance.
-   * @example
-   * ```ts
-   * import { QueryClient } from '@tanstack/react-query-no-core-pluggable'
-   *
-   * const queryClient = new QueryClient()
-   * const mutationCache = queryClient.getMutationCache()
-   * const mutations = mutationCache.findAll({ status: 'pending' })
-   * ```
-   */
-  getMutationCache(): MutationCache {
-    return this.#mutationCache
   }
 
   /**
@@ -569,7 +562,7 @@ export class QueryClient {
     this.#mutationDefaults.set(
       mutationKey,
       options,
-      this.#mutationCache.config.mutationKey,
+      this[mutationCacheKey]?.config.mutationKey,
     )
   }
 
@@ -590,7 +583,7 @@ export class QueryClient {
   ): OmitKeyof<MutationObserverOptions<any, any, any, any>, 'mutationKey'> {
     return this.#mutationDefaults.get(
       mutationKey,
-      this.#mutationCache.config.mutationKey,
+      this[mutationCacheKey]?.config.mutationKey,
     )
   }
 
@@ -724,6 +717,6 @@ export class QueryClient {
    */
   clear(): void {
     this.#queryCache.clear()
-    this.#mutationCache.clear()
+    this[mutationCacheKey]?.clear()
   }
 }

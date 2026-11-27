@@ -28,3 +28,5 @@ export function cacheOperations<TClient extends QueryClient>(client: TClient) {
     refetchQueries: bind(refetchQueries),
   }
 }
+
+export { getMutationCache } from '../src'

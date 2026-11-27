@@ -1,4 +1,7 @@
-import { cacheOperations } from '@tanstack/query-test-utils/cacheOperations'
+import {
+  cacheOperations,
+  getMutationCache,
+} from '@tanstack/query-test-utils/cacheOperations'
 import { selectOption } from '@tanstack/query-test-utils/projection'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
@@ -911,9 +914,7 @@ describe('queryClient', () => {
     it('should return the MutationCache', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(
-        queryClient.getMutationCache(),
-      ).toEqualTypeOf<MutationCache>()
+      expectTypeOf(getMutationCache(queryClient)).toEqualTypeOf<MutationCache>()
     })
   })
 
