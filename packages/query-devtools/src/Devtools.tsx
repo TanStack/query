@@ -1058,7 +1058,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               onClick={() => {
                 if (selectedView() === 'queries') {
                   sendDevToolsEvent({ type: 'CLEAR_QUERY_CACHE' })
-                  batch(() => query_cache().clear())
+                  query_cache().clear()
                 } else {
                   sendDevToolsEvent({ type: 'CLEAR_MUTATION_CACHE' })
                   mutation_cache().clear()
@@ -2206,6 +2206,28 @@ const MutationDetails = (props: { initialSearch?: string }) => {
   )
 }
 
+/**
+ * Creates a `schedule` function that runs the updates queued in the same tick once per
+ * subscription, together in one microtask and one `batch`. The queued updates are dropped when the
+ * current owner is cleaned up.
+ * @returns The `schedule` function to pass to a registry's `notify`.
+ */
+const createCoalescedSchedule = () => {
+  const pendingUpdates = new Map<symbol, () => void>()
+  const flush = () => {
+    const updates = [...pendingUpdates.values()]
+    pendingUpdates.clear()
+    batch(() => {
+      updates.forEach((update) => update())
+    })
+  }
+  onCleanup(() => pendingUpdates.clear())
+  return (update: () => void, id: symbol) => {
+    if (!pendingUpdates.size) queueMicrotask(flush)
+    pendingUpdates.set(id, update)
+  }
+}
+
 const setupQueryCacheSubscription = () => {
   const { queryCacheSubscriptions } = useDevtoolsSubscriptions()
   const queryCache = createMemo(() => {
@@ -2215,10 +2237,9 @@ const setupQueryCacheSubscription = () => {
 
   createEffect(() => {
     const cache = queryCache()
+    const schedule = createCoalescedSchedule()
     const unsubscribe = cache.subscribe((event) => {
-      batch(() => {
-        queryCacheSubscriptions.notify(() => cache, event)
-      })
+      queryCacheSubscriptions.notify(() => cache, event, schedule)
     })
     onCleanup(unsubscribe)
   })
@@ -2261,22 +2282,11 @@ const setupMutationCacheSubscription = () => {
 
   createEffect(() => {
     const cache = mutationCache()
-    let active = true
+    const schedule = createCoalescedSchedule()
     const unsubscribe = cache.subscribe((event) => {
-      mutationCacheSubscriptions.notify(
-        () => cache,
-        event,
-        (update) => {
-          queueMicrotask(() => {
-            if (active) update()
-          })
-        },
-      )
+      mutationCacheSubscriptions.notify(() => cache, event, schedule)
     })
-    onCleanup(() => {
-      active = false
-      unsubscribe()
-    })
+    onCleanup(unsubscribe)
   })
 }
 

@@ -37,4 +37,37 @@ describe('createCacheSubscriptionRegistry', () => {
       secondDispose()
     }
   })
+
+  it('should pass the same id to schedule for repeated updates of one subscription', () => {
+    const registry = createCacheSubscriptionRegistry<number, undefined>()
+    const pending = new Map<symbol, () => void>()
+    const [firstValue, setFirstValue] = createSignal(0)
+    const [secondValue, setSecondValue] = createSignal(0)
+    const dispose = createRoot((disposeRoot) => {
+      registry.register((cache) => cache(), setFirstValue)
+      registry.register((cache) => cache() * 10, setSecondValue)
+      return disposeRoot
+    })
+
+    try {
+      registry.notify(
+        () => 1,
+        undefined,
+        (update, id) => pending.set(id, update),
+      )
+      registry.notify(
+        () => 2,
+        undefined,
+        (update, id) => pending.set(id, update),
+      )
+      expect(pending.size).toBe(2)
+
+      pending.forEach((update) => update())
+
+      expect(firstValue()).toBe(2)
+      expect(secondValue()).toBe(20)
+    } finally {
+      dispose()
+    }
+  })
 })

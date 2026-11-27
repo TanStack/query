@@ -42,18 +42,19 @@ export function createCacheSubscriptionRegistry<TCache, TEvent>() {
    * Updates every subscription whose `shouldUpdate` accepts the event.
    * @param cache - The cache to compute the values from.
    * @param event - The cache event.
-   * @param schedule - Runs each update. Defaults to running it right away.
+   * @param schedule - Runs each update, receiving the subscription's id so repeated updates of the
+   * same subscription can be merged. Defaults to running it right away.
    */
   function notify(
     cache: Accessor<TCache>,
     event: TEvent,
-    schedule: (update: () => void) => void = (update) => update(),
+    schedule: (update: () => void, id: symbol) => void = (update) => update(),
   ) {
     for (const [id, subscription] of subscriptions) {
       if (!subscription.shouldUpdate(event)) continue
       schedule(() => {
         if (subscriptions.has(id)) subscription.update(cache)
-      })
+      }, id)
     }
   }
 
