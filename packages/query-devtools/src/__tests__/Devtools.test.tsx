@@ -601,6 +601,38 @@ describe('Devtools', () => {
         secondClient.clear()
       })
 
+      it('should drop pending query cache updates of the previous client when the client changes', async () => {
+        const secondClient = new QueryClient()
+        queryClient.setQueryData(['switch-key'], 'old-client')
+        secondClient.setQueryData(['switch-key'], 'new-client')
+        const [client, setClient] = createSignal(queryClient)
+        const Component =
+          mode === 'full' ? DevtoolsComponent : DevtoolsPanelComponent
+        const rendered = render(() => (
+          <Component
+            client={client()}
+            onlineManager={onlineManager}
+            queryFlavor="TanStack Query"
+            version="5"
+            initialIsOpen
+          />
+        ))
+        const panel = within(rendered.container)
+        fireEvent.click(panel.getByLabelText('Query key ["switch-key"]'))
+        expect(panel.getByDisplayValue('old-client')).toBeInTheDocument()
+
+        queryClient.setQueryData(['switch-key'], 'pending-old-update')
+        setClient(secondClient)
+        await vi.advanceTimersByTimeAsync(0)
+
+        expect(panel.getByDisplayValue('new-client')).toBeInTheDocument()
+        expect(
+          panel.queryByDisplayValue('pending-old-update'),
+        ).not.toBeInTheDocument()
+        rendered.unmount()
+        secondClient.clear()
+      })
+
       it('should switch mutation cache subscriptions when the client changes', async () => {
         const secondClient = new QueryClient()
         const [client, setClient] = createSignal(queryClient)
