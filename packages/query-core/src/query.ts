@@ -301,12 +301,11 @@ export class Query<
   #fetchPromise?: Promise<TData>
   observers: Array<QueryObserver<any, any, any, any, any>>
   #defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  #abortSignalConsumed: boolean
+  #abortSignalState?: { consumed: boolean }
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
 
-    this.#abortSignalConsumed = false
     this.#defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
@@ -643,7 +642,7 @@ export class Query<
         // we'll let the query continue so the result can be cached
         if (this.#retryer) {
           if (
-            this.#abortSignalConsumed ||
+            this.#abortSignalState?.consumed ||
             (this.state.fetchStatus === 'paused' &&
               this.state.status === 'pending')
           ) {
@@ -751,17 +750,16 @@ export class Query<
     }
 
     const abortController = new AbortController()
+    const abortSignalState = { consumed: false }
 
-    // Adds an enumerable signal property to the object that
-    // which sets abortSignalConsumed to true when the signal
-    // is read.
+    // Keep late reads of an obsolete context scoped to its own fetch.
     const addSignalProperty = (object: object) => {
       Object.defineProperties(object, {
         [fetchSignal]: { value: abortController.signal, enumerable: true },
         signal: {
           enumerable: true,
           get: () => {
-            this.#abortSignalConsumed = true
+            abortSignalState.consumed = true
             return abortController.signal
           },
         },
@@ -788,7 +786,7 @@ export class Query<
 
       const queryFnContext = createQueryFnContext()
 
-      this.#abortSignalConsumed = false
+      abortSignalState.consumed = false
       if (this.options.persister) {
         return this.options.persister(
           queryFn,
@@ -845,6 +843,7 @@ export class Query<
     }
 
     // Try to fetch the data
+    this.#abortSignalState = abortSignalState
     const retryer = (this.#retryer = createRetryer({
       initialPromise: fetchOptions?.initialPromise as
         | Promise<TData>

@@ -1104,6 +1104,38 @@ describe('query', () => {
     unsubscribe()
   })
 
+  it('should keep a replacement fetch running when a cancelled fetch reads its signal', async () => {
+    const key = createKey()
+    const readCancelledSignal = vi.fn<(aborted: boolean) => void>()
+    const queryFn = vi
+      .fn<QueryFunction<string>>()
+      .mockImplementationOnce(async (context) => {
+        await sleep(10)
+        readCancelledSignal(context.signal.aborted)
+        return 'cancelled'
+      })
+      .mockImplementationOnce(() => sleep(20).then(() => 'fresh'))
+
+    queryClient.setQueryData(key, 'cached')
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      enabled: false,
+    })
+    const unsubscribe = observer.subscribe(noop)
+
+    const first = observer.refetch()
+    const replacement = observer.refetch()
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    await vi.advanceTimersByTimeAsync(10)
+    expect(readCancelledSignal).toHaveBeenCalledExactlyOnceWith(true)
+    unsubscribe()
+
+    await vi.advanceTimersByTimeAsync(10)
+    await Promise.all([first, replacement])
+    expect(queryClient.getQueryData(key)).toBe('fresh')
+  })
+
   it('should always revert to idle state (#5968)', async () => {
     let mockedData = [1]
 

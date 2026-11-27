@@ -5,9 +5,14 @@ import { dehydrateQuery } from '../index'
 import { MutationCache } from '../mutationCache'
 import { QueryCache } from '../queryCache'
 import { QueryClient } from '../queryClient'
+import { QueryObserver } from '../queryObserver'
 import { noop } from '../utils'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
-import type { MutationFunction, MutationFunctionContext } from '../index'
+import type {
+  MutationFunction,
+  MutationFunctionContext,
+  QueryFunction,
+} from '../index'
 
 describe('dehydration and rehydration', () => {
   beforeEach(() => {
@@ -1027,6 +1032,46 @@ describe('dehydration and rehydration', () => {
     await vi.advanceTimersByTimeAsync(10)
     await promise
     queryClient.clear()
+  })
+
+  it('should cache a hydrated pending query after unsubscribing when a previous fetch consumed its signal', async () => {
+    const key = createKey()
+    const serverClient = new QueryClient()
+    const client = new QueryClient()
+    const queryFn = vi.fn<QueryFunction<string>>(({ signal }) => {
+      signal.throwIfAborted()
+      return 'cached'
+    })
+    const observer = new QueryObserver(client, {
+      queryKey: key,
+      queryFn,
+      enabled: false,
+    })
+    const unsubscribe = observer.subscribe(noop)
+
+    await observer.refetch()
+    await vi.advanceTimersByTimeAsync(1)
+
+    const prefetch = serverClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'server data'),
+    })
+    hydrate(
+      client,
+      dehydrate(serverClient, {
+        shouldDehydrateQuery: ({ state }) => state.status === 'pending',
+      }),
+    )
+    expect(client.getQueryState(key)?.fetchStatus).toBe('fetching')
+    unsubscribe()
+
+    await vi.advanceTimersByTimeAsync(10)
+    await prefetch
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(client.getQueryData(key)).toBe('server data')
+
+    client.clear()
+    serverClient.clear()
   })
 
   it('should hydrate promises even without observers', async () => {
