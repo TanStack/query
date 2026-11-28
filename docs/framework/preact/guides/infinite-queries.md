@@ -8,7 +8,12 @@ replace: { 'react-query': 'preact-query', 'React': 'Preact' }
 [//]: # 'Example'
 
 ```tsx
-import { useInfiniteQuery } from '@tanstack/preact-query'
+import {
+  useQuery,
+  infiniteQueryOptions,
+  isFetching,
+  isFetchingNextPage,
+} from '@tanstack/preact-query'
 
 function Projects() {
   const fetchProjects = async ({ pageParam }) => {
@@ -16,28 +21,22 @@ function Projects() {
     return res.json()
   }
 
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-    status,
-  } = useInfiniteQuery({
-    queryKey: ['projects'],
-    queryFn: fetchProjects,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-  })
+  const infiniteQueryResult = useQuery(
+    infiniteQueryOptions({
+      queryKey: ['projects'],
+      queryFn: fetchProjects,
+      initialPageParam: 0,
+      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    }),
+  )
 
-  return status === 'pending' ? (
+  return infiniteQueryResult.status === 'pending' ? (
     <p>Loading...</p>
-  ) : status === 'error' ? (
-    <p>Error: {error.message}</p>
+  ) : infiniteQueryResult.status === 'error' ? (
+    <p>Error: {infiniteQueryResult.error.message}</p>
   ) : (
     <>
-      {data.pages.map((group, i) => (
+      {infiniteQueryResult.data.pages.map((group, i) => (
         <div key={i}>
           {group.data.map((project) => (
             <p key={project.id}>{project.name}</p>
@@ -46,17 +45,24 @@ function Projects() {
       ))}
       <div>
         <button
-          onClick={() => fetchNextPage()}
-          disabled={!hasNextPage || isFetching}
+          onClick={() => infiniteQueryResult.fetchNextPage()}
+          disabled={
+            !infiniteQueryResult.hasNextPage || isFetching(infiniteQueryResult)
+          }
         >
-          {isFetchingNextPage
+          {isFetchingNextPage(infiniteQueryResult)
             ? 'Loading more...'
-            : hasNextPage
+            : infiniteQueryResult.hasNextPage
               ? 'Load More'
               : 'Nothing more to load'}
         </button>
       </div>
-      <div>{isFetching && !isFetchingNextPage ? 'Fetching...' : null}</div>
+      <div>
+        {isFetching(infiniteQueryResult) &&
+        !isFetchingNextPage(infiniteQueryResult)
+          ? 'Fetching...'
+          : null}
+      </div>
     </>
   )
 }

@@ -56,7 +56,7 @@ function Projects() {
     return res.json()
   }
 
-  const queryResult = useQuery(
+  const infiniteQueryResult = useQuery(
     infiniteQueryOptions({
       queryKey: ['projects'],
       queryFn: fetchProjects,
@@ -65,13 +65,13 @@ function Projects() {
     }),
   )
 
-  return queryResult.status === 'pending' ? (
+  return infiniteQueryResult.status === 'pending' ? (
     <p>Loading...</p>
-  ) : queryResult.status === 'error' ? (
-    <p>Error: {queryResult.error.message}</p>
+  ) : infiniteQueryResult.status === 'error' ? (
+    <p>Error: {infiniteQueryResult.error.message}</p>
   ) : (
     <>
-      {queryResult.data.pages.map((group, i) => (
+      {infiniteQueryResult.data.pages.map((group, i) => (
         <React.Fragment key={i}>
           {group.data.map((project) => (
             <p key={project.id}>{project.name}</p>
@@ -80,18 +80,21 @@ function Projects() {
       ))}
       <div>
         <button
-          onClick={() => queryResult.fetchNextPage()}
-          disabled={!queryResult.hasNextPage || isFetching(queryResult)}
+          onClick={() => infiniteQueryResult.fetchNextPage()}
+          disabled={
+            !infiniteQueryResult.hasNextPage || isFetching(infiniteQueryResult)
+          }
         >
-          {isFetchingNextPage(queryResult)
+          {isFetchingNextPage(infiniteQueryResult)
             ? 'Loading more...'
-            : queryResult.hasNextPage
+            : infiniteQueryResult.hasNextPage
               ? 'Load More'
               : 'Nothing more to load'}
         </button>
       </div>
       <div>
-        {isFetching(queryResult) && !isFetchingNextPage(queryResult)
+        {isFetching(infiniteQueryResult) &&
+        !isFetchingNextPage(infiniteQueryResult)
           ? 'Fetching...'
           : null}
       </div>
