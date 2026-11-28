@@ -170,6 +170,8 @@ export function queryResultTestPort(checker, source, edit, packageName) {
       receiver = node.expression
     const expect = node.parent
     if (
+      // isFetched computes a boolean from counters and has no type predicate.
+      name !== 'isFetched' &&
       ts.isCallExpression(expect) &&
       expect.expression.getText(source) === 'expectTypeOf' &&
       ts.isPropertyAccessExpression(expect.parent) &&
