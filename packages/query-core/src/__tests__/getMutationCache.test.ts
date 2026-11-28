@@ -9,9 +9,9 @@ import {
 } from '..'
 import {
   clearQueryClient,
+  clientState,
   getQueryData,
   isMutating,
-  mutationCacheKey,
   resumePausedMutations,
   setQueryData,
 } from '../queryClient'
@@ -28,8 +28,8 @@ describe('getMutationCache', () => {
     await expect(resumePausedMutations(client)).resolves.toStrictEqual([])
     clearQueryClient(client)
     expect(getQueryData(client, ['books'])).toBeUndefined()
-    expect(server[mutationCacheKey]).toBeUndefined()
-    expect(client[mutationCacheKey]).toBeUndefined()
+    expect(server[clientState].mutationCache).toBeUndefined()
+    expect(client[clientState].mutationCache).toBeUndefined()
   })
 
   it('creates a stable cache per client and reuses it across mutations and clear', async () => {

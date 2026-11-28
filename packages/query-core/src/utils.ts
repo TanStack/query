@@ -469,11 +469,13 @@ export function shallowEqualObjects<T extends Record<string, any>>(
   a: T,
   b: T | undefined,
 ): boolean {
-  if (!b || Object.keys(a).length !== Object.keys(b).length) {
+  if (!b) return false
+  const keys = Object.keys(a)
+  if (keys.length !== Object.keys(b).length) {
     return false
   }
 
-  for (const key of Object.keys(a)) {
+  for (const key of keys) {
     if (!Object.hasOwn(b, key) || a[key] !== b[key]) {
       return false
     }
@@ -660,16 +662,9 @@ export function ensureQueryFn<
     return () => fetchOptions.initialPromise!
   }
 
-  if (
-    !options.queryFn ||
-    options.queryFn === skipToken ||
-    options.queryFn === defaultQueryFn
-  ) {
-    return () =>
-      Promise.reject(new Error(`Missing queryFn: '${options.queryHash}'`))
-  }
-
-  return options.queryFn
+  if (typeof options.queryFn === 'function') return options.queryFn
+  return () =>
+    Promise.reject(new Error(`Missing queryFn: '${options.queryHash}'`))
 }
 
 /**

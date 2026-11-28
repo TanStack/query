@@ -56,20 +56,13 @@ export function projectResult<
       : undefined
   const placeholder = context.placeholder
   const input = placeholder ? placeholder.input : state.data
-  // A previously selected query may have lost its data even if this render has no selector.
-  if (
-    context.selected?.query &&
-    context.selected.query.state.data === undefined
-  ) {
-    context.selected = undefined
-    if (!context.selection?.failure) context.selection = undefined
-  }
+  clearObsoleteSelection(context)
   if (select && input !== undefined) {
     select[0].resolve(
       options,
       select[1],
       context,
-      committed,
+      placeholder ? context : committed,
       previousData,
       input,
       placeholder ? placeholder.sourceQuery : query,
@@ -88,5 +81,25 @@ export function projectResult<
     errorUpdatedAt,
     status: failure ? 'error' : isPlaceholderData ? 'success' : state.status,
     isPlaceholderData,
+  }
+}
+
+/**
+ * A selected value must be discarded when its source query loses its data,
+ * including when the next render has no selector.
+ * @param context - The selection held by an observer or reader.
+ */
+export function clearObsoleteSelection(
+  context: Pick<
+    QueryObserverResultContext<any, any, any, any, any>,
+    'selected' | 'selection'
+  >,
+): void {
+  if (
+    context.selected?.query &&
+    context.selected.query.state.data === undefined
+  ) {
+    context.selected = undefined
+    if (!context.selection?.failure) context.selection = undefined
   }
 }

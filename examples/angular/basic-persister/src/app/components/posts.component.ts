@@ -1,5 +1,5 @@
 import { Component, inject, output } from '@angular/core'
-import { QueryClient, injectQuery } from '@tanstack/angular-query'
+import { QueryClient, getQueryData, injectQuery } from '@tanstack/angular-query'
 import { PostsQueries } from '../services/posts/queries'
 
 @Component({
@@ -7,9 +7,16 @@ import { PostsQueries } from '../services/posts/queries'
   templateUrl: './posts.component.html',
 })
 export class PostsComponent {
-  readonly queryClient = inject(QueryClient)
+  private readonly queryClient = inject(QueryClient)
   readonly postsQueries = inject(PostsQueries)
   readonly setPostId = output<number>()
 
   readonly postsQuery = injectQuery(() => this.postsQueries.list())
+
+  protected isPostCached(id: number): boolean {
+    return (
+      getQueryData(this.queryClient, this.postsQueries.detail(id).queryKey) !==
+      undefined
+    )
+  }
 }

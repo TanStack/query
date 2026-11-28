@@ -4,7 +4,11 @@ import { MutationObserver, noop, shouldThrowError } from '@tanstack/query-core'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
 import { useStoreSnapshot } from './useStoreSnapshot'
-import type { DefaultError, QueryClient } from '@tanstack/query-core'
+import type {
+  DefaultError,
+  MutateOptions,
+  QueryClient,
+} from '@tanstack/query-core'
 import type {
   UseMutateFunction,
   UseMutationOptions,
@@ -210,11 +214,10 @@ export function useMutation<
     UseMutateFunction<TData, TError, TVariables, TOnMutateResult>
   >(
     (
-      ...args: Parameters<
-        UseMutateFunction<TData, TError, TVariables, TOnMutateResult>
-      >
+      variables?: TVariables,
+      mutateOptions?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
     ) => {
-      observer.mutate(args[0] as TVariables, args[1]).catch(noop)
+      observer.mutate(variables as TVariables, mutateOptions).catch(noop)
     },
     [observer],
   )

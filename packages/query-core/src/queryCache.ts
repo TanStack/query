@@ -307,11 +307,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * @internal
    */
   onFocus(): void {
-    notifyManager.batch(() => {
-      this.getAll().forEach((query) => {
-        query.onFocus()
-      })
-    })
+    this.#resume('onFocus')
   }
 
   /**
@@ -319,10 +315,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * @internal
    */
   onOnline(): void {
-    notifyManager.batch(() => {
-      this.getAll().forEach((query) => {
-        query.onOnline()
-      })
-    })
+    this.#resume('onOnline')
+  }
+
+  #resume(event: 'onFocus' | 'onOnline'): void {
+    notifyManager.batch(() => this.getAll().forEach((query) => query[event]()))
   }
 }

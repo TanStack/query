@@ -28,6 +28,8 @@ export interface SuspenseQueryMode<TSkippable extends boolean = false> {
     : typeof suspenseQueryPolicy
 }
 
+const suspenseErrorRule = [throwOnError, defaultThrowOnError] as const
+
 /**
  * Attaches the selected observer and its Suspense policy in one copy.
  * @param options - The fetcher and options supplied by the caller.
@@ -46,7 +48,7 @@ export function prepareSuspenseOptions<
     ...options,
     [observerKey]: Observer,
     enabled,
-    throwOnError: [throwOnError, defaultThrowOnError],
+    throwOnError: suspenseErrorRule,
     renderPolicy: enabled ? suspenseQueryPolicy : queryPolicy,
   }
 }

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { QueryClient, injectQuery } from '@tanstack/angular-query'
+import { QueryClient, getQueryData, injectQuery } from '@tanstack/angular-query'
 import { PostsQueries } from '../services/posts/queries'
 
 @Component({
@@ -11,5 +11,12 @@ import { PostsQueries } from '../services/posts/queries'
 export default class PostsComponent {
   readonly postsQueries = inject(PostsQueries)
   readonly postsQuery = injectQuery(() => this.postsQueries.list())
-  readonly queryClient = inject(QueryClient)
+  private readonly queryClient = inject(QueryClient)
+
+  protected isPostCached(id: number): boolean {
+    return (
+      getQueryData(this.queryClient, this.postsQueries.detail(id).queryKey) !==
+      undefined
+    )
+  }
 }

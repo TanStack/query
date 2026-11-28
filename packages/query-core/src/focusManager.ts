@@ -59,7 +59,7 @@ export class FocusManager extends Subscribable<Listener> {
    * a cleanup function that is called when the listener is replaced or no longer needed.
    * @example
    * ```ts
-   * import { focusManager } from '@tanstack/query-core-pluggable'
+   * import { focusManager } from '@tanstack/query-core'
    *
    * focusManager.setEventListener((handleFocus) => {
    *   const listener = () => handleFocus()
@@ -93,7 +93,7 @@ export class FocusManager extends Subscribable<Listener> {
    * @param focused - The focus state, or `undefined` to use the default focus check.
    * @example
    * ```ts
-   * import { focusManager } from '@tanstack/query-core-pluggable'
+   * import { focusManager } from '@tanstack/query-core'
    *
    * // Set focused
    * focusManager.setFocused(true)

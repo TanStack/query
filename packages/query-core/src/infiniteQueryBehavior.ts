@@ -4,38 +4,9 @@ import {
   ensureQueryFn,
   fetchSignal,
 } from './utils'
-import type { FetchContext, FetchOptions, Query } from './query'
-import type { QueryClient } from './queryClient'
-import type {
-  DefaultError,
-  InfiniteData,
-  InfiniteQueryPageParamsOptions,
-} from './types'
+import type { FetchContext, Query } from './query'
+import type { InfiniteData, InfiniteQueryPageParamsOptions } from './types'
 import type { FetchSignalContext } from './utils'
-
-/**
- * Captures the options and cached pages for this fetch before the cache notifies listeners.
- * @param client - Client that owns the query.
- * @param query - The cached infinite query.
- * @param fetchOptions - Options for the fetch in progress.
- * @param addSignal - Attaches the query's cancellation signal without consuming it.
- * @returns The fetcher to use for the first attempt and subsequent retries.
- */
-export function createInfiniteFetch(
-  client: QueryClient,
-  query: Query,
-  fetchOptions: FetchOptions | undefined,
-  addSignal: (context: object) => asserts context is { signal: AbortSignal },
-) {
-  const { queryKey, options, state } = query as Query<
-    unknown,
-    DefaultError,
-    InfiniteData<unknown>
-  >
-  const context = { client, queryKey, options, state, fetchOptions }
-  addSignal(context)
-  return prepareInfiniteFetch(context, query)
-}
 
 /**
  * Creates the page fetcher for an infinite query. A retry continues from the
@@ -45,10 +16,7 @@ export function createInfiniteFetch(
  * @returns A fetcher that resumes pagination at the failed page on retry.
  */
 export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
-  context: Omit<
-    FetchContext<TQueryFnData, TError, InfiniteData<TData, TPageParam>>,
-    'fetchFn'
-  >,
+  context: Omit<FetchContext<TQueryFnData, TError, TData>, 'fetchFn'>,
   query: Query,
 ) {
   const { client, queryKey, state, fetchOptions } = context
@@ -58,7 +26,8 @@ export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
     }
   const direction = fetchOptions?.meta?.fetchMore?.direction
   let result: InfiniteData<unknown> = { pages: [], pageParams: [] }
-  const previousData = state.data ?? result
+  const previousData =
+    (state.data as InfiniteData<unknown, TPageParam> | undefined) ?? result
   let currentPage = 0
 
   const fetchFn = async () => {
@@ -206,6 +175,6 @@ export function infiniteFetchOptions<TOptions extends object>(
   return {
     ...options,
     _type: 'infinite' as const,
-    _prepareInfiniteFetch: createInfiniteFetch,
+    _prepareInfiniteFetch: prepareInfiniteFetch,
   }
 }

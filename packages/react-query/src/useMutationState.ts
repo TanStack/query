@@ -91,10 +91,9 @@ function createSnapshotFactory<
       if (
         !snapshot ||
         mutations.length !== inputs.length ||
-        mutations.some(
-          (mutation, index) =>
-            mutation !== inputs[index][0] ||
-            mutation.state !== inputs[index][1],
+        inputs.some(
+          ([previous, previousState], index) =>
+            previous !== mutations[index] || previous.state !== previousState,
         )
       ) {
         snapshot = replaceEqualDeep(

@@ -13,7 +13,7 @@
           <a
             routerLink="post/{{ post.id }}"
             [style]="
-              queryClient.getQueryData(postsQueries.detail(post.id).queryKey)
+              isPostCached(post.id)
                 ? {
                     fontWeight: 'bold',
                     color: 'green',

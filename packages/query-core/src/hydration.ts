@@ -1,10 +1,6 @@
-import { createInfiniteFetch } from './infiniteQueryBehavior'
+import { prepareInfiniteFetch } from './infiniteQueryBehavior'
 import { Mutation } from './mutation'
-import {
-  getDefaultOptions,
-  getQueryCache,
-  mutationCacheKey,
-} from './queryClient'
+import { clientState, getDefaultOptions, getQueryCache } from './queryClient'
 import { serialScope } from './serialScope'
 import { noop } from './utils'
 import type { MutationState } from './mutation'
@@ -80,7 +76,7 @@ export interface HydrateOptions {
  * Reads the value of a promise synchronously if it has already resolved, e.g. a thenable that
  * resolves within its `then` call.
  * @param promise - The promise to read.
- * @returns An object with the resolved `data`, or `undefined` if the promise hasn't resolved
+ * @returns The resolved data, or `undefined` if the promise hasn't resolved
  * synchronously (or resolved with `undefined`).
  */
 function tryResolveSync(promise: PromiseLike<unknown>) {
@@ -94,11 +90,7 @@ function tryResolveSync(promise: PromiseLike<unknown>) {
   // A synchronous thenable may return an object without a catch method.
   thenResult?.catch?.(noop)
 
-  if (data !== undefined) {
-    return { data }
-  }
-
-  return undefined
+  return data
 }
 
 // FUNCTIONS
@@ -175,11 +167,10 @@ export function dehydrateQuery(
     dehydratedAt: Date.now(),
     state: {
       ...query.state,
-      ...(query.state.data !== undefined && {
-        data: serializeData
-          ? serializeData(query.state.data)
-          : query.state.data,
-      }),
+      ...(serializeData &&
+        query.state.data !== undefined && {
+          data: serializeData(query.state.data),
+        }),
     },
     queryKey: query.queryKey,
     queryHash: query.queryHash,
@@ -244,7 +235,7 @@ export function dehydrate(
     defaultShouldDehydrateMutation
 
   const mutations =
-    client[mutationCacheKey]
+    client[clientState].mutationCache
       ?.getAll()
       .flatMap((mutation) =>
         filterMutation(mutation) ? [dehydrateMutation(mutation)] : [],
@@ -315,7 +306,8 @@ export function hydrate(
 }
 
 /**
- * Restores just the queries accepted by a React hydration boundary.
+ * Restores serialized queries for adapters that hydrate queries during rendering.
+ * Importing this entry point keeps mutation restoration out of their bundles.
  * @internal
  * @param client - The client receiving the entries.
  * @param queries - The serialized query entries.
@@ -342,13 +334,11 @@ export function hydrateQueries(
       queryType,
     }) => {
       const syncData = promise ? tryResolveSync(promise) : undefined
-      const rawData = state.data === undefined ? syncData?.data : state.data
+      const rawData = state.data === undefined ? syncData : state.data
       const data =
-        rawData === undefined
-          ? rawData
-          : deserializeData
-            ? deserializeData(rawData)
-            : rawData
+        rawData !== undefined && deserializeData
+          ? deserializeData(rawData)
+          : rawData
 
       let query = queryCache.get(queryHash)
       const previous = query?.state
@@ -358,7 +348,7 @@ export function hydrateQueries(
       if (
         !previous ||
         state.dataUpdatedAt > previous.dataUpdatedAt ||
-        (syncData && dehydratedAt > previous.dataUpdatedAt)
+        (syncData !== undefined && dehydratedAt > previous.dataUpdatedAt)
       ) {
         const resolved = state.status === 'pending' && data !== undefined
         // A synchronously resolved promise is successful at dehydration time. Preserve active
@@ -388,7 +378,7 @@ export function hydrateQueries(
               meta,
               ...(queryType === 'infinite' && {
                 _type: queryType,
-                _prepareInfiniteFetch: createInfiniteFetch,
+                _prepareInfiniteFetch: prepareInfiniteFetch,
               }),
             },
             snapshot,
@@ -400,7 +390,7 @@ export function hydrateQueries(
         promise &&
         // If the data was synchronously available, there is no need to set up
         // a retryer and thus no reason to call fetch
-        !syncData &&
+        syncData === undefined &&
         !pending &&
         !fetching &&
         // Only hydrate if dehydration is newer than any existing data,

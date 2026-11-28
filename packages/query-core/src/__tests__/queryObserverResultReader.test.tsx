@@ -8,6 +8,9 @@ import {
   defaultQueryOptions,
   findCachedQuery,
   getQueryCache,
+  isFetchingNextPage,
+  isRefetchError,
+  isSuccess,
   onlineManager,
   select as selectData,
   setQueryData,
@@ -28,6 +31,36 @@ describe('query observer result readers', () => {
     clearQueryClient(client)
     onlineManager.setOnline(true)
     vi.useRealTimers()
+  })
+
+  it('derives status from the observer snapshot without storing status flags', async () => {
+    const failure = new Error('refresh failed')
+    const reader = new QueryObserver(client, {
+      queryKey: createKey(),
+      initialData: 'cached',
+      queryFn: () => Promise.reject(failure),
+      retry: false,
+    })
+    const pages = new InfiniteQueryObserver(client, {
+      queryKey: createKey(),
+      queryFn: ({ pageParam }) => pageParam,
+      initialPageParam: 0,
+      getNextPageParam: () => undefined,
+    })
+
+    const cached = reader.getCurrentResult()
+    expect(isSuccess(cached)).toBe(true)
+    expect(cached).not.toHaveProperty('isSuccess')
+    const refetched = await reader.refetch()
+    expect(isRefetchError(refetched)).toBe(true)
+    expect(refetched.error).toBe(failure)
+    expect(refetched.data).toBe('cached')
+    expect(refetched).not.toHaveProperty('isRefetchError')
+
+    const initialPage = pages.getCurrentResult()
+    expect(isFetchingNextPage(initialPage)).toBe(false)
+    expect(initialPage).toHaveProperty('fetchDirection', undefined)
+    expect(initialPage).not.toHaveProperty('isFetchingNextPage')
   })
 
   it('isolates interleaved readers from the subscribed query and its selection memo', () => {

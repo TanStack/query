@@ -46,16 +46,18 @@ type MutationDefaults = MutationOptions<any, any, any, any>
 class KeyDefaults<
   TKey extends ReadonlyArray<unknown>,
   TOptions extends object,
-> {
-  #entries = new Map<string, { key: TKey; options: TOptions }>()
-
-  set(key: TKey, options: TOptions, config?: CacheKeyConfig<TKey>): void {
-    this.#entries.set(hashKeyByOptions(key, config), { key, options })
+> extends Map<string, { key: TKey; options: TOptions }> {
+  setDefaults(
+    key: TKey,
+    options: TOptions,
+    config?: CacheKeyConfig<TKey>,
+  ): void {
+    this.set(hashKeyByOptions(key, config), { key, options })
   }
 
-  get(key: TKey, config?: CacheKeyConfig<TKey>): Partial<TOptions> {
+  getDefaults(key: TKey, config?: CacheKeyConfig<TKey>): Partial<TOptions> {
     const result: Partial<TOptions> = {}
-    for (const entry of this.#entries.values()) {
+    for (const entry of this.values()) {
       if (partialMatchKey(key, entry.key, config?.equalityFn)) {
         Object.assign(result, entry.options)
       }
@@ -65,17 +67,14 @@ class KeyDefaults<
 }
 
 /** @internal */
-export const mutationCacheKey = Symbol.for('@tanstack/query-core/mutationCache')
-
-const clientState = Symbol.for('@tanstack/query-core/clientState')
+export const clientState = Symbol.for('@tanstack/query-core/clientState')
 
 /** Holds the caches, defaults and subscriptions shared by this client's consumers. */
 export class QueryClient {
   /** @internal */
-  [mutationCacheKey]?: MutationCache
-  /** @internal */
   readonly [clientState]: {
     queryCache: QueryCache
+    mutationCache?: MutationCache
     defaultOptions: DefaultOptions
     queryDefaults?: KeyDefaults<QueryKey, QueryDefaults>
     mutationDefaults?: KeyDefaults<MutationKey, MutationDefaults>
@@ -84,9 +83,9 @@ export class QueryClient {
   }
 
   constructor(config: QueryClientConfig = {}) {
-    this[mutationCacheKey] = config.mutationCache
     this[clientState] = {
       queryCache: config.queryCache ?? new QueryCache(),
+      mutationCache: config.mutationCache,
       defaultOptions: config.defaultOptions ?? {},
       mountCount: 0,
     }
@@ -104,18 +103,15 @@ export function mountQueryClient(client: QueryClient): void {
   const state = client[clientState]
   if (++state.mountCount !== 1) return
 
-  const unsubscribeFocus = focusManager.subscribe(async (focused) => {
-    if (focused) {
-      await resumePausedMutations(client)
-      state.queryCache.onFocus()
+  const onAvailable =
+    (event: 'onFocus' | 'onOnline') => async (available: boolean) => {
+      if (available) {
+        await resumePausedMutations(client)
+        state.queryCache[event]()
+      }
     }
-  })
-  const unsubscribeOnline = onlineManager.subscribe(async (online) => {
-    if (online) {
-      await resumePausedMutations(client)
-      state.queryCache.onOnline()
-    }
-  })
+  const unsubscribeFocus = focusManager.subscribe(onAvailable('onFocus'))
+  const unsubscribeOnline = onlineManager.subscribe(onAvailable('onOnline'))
   state.unsubscribe = () => {
     unsubscribeFocus()
     unsubscribeOnline()
@@ -184,8 +180,10 @@ export function isMutating<
   filters?: NoInfer<Omit<TMutationFilters, 'status'>>,
 ): number {
   return (
-    client[mutationCacheKey]?.findAll({ ...filters, status: 'pending' })
-      .length ?? 0
+    client[clientState].mutationCache?.findAll({
+      ...filters,
+      status: 'pending',
+    }).length ?? 0
   )
 }
 
@@ -446,7 +444,8 @@ export async function query<
 export function resumePausedMutations(client: QueryClient): Promise<unknown> {
   if (onlineManager.isOnline()) {
     return (
-      client[mutationCacheKey]?.resumePausedMutations() ?? Promise.resolve([])
+      client[clientState].mutationCache?.resumePausedMutations() ??
+      Promise.resolve([])
     )
   }
   return Promise.resolve()
@@ -543,7 +542,7 @@ export function setQueryDefaults<
     >
   >,
 ): void {
-  ;(client[clientState].queryDefaults ??= new KeyDefaults()).set(
+  ;(client[clientState].queryDefaults ??= new KeyDefaults()).setDefaults(
     queryKey,
     options,
     getQueryCache(client).config.queryKey,
@@ -568,7 +567,7 @@ export function getQueryDefaults(
   queryKey: QueryKey,
 ): OmitKeyof<QueryObserverOptionsBase<any, any, any, any, any>, 'queryKey'> {
   return (
-    client[clientState].queryDefaults?.get(
+    client[clientState].queryDefaults?.getDefaults(
       queryKey,
       getQueryCache(client).config.queryKey,
     ) ?? {}
@@ -601,10 +600,10 @@ export function setMutationDefaults<
     'mutationKey'
   >,
 ): void {
-  ;(client[clientState].mutationDefaults ??= new KeyDefaults()).set(
+  ;(client[clientState].mutationDefaults ??= new KeyDefaults()).setDefaults(
     mutationKey,
     options,
-    client[mutationCacheKey]?.config.mutationKey,
+    client[clientState].mutationCache?.config.mutationKey,
   )
 }
 
@@ -626,9 +625,9 @@ export function getMutationDefaults(
   mutationKey: MutationKey,
 ): OmitKeyof<MutationObserverOptions<any, any, any, any>, 'mutationKey'> {
   return (
-    client[clientState].mutationDefaults?.get(
+    client[clientState].mutationDefaults?.getDefaults(
       mutationKey,
-      client[mutationCacheKey]?.config.mutationKey,
+      client[clientState].mutationCache?.config.mutationKey,
     ) ?? {}
   )
 }
@@ -767,5 +766,5 @@ export function defaultMutationOptions<
  */
 export function clearQueryClient(client: QueryClient): void {
   clearQueryCache(getQueryCache(client))
-  client[mutationCacheKey]?.clear()
+  client[clientState].mutationCache?.clear()
 }

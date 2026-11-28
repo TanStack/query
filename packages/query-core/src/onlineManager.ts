@@ -64,7 +64,7 @@ export class OnlineManager extends Subscribable<Listener> {
    * @example
    * ```ts
    * import NetInfo from '@react-native-community/netinfo'
-   * import { onlineManager } from '@tanstack/query-core-pluggable'
+   * import { onlineManager } from '@tanstack/query-core'
    *
    * onlineManager.setEventListener((setOnline) => {
    *   return NetInfo.addEventListener((state) => {
@@ -84,7 +84,7 @@ export class OnlineManager extends Subscribable<Listener> {
    * @param online - The online state.
    * @example
    * ```ts
-   * import { onlineManager } from '@tanstack/query-core-pluggable'
+   * import { onlineManager } from '@tanstack/query-core'
    *
    * // Set to online
    * onlineManager.setOnline(true)

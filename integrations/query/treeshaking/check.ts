@@ -3,7 +3,7 @@ import { basename, join } from 'node:path'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { build } from 'vite'
 
-const frameworks = [
+const readers = [
   'angular',
   'lit',
   'preact',
@@ -11,6 +11,8 @@ const frameworks = [
   'solid',
   'svelte',
   'vue',
+  'preact-hydration',
+  'react-hydration',
 ]
 const unused = [
   'mutation',
@@ -28,13 +30,13 @@ const peers =
 
 const rows: string[] = []
 
-for (const framework of frameworks) {
-  const entry = join(import.meta.dirname, 'entries', framework + '.ts')
+for (const reader of readers) {
+  const entry = join(import.meta.dirname, 'entries', reader + '.ts')
   const result = await build({
     root: import.meta.dirname,
     configFile: false,
     logLevel: 'error',
-    plugins: framework === 'svelte' ? [svelte()] : [],
+    plugins: reader === 'svelte' ? [svelte()] : [],
     define: { ngDevMode: 'false', 'process.env.NODE_ENV': '"production"' },
     build: {
       write: false,
@@ -57,24 +59,25 @@ for (const framework of frameworks) {
   for (const required of ['queryClient', 'queryCache', 'queryObserver']) {
     assert(
       retained.has(required),
-      framework + ' failed to include the core ' + required,
+      reader + ' failed to include the core ' + required,
     )
   }
   const forbidden = [...unused]
-  if (framework !== 'solid')
-    forbidden.push('hydration', 'infiniteQueryBehavior')
-  if (framework !== 'lit' && framework !== 'vue')
-    forbidden.push('fetchOptimistic')
+  const hydratesQueries = reader === 'solid' || reader.endsWith('-hydration')
+  if (hydratesQueries)
+    assert(retained.has('hydration'), reader + ' omitted query hydration')
+  else forbidden.push('hydration', 'infiniteQueryBehavior')
+  if (reader !== 'lit' && reader !== 'vue') forbidden.push('fetchOptimistic')
   for (const feature of forbidden) {
     assert(
       !retained.has(feature),
-      framework + ' read-only entry includes ' + feature,
+      reader + ' read-only entry includes ' + feature,
     )
   }
   const includes = (name: string) =>
     retained.has(name) ? 'Included' : 'Omitted'
   rows.push(
-    `| ${framework} | ${includes('hydration')} | ${includes('infiniteQueryBehavior')} | ${includes('fetchOptimistic')} |`,
+    `| ${reader.replace('-hydration', ' + HydrationBoundary')} | ${includes('hydration')} | ${includes('infiniteQueryBehavior')} | ${includes('fetchOptimistic')} |`,
   )
 }
 

@@ -134,7 +134,7 @@ export function useQuery(
   const result = useObserverSnapshot(
     observer,
     reader,
-    mode === 'optimistic',
+    mode,
     refreshQuery,
     handling?.onCommit,
   )

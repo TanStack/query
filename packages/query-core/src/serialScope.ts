@@ -6,7 +6,7 @@ type QueuedMutation = Mutation<any, any, any, any>
 // A shared cache coordinates scopes created by independently bundled clients.
 const queues = Symbol.for('@tanstack/query-core/serialScopes')
 type ScopedCache = MutationCache & {
-  [queues]?: Map<string, Set<QueuedMutation>>
+  [queues]?: Record<string, Set<QueuedMutation> | undefined>
 }
 
 /** Runs mutations with the same ID in registration order within one cache. */
@@ -20,12 +20,10 @@ class SerialScope {
    * @param mutation - The mutation to register.
    */
   add(cache: ScopedCache, mutation: QueuedMutation): void {
-    const scopes = (cache[queues] ??= new Map())
-    let queue = scopes.get(this.id)
-    if (!queue) {
-      queue = new Set()
-      scopes.set(this.id, queue)
-    }
+    // Scope IDs are application strings, so the table must accept keys such as "__proto__".
+    const scopes: NonNullable<ScopedCache[typeof queues]> = (cache[queues] ??=
+      Object.create(null))
+    const queue = (scopes[this.id] ??= new Set())
     queue.add(mutation)
   }
 
@@ -38,9 +36,9 @@ class SerialScope {
   remove(cache: ScopedCache, mutation: QueuedMutation): void {
     const scopes = cache[queues]
     if (!scopes) return
-    const queue = scopes.get(this.id)
+    const queue = scopes[this.id]
     if (queue?.delete(mutation) && !queue.size) {
-      scopes.delete(this.id)
+      delete scopes[this.id]
     }
   }
 
@@ -52,11 +50,8 @@ class SerialScope {
    * @returns Whether this mutation can start or continue.
    */
   canRun(cache: ScopedCache, mutation: QueuedMutation): boolean {
-    const queue = cache[queues]?.get(this.id)
-    if (queue) {
-      for (const entry of queue) {
-        if (entry.state.status === 'pending') return entry === mutation
-      }
+    for (const entry of cache[queues]?.[this.id] ?? []) {
+      if (entry.state.status === 'pending') return entry === mutation
     }
     return true
   }
@@ -72,11 +67,8 @@ class SerialScope {
     cache: ScopedCache,
     mutation: QueuedMutation,
   ): Promise<unknown> | undefined {
-    const queue = cache[queues]?.get(this.id)
-    if (queue) {
-      for (const entry of queue) {
-        if (entry !== mutation && entry.state.isPaused) return entry.continue()
-      }
+    for (const entry of cache[queues]?.[this.id] ?? []) {
+      if (entry !== mutation && entry.state.isPaused) return entry.continue()
     }
     return undefined
   }

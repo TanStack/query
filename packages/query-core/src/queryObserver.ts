@@ -504,14 +504,6 @@ export class QueryObserver<
     return promise
   }
 
-  #shouldScheduleTimer(timeout: unknown): timeout is number {
-    return (
-      !isServerEnvironment() &&
-      resolveQueryValue(this.options.enabled, this.#currentQuery) !== false &&
-      isValidTimeout(timeout)
-    )
-  }
-
   #updateStaleTimeout(): void {
     this.#clearStaleTimeout()
     const staleTime = resolveQueryValue(
@@ -519,7 +511,12 @@ export class QueryObserver<
       this.#currentQuery,
     )
 
-    if (this.#currentResult.isStale || !this.#shouldScheduleTimer(staleTime)) {
+    if (
+      this.#currentResult.isStale ||
+      isServerEnvironment() ||
+      resolveQueryValue(this.options.enabled, this.#currentQuery) === false ||
+      !isValidTimeout(staleTime)
+    ) {
       return
     }
 
@@ -667,15 +664,19 @@ export class QueryObserver<
     this.#currentResult = nextResult
 
     const { notifyOnChangeProps, throwOnError } = this.options
-    const notifyListeners =
+    let notifyListeners =
       !prevResult ||
       notifyOnChangeProps === 'all' ||
-      (throwOnError && nextResult.error !== prevResult.error) ||
-      (notifyOnChangeProps !== 'none' &&
-        (!this.#trackedProps.size ||
-          [...this.#trackedProps].some(
-            (key) => nextResult[key] !== prevResult[key],
-          )))
+      (!!throwOnError && nextResult.error !== prevResult.error)
+    if (prevResult && !notifyListeners && notifyOnChangeProps !== 'none') {
+      notifyListeners = !this.#trackedProps.size
+      for (const key of this.#trackedProps) {
+        if (nextResult[key] !== prevResult[key]) {
+          notifyListeners = true
+          break
+        }
+      }
+    }
 
     notifyManager.batch(() => {
       // First, trigger the listeners
@@ -763,15 +764,14 @@ function shouldFetchOn(
     (typeof options)['refetchOnWindowFocus'] &
     (typeof options)['refetchOnReconnect'],
 ) {
-  if (
-    resolveQueryValue(options.enabled, query) !== false &&
-    resolveQueryValue(options.staleTime, query) !== 'static'
-  ) {
-    const value = resolveQueryValue(field, query)
+  if (resolveQueryValue(options.enabled, query) === false) return false
+  const staleTime = resolveQueryValue(options.staleTime, query)
+  if (staleTime === 'static') return false
 
-    return value === 'always' || (value !== false && isStale(query, options))
-  }
-  return false
+  const value = resolveQueryValue(field, query)
+  return (
+    value === 'always' || (value !== false && query.isStaleByTime(staleTime))
+  )
 }
 
 /**

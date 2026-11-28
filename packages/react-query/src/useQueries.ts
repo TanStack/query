@@ -449,7 +449,7 @@ export function useBaseQueries<
   const results = useObserverSnapshot(
     observer,
     reader,
-    mode === 'optimistic',
+    mode,
     refreshQueries,
     errorResetBoundary.clearReset,
   )

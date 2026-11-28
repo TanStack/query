@@ -1,5 +1,5 @@
 import { notifyManager } from './notifyManager'
-import { mutationCacheKey } from './queryClient'
+import { clientState } from './queryClient'
 import { Subscribable } from './subscribable'
 import { matchMutation, noop } from './utils'
 import type { Mutation, Action as MutationAction } from './mutation'
@@ -124,7 +124,7 @@ interface NotifyEventMutationUpdated extends NotifyEvent {
  * ```
  */
 export function getMutationCache(client: QueryClient): MutationCache {
-  return (client[mutationCacheKey] ??= new MutationCache())
+  return (client[clientState].mutationCache ??= new MutationCache())
 }
 
 /**

@@ -20,11 +20,14 @@ interface ObserverStore {
  * @param subscribed - Whether the reader wants live updates.
  * @returns The client and the optimistic mode, which also determines whether to subscribe.
  */
-export function useReaderContext(queryClient?: QueryClient, subscribed = true) {
+export function useReaderContext(
+  queryClient?: QueryClient,
+  subscribed?: boolean,
+) {
   const client = useQueryClient(queryClient)
   const mode = useIsRestoring()
     ? 'isRestoring'
-    : subscribed
+    : subscribed !== false
       ? 'optimistic'
       : undefined
   return { client, mode } as const
@@ -63,7 +66,7 @@ export function defaultReaderOptions(
  * Commits a reader and subscribes React to its cached snapshots.
  * @param observer - The observer that owns the subscription.
  * @param reader - The reader scoped to the current render options.
- * @param subscribed - Whether this render subscribes to updates.
+ * @param mode - Only the live optimistic reader subscribes to updates.
  * @param refresh - Includes updates that occurred before the subscription started.
  * @param onCommit - Clears the reset state when this render commits to a new error boundary.
  * @returns The current snapshot.
@@ -71,10 +74,11 @@ export function defaultReaderOptions(
 export function useObserverSnapshot<TObserver extends ObserverStore, TResult>(
   observer: TObserver,
   reader: QueryObserverResultReader<TResult>,
-  subscribed: boolean,
+  mode: ReturnType<typeof useReaderContext>['mode'],
   refresh: (observer: TObserver) => void,
   onCommit?: () => void,
 ): TResult {
+  const subscribed = mode === 'optimistic'
   React.useEffect(() => onCommit?.(), [onCommit])
   React.useEffect(() => {
     reader.commit()

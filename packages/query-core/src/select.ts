@@ -1,5 +1,5 @@
 import { equalItems } from './equalItems'
-import { projectResult } from './projectResult'
+import { clearObsoleteSelection, projectResult } from './projectResult'
 import { replaceData } from './utils'
 import type { Select } from './projectionTypes'
 import type { Query } from './query'
@@ -61,11 +61,11 @@ function resolveSelection<
   const key = [input, transform, options.structuralSharing] as const
   if (
     context !== committed &&
-    sourceQuery?.state.data === input &&
     equalItems<unknown>(key, committed.selection?.key)
   ) {
     context.selection = committed.selection
     context.selected = committed.selected
+    clearObsoleteSelection(context)
   }
   if (equalItems<unknown>(key, context.selection?.key)) return
   try {

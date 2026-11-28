@@ -73,32 +73,6 @@ const ensureSuspenseTimers = (
 }
 
 /**
- * Decides whether a Suspense query needs to fetch during render.
- * @param result - The result for this render.
- * @param errorResetBoundary - The nearest query error reset boundary.
- * @param query - The query to fetch.
- * @returns `undefined` to skip the fetch, `false` to fetch in the background, or `true` to suspend.
- */
-const shouldSuspend = (
-  result: QueryObserverResult<any, any>,
-  errorResetBoundary: QueryErrorResetBoundaryValue,
-  query: Query<any, any, any, any>,
-): boolean | undefined => {
-  if (
-    result.status === 'pending' ||
-    (query.state.status === 'error' && errorResetBoundary.isReset())
-  ) {
-    return true
-  }
-
-  if (result.fetchStatus === 'fetching' && result.isPlaceholderData) {
-    return false
-  }
-
-  return undefined
-}
-
-/**
  * Starts a fetch during render or reuses a promise for an existing fetch.
  * @param client - The client that owns the query.
  * @param defaultedOptions - The options of the query.
@@ -153,8 +127,15 @@ function getPendingPromise(
   observer?: QueryObserver<any, any, any, any, any>,
 ) {
   const query = getQueryCache(client).build(client, options)
-  const suspend = shouldSuspend(result, boundary, query)
-  if (suspend === undefined) return undefined
+  const suspend =
+    result.status === 'pending' ||
+    (query.state.status === 'error' && boundary.isReset())
+  if (
+    !suspend &&
+    !(result.fetchStatus === 'fetching' && result.isPlaceholderData)
+  )
+    return
+
   const promise = getSuspensePromise(
     client,
     options,

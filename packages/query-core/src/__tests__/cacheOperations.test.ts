@@ -38,6 +38,22 @@ describe('cache operations', () => {
 })
 
 describe('cached query operations', () => {
+  it('invalidates a cache entry created by a separately bundled client', async () => {
+    const client = new QueryClient()
+    const entry = new QueryObserver(client, {
+      queryKey: ['article'],
+      queryFn: () => 'fetched',
+      initialData: 'cached',
+    }).getCurrentQuery()
+
+    vi.resetModules()
+    const separateBundle = await import('../query')
+    separateBundle.invalidateCachedQuery(entry)
+
+    expect(entry.state.isInvalidated).toBe(true)
+    clearQueryClient(client)
+  })
+
   it('invalidates an observed query once without starting a fetch', () => {
     const client = new QueryClient()
     const queryFn = vi.fn<() => string>(() => 'fetched')

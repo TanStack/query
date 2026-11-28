@@ -10,7 +10,7 @@ import {
   replaceData,
   timeUntilStale,
 } from './utils'
-import type { createInfiniteFetch } from './infiniteQueryBehavior'
+import type { prepareInfiniteFetch } from './infiniteQueryBehavior'
 import type { QueryCache } from './queryCache'
 import type { QueryClient } from './queryClient'
 import type { QueryObserver } from './queryObserver'
@@ -99,7 +99,7 @@ export interface QueryBehavior<
   ) => void
 }
 
-const updateState = Symbol()
+const updateState = Symbol.for('@tanstack/query-core/updateState')
 
 // CLASS
 
@@ -131,7 +131,7 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state: QueryState<TData, TError>
-  #prepareInfiniteFetch?: typeof createInfiniteFetch
+  #prepareInfiniteFetch?: typeof prepareInfiniteFetch
 
   #initialState: QueryState<TData, TError>
   #revertState?: QueryState<TData, TError>
@@ -196,7 +196,7 @@ export class Query<
     this.options = { ...this.#defaultOptions, ...options }
 
     const internalOptions = options as
-      | { _prepareInfiniteFetch?: typeof createInfiniteFetch }
+      | { _prepareInfiniteFetch?: typeof prepareInfiniteFetch }
       | undefined
     this.#prepareInfiniteFetch ??= internalOptions?._prepareInfiniteFetch
 
@@ -341,12 +341,7 @@ export class Query<
    * @internal
    */
   onFocus(): void {
-    const observer = this.observers.find((x) => x.shouldFetchOnWindowFocus())
-
-    observer?.refetch({ cancelRefetch: false })
-
-    // Continue fetch if currently paused
-    this.#retryer?.continue()
+    this.#resume('shouldFetchOnWindowFocus')
   }
 
   /**
@@ -355,9 +350,15 @@ export class Query<
    * @internal
    */
   onOnline(): void {
-    const observer = this.observers.find((x) => x.shouldFetchOnReconnect())
+    this.#resume('shouldFetchOnReconnect')
+  }
 
-    observer?.refetch({ cancelRefetch: false })
+  #resume(
+    shouldFetch: 'shouldFetchOnWindowFocus' | 'shouldFetchOnReconnect',
+  ): void {
+    this.observers
+      .find((observer) => observer[shouldFetch]())
+      ?.refetch({ cancelRefetch: false })
 
     // Continue fetch if currently paused
     this.#retryer?.continue()
@@ -477,49 +478,43 @@ export class Query<
 
     const abortController = new AbortController()
 
-    const addSignalProperty: (
-      object: object,
-    ) => asserts object is { signal: AbortSignal } = (object) => {
-      Object.defineProperties(object, {
-        [fetchSignal]: { value: abortController.signal, enumerable: true },
-        signal: {
-          enumerable: true,
-          get: () => {
-            this.#abortSignalConsumed = true
-            return abortController.signal
-          },
-        },
-      })
+    const readSignal = () => {
+      this.#abortSignalConsumed = true
+      return abortController.signal
     }
+    const createContext = () => ({
+      client: this.#client,
+      queryKey: this.queryKey,
+      meta: this.meta,
+      [fetchSignal]: abortController.signal,
+      get signal() {
+        return readSignal()
+      },
+    })
 
     const activeOptions = this.options
     const runFetch =
       this.#prepareInfiniteFetch?.(
-        this.#client,
+        Object.assign(createContext(), {
+          options: activeOptions,
+          state: this.state,
+          fetchOptions,
+        }),
         this as unknown as Query,
-        fetchOptions,
-        addSignalProperty,
       ) ??
       (() => {
         const queryFn = ensureQueryFn(this.options, fetchOptions)
-
-        const queryFnContext = {
-          client: this.#client,
-          queryKey: this.queryKey,
-          meta: this.meta,
-        }
-        addSignalProperty(queryFnContext)
-
+        const context = createContext()
         this.#abortSignalConsumed = false
         if (this.options.persister) {
           return this.options.persister(
             queryFn,
-            queryFnContext,
+            context,
             this as unknown as Query,
           )
         }
 
-        return queryFn(queryFnContext)
+        return queryFn(context)
       })
 
     // Store state in case the current fetch needs to be reverted
