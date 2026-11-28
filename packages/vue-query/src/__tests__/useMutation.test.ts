@@ -685,6 +685,35 @@ describe('useMutation', () => {
         )
       },
     )
+
+    // These tests let throwOnError return false on purpose: under vitest,
+    // throwing a falsy value from the watcher breaks every watcher created
+    // later in this file, while the throw path is already covered above.
+    it('should evaluate throwOnError when the mutation rejects with undefined', async () => {
+      const throwOnError = vi.fn().mockReturnValue(false)
+      const { mutate } = useMutation<string, undefined>({
+        mutationFn: () => sleep(10).then(() => Promise.reject(undefined)),
+        throwOnError,
+      })
+
+      mutate()
+      await vi.advanceTimersByTimeAsync(10)
+      expect(throwOnError).toHaveBeenCalledTimes(1)
+      expect(throwOnError).toHaveBeenCalledWith(undefined)
+    })
+
+    it('should evaluate throwOnError when the mutation rejects with null', async () => {
+      const throwOnError = vi.fn().mockReturnValue(false)
+      const { mutate } = useMutation<string, null>({
+        mutationFn: () => sleep(10).then(() => Promise.reject(null)),
+        throwOnError,
+      })
+
+      mutate()
+      await vi.advanceTimersByTimeAsync(10)
+      expect(throwOnError).toHaveBeenCalledTimes(1)
+      expect(throwOnError).toHaveBeenCalledWith(null)
+    })
   })
 
   describe('optimistic updates', () => {
