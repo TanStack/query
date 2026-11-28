@@ -41,13 +41,13 @@ import {
 import { reconcile } from 'solid-js/store'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
-  queryOptions,
   IsRestoringProvider,
   QueryCache,
   QueryClient,
   defaultQueryFn,
   keepPreviousData,
   noop,
+  queryOptions,
   skipToken,
   useQuery,
 } from '..'

@@ -1,6 +1,6 @@
 import {
-  infiniteQueryOptions,
   createInfiniteQueryController,
+  infiniteQueryOptions,
   isFetching,
   isFetchingNextPage,
   isLoading,

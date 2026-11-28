@@ -38,13 +38,13 @@ import {
   vi,
 } from 'vitest'
 import {
-  queryOptions,
   QueryCache,
   QueryClient,
   defaultQueryFn,
   injectQuery,
   keepPreviousData,
   provideTanStackQuery,
+  queryOptions,
   skipToken,
   toResource,
 } from '..'
