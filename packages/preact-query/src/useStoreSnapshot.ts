@@ -1,6 +1,6 @@
+import { notifyManager } from '@tanstack/query-core'
 import { useCallback } from 'preact/hooks'
 import { useSyncExternalStore } from './utils'
-import { notifyManager } from '@tanstack/query-core'
 
 /**
  * Subscribes to a cache or observer with batched notifications. The subscription
@@ -15,7 +15,8 @@ export function useStoreSnapshot<T>(
 ): T {
   return useSyncExternalStore(
     useCallback(
-      (onStoreChange) => store.subscribe(notifyManager.batchCalls(onStoreChange)),
+      (onStoreChange) =>
+        store.subscribe(notifyManager.batchCalls(onStoreChange)),
       [store],
     ),
     getSnapshot,

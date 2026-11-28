@@ -1,6 +1,6 @@
 'use client'
-import * as React from 'react'
 import { notifyManager } from '@tanstack/query-core'
+import * as React from 'react'
 
 /**
  * Subscribes to a cache or observer with batched notifications. The subscription
@@ -15,7 +15,8 @@ export function useStoreSnapshot<T>(
 ): T {
   return React.useSyncExternalStore(
     React.useCallback(
-      (onStoreChange) => store.subscribe(notifyManager.batchCalls(onStoreChange)),
+      (onStoreChange) =>
+        store.subscribe(notifyManager.batchCalls(onStoreChange)),
       [store],
     ),
     getSnapshot,
