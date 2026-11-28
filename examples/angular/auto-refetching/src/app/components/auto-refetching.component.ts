@@ -4,6 +4,8 @@ import {
   QueryClient,
   injectMutation,
   injectQuery,
+  invalidateQueries,
+  refetchInterval,
 } from '@tanstack/angular-query'
 import { TasksMutations, TasksQueries } from '../services/tasks/queries'
 
@@ -21,13 +23,13 @@ export class AutoRefetchingExampleComponent {
 
   readonly tasks = injectQuery(() => ({
     ...this.#tasksQueries.list(),
-    refetchInterval: this.intervalMs(),
+    refetchInterval: refetchInterval(this.intervalMs()),
   }))
 
   readonly addMutation = injectMutation(() => ({
     ...this.#tasksMutations.create(),
     onSuccess: () => {
-      this.#queryClient.invalidateQueries({
+      invalidateQueries(this.#queryClient, {
         queryKey: this.#tasksQueries.list().queryKey,
       })
     },
@@ -35,7 +37,7 @@ export class AutoRefetchingExampleComponent {
   readonly clearMutation = injectMutation(() => ({
     ...this.#tasksMutations.deleteAll(),
     onSuccess: () => {
-      this.#queryClient.invalidateQueries({
+      invalidateQueries(this.#queryClient, {
         queryKey: this.#tasksQueries.list().queryKey,
       })
     },

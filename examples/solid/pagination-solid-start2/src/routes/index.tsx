@@ -1,6 +1,9 @@
 import {
+  isFetching,
   keepPreviousData,
   noop,
+  placeholderData,
+  query,
   useQuery,
   useQueryClient,
 } from '@tanstack/solid-query'
@@ -38,14 +41,14 @@ function Projects() {
 
   const projectsQuery = useQuery(() => ({
     ...projectsQueries.list(page()),
-    placeholderData: keepPreviousData,
+    placeholderData: placeholderData(keepPreviousData),
     throwOnError: true,
   }))
 
   // Prefetch the next page!
   createEffect(() => {
     if (!projectsQuery.isPlaceholderData && projectsQuery.data?.hasMore) {
-      queryClient.query(projectsQueries.list(page() + 1)).catch(noop)
+      query(queryClient, projectsQueries.list(page() + 1)).catch(noop)
     }
   })
 
@@ -84,7 +87,7 @@ function Projects() {
         // we can use `isFetching` to show a background loading
         // indicator since our `status === 'pending'` state won't be triggered
       }
-      <Show when={projectsQuery.isFetching}>
+      <Show when={isFetching(projectsQuery)}>
         <span> Loading...</span>
       </Show>{' '}
     </>

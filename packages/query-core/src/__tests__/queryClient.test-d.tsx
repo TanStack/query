@@ -1,6 +1,38 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import {
+  cancelQueries,
+  clearQueryClient,
+  countFetchingQueries,
+  defaultMutationOptions,
+  defaultQueryOptions,
+  query as fetchQueryData,
+  findCachedQueries,
+  getDefaultOptions,
+  getMutationCache,
+  getMutationDefaults,
+  getQueriesData,
+  getQueryCache,
+  getQueryData,
+  getQueryDefaults,
+  getQueryState,
+  infiniteQuery,
+  invalidateQueries,
+  isMutating,
+  mountQueryClient,
+  refetchQueries,
+  removeQueries,
+  resetQueries,
+  resumePausedMutations,
+  select,
+  setMutationDefaults,
+  setQueriesData,
+  setQueryData,
+  setQueryDefaults,
+  unmountQueryClient,
+} from '..'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
+import type { setDefaultOptions } from '..'
 import type { Mutation } from '../mutation'
 import type { MutationCache } from '../mutationCache'
 import type { Query, QueryState } from '../query'
@@ -26,6 +58,11 @@ import type {
   UnsetMarker,
 } from '../types'
 import type { MutationFilters, QueryFilters, Updater } from '../utils'
+
+type OperationArgs<
+  TOperation extends (...args: Array<never>) => unknown,
+  TClient,
+> = Parameters<TOperation> extends [TClient, ...infer TArgs] ? TArgs : never
 
 type TypedData = { foo: string }
 type TypedError = DefaultError & { bar: string }
@@ -86,7 +123,7 @@ describe('queryClient', () => {
     it('should be typed if key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      const data = queryClient.getQueryData(key)
+      const data = getQueryData(queryClient, key)
 
       expectTypeOf(data).toEqualTypeOf<number | undefined>()
     })
@@ -94,7 +131,7 @@ describe('queryClient', () => {
     it('should infer unknown if key is not tagged', () => {
       const key = ['key'] as const
       const queryClient = new QueryClient()
-      const data = queryClient.getQueryData(key)
+      const data = getQueryData(queryClient, key)
 
       expectTypeOf(data).toEqualTypeOf<unknown>()
     })
@@ -102,13 +139,13 @@ describe('queryClient', () => {
     it('should infer passed generic if passed', () => {
       const key = ['key'] as const
       const queryClient = new QueryClient()
-      const data = queryClient.getQueryData<number>(key)
+      const data = getQueryData<number>(queryClient, key)
 
       expectTypeOf(data).toEqualTypeOf<number | undefined>()
     })
 
     it('should only allow Arrays to be passed', () => {
-      assertType<Parameters<QueryClient['getQueryData']>>([
+      assertType<OperationArgs<typeof getQueryData, QueryClient>>([
         // @ts-expect-error TS2345: Argument of type 'string' is not assignable to parameter of type 'QueryKey'
         { queryKey: 'key' },
       ])
@@ -116,14 +153,14 @@ describe('queryClient', () => {
 
     it('should resolve the data type from a tagged filter key', () => {
       const queryClient = new QueryClient()
-      const data = queryClient.getQueryData(typedFilterKey)
+      const data = getQueryData(queryClient, typedFilterKey)
 
       expectTypeOf(data).toEqualTypeOf<TypedData | undefined>()
     })
 
     it('should resolve unknown from an untyped filter key', () => {
       const queryClient = new QueryClient()
-      const data = queryClient.getQueryData(untypedFilterKey)
+      const data = getQueryData(queryClient, untypedFilterKey)
 
       expectTypeOf(data).toEqualTypeOf<unknown>()
     })
@@ -133,7 +170,7 @@ describe('queryClient', () => {
     it('should type the updater if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      const data = queryClient.setQueryData(key, (prev) => {
+      const data = setQueryData(queryClient, key, (prev) => {
         expectTypeOf(prev).toEqualTypeOf<number | undefined>()
         return prev
       })
@@ -146,12 +183,12 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       // @ts-expect-error value should be a number
-      queryClient.setQueryData(key, '1')
+      setQueryData(queryClient, key, '1')
 
       // @ts-expect-error value should be a number
-      queryClient.setQueryData(key, () => '1')
+      setQueryData(queryClient, key, () => '1')
 
-      const data = queryClient.setQueryData(key, 1)
+      const data = setQueryData(queryClient, key, 1)
 
       expectTypeOf(data).toEqualTypeOf<number | undefined>()
     })
@@ -159,7 +196,7 @@ describe('queryClient', () => {
     it('should infer unknown for updater if key is not tagged', () => {
       const key = ['key'] as const
       const queryClient = new QueryClient()
-      const data = queryClient.setQueryData(key, (prev) => {
+      const data = setQueryData(queryClient, key, (prev) => {
         expectTypeOf(prev).toEqualTypeOf<unknown>()
         return prev
       })
@@ -170,7 +207,7 @@ describe('queryClient', () => {
     it('should infer unknown for value if key is not tagged', () => {
       const key = ['key'] as const
       const queryClient = new QueryClient()
-      const data = queryClient.setQueryData(key, 'foo')
+      const data = setQueryData(queryClient, key, 'foo')
 
       expectTypeOf(data).toEqualTypeOf<unknown>()
     })
@@ -178,7 +215,7 @@ describe('queryClient', () => {
     it('should infer passed generic if passed', () => {
       const key = ['key'] as const
       const queryClient = new QueryClient()
-      const data = queryClient.setQueryData<string>(key, (prev) => {
+      const data = setQueryData<string>(queryClient, key, (prev) => {
         expectTypeOf(prev).toEqualTypeOf<string | undefined>()
         return prev
       })
@@ -189,7 +226,7 @@ describe('queryClient', () => {
     it('should infer passed generic for value', () => {
       const key = ['key'] as const
       const queryClient = new QueryClient()
-      const data = queryClient.setQueryData<string>(key, 'foo')
+      const data = setQueryData<string>(queryClient, key, 'foo')
 
       expectTypeOf(data).toEqualTypeOf<string | undefined>()
     })
@@ -201,7 +238,7 @@ describe('queryClient', () => {
       // Simulate usage inside a function with explicit return type
       // The outer function returns 'unknown' but this shouldn't affect the updater's type inference
       ;(() =>
-        queryClient.setQueryData(key, (data) => {
+        setQueryData(queryClient, key, (data) => {
           expectTypeOf(data).toEqualTypeOf<number | undefined>()
           return data
         })) satisfies () => unknown
@@ -212,7 +249,7 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       const callbackTest: SuccessCallback = () =>
-        queryClient.setQueryData(key, (data) => {
+        setQueryData(queryClient, key, (data) => {
           expectTypeOf(data).toEqualTypeOf<number | undefined>()
           return data
         })
@@ -224,7 +261,7 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       const callbackTest2: SuccessCallback = () => {
-        queryClient.setQueryData(key, (data) => {
+        setQueryData(queryClient, key, (data) => {
           expectTypeOf(data).toEqualTypeOf<number | undefined>()
           return data
         })
@@ -236,11 +273,12 @@ describe('queryClient', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
 
-      queryClient.setQueryData(key, 1)
-      queryClient.setQueryData(key, 1, { updatedAt: 0 })
+      setQueryData(queryClient, key, 1)
+      setQueryData(queryClient, key, 1, { updatedAt: 0 })
 
-      type SetDataOptionsArg = Parameters<
-        typeof queryClient.setQueryData<number, typeof key>
+      type SetDataOptionsArg = OperationArgs<
+        typeof setQueryData<number, typeof key>,
+        typeof queryClient
       >[2]
       expectTypeOf<SetDataOptionsArg>().toEqualTypeOf<
         SetDataOptions | undefined
@@ -258,24 +296,26 @@ describe('queryClient', () => {
       // here, so it falls back to the function branch and reports the literal as
       // excess properties. Annotating sidesteps that (TS >= 5.5 handles it).
       const newData: TypedData = { foo: '' }
-      const data = queryClient.setQueryData(typedFilterKey, newData)
+      const data = setQueryData(queryClient, typedFilterKey, newData)
 
       expectTypeOf(data).toEqualTypeOf<TypedData | undefined>()
       expectTypeOf<
-        Parameters<
-          typeof queryClient.setQueryData<unknown, typeof typedFilterKey>
+        OperationArgs<
+          typeof setQueryData<unknown, typeof typedFilterKey>,
+          typeof queryClient
         >[1]
       >().toEqualTypeOf<Updater<TypedData | undefined, TypedData | undefined>>()
     })
 
     it('should resolve unknown from an untyped filter key', () => {
       const queryClient = new QueryClient()
-      const data = queryClient.setQueryData(untypedFilterKey, { foo: '' })
+      const data = setQueryData(queryClient, untypedFilterKey, { foo: '' })
 
       expectTypeOf(data).toEqualTypeOf<unknown>()
       expectTypeOf<
-        Parameters<
-          typeof queryClient.setQueryData<unknown, typeof untypedFilterKey>
+        OperationArgs<
+          typeof setQueryData<unknown, typeof untypedFilterKey>,
+          typeof queryClient
         >[1]
       >().toEqualTypeOf<Updater<unknown, unknown>>()
     })
@@ -285,12 +325,13 @@ describe('queryClient', () => {
     it('should resolve QueryKey and unknown for a tagged filter', () => {
       const queryClient = new QueryClient()
       // TODO: types here are wrong and coming up undefined
-      const data = queryClient.setQueriesData(typedQueryFilters, { foo: '' })
+      const data = setQueriesData(queryClient, typedQueryFilters, { foo: '' })
 
       expectTypeOf(data).toEqualTypeOf<Array<[QueryKey, unknown]>>()
       expectTypeOf<
-        Parameters<
-          typeof queryClient.setQueriesData<unknown, typeof typedQueryFilters>
+        OperationArgs<
+          typeof setQueriesData<unknown, typeof typedQueryFilters>,
+          typeof queryClient
         >[1]
       >().toEqualTypeOf<Updater<unknown, unknown>>()
     })
@@ -298,12 +339,13 @@ describe('queryClient', () => {
     it('should resolve QueryKey and unknown for an untyped filter', () => {
       const queryClient = new QueryClient()
       // TODO: types here are wrong and coming up undefined
-      const data = queryClient.setQueriesData(untypedQueryFilters, { foo: '' })
+      const data = setQueriesData(queryClient, untypedQueryFilters, { foo: '' })
 
       expectTypeOf(data).toEqualTypeOf<Array<[QueryKey, unknown]>>()
       expectTypeOf<
-        Parameters<
-          typeof queryClient.setQueriesData<unknown, typeof untypedQueryFilters>
+        OperationArgs<
+          typeof setQueriesData<unknown, typeof untypedQueryFilters>,
+          typeof queryClient
         >[1]
       >().toEqualTypeOf<Updater<unknown, unknown>>()
     })
@@ -313,7 +355,7 @@ describe('queryClient', () => {
     it('should be loose typed without tag', () => {
       const key = ['key'] as const
       const queryClient = new QueryClient()
-      const data = queryClient.getQueryState(key)
+      const data = getQueryState(queryClient, key)
 
       expectTypeOf(data).toEqualTypeOf<QueryState<unknown, Error> | undefined>()
     })
@@ -321,7 +363,7 @@ describe('queryClient', () => {
     it('should be typed if key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      const data = queryClient.getQueryState(key)
+      const data = getQueryState(queryClient, key)
 
       expectTypeOf(data).toEqualTypeOf<QueryState<number, Error> | undefined>()
     })
@@ -330,7 +372,7 @@ describe('queryClient', () => {
       type CustomError = Error & { customError: string }
       const key = ['key'] as DataTag<Array<string>, number, CustomError>
       const queryClient = new QueryClient()
-      const data = queryClient.getQueryState(key)
+      const data = getQueryState(queryClient, key)
 
       expectTypeOf(data).toEqualTypeOf<
         QueryState<number, CustomError> | undefined
@@ -339,7 +381,7 @@ describe('queryClient', () => {
 
     it('should resolve the data and error from a tagged filter key', () => {
       const queryClient = new QueryClient()
-      const state = queryClient.getQueryState(typedFilterKey)
+      const state = getQueryState(queryClient, typedFilterKey)
 
       expectTypeOf(state).toEqualTypeOf<
         QueryState<TypedData, TypedError> | undefined
@@ -348,7 +390,7 @@ describe('queryClient', () => {
 
     it('should resolve unknown and DefaultError from an untyped filter key', () => {
       const queryClient = new QueryClient()
-      const state = queryClient.getQueryState(untypedFilterKey)
+      const state = getQueryState(queryClient, untypedFilterKey)
 
       expectTypeOf(state).toEqualTypeOf<
         QueryState<unknown, DefaultError> | undefined
@@ -358,27 +400,30 @@ describe('queryClient', () => {
 
   describe('query', () => {
     it('should allow passing select option', () => {
-      const result = new QueryClient().query({
+      const result = fetchQueryData(new QueryClient(), {
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
-        select: (data) => data.length,
+        select: select((data) => {
+          expectTypeOf(data).toEqualTypeOf<string>()
+          return data.length
+        }),
       })
 
       expectTypeOf(result).toEqualTypeOf<Promise<number>>()
     })
 
     it('should infer select type with skipToken queryFn', () => {
-      const result = new QueryClient().query({
+      const result = fetchQueryData(new QueryClient(), {
         queryKey: ['key'],
         queryFn: skipToken,
-        select: (data: string) => data.length,
+        select: select((data: string) => data.length),
       })
 
       expectTypeOf(result).toEqualTypeOf<Promise<number | undefined>>()
     })
 
     it('should not allow enabled', () => {
-      assertType<Parameters<QueryClient['query']>>([
+      assertType<OperationArgs<typeof fetchQueryData, QueryClient>>([
         {
           queryKey: ['key'],
           queryFn: skipToken,
@@ -390,14 +435,14 @@ describe('queryClient', () => {
 
     it('should resolve with the data type', async () => {
       const queryClient = new QueryClient()
-      const data = await queryClient.query(typedQueryOptions)
+      const data = await fetchQueryData(queryClient, typedQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<TypedData | undefined>()
     })
 
     it('should resolve with unknown when untyped', async () => {
       const queryClient = new QueryClient()
-      const data = await queryClient.query(untypedQueryOptions)
+      const data = await fetchQueryData(queryClient, untypedQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<unknown>()
     })
@@ -405,13 +450,16 @@ describe('queryClient', () => {
 
   describe('infiniteQuery', () => {
     it('should allow passing select option', () => {
-      const result = new QueryClient().infiniteQuery({
+      const result = infiniteQuery(new QueryClient(), {
         queryKey: ['key'],
         queryFn: () => Promise.resolve({ count: 1 }),
         initialPageParam: 1,
         getNextPageParam: () => 2,
-        select: (data) => ({
-          pages: data.pages.map((x) => `count: ${x.count}`),
+        select: select((data) => {
+          expectTypeOf(data).toEqualTypeOf<
+            InfiniteData<{ count: number }, number>
+          >()
+          return { pages: data.pages.map((x) => `count: ${x.count}`) }
         }),
       })
 
@@ -419,7 +467,7 @@ describe('queryClient', () => {
     })
 
     it('should allow passing pages', async () => {
-      const result = await new QueryClient().infiniteQuery({
+      const result = await infiniteQuery(new QueryClient(), {
         queryKey: ['key'],
         queryFn: () => Promise.resolve({ count: 1 }),
         getNextPageParam: () => 1,
@@ -445,7 +493,7 @@ describe('queryClient', () => {
     })
 
     it('should allow passing getNextPageParam without pages', () => {
-      assertType<Parameters<QueryClient['infiniteQuery']>>([
+      assertType<OperationArgs<typeof infiniteQuery, QueryClient>>([
         {
           queryKey: ['key'],
           queryFn: () => Promise.resolve({ count: 1 }),
@@ -456,7 +504,7 @@ describe('queryClient', () => {
     })
 
     it('should require getNextPageParam even without pages', () => {
-      assertType<Parameters<QueryClient['infiniteQuery']>>([
+      assertType<OperationArgs<typeof infiniteQuery, QueryClient>>([
         // @ts-expect-error Property 'getNextPageParam' is missing
         {
           queryKey: ['key'],
@@ -468,7 +516,7 @@ describe('queryClient', () => {
 
     it('should default its page param to unknown', () => {
       const queryClient = new QueryClient()
-      const result = queryClient.infiniteQuery({
+      const result = infiniteQuery(queryClient, {
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
         initialPageParam: 1,
@@ -479,15 +527,16 @@ describe('queryClient', () => {
         Promise<InfiniteData<string, number>>
       >()
 
-      type PageParam = Parameters<
-        typeof queryClient.infiniteQuery<string, Error>
+      type PageParam = OperationArgs<
+        typeof infiniteQuery<string, Error>,
+        typeof queryClient
       >[0]['initialPageParam']
       expectTypeOf<PageParam>().toEqualTypeOf<unknown>()
     })
 
     it('should resolve with InfiniteData of the data type', async () => {
       const queryClient = new QueryClient()
-      const data = await queryClient.infiniteQuery(typedInfiniteQueryOptions)
+      const data = await infiniteQuery(queryClient, typedInfiniteQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<
         InfiniteData<TypedData, unknown> | undefined
@@ -496,7 +545,7 @@ describe('queryClient', () => {
 
     it('should resolve with InfiniteData of unknown when untyped', async () => {
       const queryClient = new QueryClient()
-      const data = await queryClient.infiniteQuery(untypedInfiniteQueryOptions)
+      const data = await infiniteQuery(queryClient, untypedInfiniteQueryOptions)
 
       expectTypeOf(data).toEqualTypeOf<
         InfiniteData<unknown, unknown> | undefined
@@ -506,18 +555,18 @@ describe('queryClient', () => {
 
   describe('invalidateQueries', () => {
     it('should reject a non-array queryKey', () => {
-      assertType<Parameters<QueryClient['invalidateQueries']>>([])
-      assertType<Parameters<QueryClient['invalidateQueries']>>([
+      assertType<OperationArgs<typeof invalidateQueries, QueryClient>>([])
+      assertType<OperationArgs<typeof invalidateQueries, QueryClient>>([
         { queryKey: ['1'] },
       ])
-      assertType<Parameters<QueryClient['invalidateQueries']>>([
+      assertType<OperationArgs<typeof invalidateQueries, QueryClient>>([
         // @ts-expect-error
         { queryKey: '1' },
       ])
     })
 
     it('should reject an object queryKey (#8684)', () => {
-      assertType<Parameters<QueryClient['invalidateQueries']>>([
+      assertType<OperationArgs<typeof invalidateQueries, QueryClient>>([
         // @ts-expect-error key is not an array
         { queryKey: { foo: true } },
       ])
@@ -526,7 +575,7 @@ describe('queryClient', () => {
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      queryClient.invalidateQueries({
+      invalidateQueries(queryClient, {
         queryKey: key,
         predicate: (query) => {
           expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
@@ -539,14 +588,14 @@ describe('queryClient', () => {
     it('should return a promise of void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.invalidateQueries()).toEqualTypeOf<
+      expectTypeOf(invalidateQueries(queryClient)).toEqualTypeOf<
         Promise<void>
       >()
     })
 
     it('should accept a refetchType that QueryFilters does not have', () => {
       type RefetchType = NonNullable<
-        Parameters<QueryClient['invalidateQueries']>[0]
+        OperationArgs<typeof invalidateQueries, QueryClient>[0]
       >['refetchType']
       expectTypeOf<RefetchType>().toEqualTypeOf<
         'all' | 'active' | 'inactive' | 'none' | undefined
@@ -555,7 +604,7 @@ describe('queryClient', () => {
 
     it('should accept the refetch options it inherits as its second argument', () => {
       expectTypeOf<
-        NonNullable<Parameters<QueryClient['invalidateQueries']>[1]>
+        NonNullable<OperationArgs<typeof invalidateQueries, QueryClient>[1]>
       >().toEqualTypeOf<{
         throwOnError?: boolean
         cancelRefetch?: boolean
@@ -567,7 +616,7 @@ describe('queryClient', () => {
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      queryClient.cancelQueries({
+      cancelQueries(queryClient, {
         queryKey: key,
         predicate: (query) => {
           expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
@@ -578,13 +627,13 @@ describe('queryClient', () => {
     })
 
     it('should accept being called without filters', () => {
-      assertType<Parameters<QueryClient['cancelQueries']>>([])
+      assertType<OperationArgs<typeof cancelQueries, QueryClient>>([])
     })
 
     it('should return a promise of void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.cancelQueries()).toEqualTypeOf<Promise<void>>()
+      expectTypeOf(cancelQueries(queryClient)).toEqualTypeOf<Promise<void>>()
     })
   })
 
@@ -592,7 +641,7 @@ describe('queryClient', () => {
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      queryClient.removeQueries({
+      removeQueries(queryClient, {
         queryKey: key,
         predicate: (query) => {
           expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
@@ -603,13 +652,13 @@ describe('queryClient', () => {
     })
 
     it('should accept being called without filters', () => {
-      assertType<Parameters<QueryClient['removeQueries']>>([])
+      assertType<OperationArgs<typeof removeQueries, QueryClient>>([])
     })
 
     it('should return void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.removeQueries()).toEqualTypeOf<void>()
+      expectTypeOf(removeQueries(queryClient)).toEqualTypeOf<void>()
     })
   })
 
@@ -617,7 +666,7 @@ describe('queryClient', () => {
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      queryClient.refetchQueries({
+      refetchQueries(queryClient, {
         queryKey: key,
         predicate: (query) => {
           expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
@@ -628,13 +677,13 @@ describe('queryClient', () => {
     })
 
     it('should accept being called without filters', () => {
-      assertType<Parameters<QueryClient['refetchQueries']>>([])
+      assertType<OperationArgs<typeof refetchQueries, QueryClient>>([])
     })
 
     it('should return a promise of void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.refetchQueries()).toEqualTypeOf<Promise<void>>()
+      expectTypeOf(refetchQueries(queryClient)).toEqualTypeOf<Promise<void>>()
     })
   })
 
@@ -642,7 +691,7 @@ describe('queryClient', () => {
     it('should type the predicate if the key is tagged', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
-      queryClient.resetQueries({
+      resetQueries(queryClient, {
         queryKey: key,
         predicate: (query) => {
           expectTypeOf(query.state.data).toEqualTypeOf<unknown>()
@@ -653,18 +702,18 @@ describe('queryClient', () => {
     })
 
     it('should accept being called without filters', () => {
-      assertType<Parameters<QueryClient['resetQueries']>>([])
+      assertType<OperationArgs<typeof resetQueries, QueryClient>>([])
     })
 
     it('should return a promise of void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.resetQueries()).toEqualTypeOf<Promise<void>>()
+      expectTypeOf(resetQueries(queryClient)).toEqualTypeOf<Promise<void>>()
     })
 
     it('should accept the refetch options it inherits as its second argument', () => {
       expectTypeOf<
-        NonNullable<Parameters<QueryClient['resetQueries']>[1]>
+        NonNullable<OperationArgs<typeof resetQueries, QueryClient>[1]>
       >().toEqualTypeOf<{
         throwOnError?: boolean
         cancelRefetch?: boolean
@@ -677,16 +726,25 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(
-        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
-        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'fetching' }),
+        countFetchingQueries(queryClient, {
+          queryKey: ['key'],
+          // @ts-expect-error countFetchingQueries always filters by fetchStatus: 'fetching'
+          fetchStatus: 'fetching',
+        }),
       ).toEqualTypeOf<number>()
       expectTypeOf(
-        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
-        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'paused' }),
+        countFetchingQueries(queryClient, {
+          queryKey: ['key'],
+          // @ts-expect-error countFetchingQueries always filters by fetchStatus: 'fetching'
+          fetchStatus: 'paused',
+        }),
       ).toEqualTypeOf<number>()
       expectTypeOf(
-        // @ts-expect-error isFetching always filters by fetchStatus: 'fetching'
-        queryClient.isFetching({ queryKey: ['key'], fetchStatus: 'idle' }),
+        countFetchingQueries(queryClient, {
+          queryKey: ['key'],
+          // @ts-expect-error countFetchingQueries always filters by fetchStatus: 'fetching'
+          fetchStatus: 'idle',
+        }),
       ).toEqualTypeOf<number>()
     })
 
@@ -694,7 +752,7 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(
-        queryClient.isFetching({
+        countFetchingQueries(queryClient, {
           queryKey: ['key'],
           exact: true,
           type: 'active',
@@ -708,25 +766,27 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(
-        queryClient.getQueryCache().findAll({ fetchStatus: 'paused' }),
+        findCachedQueries(getQueryCache(queryClient), {
+          fetchStatus: 'paused',
+        }),
       ).toBeArray()
     })
 
     it('should return a number', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.isFetching()).toEqualTypeOf<number>()
+      expectTypeOf(countFetchingQueries(queryClient)).toEqualTypeOf<number>()
       expectTypeOf(
-        queryClient.isFetching({ queryKey: ['key'] }),
+        countFetchingQueries(queryClient, { queryKey: ['key'] }),
       ).toEqualTypeOf<number>()
     })
 
     it('should accept being called without filters', () => {
-      assertType<Parameters<QueryClient['isFetching']>>([])
+      assertType<OperationArgs<typeof countFetchingQueries, QueryClient>>([])
     })
 
     it('should reject an unknown filter property', () => {
-      assertType<Parameters<QueryClient['isFetching']>>([
+      assertType<OperationArgs<typeof countFetchingQueries, QueryClient>>([
         // @ts-expect-error unknown filter properties are rejected
         { notAFilter: true },
       ])
@@ -737,18 +797,18 @@ describe('queryClient', () => {
     it('should return a number', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.isMutating()).toEqualTypeOf<number>()
+      expectTypeOf(isMutating(queryClient)).toEqualTypeOf<number>()
       expectTypeOf(
-        queryClient.isMutating({ mutationKey: ['key'] }),
+        isMutating(queryClient, { mutationKey: ['key'] }),
       ).toEqualTypeOf<number>()
     })
 
     it('should accept being called without filters', () => {
-      assertType<Parameters<QueryClient['isMutating']>>([])
+      assertType<OperationArgs<typeof isMutating, QueryClient>>([])
     })
 
     it('should reject an unknown filter property', () => {
-      assertType<Parameters<QueryClient['isMutating']>>([
+      assertType<OperationArgs<typeof isMutating, QueryClient>>([
         // @ts-expect-error unknown filter properties are rejected
         { notAFilter: true },
       ])
@@ -758,10 +818,10 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(
-        queryClient.isMutating(typedMutationFilters),
+        isMutating(queryClient, typedMutationFilters),
       ).toEqualTypeOf<number>()
       expectTypeOf(
-        queryClient.isMutating(untypedMutationFilters),
+        isMutating(queryClient, untypedMutationFilters),
       ).toEqualTypeOf<number>()
     })
 
@@ -769,7 +829,7 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(
-        queryClient.isMutating<MutationFilters<TypedData, TypedError>>({
+        isMutating<MutationFilters<TypedData, TypedError>>(queryClient, {
           predicate(mutation) {
             expectTypeOf(mutation).toEqualTypeOf<
               Mutation<TypedData, TypedError>
@@ -791,7 +851,7 @@ describe('queryClient', () => {
 
       expectTypeOf(
         // @ts-expect-error isMutating always filters by status: 'pending'
-        queryClient.isMutating({ mutationKey: ['key'], status: 'pending' }),
+        isMutating(queryClient, { mutationKey: ['key'], status: 'pending' }),
       ).toEqualTypeOf<number>()
     })
   })
@@ -801,23 +861,23 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(
-        queryClient.getQueriesData({ queryKey: ['key'] }),
+        getQueriesData(queryClient, { queryKey: ['key'] }),
       ).toEqualTypeOf<Array<[QueryKey, unknown]>>()
 
       // @ts-expect-error filters are required
-      queryClient.getQueriesData()
+      getQueriesData(queryClient)
     })
 
     it('should infer the passed generic as the tuple data', () => {
       const queryClient = new QueryClient()
-      const data = queryClient.getQueriesData<number>({ queryKey: ['key'] })
+      const data = getQueriesData<number>(queryClient, { queryKey: ['key'] })
 
       expectTypeOf(data).toEqualTypeOf<Array<[QueryKey, number | undefined]>>()
     })
 
     it('should widen the tuple to the filter key and unknown when tagged', () => {
       const queryClient = new QueryClient()
-      const data = queryClient.getQueriesData(typedQueryFilters)
+      const data = getQueriesData(queryClient, typedQueryFilters)
 
       expectTypeOf(data).toEqualTypeOf<
         Array<[ReadonlyArray<unknown>, unknown]>
@@ -826,7 +886,7 @@ describe('queryClient', () => {
 
     it('should resolve QueryKey and unknown when untyped', () => {
       const queryClient = new QueryClient()
-      const data = queryClient.getQueriesData(untypedQueryFilters)
+      const data = getQueriesData(queryClient, untypedQueryFilters)
 
       expectTypeOf(data).toEqualTypeOf<Array<[QueryKey, unknown]>>()
     })
@@ -836,7 +896,7 @@ describe('queryClient', () => {
     it('should return a promise of unknown', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.resumePausedMutations()).toEqualTypeOf<
+      expectTypeOf(resumePausedMutations(queryClient)).toEqualTypeOf<
         Promise<unknown>
       >()
     })
@@ -846,8 +906,10 @@ describe('queryClient', () => {
     it('should take no arguments and return void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.mount).parameters.toEqualTypeOf<[]>()
-      expectTypeOf(queryClient.mount()).toEqualTypeOf<void>()
+      expectTypeOf<
+        OperationArgs<typeof mountQueryClient, typeof queryClient>
+      >().toEqualTypeOf<[]>()
+      expectTypeOf(mountQueryClient(queryClient)).toEqualTypeOf<void>()
     })
   })
 
@@ -855,8 +917,10 @@ describe('queryClient', () => {
     it('should take no arguments and return void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.unmount).parameters.toEqualTypeOf<[]>()
-      expectTypeOf(queryClient.unmount()).toEqualTypeOf<void>()
+      expectTypeOf<
+        OperationArgs<typeof unmountQueryClient, typeof queryClient>
+      >().toEqualTypeOf<[]>()
+      expectTypeOf(unmountQueryClient(queryClient)).toEqualTypeOf<void>()
     })
   })
 
@@ -864,8 +928,10 @@ describe('queryClient', () => {
     it('should take no arguments and return void', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.clear).parameters.toEqualTypeOf<[]>()
-      expectTypeOf(queryClient.clear()).toEqualTypeOf<void>()
+      expectTypeOf<
+        OperationArgs<typeof clearQueryClient, typeof queryClient>
+      >().toEqualTypeOf<[]>()
+      expectTypeOf(clearQueryClient(queryClient)).toEqualTypeOf<void>()
     })
   })
 
@@ -873,7 +939,7 @@ describe('queryClient', () => {
     it('should return the QueryCache', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.getQueryCache()).toEqualTypeOf<QueryCache>()
+      expectTypeOf(getQueryCache(queryClient)).toEqualTypeOf<QueryCache>()
     })
   })
 
@@ -881,9 +947,7 @@ describe('queryClient', () => {
     it('should return the MutationCache', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(
-        queryClient.getMutationCache(),
-      ).toEqualTypeOf<MutationCache>()
+      expectTypeOf(getMutationCache(queryClient)).toEqualTypeOf<MutationCache>()
     })
   })
 
@@ -892,7 +956,7 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(
-        queryClient.getDefaultOptions(),
+        getDefaultOptions(queryClient),
       ).toEqualTypeOf<DefaultOptions>()
     })
   })
@@ -900,10 +964,10 @@ describe('queryClient', () => {
   describe('setDefaultOptions', () => {
     it('should only accept DefaultOptions', () => {
       expectTypeOf<
-        Parameters<QueryClient['setDefaultOptions']>[0]
+        OperationArgs<typeof setDefaultOptions, QueryClient>[0]
       >().toEqualTypeOf<DefaultOptions>()
 
-      assertType<Parameters<QueryClient['setDefaultOptions']>>([
+      assertType<OperationArgs<typeof setDefaultOptions, QueryClient>>([
         // @ts-expect-error unknown top-level options are rejected
         { notAnOption: true },
       ])
@@ -914,13 +978,13 @@ describe('queryClient', () => {
     it('should only accept a QueryKey as its first argument', () => {
       const queryClient = new QueryClient()
 
-      queryClient.setQueryDefaults(['key'], { staleTime: 1000 })
+      setQueryDefaults(queryClient, ['key'], { staleTime: 1000 })
 
       expectTypeOf<
-        Parameters<QueryClient['setQueryDefaults']>[0]
+        OperationArgs<typeof setQueryDefaults, QueryClient>[0]
       >().toEqualTypeOf<QueryKey>()
 
-      assertType<Parameters<QueryClient['setQueryDefaults']>>([
+      assertType<OperationArgs<typeof setQueryDefaults, QueryClient>>([
         // @ts-expect-error the query key must be an array
         'key',
         {},
@@ -930,14 +994,14 @@ describe('queryClient', () => {
     it('should make every option optional and reject queryKey', () => {
       const queryClient = new QueryClient()
 
-      queryClient.setQueryDefaults(['key'], {})
-      queryClient.setQueryDefaults(['key'], { staleTime: 1000 })
+      setQueryDefaults(queryClient, ['key'], {})
+      setQueryDefaults(queryClient, ['key'], { staleTime: 1000 })
 
       expectTypeOf<
-        Parameters<typeof queryClient.setQueryDefaults>[1]
+        OperationArgs<typeof setQueryDefaults, typeof queryClient>[1]
       >().not.toHaveProperty('queryKey')
 
-      queryClient.setQueryDefaults(['key'], {
+      setQueryDefaults(queryClient, ['key'], {
         // @ts-expect-error queryKey is omitted from the defaults
         queryKey: ['key'],
       })
@@ -947,7 +1011,7 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(
-        queryClient.setQueryDefaults(['key'], {}),
+        setQueryDefaults(queryClient, ['key'], {}),
       ).toEqualTypeOf<void>()
     })
   })
@@ -957,16 +1021,16 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf<
-        Parameters<QueryClient['getQueryDefaults']>[0]
+        OperationArgs<typeof getQueryDefaults, QueryClient>[0]
       >().toEqualTypeOf<QueryKey>()
 
       // @ts-expect-error the query key is required
-      queryClient.getQueryDefaults()
+      getQueryDefaults(queryClient)
     })
 
     it('should return the query options without queryKey', () => {
       const queryClient = new QueryClient()
-      const defaults = queryClient.getQueryDefaults(['key'])
+      const defaults = getQueryDefaults(queryClient, ['key'])
 
       expectTypeOf(defaults).toEqualTypeOf<
         OmitKeyof<QueryObserverOptionsBase<any, any, any, any, any>, 'queryKey'>
@@ -977,11 +1041,11 @@ describe('queryClient', () => {
     it('should resolve the same options for a tagged and an untyped key', () => {
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.getQueryDefaults(typedFilterKey)).toEqualTypeOf<
+      expectTypeOf(getQueryDefaults(queryClient, typedFilterKey)).toEqualTypeOf<
         OmitKeyof<QueryObserverOptionsBase<any, any, any, any, any>, 'queryKey'>
       >()
       expectTypeOf(
-        queryClient.getQueryDefaults(untypedFilterKey),
+        getQueryDefaults(queryClient, untypedFilterKey),
       ).toEqualTypeOf<
         OmitKeyof<QueryObserverOptionsBase<any, any, any, any, any>, 'queryKey'>
       >()
@@ -992,13 +1056,13 @@ describe('queryClient', () => {
     it('should only accept a MutationKey as its first argument', () => {
       const queryClient = new QueryClient()
 
-      queryClient.setMutationDefaults(['key'], {})
+      setMutationDefaults(queryClient, ['key'], {})
 
       expectTypeOf<
-        Parameters<QueryClient['setMutationDefaults']>[0]
+        OperationArgs<typeof setMutationDefaults, QueryClient>[0]
       >().toEqualTypeOf<MutationKey>()
 
-      assertType<Parameters<QueryClient['setMutationDefaults']>>([
+      assertType<OperationArgs<typeof setMutationDefaults, QueryClient>>([
         // @ts-expect-error the mutation key must be an array
         'key',
         {},
@@ -1008,13 +1072,13 @@ describe('queryClient', () => {
     it('should reject mutationKey inside the defaults', () => {
       const queryClient = new QueryClient()
 
-      queryClient.setMutationDefaults(['key'], { retry: 3 })
+      setMutationDefaults(queryClient, ['key'], { retry: 3 })
 
       expectTypeOf<
-        Parameters<typeof queryClient.setMutationDefaults>[1]
+        OperationArgs<typeof setMutationDefaults, typeof queryClient>[1]
       >().not.toHaveProperty('mutationKey')
 
-      queryClient.setMutationDefaults(['key'], {
+      setMutationDefaults(queryClient, ['key'], {
         // @ts-expect-error mutationKey is omitted from the defaults
         mutationKey: ['key'],
       })
@@ -1024,7 +1088,7 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(
-        queryClient.setMutationDefaults(['key'], {}),
+        setMutationDefaults(queryClient, ['key'], {}),
       ).toEqualTypeOf<void>()
     })
 
@@ -1032,7 +1096,7 @@ describe('queryClient', () => {
     it('should type the onSettled callback arguments', () => {
       const queryClient = new QueryClient()
 
-      queryClient.setMutationDefaults(typedMutationKey, {
+      setMutationDefaults(queryClient, typedMutationKey, {
         onSettled(data, error, variables, onMutateResult, context) {
           expectTypeOf(data).toEqualTypeOf<unknown>()
           expectTypeOf(error).toEqualTypeOf<DefaultError | null>()
@@ -1049,16 +1113,16 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf<
-        Parameters<QueryClient['getMutationDefaults']>[0]
+        OperationArgs<typeof getMutationDefaults, QueryClient>[0]
       >().toEqualTypeOf<MutationKey>()
 
       // @ts-expect-error the mutation key is required
-      queryClient.getMutationDefaults()
+      getMutationDefaults(queryClient)
     })
 
     it('should return the mutation options without mutationKey', () => {
       const queryClient = new QueryClient()
-      const defaults = queryClient.getMutationDefaults(['key'])
+      const defaults = getMutationDefaults(queryClient, ['key'])
 
       expectTypeOf(defaults).toEqualTypeOf<
         OmitKeyof<MutationObserverOptions<any, any, any, any>, 'mutationKey'>
@@ -1070,12 +1134,12 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(
-        queryClient.getMutationDefaults(typedMutationKey),
+        getMutationDefaults(queryClient, typedMutationKey),
       ).toEqualTypeOf<
         OmitKeyof<MutationObserverOptions<any, any, any, any>, 'mutationKey'>
       >()
       expectTypeOf(
-        queryClient.getMutationDefaults(untypedMutationKey),
+        getMutationDefaults(queryClient, untypedMutationKey),
       ).toEqualTypeOf<
         OmitKeyof<MutationObserverOptions<any, any, any, any>, 'mutationKey'>
       >()
@@ -1085,7 +1149,7 @@ describe('queryClient', () => {
   describe('defaultQueryOptions', () => {
     it('should resolve the defaulted options from the data and error types', () => {
       const queryClient = new QueryClient()
-      const options = queryClient.defaultQueryOptions(typedQueryOptions)
+      const options = defaultQueryOptions(queryClient, typedQueryOptions)
 
       expectTypeOf(options).toEqualTypeOf<
         DefaultedQueryObserverOptions<
@@ -1099,7 +1163,7 @@ describe('queryClient', () => {
     })
 
     it('should preserve the query function page parameter', () => {
-      const options = new QueryClient().defaultQueryOptions({
+      const options = defaultQueryOptions(new QueryClient(), {
         queryKey: ['key'],
         queryFn: ({ pageParam }: { pageParam: number }) => pageParam.toFixed(),
       })
@@ -1111,7 +1175,7 @@ describe('queryClient', () => {
 
     it('should resolve unknown and DefaultError when untyped', () => {
       const queryClient = new QueryClient()
-      const options = queryClient.defaultQueryOptions(untypedQueryOptions)
+      const options = defaultQueryOptions(queryClient, untypedQueryOptions)
 
       expectTypeOf(options).toEqualTypeOf<
         DefaultedQueryObserverOptions<
@@ -1127,13 +1191,13 @@ describe('queryClient', () => {
 
   describe('defaultMutationOptions', () => {
     it('should accept being called without options', () => {
-      assertType<Parameters<QueryClient['defaultMutationOptions']>>([])
+      assertType<OperationArgs<typeof defaultMutationOptions, QueryClient>>([])
     })
 
     it('should return the same type it is given', () => {
       const queryClient = new QueryClient()
       const options: MutationOptions<number, Error, string> = {}
-      const defaulted = queryClient.defaultMutationOptions(options)
+      const defaulted = defaultMutationOptions(queryClient, options)
 
       expectTypeOf(defaulted).toEqualTypeOf<
         MutationOptions<number, Error, string>
@@ -1144,10 +1208,10 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
 
       expectTypeOf(
-        queryClient.defaultMutationOptions(typedMutationOptions),
+        defaultMutationOptions(queryClient, typedMutationOptions),
       ).toEqualTypeOf<MutationOptions<TypedData, TypedError, void, unknown>>()
       expectTypeOf(
-        queryClient.defaultMutationOptions(untypedMutationOptions),
+        defaultMutationOptions(queryClient, untypedMutationOptions),
       ).toEqualTypeOf<MutationOptions<unknown, DefaultError, void, unknown>>()
     })
   })
@@ -1207,7 +1271,7 @@ describe('queryClient', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
 
-      expectTypeOf(queryClient.getQueryState(key)).toEqualTypeOf<
+      expectTypeOf(getQueryState(queryClient, key)).toEqualTypeOf<
         QueryState<number, Error> | undefined
       >()
 
@@ -1226,7 +1290,7 @@ describe('queryClient', () => {
       const queryClient = new QueryClient()
       const reTagged = ['key'] as DataTag<Tagged, string>
 
-      expectTypeOf(queryClient.getQueryData(reTagged)).toEqualTypeOf<
+      expectTypeOf(getQueryData(queryClient, reTagged)).toEqualTypeOf<
         number | undefined
       >()
     })
@@ -1251,7 +1315,7 @@ describe('queryClient', () => {
     })
 
     it('should reject a non-QueryTypeFilter type', () => {
-      assertType<Parameters<QueryClient['isFetching']>>([
+      assertType<OperationArgs<typeof countFetchingQueries, QueryClient>>([
         // @ts-expect-error 'paused' is not a QueryTypeFilter
         { type: 'paused' },
       ])
@@ -1290,7 +1354,7 @@ describe('queryClient', () => {
 
   describe('MutationFilters', () => {
     it('should reject a mutationKey that is not an array', () => {
-      assertType<Parameters<QueryClient['isMutating']>>([
+      assertType<OperationArgs<typeof isMutating, QueryClient>>([
         // @ts-expect-error the mutation key must be an array
         { mutationKey: 'key' },
       ])
@@ -1336,8 +1400,9 @@ describe('queryClient', () => {
       const key = ['key'] as DataTag<Array<string>, number>
       const queryClient = new QueryClient()
 
-      type UpdaterArg = Parameters<
-        typeof queryClient.setQueryData<number, typeof key>
+      type UpdaterArg = OperationArgs<
+        typeof setQueryData<number, typeof key>,
+        typeof queryClient
       >[1]
       expectTypeOf<UpdaterArg>().toEqualTypeOf<
         Updater<number | undefined, number | undefined>

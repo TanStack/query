@@ -1,5 +1,9 @@
 import { render } from '@solidjs/testing-library'
-import { QueryClient, onlineManager } from '@tanstack/query-core'
+import {
+  QueryClient,
+  clearQueryClient,
+  onlineManager,
+} from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import DevtoolsComponent from '../DevtoolsComponent'
 
@@ -57,7 +61,7 @@ describe('DevtoolsComponent', () => {
 
   afterEach(() => {
     Object.keys(storage).forEach((key) => delete storage[key])
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   it('should render without throwing when only required props are provided', () => {

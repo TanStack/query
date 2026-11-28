@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/preact-query'
+import { isError, isPending, useQuery } from '@tanstack/preact-query'
 import { commentsQueries } from './services/comments/queries'
 import { postsQueries } from './services/posts/queries'
 import { usersQueries } from './services/users/queries'
@@ -22,24 +22,24 @@ export default function App() {
       <h1>Server Rendering with Preact Query</h1>
       <h2>Comments</h2>
       <p>
-        {commentsQuery.isPending
+        {isPending(commentsQuery)
           ? 'Loading comments on the client...'
-          : commentsQuery.isError
+          : isError(commentsQuery)
             ? `Error: ${commentsQuery.error.message}`
             : `${commentsQuery.data.length} comments`}
       </p>
       <h2>Author of the first post</h2>
       <p>
-        {authorQuery.isPending
+        {isPending(authorQuery)
           ? 'Loading author...'
-          : authorQuery.isError
+          : isError(authorQuery)
             ? `Error: ${authorQuery.error.message}`
             : authorQuery.data.name}
       </p>
       <h2>Posts</h2>
-      {postsQuery.isPending ? (
+      {isPending(postsQuery) ? (
         'Loading posts...'
-      ) : postsQuery.isError ? (
+      ) : isError(postsQuery) ? (
         <span>Error: {postsQuery.error.message}</span>
       ) : (
         <ul>

@@ -9,6 +9,13 @@ import {
   Component,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import {
+  cancelQueries,
+  clearQueryClient,
+  getQueryData,
+  isMutating,
+  setQueryData,
+} from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import { lastValueFrom } from 'rxjs'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -43,7 +50,7 @@ describe('PendingTasks Integration', () => {
 
   afterEach(() => {
     onlineManager.setOnline(true)
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -73,7 +80,7 @@ describe('PendingTasks Integration', () => {
       await second
       await Promise.resolve()
       expect(stable).toBe(false)
-      expect(queryClient.isMutating()).toBe(1)
+      expect(isMutating(queryClient)).toBe(1)
       resolve.get('first')!('first')
       await first
       await stability
@@ -729,7 +736,7 @@ describe('PendingTasks Integration', () => {
 
       // Cancel the query after a short delay
       setTimeout(() => {
-        queryClient.cancelQueries({ queryKey: ['cancel-test'] })
+        cancelQueries(queryClient, { queryKey: ['cancel-test'] })
       }, 20)
 
       // Advance to the cancellation point
@@ -775,7 +782,7 @@ describe('PendingTasks Integration', () => {
       const app = TestBed.inject(ApplicationRef)
       const testQueryKey = ['optimistic-test']
 
-      queryClient.setQueryData(testQueryKey, 'initial-data')
+      setQueryData(queryClient, testQueryKey, 'initial-data')
 
       const mutation = TestBed.runInInjectionContext(() =>
         injectMutation(() => ({
@@ -785,14 +792,14 @@ describe('PendingTasks Integration', () => {
           },
           onMutate: async (newData) => {
             // Optimistic update
-            const previousData = queryClient.getQueryData(testQueryKey)
-            queryClient.setQueryData(testQueryKey, newData)
+            const previousData = getQueryData(queryClient, testQueryKey)
+            setQueryData(queryClient, testQueryKey, newData)
             return { previousData }
           },
           onError: (_err, _newData, context) => {
             // Rollback on error
             if (context?.previousData) {
-              queryClient.setQueryData(testQueryKey, context.previousData)
+              setQueryData(queryClient, testQueryKey, context.previousData)
             }
           },
         })),
@@ -802,14 +809,14 @@ describe('PendingTasks Integration', () => {
       await Promise.resolve()
 
       // Data should be optimistically updated immediately
-      expect(queryClient.getQueryData(testQueryKey)).toBe('optimistic-data')
+      expect(getQueryData(queryClient, testQueryKey)).toBe('optimistic-data')
 
       const stablePromise = app.whenStable()
       await vi.advanceTimersByTimeAsync(60)
       await stablePromise
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('optimistic-data')
-      expect(queryClient.getQueryData(testQueryKey)).toBe('optimistic-data')
+      expect(getQueryData(queryClient, testQueryKey)).toBe('optimistic-data')
     })
   })
 })

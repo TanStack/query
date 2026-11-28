@@ -28,12 +28,16 @@ const projectsQuery = useQuery(() => ({
 [//]: # 'Example2'
 
 ```tsx
+import { queryOptions, select } from '@tanstack/solid-query'
+
 // Get the users ids
-const usersQuery = useQuery(() => ({
-  queryKey: ['users'],
-  queryFn: getUsersData,
-  select: (users) => users.map((user) => user.id),
-}))
+const usersQuery = useQuery(() =>
+  queryOptions({
+    queryKey: ['users'],
+    queryFn: getUsersData,
+    select: select((users) => users.map((user) => user.id)),
+  }),
+)
 
 // Then get the users messages
 const usersMessages = useQueries(() => ({

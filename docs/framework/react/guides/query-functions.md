@@ -12,19 +12,28 @@ All of the following are valid query function configurations:
 [//]: # 'Example'
 
 ```tsx
-useQuery({ queryKey: ['todos'], queryFn: fetchAllTodos })
-useQuery({ queryKey: ['todos', todoId], queryFn: () => fetchTodoById(todoId) })
-useQuery({
-  queryKey: ['todos', todoId],
-  queryFn: async () => {
-    const data = await fetchTodoById(todoId)
-    return data
-  },
-})
-useQuery({
-  queryKey: ['todos', todoId],
-  queryFn: ({ queryKey }) => fetchTodoById(queryKey[1]),
-})
+useQuery(queryOptions({ queryKey: ['todos'], queryFn: fetchAllTodos }))
+useQuery(
+  queryOptions({
+    queryKey: ['todos', todoId],
+    queryFn: () => fetchTodoById(todoId),
+  }),
+)
+useQuery(
+  queryOptions({
+    queryKey: ['todos', todoId],
+    queryFn: async () => {
+      const data = await fetchTodoById(todoId)
+      return data
+    },
+  }),
+)
+useQuery(
+  queryOptions({
+    queryKey: ['todos', todoId],
+    queryFn: ({ queryKey }) => fetchTodoById(queryKey[1]),
+  }),
+)
 ```
 
 [//]: # 'Example'
@@ -36,19 +45,21 @@ For TanStack Query to determine a query has errored, the query function **must t
 [//]: # 'Example2'
 
 ```tsx
-const { error } = useQuery({
-  queryKey: ['todos', todoId],
-  queryFn: async () => {
-    if (somethingGoesWrong) {
-      throw new Error('Oh no!')
-    }
-    if (somethingElseGoesWrong) {
-      return Promise.reject(new Error('Oh no!'))
-    }
+const { error } = useQuery(
+  queryOptions({
+    queryKey: ['todos', todoId],
+    queryFn: async () => {
+      if (somethingGoesWrong) {
+        throw new Error('Oh no!')
+      }
+      if (somethingElseGoesWrong) {
+        return Promise.reject(new Error('Oh no!'))
+      }
 
-    return data
-  },
-})
+      return data
+    },
+  }),
+)
 ```
 
 [//]: # 'Example2'
@@ -60,16 +71,18 @@ While most utilities like `axios` or `graphql-request` automatically throw error
 [//]: # 'Example3'
 
 ```tsx
-useQuery({
-  queryKey: ['todos', todoId],
-  queryFn: async () => {
-    const response = await fetch('/todos/' + todoId)
-    if (!response.ok) {
-      throw new Error('Network response was not ok')
-    }
-    return response.json()
-  },
-})
+useQuery(
+  queryOptions({
+    queryKey: ['todos', todoId],
+    queryFn: async () => {
+      const response = await fetch('/todos/' + todoId)
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      return response.json()
+    },
+  }),
+)
 ```
 
 [//]: # 'Example3'
@@ -82,10 +95,12 @@ Query keys are not just for uniquely identifying the data you are fetching, but 
 
 ```tsx
 function Todos({ status, page }) {
-  const result = useQuery({
-    queryKey: ['todos', { status, page }],
-    queryFn: fetchTodoList,
-  })
+  const result = useQuery(
+    queryOptions({
+      queryKey: ['todos', { status, page }],
+      queryFn: fetchTodoList,
+    }),
+  )
 }
 
 // Access the key, status and page variables in your query function!

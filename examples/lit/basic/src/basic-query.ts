@@ -2,6 +2,8 @@ import {
   QueryClient,
   QueryClientProvider,
   createQueryController,
+  isError,
+  isPending,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { resetTodoApi } from './services/todos/api'
@@ -51,12 +53,12 @@ class BasicQueryExample extends LitElement {
         </button>
 
         ${
-          query.isPending
+          isPending(query)
             ? html`<p data-testid="basic-loading">Loading...</p>`
             : null
         }
         ${
-          query.isError
+          isError(query)
             ? html`<p data-testid="basic-error">
                 Error: ${query.error.message}
               </p>`

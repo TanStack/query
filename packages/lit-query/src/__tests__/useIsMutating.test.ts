@@ -1,4 +1,9 @@
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  clearQueryClient,
+  getMutationCache,
+  isMutating as queryIsMutating,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import {
@@ -35,7 +40,7 @@ describe('useIsMutating', () => {
 
   afterEach(() => {
     container.remove()
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -119,14 +124,14 @@ describe('useIsMutating', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.isMutating()).toBe(0)
     expect(
-      queryClient
-        .getMutationCache()
-        .findAll({ mutationKey: consumer.mutationKey }).length,
+      getMutationCache(queryClient).findAll({
+        mutationKey: consumer.mutationKey,
+      }).length,
     ).toBeGreaterThan(0)
     expect(
-      providerClient
-        .getMutationCache()
-        .findAll({ mutationKey: consumer.mutationKey }),
+      getMutationCache(providerClient).findAll({
+        mutationKey: consumer.mutationKey,
+      }),
     ).toHaveLength(0)
 
     consumer.mutation.destroy()
@@ -439,7 +444,7 @@ describe('useIsMutating', () => {
     const producerMutation = producer.mutation
 
     producerMutation.mutate()
-    expect(queryClient.isMutating()).toBe(1)
+    expect(queryIsMutating(queryClient)).toBe(1)
 
     class Host extends LitElement {
       isMutating?: IsMutatingAccessor

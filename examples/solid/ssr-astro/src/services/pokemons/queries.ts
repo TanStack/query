@@ -1,4 +1,8 @@
-import { keepPreviousData, queryOptions } from '@tanstack/solid-query'
+import {
+  keepPreviousData,
+  placeholderData,
+  queryOptions,
+} from '@tanstack/solid-query'
 import { pokemonsAPI } from './api'
 
 export const pokemonsQueries = {
@@ -12,7 +16,7 @@ export const pokemonsQueries = {
     queryOptions({
       queryKey: [...pokemonsQueries.all(), 'detail', id] as const,
       queryFn: () => pokemonsAPI.getPokemon(id),
-      placeholderData: keepPreviousData,
+      placeholderData: placeholderData(keepPreviousData),
       throwOnError: true,
     }),
 }

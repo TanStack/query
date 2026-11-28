@@ -1,6 +1,7 @@
 import {
   createMutationController,
   createQueryController,
+  invalidateQueries,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { todosMutations, todosQueries } from './services/todos/queries'
@@ -17,7 +18,7 @@ class TodoListUI extends LitElement {
   private readonly addTodoMutation = createMutationController(this, () => ({
     ...todosMutations.create(),
     onSettled: (_data, _error, _variables, _onMutateResult, { client }) =>
-      client.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
+      invalidateQueries(client, { queryKey: todosQueries.list().queryKey }),
   }))
 
   protected override createRenderRoot(): HTMLElement | DocumentFragment {

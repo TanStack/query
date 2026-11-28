@@ -1,3 +1,6 @@
+import { InfiniteQueryObserver } from '@tanstack/query-core'
+import { observerKey } from './queryDescriptor'
+import { queryPolicy } from './queryPolicy'
 import type {
   DefaultError,
   InfiniteData,
@@ -8,6 +11,8 @@ import type {
   QueryKeyWithDataTag,
   SkipToken,
 } from '@tanstack/query-core'
+import type { QueryDescriptor } from './queryDescriptor'
+import type { SuspenseControls } from './suspenseQuery'
 import type { UseInfiniteQueryOptions } from './types'
 
 /**
@@ -60,16 +65,17 @@ export type UndefinedInitialDataInfiniteOptions<
  * @template TQueryKey - The type of your `queryKey`.
  * @template TPageParam - The type of the parameter passed to `queryFn` to fetch a given page.
  */
-export type UnusedSkipTokenInfiniteOptions<
+export interface UnusedSkipTokenInfiniteOptions<
   TQueryFnData,
   TError = DefaultError,
   TData = InfiniteData<TQueryFnData>,
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = unknown,
-> = OmitKeyof<
+> extends OmitKeyof<
   UseInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey, TPageParam>,
   'queryFn'
-> & {
+> {
+  /** The query function or the configured client default. */
   queryFn: Exclude<
     UseInfiniteQueryOptions<
       TQueryFnData,
@@ -117,186 +123,230 @@ export type DefinedInitialDataInfiniteOptions<
     | (() => NonUndefinedGuard<InfiniteData<TQueryFnData, TPageParam>>)
 }
 
-/**
- * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
- * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
- * `options.queryKey` is required and is the query key to generate options for.
- *
- * This overload is selected when `initialData` is known to be defined.
- * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`, with `initialData` known to be defined.
- * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @remarks See {@link useInfiniteQuery} for examples that fetch further pages, from a button click or
- * automatically as the user scrolls.
- * @see {@link useInfiniteQuery} to run an infinite query with these options.
- * @example
- * ```tsx
- * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query'
- *
- * export const projectsOptions = infiniteQueryOptions({
- *   queryKey: ['projects'],
- *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
- *   initialPageParam: 0,
- *   getNextPageParam: (lastPage) => lastPage.nextId,
- *   initialData: { pages: [], pageParams: [] },
- * })
- *
- * function Projects() {
- *   // `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
- *   // list stays visible alongside the error.
- *   const { data, isError, error } = useInfiniteQuery(projectsOptions)
- *
- *   return (
- *     <div>
- *       {isError ? <span>Error: {error.message}</span> : null}
- *       <ul>
- *         {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
- *       </ul>
- *     </div>
- *   )
- * }
- * ```
- */
-export function infiniteQueryOptions<
-  TQueryFnData,
-  TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
->(
-  options: DefinedInitialDataInfiniteOptions<
+/** Identifies the observer selected at definition time by infiniteQueryOptions. */
+export type InfiniteQueryMode = QueryDescriptor<typeof InfiniteQueryObserver>
+
+// A private type-only default distinguishes an omitted selector output from an
+// explicitly selected value while keeping the public v6 generic parameter order.
+declare const unselectedPages: unique symbol
+/** Marks an omitted selector type while allowing an inferred page parameter in its default. */
+export type UnselectedPages = typeof unselectedPages
+/** Preserves a custom projection or supplies the cached pages with their inferred cursor type. */
+export type ResolvedPages<TData, TPage, TParam> = TData extends UnselectedPages
+  ? InfiniteData<TPage, TParam>
+  : TData
+
+type InfiniteQueryOptionsFactory<TPolicy> = {
+  /**
+   * The factory accepts the fetcher, pagination callbacks, and observer options for the query.
+   * These options can be shared across hooks and imperative APIs such as `infiniteQuery(client, options)`.
+   * `options.queryKey` is required and is the query key to generate options for.
+   *
+   * This overload is selected when `initialData` is known to be defined.
+   * @param options - The {@link DefinedInitialDataInfiniteOptions} to use — all paginated observer options, with `initialData` known to be defined.
+   * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
+   * @remarks See {@link useQuery} for examples that fetch further pages, from a button click or
+   * automatically as the user scrolls.
+   * @see {@link useQuery} to run an infinite query with these options.
+   * @example
+   * ```tsx
+   * import { infiniteQueryOptions, useQuery } from '@tanstack/react-query'
+   *
+   * export const projectsOptions = infiniteQueryOptions({
+   *   queryKey: ['projects'],
+   *   queryFn: ({ pageParam }) => fetchProjects(pageParam),
+   *   initialPageParam: 0,
+   *   getNextPageParam: (lastPage) => lastPage.nextId,
+   *   initialData: { pages: [], pageParams: [] },
+   * })
+   *
+   * function Projects() {
+   *   // `data` is never `undefined`, thanks to `initialData` — even if a refetch fails, so the
+   *   // list stays visible alongside the error.
+   *   const { data, status, error } = useQuery(projectsOptions)
+   *
+   *   return (
+   *     <div>
+   *       {status === 'error' ? <span>Error: {error.message}</span> : null}
+   *       <ul>
+   *         {data.pages.map((page) => page.projects.map((p) => <li key={p.id}>{p.name}</li>))}
+   *       </ul>
+   *     </div>
+   *   )
+   * }
+   * ```
+   */
+  <
+    TQueryFnData,
+    TError = DefaultError,
+    TData = UnselectedPages,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: DefinedInitialDataInfiniteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    > &
+      TPolicy,
+  ): DefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
-    TData,
+    ResolvedPages<TData, TQueryFnData, TPageParam>,
     TQueryKey,
     TPageParam
-  >,
-): DefinedInitialDataInfiniteOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam
-> &
-  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+  > &
+    QueryKeyWithDataTag<
+      TQueryKey,
+      InfiniteData<TQueryFnData, TPageParam>,
+      TError
+    > &
+    InfiniteQueryMode &
+    TPolicy
 
-/**
- * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
- * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
- * `options.queryKey` is required and is the query key to generate options for.
- * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
- * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @remarks See {@link useInfiniteQuery} for examples that fetch further pages, from a button click or
- * automatically as the user scrolls.
- * @see {@link useInfiniteQuery} to run an infinite query with these options.
- * @example
- * A parameterized factory, so the same options object can be reused per `postId`:
- * ```tsx
- * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query'
- *
- * export const commentsOptions = (postId: string) =>
- *   infiniteQueryOptions({
- *     queryKey: ['post', postId, 'comments'],
- *     queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
- *     initialPageParam: 0,
- *     getNextPageParam: (lastPage) => lastPage.nextId,
- *   })
- *
- * function Comments({ postId }: { postId: string }) {
- *   const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
- *
- *   if (isPending) return 'Loading...'
- *   if (isError) return <span>Error: {error.message}</span>
- *
- *   return (
- *     <ul>
- *       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
- *     </ul>
- *   )
- * }
- * ```
- */
-export function infiniteQueryOptions<
-  TQueryFnData,
-  TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
->(
-  options: UnusedSkipTokenInfiniteOptions<
+  /**
+   * The factory accepts the fetcher, pagination callbacks, and observer options for the query.
+   * These options can be shared across hooks and imperative APIs such as `infiniteQuery(client, options)`.
+   * `options.queryKey` is required and is the query key to generate options for.
+   * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — the fetcher, pagination, and observer options.
+   * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
+   * @remarks See {@link useQuery} for examples that fetch further pages, from a button click or
+   * automatically as the user scrolls.
+   * @see {@link useQuery} to run an infinite query with these options.
+   * @example
+   * A parameterized factory, so the same options object can be reused per `postId`:
+   * ```tsx
+   * import { infiniteQueryOptions, useQuery } from '@tanstack/react-query'
+   *
+   * export const commentsOptions = (postId: string) =>
+   *   infiniteQueryOptions({
+   *     queryKey: ['post', postId, 'comments'],
+   *     queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
+   *     initialPageParam: 0,
+   *     getNextPageParam: (lastPage) => lastPage.nextId,
+   *   })
+   *
+   * function Comments({ postId }: { postId: string }) {
+   *   const { data, status, error } = useQuery(commentsOptions(postId))
+   *
+   *   if (status === 'pending') return 'Loading...'
+   *   if (status === 'error') return <span>Error: {error.message}</span>
+   *
+   *   return (
+   *     <ul>
+   *       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+   *     </ul>
+   *   )
+   * }
+   * ```
+   */
+  <
+    TQueryFnData,
+    TError = DefaultError,
+    TData = UnselectedPages,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: UnusedSkipTokenInfiniteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    > &
+      TPolicy,
+  ): UnusedSkipTokenInfiniteOptions<
     TQueryFnData,
     TError,
-    TData,
+    ResolvedPages<TData, TQueryFnData, TPageParam>,
     TQueryKey,
     TPageParam
-  >,
-): UnusedSkipTokenInfiniteOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam
-> &
-  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
+  > &
+    QueryKeyWithDataTag<
+      TQueryKey,
+      InfiniteData<TQueryFnData, TPageParam>,
+      TError
+    > &
+    InfiniteQueryMode &
+    TPolicy
 
-/**
- * You can generally pass everything to `infiniteQueryOptions` that you can also pass to `useInfiniteQuery`.
- * These options can be shared across hooks and imperative APIs such as `queryClient.infiniteQuery`.
- * `options.queryKey` is required and is the query key to generate options for.
- * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to `useInfiniteQuery`.
- * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @remarks See {@link useInfiniteQuery} for examples that fetch further pages (from a button click or
- * automatically as the user scrolls) and that use `skipToken` to disable the query until `postId` is set.
- * @see {@link useInfiniteQuery} to run an infinite query with these options.
- * @example
- * A parameterized factory, so the same options object can be reused per `postId`:
- * ```tsx
- * import { infiniteQueryOptions, useInfiniteQuery } from '@tanstack/react-query'
- *
- * export const commentsOptions = (postId: string) =>
- *   infiniteQueryOptions({
- *     queryKey: ['post', postId, 'comments'],
- *     queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
- *     initialPageParam: 0,
- *     getNextPageParam: (lastPage) => lastPage.nextId,
- *   })
- *
- * function Comments({ postId }: { postId: string }) {
- *   const { data, isPending, isError, error } = useInfiniteQuery(commentsOptions(postId))
- *
- *   if (isPending) return 'Loading...'
- *   if (isError) return <span>Error: {error.message}</span>
- *
- *   return (
- *     <ul>
- *       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
- *     </ul>
- *   )
- * }
- * ```
- */
-export function infiniteQueryOptions<
-  TQueryFnData,
-  TError = DefaultError,
-  TData = InfiniteData<TQueryFnData>,
-  TQueryKey extends QueryKey = QueryKey,
-  TPageParam = unknown,
->(
-  options: UndefinedInitialDataInfiniteOptions<
+  /**
+   * The factory accepts the fetcher, pagination callbacks, and observer options for the query.
+   * These options can be shared across hooks and imperative APIs such as `infiniteQuery(client, options)`.
+   * `options.queryKey` is required and is the query key to generate options for.
+   * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — the fetcher, pagination, and observer options.
+   * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
+   * @remarks See {@link useQuery} for examples that fetch further pages (from a button click or
+   * automatically as the user scrolls) and that use `skipToken` to disable the query until `postId` is set.
+   * @see {@link useQuery} to run an infinite query with these options.
+   * @example
+   * A parameterized factory, so the same options object can be reused per `postId`:
+   * ```tsx
+   * import { infiniteQueryOptions, useQuery } from '@tanstack/react-query'
+   *
+   * export const commentsOptions = (postId: string) =>
+   *   infiniteQueryOptions({
+   *     queryKey: ['post', postId, 'comments'],
+   *     queryFn: ({ pageParam }) => fetchComments(postId, pageParam),
+   *     initialPageParam: 0,
+   *     getNextPageParam: (lastPage) => lastPage.nextId,
+   *   })
+   *
+   * function Comments({ postId }: { postId: string }) {
+   *   const { data, status, error } = useQuery(commentsOptions(postId))
+   *
+   *   if (status === 'pending') return 'Loading...'
+   *   if (status === 'error') return <span>Error: {error.message}</span>
+   *
+   *   return (
+   *     <ul>
+   *       {data.pages.map((page) => page.comments.map((c) => <li key={c.id}>{c.text}</li>))}
+   *     </ul>
+   *   )
+   * }
+   * ```
+   */
+  <
+    TQueryFnData,
+    TError = DefaultError,
+    TData = UnselectedPages,
+    TQueryKey extends QueryKey = QueryKey,
+    TPageParam = unknown,
+  >(
+    options: UndefinedInitialDataInfiniteOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey,
+      TPageParam
+    > &
+      TPolicy,
+  ): UndefinedInitialDataInfiniteOptions<
     TQueryFnData,
     TError,
-    TData,
+    ResolvedPages<TData, TQueryFnData, TPageParam>,
     TQueryKey,
     TPageParam
-  >,
-): UndefinedInitialDataInfiniteOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey,
-  TPageParam
-> &
-  QueryKeyWithDataTag<TQueryKey, InfiniteData<TQueryFnData>, TError>
-
-export function infiniteQueryOptions(options: unknown) {
-  return options
+  > &
+    QueryKeyWithDataTag<
+      TQueryKey,
+      InfiniteData<TQueryFnData, TPageParam>,
+      TError
+    > &
+    InfiniteQueryMode &
+    TPolicy
 }
+
+/**
+ * Prepares a descriptor and tags its cache key with the data and error types.
+ * @param options - The fetcher and its configuration for the selected observer.
+ * @returns A new descriptor backed by InfiniteQueryObserver.
+ */
+export const infiniteQueryOptions: InfiniteQueryOptionsFactory<SuspenseControls> &
+  InfiniteQueryOptionsFactory<unknown> = <T extends object>(options: T) => ({
+  ...options,
+  renderPolicy: queryPolicy,
+  [observerKey]: InfiniteQueryObserver,
+})

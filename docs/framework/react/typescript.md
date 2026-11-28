@@ -19,28 +19,28 @@ Types in React Query generally flow through very well so that you don't have to 
 [//]: # 'TypeInference1'
 
 ```tsx
-const { data } = useQuery({
-  //    ^? const data: number | undefined
-  queryKey: ['test'],
-  queryFn: () => Promise.resolve(5),
-})
+const { data } = useQuery(
+  queryOptions({
+    //    ^? const data: number | undefined
+    queryKey: ['test'],
+    queryFn: () => Promise.resolve(5),
+  }),
+)
 ```
-
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFC8MQAdqnhIAJnRh0icALwoM2XHgAUAbSqDkIAEa4qAXQA0cFQEo5APjgAFciGAYAdLVQQANgDd0KgKxmzXgB6ILgw8IA9AH5eIA)
 
 [//]: # 'TypeInference1'
 [//]: # 'TypeInference2'
 
 ```tsx
-const { data } = useQuery({
-  //      ^? const data: string | undefined
-  queryKey: ['test'],
-  queryFn: () => Promise.resolve(5),
-  select: (data) => data.toString(),
-})
+const { data } = useQuery(
+  queryOptions({
+    //      ^? const data: string | undefined
+    queryKey: ['test'],
+    queryFn: () => Promise.resolve(5),
+    select: select((data) => data.toString()),
+  }),
+)
 ```
-
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFC8MQAdqnhIAJnRh0icALwoM2XHgAUAbSox0IqgF0ANHBUBKOQD44ABXIhgGAHS1UEADYA3dCoCsxw0gwu6EwAXHASUuZhknT2MBAAyjBQwIIA5iaExrwA9Nlw+QUAegD8vEA)
 
 [//]: # 'TypeInference2'
 
@@ -52,33 +52,33 @@ This works best if your `queryFn` has a well-defined returned type. Keep in mind
 const fetchGroups = (): Promise<Group[]> =>
   axios.get('/groups').then((response) => response.data)
 
-const { data } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
+const { data } = useQuery(
+  queryOptions({ queryKey: ['groups'], queryFn: fetchGroups }),
+)
 //      ^? const data: Group[] | undefined
 ```
-
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFCiSw4dAB7AIqUuUpURY1Nx68YeMOjgBxcsjBwAvIjjAAJgC44AO2QgARriK9eDCOdTwS6GAwAWmiNon6ABQAlGYAClLAGAA8vtoA2gC6AHx6qbLiAHQA5h6BVAD02Vpg8sGZMF7o5oG0qJAuarqpdQ0YmUZ0MHTBDjxOLvBInd1EeigY2Lh4gfFUxX6lVIkANKQe3nGlvTwFBXAHhwB6APxwA65wI3RmW0lwAD4o5kboJMDm6Ea8QA)
 
 [//]: # 'TypeInference3'
 
 ## Type Narrowing
 
-React Query uses a [discriminated union type](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#discriminated-unions) for the query result, discriminated by the `status` field and the derived status boolean flags. This will allow you to check for e.g. `success` status to make `data` defined:
+React Query uses a [discriminated union type](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#discriminated-unions) for the query result. Checking `result.status` or passing the result to a type guard such as `isSuccess` narrows the same union. Read `result.data` after the check so TypeScript retains that relationship:
 
 [//]: # 'TypeNarrowing'
 
 ```tsx
-const { data, isSuccess } = useQuery({
-  queryKey: ['test'],
-  queryFn: () => Promise.resolve(5),
-})
+const queryResult = useQuery(
+  queryOptions({
+    queryKey: ['test'],
+    queryFn: () => Promise.resolve(5),
+  }),
+)
 
-if (isSuccess) {
-  data
-  //  ^? const data: number
+if (isSuccess(queryResult)) {
+  queryResult.data
+  //          ^? number
 }
 ```
-
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFC8MQAdqnhIAJnRh0ANHGCoAysgYN0qVETgBeFBmy48ACgDaVGGphUAurMMBKbQD44ABXIh56AHS1UEADYAbuiGAKx2dry8wCRwhvJKKmqoDgi8cBlwElK8APS5GQB6APy8hLxAA)
 
 [//]: # 'TypeNarrowing'
 
@@ -89,11 +89,11 @@ The type for error defaults to `Error`, because that is what most users expect.
 [//]: # 'TypingError'
 
 ```tsx
-const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
-//      ^? const error: Error
+const { error } = useQuery(
+  queryOptions({ queryKey: ['groups'], queryFn: fetchGroups }),
+)
+//      ^? const error: Error | null
 ```
-
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPRTr2swBaAI458VALAAoUJFhx6AD2ARUpcpSqLlqCZKkw8YdHADi5ZGDgBeRHGAATAFxxGyEACNcRKVNYRm8CToMKwAFmYQFqo2ABQAlM4ACurAGAA8ERYA2gC6AHzWBVoqAHQA5sExVJxl5mA6cSUwoeiMMTyokMzGVgUdXRgl9vQMcT6SfgG2uORQRNYoGNi4eDFZVLWR9VQ5ADSkwWGZ9WOSnJxwl1cAegD8QA)
 
 [//]: # 'TypingError'
 
@@ -102,20 +102,27 @@ If you want to throw a custom error, or something that isn't an `Error` at all, 
 [//]: # 'TypingError2'
 
 ```tsx
-const { error } = useQuery<Group[], string>(['groups'], fetchGroups)
+const { error } = useQuery(
+  queryOptions<Group[], string>({
+    queryKey: ['groups'],
+    queryFn: fetchGroups,
+  }),
+)
 //      ^? const error: string | null
 ```
 
 [//]: # 'TypingError2'
 
-However, this has the drawback that type inference for all other generics of `useQuery` will not work anymore. It is generally not considered a good practice to throw something that isn't an `Error`, so if you have a subclass like `AxiosError` you can use _type narrowing_ to make the error field more specific:
+However, this has the drawback that type inference for the remaining generic parameters of `queryOptions` will not work anymore. It is generally not considered a good practice to throw something that isn't an `Error`, so if you have a subclass like `AxiosError` you can use _type narrowing_ to make the error field more specific:
 
 [//]: # 'TypingError3'
 
 ```tsx
 import axios from 'axios'
 
-const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
+const { error } = useQuery(
+  queryOptions({ queryKey: ['groups'], queryFn: fetchGroups }),
+)
 //      ^? const error: Error | null
 
 if (axios.isAxiosError(error)) {
@@ -123,8 +130,6 @@ if (axios.isAxiosError(error)) {
   // ^? const error: AxiosError
 }
 ```
-
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPRTr2swBaAI458VALAAoUJFhx6AD2ARUpcpSqLlqCZKkw8YdHADi5ZGDgBeRHGAATAFxxGyEACNcRKVNYRm8CToMKwAFmYQFqo2ABQAlM4ACurAGAA8ERYA2gC6AHzWBVoqAHQA5sExVJxl5mA6cSUwoeiMMTyokMzGVgUdXRgl9vQMcT6SfgG2uORQRNYoGNi4eDFIIisA0uh4zllUtZH1VDkANHAb+ABijM5BIeF1qoRjkpyccJ9fAHoA-OPAEhwGLFVAlVIAQSUKgAolBZjEZtA4nFEFJPkioOi4O84H8pIQgA)
 
 [//]: # 'TypingError3'
 
@@ -144,7 +149,9 @@ declare module '@tanstack/react-query' {
   }
 }
 
-const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
+const { error } = useQuery(
+  queryOptions({ queryKey: ['groups'], queryFn: fetchGroups }),
+)
 //      ^? const error: unknown | null
 ```
 
@@ -199,10 +206,10 @@ declare module '@tanstack/react-query' {
 
 ## Typing Query Options
 
-If you inline query options into `useQuery`, you'll get automatic type inference. However, you might want to extract the query options into a separate function to share them between `useQuery` and e.g. `query`. In that case, you'd lose type inference. To get it back, you can use the `queryOptions` helper:
+Define a reusable factory with `queryOptions`. Its descriptor carries the fetcher’s inferred data and error types into `useQuery` and client operations.
 
 ```ts
-import { queryOptions } from '@tanstack/react-query'
+import { queryOptions, query } from '@tanstack/react-query'
 
 function groupOptions() {
   return queryOptions({
@@ -213,10 +220,10 @@ function groupOptions() {
 }
 
 useQuery(groupOptions())
-queryClient.query(groupOptions())
+query(queryClient, groupOptions())
 ```
 
-Further, the `queryKey` returned from `queryOptions` knows about the `queryFn` associated with it, and we can leverage that type information to make functions like `queryClient.getQueryData` aware of those types as well:
+Further, the `queryKey` returned from `queryOptions` knows about the `queryFn` associated with it, and we can leverage that type information to make functions like `getQueryData` aware of those types as well:
 
 ```ts
 function groupOptions() {
@@ -227,20 +234,20 @@ function groupOptions() {
   })
 }
 
-const data = queryClient.getQueryData(groupOptions().queryKey)
+const data = getQueryData(queryClient, groupOptions().queryKey)
 //     ^? const data: Group[] | undefined
 ```
 
 Without `queryOptions`, the type of `data` would be `unknown`, unless we'd pass a generic to it:
 
 ```ts
-const data = queryClient.getQueryData<Group[]>(['groups'])
+const data = getQueryData<Group[]>(queryClient, ['groups'])
 ```
 
-Note that type inference via `queryOptions` does _not_ work for `queryClient.getQueriesData`, because it returns an array of tuples with heterogeneous, `unknown` data. If you are sure of the type of data that your query will return, specify it explicitly:
+Note that type inference via `queryOptions` does _not_ work for `getQueriesData`, because it returns an array of tuples with heterogeneous, `unknown` data. If you are sure of the type of data that your query will return, specify it explicitly:
 
 ```ts
-const entries = queryClient.getQueriesData<Group[]>(groupOptions().queryKey)
+const entries = getQueriesData<Group[]>(queryClient, groupOptions().queryKey)
 //     ^? const entries: Array<[QueryKey, Group[] | undefined]>
 ```
 
@@ -258,10 +265,10 @@ function groupMutationOptions() {
 
 useMutation({
   ...groupMutationOptions(),
-  onSuccess: () => queryClient.invalidateQueries({ queryKey: ['groups'] }),
+  onSuccess: () => invalidateQueries(queryClient, { queryKey: ['groups'] }),
 })
 useIsMutating(groupMutationOptions())
-queryClient.isMutating(groupMutationOptions())
+isMutating(queryClient, groupMutationOptions())
 ```
 
 [//]: # 'TypingQueryOptions'

@@ -1,4 +1,7 @@
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  isMutating as isMutatingOption,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { useIsMutating, useMutation, useMutationState } from '..'
@@ -181,7 +184,8 @@ describe('mutationOptions', () => {
   it('should infer types when used with queryClient.isMutating', () => {
     const queryClient = new QueryClient()
 
-    const isMutating = queryClient.isMutating(
+    const isMutating = isMutatingOption(
+      queryClient,
       mutationOptions({
         mutationKey: createKey(),
         mutationFn: () => Promise.resolve(5),
@@ -189,7 +193,8 @@ describe('mutationOptions', () => {
     )
     expectTypeOf(isMutating).toEqualTypeOf<number>()
 
-    queryClient.isMutating(
+    isMutatingOption(
+      queryClient,
       // @ts-expect-error filters should have mutationKey
       mutationOptions({
         mutationFn: () => Promise.resolve(5),

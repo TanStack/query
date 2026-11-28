@@ -1,5 +1,11 @@
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
-import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  QueryClient,
+  getQueryData,
+  isFetching,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import * as React from 'react'
@@ -24,7 +30,9 @@ function Posts({
   setPostId: React.Dispatch<React.SetStateAction<number>>
 }) {
   const queryClient = useQueryClient()
-  const { status, data, error, isFetching } = useQuery(postsQueries.list())
+  const queryResult = useQuery(postsQueries.list())
+  const { status, data, error } = queryResult
+  const fetching = isFetching(queryResult)
 
   return (
     <div>
@@ -45,7 +53,8 @@ function Posts({
                     style={
                       // We can access the query data here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(
+                      getQueryData(
+                        queryClient,
                         postsQueries.detail(post.id).queryKey,
                       )
                         ? {
@@ -60,7 +69,7 @@ function Posts({
                 </p>
               ))}
             </div>
-            <div>{isFetching ? 'Background Updating...' : ' '}</div>
+            <div>{fetching ? 'Background Updating...' : ' '}</div>
           </>
         )}
       </div>
@@ -75,9 +84,9 @@ function Post({
   postId: number
   setPostId: React.Dispatch<React.SetStateAction<number>>
 }) {
-  const { status, data, error, isFetching } = useQuery(
-    postsQueries.detail(postId),
-  )
+  const queryResult = useQuery(postsQueries.detail(postId))
+  const { status, data, error } = queryResult
+  const fetching = isFetching(queryResult)
 
   return (
     <div>
@@ -96,7 +105,7 @@ function Post({
           <div>
             <p>{data.body}</p>
           </div>
-          <div>{isFetching ? 'Background Updating...' : ' '}</div>
+          <div>{fetching ? 'Background Updating...' : ' '}</div>
         </>
       )}
     </div>

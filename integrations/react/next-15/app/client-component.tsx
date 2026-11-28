@@ -1,30 +1,37 @@
 'use client'
 
 import { Temporal } from '@js-temporal/polyfill'
-import { useQuery } from '@tanstack/react-query'
+import {
+  isError,
+  isPending,
+  useQuery,
+  queryOptions,
+} from '@tanstack/react-query'
 import React from 'react'
 
 export function ClientComponent() {
-  const query = useQuery({
-    queryKey: ['data'],
-    queryFn: async () => {
-      const { count } = await (
-        await fetch('http://localhost:3000/count')
-      ).json()
+  const query = useQuery(
+    queryOptions({
+      queryKey: ['data'],
+      queryFn: async () => {
+        const { count } = await (
+          await fetch('http://localhost:3000/count')
+        ).json()
 
-      return {
-        text: 'data from client',
-        date: Temporal.PlainDate.from('2023-01-01'),
-        count,
-      }
-    },
-  })
+        return {
+          text: 'data from client',
+          date: Temporal.PlainDate.from('2023-01-01'),
+          count,
+        }
+      },
+    }),
+  )
 
-  if (query.isPending) {
+  if (isPending(query)) {
     return <div>Loading...</div>
   }
 
-  if (query.isError) {
+  if (isError(query)) {
     return <div>An error has occurred!</div>
   }
 

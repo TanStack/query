@@ -44,9 +44,9 @@ Read on to learn how to implement these three steps with React Query.
 
 ## A quick note on Suspense
 
-This guide uses the regular `useQuery` API. While we don't necessarily recommend it, it is possible to replace this with `useSuspenseQuery` instead **as long as you always prefetch all your queries**. The upside is that you get to use `<Suspense>` for loading states on the client.
+This guide passes regular `queryOptions` to `useQuery`. You can pass `suspenseQueryOptions` when you always prefetch every query before rendering. The upside is that you get to use `<Suspense>` for loading states on the client.
 
-If you do forget to prefetch a query when you are using `useSuspenseQuery`, the consequences will depend on the framework you are using. In some cases, the data will Suspend and get fetched on the server but never be hydrated to the client, where it will fetch again. In these cases you will get a markup hydration mismatch, because the server and the client tried to render different things.
+If you do forget to prefetch a query when you are using `suspenseQueryOptions`, the consequences will depend on the framework you are using. In some cases, the data will Suspend and get fetched on the server but never be hydrated to the client, where it will fetch again. In these cases you will get a markup hydration mismatch, because the server and the client tried to render different things.
 
 ## Initial setup
 
@@ -128,11 +128,13 @@ export async function getServerSideProps() {
 }
 
 function Posts(props) {
-  const { data } = useQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-    initialData: props.posts,
-  })
+  const { data } = useQuery(
+    queryOptions({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+      initialData: props.posts,
+    }),
+  )
 
   // ...
 }
@@ -149,11 +151,13 @@ export async function loader() {
 function Posts() {
   const { posts } = useLoaderData<typeof loader>()
 
-  const { data } = useQuery({
-    queryKey: ['posts'],
-    queryFn: getPosts,
-    initialData: posts,
-  })
+  const { data } = useQuery(
+    queryOptions({
+      queryKey: ['posts'],
+      queryFn: getPosts,
+      initialData: posts,
+    }),
+  )
 
   // ...
 }
@@ -174,7 +178,7 @@ Setting up the full hydration solution is straightforward and does not have thes
 With just a little more setup, you can use a `queryClient` to prefetch queries during a preload phase, pass a serialized version of that `queryClient` to the rendering part of the app and reuse it there. This avoids the drawbacks above. Feel free to skip ahead for full Next.js pages router and Remix examples, but at a general level these are the extra steps:
 
 - In the framework loader function, create a `const queryClient = new QueryClient(options)`
-- In the loader function, do `await queryClient.query(...)` for each query you want to prefetch
+- In the loader function, do `await query(queryClient, ...)` for each query you want to prefetch
   - You want to use `await Promise.all(...)` to fetch the queries in parallel when possible
   - It's fine to have queries that aren't prefetched. These won't be server rendered, instead they will be fetched on the client after the application is interactive. This can be great for content that is shown only after user interaction, or is far down on the page to avoid blocking more critical content.
 - From the loader, return `dehydrate(queryClient)`, note that the exact syntax to return this differs between frameworks
@@ -227,18 +231,18 @@ import {
   noop,
   QueryClient,
   useQuery,
+  query,
+  queryOptions,
 } from '@tanstack/react-query'
 
 // This could also be getServerSideProps
 export async function getStaticProps() {
   const queryClient = new QueryClient()
 
-  await queryClient
-    .query({
-      queryKey: ['posts'],
-      queryFn: getPosts,
-    })
-    .catch(noop)
+  await query(queryClient, {
+    queryKey: ['posts'],
+    queryFn: getPosts,
+  }).catch(noop)
 
   return {
     props: {
@@ -250,14 +254,18 @@ export async function getStaticProps() {
 function Posts() {
   // This useQuery could just as well happen in some deeper child to
   // the <PostsRoute>, data will be available immediately either way
-  const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts })
+  const { data } = useQuery(
+    queryOptions({ queryKey: ['posts'], queryFn: getPosts }),
+  )
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix
-  const { data: commentsData } = useQuery({
-    queryKey: ['posts-comments'],
-    queryFn: getComments,
-  })
+  const { data: commentsData } = useQuery(
+    queryOptions({
+      queryKey: ['posts-comments'],
+      queryFn: getComments,
+    }),
+  )
 
   // ...
 }
@@ -313,17 +321,17 @@ import {
   noop,
   QueryClient,
   useQuery,
+  query,
+  queryOptions,
 } from '@tanstack/react-query'
 
 export async function loader() {
   const queryClient = new QueryClient()
 
-  await queryClient
-    .query({
-      queryKey: ['posts'],
-      queryFn: getPosts,
-    })
-    .catch(noop)
+  await query(queryClient, {
+    queryKey: ['posts'],
+    queryFn: getPosts,
+  }).catch(noop)
 
   return json({ dehydratedState: dehydrate(queryClient) })
 }
@@ -331,14 +339,18 @@ export async function loader() {
 function Posts() {
   // This useQuery could just as well happen in some deeper child to
   // the <PostsRoute>, data will be available immediately either way
-  const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts })
+  const { data } = useQuery(
+    queryOptions({ queryKey: ['posts'], queryFn: getPosts }),
+  )
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix
-  const { data: commentsData } = useQuery({
-    queryKey: ['posts-comments'],
-    queryFn: getComments,
-  })
+  const { data: commentsData } = useQuery(
+    queryOptions({
+      queryKey: ['posts-comments'],
+      queryFn: getComments,
+    }),
+  )
 
   // ...
 }
@@ -418,10 +430,12 @@ Over in the Prefetching guide we learned how to [prefetch dependent queries](./p
 
 ```tsx
 // Get the user
-const { data: user } = useQuery({
-  queryKey: ['user', email],
-  queryFn: getUserByEmail,
-})
+const { data: user } = useQuery(
+  queryOptions({
+    queryKey: ['user', email],
+    queryFn: getUserByEmail,
+  }),
+)
 
 const userId = user?.id
 
@@ -430,12 +444,14 @@ const {
   status,
   fetchStatus,
   data: projects,
-} = useQuery({
-  queryKey: ['projects', userId],
-  queryFn: getProjectsByUser,
-  // The query will not execute until the userId exists
-  enabled: !!userId,
-})
+} = useQuery(
+  queryOptions({
+    queryKey: ['projects', userId],
+    queryFn: getProjectsByUser,
+    // The query will not execute until the userId exists
+    enabled: !!userId,
+  }),
+)
 ```
 
 How would we prefetch this so it can be server rendered? Here's an example:
@@ -445,13 +461,13 @@ How would we prefetch this so it can be server rendered? Here's an example:
 export async function getServerSideProps() {
   const queryClient = new QueryClient()
 
-  const user = await queryClient.query({
+  const user = await query(queryClient, {
     queryKey: ['user', email],
     queryFn: getUserByEmail,
   })
 
   if (user?.id) {
-    await queryClient.query({
+    await query(queryClient, {
       queryKey: ['projects', user.id],
       queryFn: getProjectsByUser,
     })
@@ -470,17 +486,17 @@ This can get more complex of course, but since these loader functions are just J
 React Query defaults to a graceful degradation strategy. This means:
 
 - `dehydrate(...)` only includes successful queries, not failed ones
-- We can intentionally ignore the returned promise from `void queryClient.query(...)` and add `.catch(noop)` to swallow any errors, so surrounding loader code will not observe query errors
+- We can intentionally ignore the returned promise from `void query(queryClient, ...)` and add `.catch(noop)` to swallow any errors, so surrounding loader code will not observe query errors
 
 This will lead to any failed queries being retried on the client and that the server rendered output will include loading states instead of the full content.
 
-While a good default, sometimes this is not what you want. When critical content is missing, you might want to respond with a 404 or 500 status code depending on the situation. For these cases, use `await queryClient.query(...)` without the noop catch, which will throw errors when it fails, letting you handle things in a suitable way.
+While a good default, sometimes this is not what you want. When critical content is missing, you might want to respond with a 404 or 500 status code depending on the situation. For these cases, use `await query(queryClient, ...)` without the noop catch, which will throw errors when it fails, letting you handle things in a suitable way.
 
 ```tsx
 let result
 
 try {
-  result = await queryClient.query(...)
+  result = await query(queryClient, ...)
 } catch (error) {
   // Handle the error, refer to your framework documentation
 }
@@ -603,7 +619,7 @@ const queryClient = new QueryClient({
 
 Avoid setting `gcTime` to `0` as it may result in a hydration error. This occurs because the [Hydration Boundary](../reference/functions/HydrationBoundary.md) places necessary data into the cache for rendering, but if the garbage collector removes the data before the rendering completes, issues may arise. Short finite values have the same risk: a prefetched query that finishes early can be removed once its `gcTime` passes, while a slower query is still being prefetched and before `dehydrate` runs. Keep `Infinity` on the server where you can.
 
-If you set a finite `gcTime` on the server, call [`queryClient.clear()`](../reference/classes/QueryClient.md#clear) once you no longer need the client, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
+If you set a finite `gcTime` on the server, call [`clearQueryClient(queryClient)`](./migrating-to-v6.md#client-operations-across-frameworks) once you no longer need the client, for example after you have dehydrated or rendered with it. This removes every query from the cache and cancels its pending fetch and garbage collection timer.
 
 ### Caveat for Next.js rewrites
 

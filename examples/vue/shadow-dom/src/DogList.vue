@@ -1,8 +1,15 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
+import {
+  isError as queryIsError,
+  isPending as queryIsPending,
+  useQuery,
+} from '@tanstack/vue-query'
+import { computed } from 'vue'
 import { dogsQueries } from './services/dogs/queries'
 
-const { isPending, isError, data } = useQuery(dogsQueries.list())
+const { state: queryState, data } = useQuery(dogsQueries.list())
+const isPending = computed(() => queryIsPending(queryState))
+const isError = computed(() => queryIsError(queryState))
 </script>
 
 <template>

@@ -1,4 +1,9 @@
-import { Mutation, QueryClient } from '@tanstack/query-core'
+import {
+  Mutation,
+  QueryClient,
+  clearQueryClient,
+  getMutationCache,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import {
@@ -35,7 +40,7 @@ describe('useMutationState', () => {
 
   afterEach(() => {
     container.remove()
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -125,7 +130,7 @@ describe('useMutationState', () => {
       host.updatesRequested = 0
 
       for (let i = 0; i < 5; i += 1) {
-        queryClient.getMutationCache().notify({
+        getMutationCache(queryClient).notify({
           type: 'updated',
           mutation: existingMutation,
           action: { type: 'pause' } as never,

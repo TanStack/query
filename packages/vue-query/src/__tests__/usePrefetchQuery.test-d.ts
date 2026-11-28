@@ -1,4 +1,4 @@
-import { skipToken } from '@tanstack/query-core'
+import { refetchInterval, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { ref } from 'vue'
@@ -20,7 +20,7 @@ describe('usePrefetchQuery', () => {
         queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2353
-        refetchInterval: 1000,
+        refetchInterval: refetchInterval(1000),
       }),
     )
 

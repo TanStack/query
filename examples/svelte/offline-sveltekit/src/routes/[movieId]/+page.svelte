@@ -1,5 +1,16 @@
 <script lang="ts">
-  import { createMutation, createQuery } from '@tanstack/svelte-query'
+  import {
+    isLoading,
+    isFetching,
+    isError,
+    isPaused,
+    cancelQueries,
+    getQueryData,
+    setQueryData,
+    invalidateQueries,
+    createMutation,
+    createQuery,
+  } from '@tanstack/svelte-query'
   import { resolve } from '$app/paths'
   import { queryClient } from '$lib/queryClient'
   import { moviesMutations, moviesQueries } from '$lib/services/movies/queries'
@@ -15,16 +26,17 @@
     ...moviesMutations.update(),
     mutationKey: moviesQueries.detail(data.movieId).queryKey,
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({
+      await cancelQueries(queryClient, {
         queryKey: moviesQueries.detail(data.movieId).queryKey,
       })
       const { queryKey } = moviesQueries.detail(data.movieId)
-      const previousData = queryClient.getQueryData(queryKey)
+      const previousData = getQueryData(queryClient, queryKey)
 
       // remove local state so that server state is taken instead
       commentDraft = undefined
 
-      queryClient.setQueryData(
+      setQueryData(
+        queryClient,
         queryKey,
         (old) =>
           old && {
@@ -39,13 +51,14 @@
       return { previousData }
     },
     onError: (_, __, onMutateResult) => {
-      queryClient.setQueryData(
+      setQueryData(
+        queryClient,
         moviesQueries.detail(data.movieId).queryKey,
         onMutateResult?.previousData,
       )
     },
     onSettled: () => {
-      queryClient.invalidateQueries({
+      invalidateQueries(queryClient, {
         queryKey: moviesQueries.detail(data.movieId).queryKey,
       })
     },
@@ -67,7 +80,7 @@
   }
 </script>
 
-{#if movieQuery.isLoading}
+{#if isLoading(movieQuery)}
   Loading...
 {:else if movieQuery.data}
   <form onsubmit={submitForm}>
@@ -97,7 +110,7 @@
     <div>
       Updated at: {new Date(movieQuery.data.ts).toLocaleTimeString()}
     </div>
-    <div>{movieQuery.isFetching ? 'fetching...' : ''}</div>
+    <div>{isFetching(movieQuery) ? 'fetching...' : ''}</div>
     <div>
       {updateMovie.isPaused
         ? 'mutation paused - offline'
@@ -106,12 +119,12 @@
           : ''}
     </div>
   </form>
-{:else if movieQuery.isError}
+{:else if isError(movieQuery)}
   <div>
     <a href={resolve('/')}>Back</a>
     <h1>Couldn't load movie!</h1>
     <div>{movieQuery.error.message}</div>
   </div>
-{:else if movieQuery.isPaused}
+{:else if isPaused(movieQuery)}
   We're offline and have no data to show :(
 {/if}

@@ -144,7 +144,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
 ): Retryer<TData> {
   let isRetryCancelled = false
   let failureCount = 0
-  let continueFn: ((value?: unknown) => void) | undefined
+  let continueFn: (() => void) | undefined
   let status: RetryerStatus = 'pending'
   const {
     promise,
@@ -158,7 +158,7 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
   const cancel = (cancelOptions?: CancelOptions): void => {
     if (!isResolved()) {
       const error = new CancelledError(cancelOptions) as TError
-      reject(error)
+      settle('rejected', error)
 
       config.onCancel?.(error)
     }
@@ -178,67 +178,37 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
 
   const canStart = () => canFetch(config.networkMode) && config.canRun()
 
-  const resolve = (value: any) => {
-    if (!isResolved()) {
-      continueFn?.()
-      status = 'resolved'
-      promiseResolve(value)
-    }
+  const settle = (next: 'rejected' | 'resolved', value: unknown) => {
+    if (isResolved()) return
+    continueFn?.()
+    status = next
+    if (next === 'rejected') promiseReject(value)
+    else promiseResolve(value as TData)
   }
 
-  const reject = (value: any) => {
-    if (!isResolved()) {
-      continueFn?.()
-      status = 'rejected'
-      promiseReject(value)
+  const pause = async (canResume: () => boolean) => {
+    const gate = Promise.withResolvers<void>()
+    continueFn = () => {
+      if (isResolved() || canResume()) gate.resolve()
     }
+    config.onPause?.()
+    await gate.promise
+    continueFn = undefined
+    if (!isResolved()) config.onContinue?.()
   }
 
-  const pause = (canResume: () => boolean) => {
-    return new Promise((continueResolve) => {
-      continueFn = (value) => {
-        if (isResolved() || canResume()) {
-          continueResolve(value)
-        }
-      }
-      config.onPause?.()
-    }).then(() => {
-      continueFn = undefined
-      if (!isResolved()) {
-        config.onContinue?.()
-      }
-    })
-  }
+  // Convert synchronous exceptions to rejected promises, like async query functions.
+  const attempt = async () =>
+    (failureCount === 0 ? config.initialPromise : undefined) ?? config.fn()
 
-  // Create loop function
-  const run = () => {
-    // Do nothing if already resolved
-    if (isResolved()) {
-      return
-    }
-
-    let promiseOrValue: any
-
-    // we can re-use config.initialPromise on the first call of run()
-    const initialPromise =
-      failureCount === 0 ? config.initialPromise : undefined
-
-    // Execute query
-    try {
-      promiseOrValue = initialPromise ?? config.fn()
-    } catch (error) {
-      promiseOrValue = Promise.reject(error)
-    }
-
-    Promise.resolve(promiseOrValue)
-      .then(resolve)
-      .catch((error) => {
-        // Stop if the fetch is already resolved
-        if (isResolved()) {
-          return
-        }
-
-        // Do we need to retry the request?
+  const run = async () => {
+    while (!isResolved()) {
+      let data: TData
+      try {
+        data = await attempt()
+      } catch (cause) {
+        if (isResolved()) return
+        const error = cause as TError
         const retry = config.retry ?? (isServerEnvironment() ? 0 : 3)
         const retryDelay = config.retryDelay ?? defaultRetryDelay
         const delay =
@@ -251,32 +221,19 @@ export function createRetryer<TData = unknown, TError = DefaultError>(
           (typeof retry === 'function' && retry(failureCount, error))
 
         if (isRetryCancelled || !shouldRetry) {
-          // We are done if the query does not need to be retried
-          reject(error)
+          settle('rejected', error)
           return
         }
-
         failureCount++
-
-        // Notify on fail
         config.onFail?.(failureCount, error)
-
-        // Delay
-        sleep(delay)
-          // Pause if the document is not visible or when the device is offline
-          .then(() => {
-            return isResolved() || canContinue()
-              ? undefined
-              : pause(canContinue)
-          })
-          .then(() => {
-            if (isRetryCancelled) {
-              reject(error)
-            } else {
-              run()
-            }
-          })
-      })
+        await sleep(delay)
+        if (!isResolved() && !canContinue()) await pause(canContinue)
+        // oxlint-disable-next-line typescript/no-unnecessary-condition -- cancelRetry can run while the delay or pause is pending.
+        if (isRetryCancelled) settle('rejected', error)
+        continue
+      }
+      settle('resolved', data)
+    }
   }
 
   return {

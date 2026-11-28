@@ -1,30 +1,45 @@
-import { QueryCache as QC } from '@tanstack/query-core'
+import {
+  findCachedQueries as coreFindCachedQueries,
+  findCachedQuery as coreFindCachedQuery,
+} from '@tanstack/query-core'
 import { cloneDeepUnref } from './utils'
 import type {
   DefaultError,
   Query,
+  QueryCache,
   QueryFilters,
   WithRequired,
 } from '@tanstack/query-core'
 import type { MaybeRefDeep } from './types'
 
-/**
- * Vue-aware subclass of `@tanstack/query-core`'s `QueryCache`. `find`/`findAll` also accept a
- * {@link MaybeRefDeep} filters object, so `ref`s can be passed directly without unwrapping. Access it via
- * `queryClient.getQueryCache()` — `QueryClient` constructs one of these by default.
- */
-export class QueryCache extends QC {
-  override find<
-    TQueryFnData = unknown,
-    TError = DefaultError,
-    TData = TQueryFnData,
-  >(
-    filters: MaybeRefDeep<WithRequired<QueryFilters, 'queryKey'>>,
-  ): Query<TQueryFnData, TError, TData> | undefined {
-    return super.find(cloneDeepUnref(filters))
-  }
+export { QueryCache } from '@tanstack/query-core'
 
-  override findAll(filters: MaybeRefDeep<QueryFilters> = {}): Array<Query> {
-    return super.findAll(cloneDeepUnref(filters))
-  }
+/**
+ * Returns the first matching query after unwrapping its filters, or undefined if none match.
+ * @param cache - The query cache to search.
+ * @param filters - Reactive criteria for matching cache entries.
+ * @returns The matching query, or undefined.
+ */
+export function findCachedQuery<
+  TQueryFnData = unknown,
+  TError = DefaultError,
+  TData = TQueryFnData,
+>(
+  cache: QueryCache,
+  filters: MaybeRefDeep<WithRequired<QueryFilters, 'queryKey'>>,
+): Query<TQueryFnData, TError, TData> | undefined {
+  return coreFindCachedQuery(cache, cloneDeepUnref(filters))
+}
+
+/**
+ * Returns all cached queries matching the unwrapped filters. Omitting filters returns all queries.
+ * @param cache - The query cache to search.
+ * @param filters - Reactive criteria for matching cache entries.
+ * @returns The matching cached queries.
+ */
+export function findCachedQueries(
+  cache: QueryCache,
+  filters: MaybeRefDeep<QueryFilters> = {},
+): Array<Query> {
+  return coreFindCachedQueries(cache, cloneDeepUnref(filters))
 }

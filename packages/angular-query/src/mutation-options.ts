@@ -62,7 +62,7 @@ export function mutationOptions<
  * @example
  * Sharing options across services, so `QueriesService` stays the single place a mutation is defined:
  * ```angular-ts
- * import { mutationOptions, injectMutation } from '@tanstack/angular-query'
+ * import { injectMutation, mutationOptions, setQueryData } from '@tanstack/angular-query'
  *
  * @Injectable({ providedIn: 'root' })
  * export class QueriesService {
@@ -71,7 +71,7 @@ export function mutationOptions<
  *   updatePost(id: number) {
  *     return mutationOptions({
  *       mutationFn: (post: Partial<Post>) => putPost(id, post),
- *       onSuccess: (newPost) => this.#queryClient.setQueryData(['posts', id], newPost),
+ *       onSuccess: (newPost) => this.#setQueryData(queryClient, ['posts', id], newPost),
  *     })
  *   }
  * }

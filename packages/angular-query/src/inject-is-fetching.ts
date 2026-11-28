@@ -1,5 +1,9 @@
 import { assertInInjectionContext, inject } from '@angular/core'
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  countFetchingQueries,
+  getQueryCache,
+} from '@tanstack/query-core'
 import { injectExternalStore } from './utils/inject-external-store'
 import type { Signal } from '@angular/core'
 import type { QueryFilters } from '@tanstack/query-core'
@@ -50,10 +54,10 @@ export function injectIsFetching(
     assertInInjectionContext(injectIsFetching)
   }
   const queryClient = inject(QueryClient)
-  const cache = queryClient.getQueryCache()
+  const cache = getQueryCache(queryClient)
 
   return injectExternalStore(() => ({
-    getSnapshot: () => queryClient.isFetching(filters()),
+    getSnapshot: () => countFetchingQueries(queryClient, filters()),
     subscribe: (onStoreChange) => cache.subscribe(onStoreChange),
   }))
 }

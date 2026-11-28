@@ -126,7 +126,7 @@ export type DefinedInitialDataInfiniteOptions<
 /**
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to
  * `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
- * `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options
+ * `infiniteQuery`. `options.queryKey` is required and is the query key to generate options
  * for.
  *
  * This overload is selected when `initialData` is known to be defined.
@@ -193,7 +193,7 @@ export function infiniteQueryOptions<
 /**
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to
  * `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
- * `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options
+ * `infiniteQuery`. `options.queryKey` is required and is the query key to generate options
  * for.
  * @param options - The {@link UnusedSkipTokenInfiniteOptions} to use — everything you can pass to
  * `injectInfiniteQuery`.
@@ -264,7 +264,7 @@ export function infiniteQueryOptions<
 /**
  * You can generally pass everything to `infiniteQueryOptions` that you can also pass to
  * `injectInfiniteQuery`. These options can be shared across functions and imperative APIs such as
- * `queryClient.infiniteQuery`. `options.queryKey` is required and is the query key to generate options
+ * `infiniteQuery`. `options.queryKey` is required and is the query key to generate options
  * for.
  * @param options - The {@link UndefinedInitialDataInfiniteOptions} to use — everything you can pass to
  * `injectInfiniteQuery`.

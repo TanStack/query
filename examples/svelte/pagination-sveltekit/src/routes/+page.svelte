@@ -1,5 +1,8 @@
 <script lang="ts">
   import {
+    isFetching,
+    placeholderData,
+    query as queryQuery,
     createQuery,
     keepPreviousData,
     noop,
@@ -12,13 +15,13 @@
 
   const query = createQuery(() => ({
     ...projectsQueries.list(page),
-    placeholderData: keepPreviousData,
+    placeholderData: placeholderData(keepPreviousData),
   }))
 
   // Prefetch the next page!
   $effect(() => {
     if (!query.isPlaceholderData && query.data?.hasMore) {
-      queryClient.query(projectsQueries.list(page + 1)).catch(noop)
+      queryQuery(queryClient, projectsQueries.list(page + 1)).catch(noop)
     }
   })
 </script>
@@ -59,5 +62,5 @@
   <!-- Since the last page's data potentially sticks around between page requests,
   we can use `isFetching` to show a background loading
   indicator since our `status === 'pending'` state won't be triggered -->
-  {#if query.isFetching}<span> Loading...</span>{/if}
+  {#if isFetching(query)}<span> Loading...</span>{/if}
 </div>

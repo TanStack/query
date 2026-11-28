@@ -1,4 +1,9 @@
 import { fireEvent } from '@solidjs/testing-library'
+import {
+  clearQueryClient,
+  getMutationCache,
+  isMutating as queryIsMutating,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { createEffect, createRenderEffect } from 'solid-js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -16,7 +21,7 @@ describe('mutationOptions', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -204,12 +209,12 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
-      isMutatingArray.push(queryClient.isMutating(mutationOpts))
+      isMutatingArray.push(queryIsMutating(queryClient, mutationOpts))
     })
 
-    isMutatingArray.push(queryClient.isMutating(mutationOpts))
+    isMutatingArray.push(queryIsMutating(queryClient, mutationOpts))
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     expect(isMutatingArray[0]).toBe(0)
@@ -240,12 +245,12 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
-      isMutatingArray.push(queryClient.isMutating())
+      isMutatingArray.push(queryIsMutating(queryClient))
     })
 
-    isMutatingArray.push(queryClient.isMutating())
+    isMutatingArray.push(queryIsMutating(queryClient))
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
     expect(isMutatingArray[0]).toBe(0)
@@ -283,12 +288,12 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
-      isMutatingArray.push(queryClient.isMutating())
+      isMutatingArray.push(queryIsMutating(queryClient))
     })
 
-    isMutatingArray.push(queryClient.isMutating())
+    isMutatingArray.push(queryIsMutating(queryClient))
 
     fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
     fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
@@ -327,17 +332,17 @@ describe('mutationOptions', () => {
 
     const rendered = renderWithClient(queryClient, () => <Mutation />)
 
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const unsubscribe = mutationCache.subscribe(() => {
       isMutatingArray.push(
-        queryClient.isMutating({
+        queryIsMutating(queryClient, {
           mutationKey: mutationOpts1.mutationKey,
         }),
       )
     })
 
     isMutatingArray.push(
-      queryClient.isMutating({
+      queryIsMutating(queryClient, {
         mutationKey: mutationOpts1.mutationKey,
       }),
     )

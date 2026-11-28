@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { isError, isFetching } from '@tanstack/query-core'
   import {
     createInfiniteQuery,
     setQueryClientContext,
@@ -19,6 +20,6 @@
 </script>
 
 <div data-testid="status">{query.status}</div>
-<div data-testid="isError">{query.isError}</div>
-<div data-testid="isFetching">{query.isFetching}</div>
+<div data-testid="isError">{isError(query)}</div>
+<div data-testid="isFetching">{isFetching(query)}</div>
 <div data-testid="pages">{query.data?.pages.join(', ') ?? 'none'}</div>

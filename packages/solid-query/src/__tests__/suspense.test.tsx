@@ -1,4 +1,11 @@
 import { fireEvent } from '@solidjs/testing-library'
+import {
+  clearQueryClient,
+  findCachedQuery,
+  getQueryObserverCount,
+  isFetching,
+  resetQueries,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   ErrorBoundary,
@@ -24,7 +31,7 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -195,18 +202,22 @@ describe("useQuery's in Suspense mode", () => {
     const rendered = renderWithClient(queryClient, () => <App />)
 
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
-    expect(queryCache.find({ queryKey: key })).toBeUndefined()
+    expect(findCachedQuery(queryCache, { queryKey: key })).toBeUndefined()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
-    expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(1)
+    expect(
+      getQueryObserverCount(findCachedQuery(queryCache, { queryKey: key })!),
+    ).toBe(1)
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
 
-    expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(0)
+    expect(
+      getQueryObserverCount(findCachedQuery(queryCache, { queryKey: key })!),
+    ).toBe(0)
   })
 
   // https://github.com/tannerlinsley/react-query/issues/468
@@ -348,7 +359,7 @@ describe("useQuery's in Suspense mode", () => {
       return (
         <div>
           <span>data: {result.data}</span>
-          <span>fetching: {result.isFetching ? 'true' : 'false'}</span>
+          <span>fetching: {isFetching(result) ? 'true' : 'false'}</span>
         </div>
       )
     }
@@ -675,7 +686,7 @@ describe("useQuery's in Suspense mode", () => {
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
-          <button aria-label="fail" onClick={() => queryClient.resetQueries()}>
+          <button aria-label="fail" onClick={() => resetQueries(queryClient)}>
             fail
           </button>
         </div>

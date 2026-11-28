@@ -1,7 +1,16 @@
 import { A, useParams } from '@solidjs/router'
 import {
+  cancelQueries,
+  getQueryData,
+  invalidateQueries,
+  isError,
+  isFetching,
+  isLoading,
+  isPaused,
   noop,
   onlineManager,
+  query,
+  setQueryData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -17,13 +26,13 @@ export const preload =
     if (!params.movieId) return
     const { queryKey } = moviesQueries.detail(params.movieId)
     if (
-      !queryClient.getQueryData(queryKey) &&
+      !getQueryData(queryClient, queryKey) &&
       // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
       // we just let the Detail component handle it
       onlineManager.isOnline() &&
       !isRestoring()
     ) {
-      queryClient.query(moviesQueries.detail(params.movieId)).catch(noop)
+      query(queryClient, moviesQueries.detail(params.movieId)).catch(noop)
     }
   }
 
@@ -38,16 +47,17 @@ export default function Detail() {
     ...moviesMutations.update(),
     mutationKey: moviesQueries.detail(params.movieId).queryKey,
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({
+      await cancelQueries(queryClient, {
         queryKey: moviesQueries.detail(params.movieId).queryKey,
       })
       const { queryKey } = moviesQueries.detail(params.movieId)
-      const previousData = queryClient.getQueryData(queryKey)
+      const previousData = getQueryData(queryClient, queryKey)
 
       // remove local state so that server state is taken instead
       setCommentDraft(undefined)
 
-      queryClient.setQueryData(
+      setQueryData(
+        queryClient,
         queryKey,
         (old) =>
           old && {
@@ -62,13 +72,14 @@ export default function Detail() {
       return { previousData }
     },
     onError: (_, __, onMutateResult) => {
-      queryClient.setQueryData(
+      setQueryData(
+        queryClient,
         moviesQueries.detail(params.movieId).queryKey,
         onMutateResult?.previousData,
       )
     },
     onSettled: () => {
-      queryClient.invalidateQueries({
+      invalidateQueries(queryClient, {
         queryKey: moviesQueries.detail(params.movieId).queryKey,
       })
     },
@@ -92,7 +103,7 @@ export default function Detail() {
 
   return (
     <Switch>
-      <Match when={movieQuery.isLoading}>Loading...</Match>
+      <Match when={isLoading(movieQuery)}>Loading...</Match>
       <Match when={movieQuery.data}>
         <form onSubmit={submitForm}>
           <A href="/">Back</A>
@@ -120,7 +131,7 @@ export default function Detail() {
           <div>
             Updated at: {new Date(movieQuery.data!.ts).toLocaleTimeString()}
           </div>
-          <Show when={movieQuery.isFetching}>
+          <Show when={isFetching(movieQuery)}>
             <div>fetching...</div>
           </Show>
           <div>
@@ -130,14 +141,14 @@ export default function Detail() {
           </div>
         </form>
       </Match>
-      <Match when={movieQuery.isError}>
+      <Match when={isError(movieQuery)}>
         <div>
           <A href="/">Back</A>
           <h1>Couldn't load movie!</h1>
           <div>{movieQuery.error?.message}</div>
         </div>
       </Match>
-      <Match when={movieQuery.isPaused}>
+      <Match when={isPaused(movieQuery)}>
         We're offline and have no data to show :(
       </Match>
     </Switch>

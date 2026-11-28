@@ -2,8 +2,12 @@ import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import {
   QueryClient,
+  clearQueryClient,
   defaultQueryFn,
   noop,
+  query,
+  queryOptions,
+  setQueryData,
   useQueries,
   useQuery,
 } from '@tanstack/react-query'
@@ -70,12 +74,10 @@ describe('PersistQueryClientProvider', () => {
     const states: Array<UseQueryResult<string>> = []
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -83,13 +85,15 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     function Page() {
-      const state = useQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'fetched'),
-      })
+      const state = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'fetched'),
+        }),
+      )
 
       states.push(state)
 
@@ -141,12 +145,10 @@ describe('PersistQueryClientProvider', () => {
     const key = createKey()
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -154,13 +156,15 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     function Page() {
-      const state = useQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'fetched'),
-      })
+      const state = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'fetched'),
+        }),
+      )
 
       return (
         <div>
@@ -168,7 +172,7 @@ describe('PersistQueryClientProvider', () => {
           <h2>fetchStatus: {state.fetchStatus}</h2>
           <button
             onClick={() => {
-              queryClient.setQueryData(key, 'updated')
+              setQueryData(queryClient, key, 'updated')
             }}
           >
             update
@@ -211,12 +215,10 @@ describe('PersistQueryClientProvider', () => {
     const states: Array<UseQueryResult> = []
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -224,7 +226,7 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     function Page() {
       const [state] = useQueries({
@@ -287,12 +289,10 @@ describe('PersistQueryClientProvider', () => {
     const states: Array<DefinedUseQueryResult<string>> = []
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -300,17 +300,19 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     function Page() {
-      const state = useQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'fetched'),
-        initialData: 'initial',
-        // make sure that initial data is older than the hydration data
-        // otherwise initialData would be newer and takes precedence
-        initialDataUpdatedAt: 1,
-      })
+      const state = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'fetched'),
+          initialData: 'initial',
+          // make sure that initial data is older than the hydration data
+          // otherwise initialData would be newer and takes precedence
+          initialDataUpdatedAt: 1,
+        }),
+      )
 
       states.push(state)
 
@@ -363,12 +365,10 @@ describe('PersistQueryClientProvider', () => {
     const states: Array<UseQueryResult<string>> = []
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -376,20 +376,22 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     let fetched = false
 
     function Page() {
-      const state = useQuery({
-        queryKey: key,
-        queryFn: async () => {
-          await sleep(10)
-          fetched = true
-          return 'fetched'
-        },
-        staleTime: Infinity,
-      })
+      const state = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            fetched = true
+            return 'fetched'
+          },
+          staleTime: Infinity,
+        }),
+      )
 
       states.push(state)
 
@@ -437,12 +439,10 @@ describe('PersistQueryClientProvider', () => {
     const key = createKey()
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -450,13 +450,15 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     function Page() {
-      const state = useQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'fetched'),
-      })
+      const state = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'fetched'),
+        }),
+      )
 
       return (
         <div>
@@ -490,12 +492,10 @@ describe('PersistQueryClientProvider', () => {
     const key = createKey()
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -503,20 +503,22 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     const states: Array<string> = []
 
     function Page() {
-      const { data, fetchStatus } = useQuery({
-        queryKey: key,
-        queryFn: async () => {
-          states.push('fetching')
-          await sleep(10)
-          states.push('fetched')
-          return 'fetched'
-        },
-      })
+      const { data, fetchStatus } = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: async () => {
+            states.push('fetching')
+            await sleep(10)
+            states.push('fetched')
+            return 'fetched'
+          },
+        }),
+      )
 
       return (
         <div>
@@ -567,10 +569,12 @@ describe('PersistQueryClientProvider', () => {
     const [error, persister] = createMockErrorPersister(removeClient)
 
     function Page() {
-      const state = useQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'fetched'),
-      })
+      const state = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'fetched'),
+        }),
+      )
 
       return (
         <div>
@@ -607,12 +611,10 @@ describe('PersistQueryClientProvider', () => {
     const states: Array<UseQueryResult> = []
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -620,7 +622,7 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     const onSuccess = vi.fn<() => void>()
 
@@ -667,9 +669,13 @@ describe('PersistQueryClientProvider', () => {
     }
 
     function Page() {
-      const state = useQuery({ queryKey: key, queryFn: defaultQueryFn })
+      const state = useQuery(
+        queryOptions({ queryKey: key, queryFn: defaultQueryFn }),
+      )
 
-      states.push(state)
+      React.useEffect(() => {
+        states.push(state)
+      })
 
       return (
         <div>
@@ -739,12 +745,10 @@ describe('PersistQueryClientProvider', () => {
     const key = createKey()
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createPersister()
@@ -754,13 +758,15 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     function Page() {
-      const state = useQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'fetched'),
-      })
+      const state = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'fetched'),
+        }),
+      )
 
       return (
         <div>

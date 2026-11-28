@@ -1,3 +1,4 @@
+import { invalidateQueries } from '@tanstack/react-query'
 import { redirect } from 'react-router'
 import { contactsAPI } from '../services/contacts/api'
 import { contactsQueries } from '../services/contacts/queries'
@@ -11,6 +12,6 @@ export const action =
       throw new Error('No contact ID provided')
     }
     await contactsAPI.deleteContact(params.contactId)
-    queryClient.invalidateQueries({ queryKey: contactsQueries.all() })
+    invalidateQueries(queryClient, { queryKey: contactsQueries.all() })
     return redirect('/')
   }

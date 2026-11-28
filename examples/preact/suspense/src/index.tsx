@@ -3,6 +3,7 @@ import {
   QueryClientProvider,
   QueryErrorResetBoundary,
   noop,
+  query,
   useQueryClient,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
@@ -42,7 +43,7 @@ function Example() {
       <Button
         onClick={() => {
           if (!showProjects) {
-            queryClient.query(projectsQueries.list()).catch(noop)
+            query(queryClient, projectsQueries.list()).catch(noop)
           }
           setShowProjects((old) => !old)
         }}

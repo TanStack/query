@@ -1,4 +1,8 @@
 <script lang="ts">
+  import {
+    resumePausedMutations,
+    invalidateQueries,
+  } from '@tanstack/svelte-query'
   import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
   import { PersistQueryClientProvider } from '@tanstack/svelte-query-persist-client'
   import { Toaster } from 'svelte-sonner'
@@ -17,8 +21,8 @@
   persistOptions={{ persister }}
   onSuccess={() => {
     // resume mutations after initial restore from localStorage was successful
-    queryClient.resumePausedMutations().then(() => {
-      queryClient.invalidateQueries()
+    resumePausedMutations(queryClient).then(() => {
+      invalidateQueries(queryClient)
     })
   }}
 >

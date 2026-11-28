@@ -1,3 +1,4 @@
+import { getQueryObserverCount, isQueryStale } from '@tanstack/query-core'
 import type { Query } from '@tanstack/query-core'
 
 type SortFn = (a: Query, b: Query) => number
@@ -23,10 +24,10 @@ export function getQueryState(query: Query): QueryState {
   if (query.state.fetchStatus === 'paused') {
     return QueryState.Paused
   }
-  if (!query.getObserversCount()) {
+  if (!getQueryObserverCount(query)) {
     return QueryState.Inactive
   }
-  if (query.isStale()) {
+  if (isQueryStale(query)) {
     return QueryState.Stale
   }
 

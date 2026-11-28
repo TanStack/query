@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+  import { isPending, createQuery } from '@tanstack/svelte-query'
 
   const query = createQuery(() => ({
     queryKey: ['test'],
@@ -10,7 +10,7 @@
   }))
 </script>
 
-{#if query.isPending}
+{#if isPending(query)}
   <div>Loading...</div>
 {:else if query.error}
   <div>An error has occurred!</div>

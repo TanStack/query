@@ -2,6 +2,7 @@ import {
   QueryClient,
   QueryClientProvider,
   createQueryController,
+  setQueryData,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 
@@ -25,7 +26,7 @@ function createContractClient(data: ContractProbeData): QueryClient {
     },
   })
 
-  client.setQueryData(contractQueryKey, data)
+  setQueryData(client, contractQueryKey, data)
   return client
 }
 

@@ -1,5 +1,11 @@
 import { describe, expectTypeOf, it } from 'vitest'
-import { InfiniteQueryObserver, QueryClient, QueryObserver } from '..'
+import {
+  InfiniteQueryObserver,
+  QueryClient,
+  QueryObserver,
+  defaultQueryOptions,
+  select,
+} from '..'
 import type {
   DefaultedInfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -14,16 +20,16 @@ class CustomError extends Error {
 describe('result reader types', () => {
   it('preserves selected data and error types', () => {
     const client = new QueryClient()
-    const options = client.defaultQueryOptions<
+    const options = defaultQueryOptions<
       number,
       CustomError,
       string,
       number,
       readonly ['value']
-    >({
+    >(client, {
       queryKey: ['value'],
       queryFn: () => 1,
-      select: String,
+      select: select(String),
     })
     const observer = new QueryObserver(client, options)
     const reader = observer.createResultReader(options)
@@ -46,7 +52,7 @@ describe('result reader types', () => {
     > = {
       queryKey: ['value'],
       queryFn: ({ pageParam }) => pageParam,
-      select: (data) => data.pages.join(','),
+      select: select((data) => data.pages.join(',')),
       initialPageParam: 0,
       getNextPageParam: (last) => last + 1,
       queryHash: 'value',

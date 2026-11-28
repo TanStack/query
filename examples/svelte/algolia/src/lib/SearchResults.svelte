@@ -1,5 +1,12 @@
 <script lang="ts">
-  import { createInfiniteQuery } from '@tanstack/svelte-query'
+  import {
+    infiniteQueryOptions,
+    isLoading,
+    isFetching,
+    isFetchingNextPage,
+    select,
+    createInfiniteQuery,
+  } from '@tanstack/svelte-query'
   import { productsQueries } from './services/products/queries'
 
   type Product = {
@@ -14,20 +21,22 @@
 
   let { query = '' }: Props = $props()
 
-  const searchQuery = createInfiniteQuery(() => ({
-    ...productsQueries.search<Product>({
-      indexName: 'bestbuy',
-      query,
-      hitsPerPage: 5,
+  const searchQuery = createInfiniteQuery(() =>
+    infiniteQueryOptions({
+      ...productsQueries.search<Product>({
+        indexName: 'bestbuy',
+        query,
+        hitsPerPage: 5,
+      }),
+      select: select((data) => data.pages.flatMap((page) => page.hits)),
+      staleTime: 30 * 1000, // 30s
+      gcTime: 15 * 60 * 1000, // 15m
     }),
-    select: (data) => data.pages.flatMap((page) => page.hits),
-    staleTime: 30 * 1000, // 30s
-    gcTime: 15 * 60 * 1000, // 15m
-  }))
+  )
 </script>
 
 {#if query}
-  {#if searchQuery.isLoading}
+  {#if isLoading(searchQuery)}
     <div class="loading">Loading...</div>
   {:else if searchQuery.status === 'error'}
     <div>Error: {searchQuery.error.message}</div>
@@ -35,7 +44,7 @@
     <div>
       <div class="search-status">
         Status: {searchQuery.status}
-        {#if searchQuery.isFetching}<span>fetching...</span>{/if}
+        {#if isFetching(searchQuery)}<span>fetching...</span>{/if}
       </div>
       <div>
         <div class="search-result">
@@ -62,12 +71,12 @@
             type="button"
             class="search-more"
             onclick={() => searchQuery.fetchNextPage()}
-            disabled={searchQuery.isFetching}
+            disabled={isFetching(searchQuery)}
           >
             more
           </button>
         {/if}
-        {#if searchQuery.isFetchingNextPage}
+        {#if isFetchingNextPage(searchQuery)}
           <div class="search-status">Fetching next page...</div>
         {/if}
       </div>

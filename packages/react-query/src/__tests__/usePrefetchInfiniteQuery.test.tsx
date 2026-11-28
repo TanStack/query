@@ -1,3 +1,4 @@
+import { clearQueryClient, infiniteQuery } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
@@ -6,8 +7,9 @@ import {
   QueryCache,
   QueryClient,
   noop,
+  suspenseInfiniteQueryOptions,
   usePrefetchInfiniteQuery,
-  useSuspenseInfiniteQuery,
+  useQuery,
 } from '..'
 import { renderWithSuspense } from './utils'
 
@@ -22,7 +24,7 @@ describe('usePrefetchInfiniteQuery', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -49,7 +51,7 @@ describe('usePrefetchInfiniteQuery', () => {
     }
 
     function Page() {
-      const state = useSuspenseInfiniteQuery(queryOpts)
+      const state = useQuery(suspenseInfiniteQueryOptions(queryOpts))
 
       return (
         <div>
@@ -113,12 +115,12 @@ describe('usePrefetchInfiniteQuery', () => {
         allPages.length < data.length ? allPages.length : undefined,
     }
 
-    void queryClient.infiniteQuery({ ...queryOpts, pages: 3 }).catch(noop)
+    void infiniteQuery(queryClient, { ...queryOpts, pages: 3 }).catch(noop)
     await vi.advanceTimersByTimeAsync(30)
     queryOpts.queryFn.mockClear()
 
     function Page() {
-      const state = useSuspenseInfiniteQuery(queryOpts)
+      const state = useQuery(suspenseInfiniteQueryOptions(queryOpts))
 
       return (
         <div>
@@ -178,7 +180,7 @@ describe('usePrefetchInfiniteQuery', () => {
     }
 
     function Page() {
-      const state = useSuspenseInfiniteQuery(queryOpts)
+      const state = useQuery(suspenseInfiniteQueryOptions(queryOpts))
 
       return (
         <div>

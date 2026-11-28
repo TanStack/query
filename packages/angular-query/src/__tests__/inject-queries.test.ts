@@ -10,6 +10,16 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import {
+  cancelQueries,
+  findCachedQuery,
+  getQueryCache,
+  getQueryObserverCount,
+  invalidateQueries,
+  select,
+  setDefaultOptions,
+  setQueryData,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/angular'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -74,7 +84,7 @@ describe('injectQueries', () => {
 
   it('should keep failed refetch state and cached data readable without global reporting', async () => {
     vi.useRealTimers()
-    queryClient.setDefaultOptions({
+    setDefaultOptions(queryClient, {
       queries: { retry: false, throwOnError: true },
     })
     const report = vi.spyOn(TestBed.inject(ErrorHandler), 'handleError')
@@ -136,7 +146,7 @@ describe('injectQueries', () => {
       query.status(),
     )
     const subscriptionEvents: Array<string> = []
-    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+    const unsubscribe = getQueryCache(queryClient).subscribe((event) => {
       // setQueries emits synchronously; this read must not re-enter the signal
       // computation that caused the options update.
       if (event.type === 'observerOptionsUpdated') readResult()
@@ -174,7 +184,7 @@ describe('injectQueries', () => {
     TestBed.tick()
 
     const nestedStatuses: Array<string> = []
-    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+    const unsubscribe = getQueryCache(queryClient).subscribe((event) => {
       if (event.type === 'observerAdded' || event.type === 'observerRemoved') {
         void Promise.resolve().then(() =>
           nestedStatuses.push(queries()[0].status()),
@@ -209,7 +219,7 @@ describe('injectQueries', () => {
     expect(queries()[0].status()).toBe('pending')
     TestBed.tick()
     const nestedStatuses: Array<string> = []
-    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+    const unsubscribe = getQueryCache(queryClient).subscribe((event) => {
       if (event.type === 'added')
         void Promise.resolve().then(() =>
           nestedStatuses.push(queries()[0].status()),
@@ -469,7 +479,7 @@ describe('injectQueries', () => {
   it('combines fresh raw results when a signal changes what combine selects', () => {
     const showData = signal(false)
     const key = ['reactive-combine-selection']
-    queryClient.setQueryData(key, 1)
+    setQueryData(queryClient, key, 1)
     const queries = TestBed.runInInjectionContext(() =>
       injectQueries(() => ({
         queries: [{ queryKey: key, queryFn: skipToken }],
@@ -479,9 +489,9 @@ describe('injectQueries', () => {
 
     expect(queries()).toStrictEqual({ value: 0 })
     TestBed.tick()
-    queryClient.setQueryData(key, 2)
+    setQueryData(queryClient, key, 2)
     const previous = queries()
-    queryClient.setQueryData(key, 3)
+    setQueryData(queryClient, key, 3)
     expect(queries()).toStrictEqual(previous)
     expect(queries()).not.toBe(previous)
     showData.set(true)
@@ -625,7 +635,7 @@ describe('injectQueries', () => {
             {
               queryKey: ['reactive-select'],
               queryFn: fetchSpy,
-              select: (data: number) => data * currentMultiplier,
+              select: select((data: number) => data * currentMultiplier),
               staleTime: 0,
             },
           ],
@@ -637,13 +647,13 @@ describe('injectQueries', () => {
     await vi.advanceTimersByTimeAsync(11)
 
     const query = rendered.fixture.componentInstance.queries()[0]
-    const cachedQuery = queryClient
-      .getQueryCache()
-      .find({ queryKey: ['reactive-select'] })!
+    const cachedQuery = findCachedQuery(getQueryCache(queryClient), {
+      queryKey: ['reactive-select'],
+    })!
 
     expect(query.data()).toBe(2)
     expect(fetchSpy).toHaveBeenCalledTimes(1)
-    expect(cachedQuery.getObserversCount()).toBe(1)
+    expect(getQueryObserverCount(cachedQuery)).toBe(1)
 
     multiplier.set(2)
     rendered.fixture.detectChanges()
@@ -651,10 +661,10 @@ describe('injectQueries', () => {
 
     expect(query.data()).toBe(4)
     expect(fetchSpy).toHaveBeenCalledTimes(1)
-    expect(cachedQuery.getObserversCount()).toBe(1)
+    expect(getQueryObserverCount(cachedQuery)).toBe(1)
 
     rendered.fixture.destroy()
-    expect(cachedQuery.getObserversCount()).toBe(0)
+    expect(getQueryObserverCount(cachedQuery)).toBe(0)
   })
 
   it('should refetch only changed keys when queries length stays the same', async () => {
@@ -734,7 +744,7 @@ describe('injectQueries', () => {
     const initialQuery = rendered.fixture.componentInstance.queries()[0]
     const initialDataSignal = initialQuery.data
 
-    queryClient.setQueryData(['proxy-cache-update'], 'updated')
+    setQueryData(queryClient, ['proxy-cache-update'], 'updated')
     await vi.advanceTimersByTimeAsync(0)
 
     const updatedQuery = rendered.fixture.componentInstance.queries()[0]
@@ -1070,7 +1080,7 @@ describe('injectQueries', () => {
       })
       expect(isStable).toBe(true)
 
-      const invalidation = queryClient.invalidateQueries({ queryKey: key })
+      const invalidation = invalidateQueries(queryClient, { queryKey: key })
       expect(isStable).toBe(false)
       complete(2)
       await invalidation
@@ -1219,7 +1229,7 @@ describe('injectQueries', () => {
       const query = fixture.componentInstance.queries()[0]
 
       await vi.advanceTimersByTimeAsync(20)
-      await queryClient.cancelQueries({ queryKey: ['queries-cancel'] })
+      await cancelQueries(queryClient, { queryKey: ['queries-cancel'] })
       await app.whenStable()
 
       expect(query.status()).toBe('pending')
@@ -1313,21 +1323,21 @@ describe('injectQueries', () => {
     expect(result.status()).toBe('success')
     expect(result.data()).toBe('restored-data')
 
-    const cachedQuery = queryClient
-      .getQueryCache()
-      .find({ queryKey: ['restoring'] })!
-    expect(cachedQuery.getObserversCount()).toBe(1)
+    const cachedQuery = findCachedQuery(getQueryCache(queryClient), {
+      queryKey: ['restoring'],
+    })!
+    expect(getQueryObserverCount(cachedQuery)).toBe(1)
 
     isRestoring.set(true)
     fixture.detectChanges()
-    expect(cachedQuery.getObserversCount()).toBe(0)
+    expect(getQueryObserverCount(cachedQuery)).toBe(0)
 
     isRestoring.set(false)
     fixture.detectChanges()
-    expect(cachedQuery.getObserversCount()).toBe(1)
+    expect(getQueryObserverCount(cachedQuery)).toBe(1)
 
     fixture.destroy()
-    expect(cachedQuery.getObserversCount()).toBe(0)
+    expect(getQueryObserverCount(cachedQuery)).toBe(0)
   })
 
   it.each(['options-first', 'restoring-first'] as const)(
@@ -1372,16 +1382,16 @@ describe('injectQueries', () => {
       expect(queriedKeys).toStrictEqual(['new'])
       expect(queries()[0].data()).toBe('new')
       expect(
-        queryClient
-          .getQueryCache()
-          .find({ queryKey: ['same-turn-restoration', 'old'] })?.state
-          .fetchStatus,
+        findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['same-turn-restoration', 'old'],
+        })?.state.fetchStatus,
       ).toBe('idle')
       expect(
-        queryClient
-          .getQueryCache()
-          .find({ queryKey: ['same-turn-restoration', 'new'] })
-          ?.getObserversCount(),
+        getQueryObserverCount(
+          findCachedQuery(getQueryCache(queryClient), {
+            queryKey: ['same-turn-restoration', 'new'],
+          })!,
+        ),
       ).toBe(1)
     },
   )
@@ -1413,7 +1423,7 @@ describe('injectQueries', () => {
       queries()[0].status(),
     )
     let appliedStaleTime: number | undefined
-    const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+    const unsubscribe = getQueryCache(queryClient).subscribe((event) => {
       if (event.type === 'observerOptionsUpdated') {
         appliedStaleTime = event.observer.options.staleTime as number
         boundaryRead()
@@ -1427,10 +1437,11 @@ describe('injectQueries', () => {
     expect(boundaryRead).toHaveBeenCalledWith()
     expect(appliedStaleTime).toBe(1)
     expect(
-      queryClient
-        .getQueryCache()
-        .find({ queryKey: ['restoration-reentrant'] })
-        ?.getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['restoration-reentrant'],
+        })!,
+      ),
     ).toBe(1)
 
     unsubscribe()
@@ -1459,28 +1470,28 @@ describe('injectQueries', () => {
 
     expect(queries()[0].status()).toBe('pending')
     TestBed.tick()
-    const oldQuery = queryClient
-      .getQueryCache()
-      .find({ queryKey: oldQueryKey })!
-    expect(oldQuery.getObserversCount()).toBe(0)
+    const oldQuery = findCachedQuery(getQueryCache(queryClient), {
+      queryKey: oldQueryKey,
+    })!
+    expect(getQueryObserverCount(oldQuery)).toBe(0)
 
     key.set('new')
     isRestoring.set(false)
 
     expect(queries()[0].status()).toBe('pending')
     expect(
-      queryClient.getQueryCache().find({ queryKey: newQueryKey }),
+      findCachedQuery(getQueryCache(queryClient), { queryKey: newQueryKey }),
     ).toBeDefined()
 
-    queryClient.setQueryData(newQueryKey, 'early data')
-    const newQuery = queryClient
-      .getQueryCache()
-      .find({ queryKey: newQueryKey })!
-    expect(newQuery.getObserversCount()).toBe(0)
+    setQueryData(queryClient, newQueryKey, 'early data')
+    const newQuery = findCachedQuery(getQueryCache(queryClient), {
+      queryKey: newQueryKey,
+    })!
+    expect(getQueryObserverCount(newQuery)).toBe(0)
     TestBed.tick()
 
-    expect(oldQuery.getObserversCount()).toBe(0)
-    expect(newQuery.getObserversCount()).toBe(1)
+    expect(getQueryObserverCount(oldQuery)).toBe(0)
+    expect(getQueryObserverCount(newQuery)).toBe(1)
     expect(queries()[0].data()).toBe('early data')
   })
 
@@ -1502,30 +1513,30 @@ describe('injectQueries', () => {
 
     expect(queries()[0].status()).toBe('pending')
     TestBed.tick()
-    const oldQuery = queryClient
-      .getQueryCache()
-      .find({ queryKey: oldQueryKey })!
-    expect(oldQuery.getObserversCount()).toBe(1)
+    const oldQuery = findCachedQuery(getQueryCache(queryClient), {
+      queryKey: oldQueryKey,
+    })!
+    expect(getQueryObserverCount(oldQuery)).toBe(1)
 
     key.set('new')
 
     expect(queries()[0].status()).toBe('pending')
     // The existing observer list stays attached until the configuration effect
     // can move it atomically.
-    expect(oldQuery.getObserversCount()).toBe(1)
+    expect(getQueryObserverCount(oldQuery)).toBe(1)
     expect(
-      queryClient.getQueryCache().find({ queryKey: newQueryKey }),
+      findCachedQuery(getQueryCache(queryClient), { queryKey: newQueryKey }),
     ).toBeDefined()
 
-    queryClient.setQueryData(newQueryKey, 'early data')
-    const newQuery = queryClient
-      .getQueryCache()
-      .find({ queryKey: newQueryKey })!
-    expect(newQuery.getObserversCount()).toBe(0)
+    setQueryData(queryClient, newQueryKey, 'early data')
+    const newQuery = findCachedQuery(getQueryCache(queryClient), {
+      queryKey: newQueryKey,
+    })!
+    expect(getQueryObserverCount(newQuery)).toBe(0)
     TestBed.tick()
 
-    expect(oldQuery.getObserversCount()).toBe(0)
-    expect(newQuery.getObserversCount()).toBe(1)
+    expect(getQueryObserverCount(oldQuery)).toBe(0)
+    expect(getQueryObserverCount(newQuery)).toBe(1)
     expect(queries()[0].data()).toBe('early data')
   })
 

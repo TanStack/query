@@ -1,8 +1,9 @@
 import { notifyManager } from './notifyManager'
 import { Query } from './query'
+import { defaultQueryOptions, getQueryDefaults } from './queryClient'
 import { Subscribable } from './subscribable'
-import { hashKeyByOptions, matchQuery } from './utils'
-import type { Action, QueryState } from './query'
+import { hashKeyByOptions } from './utils'
+import type { Action as QueryAction, QueryState } from './query'
 import type { QueryClient } from './queryClient'
 import type { QueryObserver } from './queryObserver'
 import type {
@@ -13,9 +14,6 @@ import type {
   QueryOptions,
   WithRequired,
 } from './types'
-import type { QueryFilters } from './utils'
-
-// TYPES
 
 /**
  * Global callbacks that fire for every query handled by a `QueryCache`, regardless of which
@@ -45,48 +43,9 @@ export interface QueryCacheConfig {
   ) => void
 }
 
-interface NotifyEventQueryAdded extends NotifyEvent {
-  type: 'added'
-  query: Query<any, any, any, any>
-}
-
-interface NotifyEventQueryRemoved extends NotifyEvent {
-  type: 'removed'
-  query: Query<any, any, any, any>
-}
-
-interface NotifyEventQueryUpdated extends NotifyEvent {
-  type: 'updated'
-  query: Query<any, any, any, any>
-  action: Action<any, any>
-}
-
-interface NotifyEventQueryObserverAdded extends NotifyEvent {
-  type: 'observerAdded'
-  query: Query<any, any, any, any>
-  observer: QueryObserver<any, any, any, any, any>
-}
-
-interface NotifyEventQueryObserverRemoved extends NotifyEvent {
-  type: 'observerRemoved'
-  query: Query<any, any, any, any>
-  observer: QueryObserver<any, any, any, any, any>
-}
-
-interface NotifyEventQueryObserverResultsUpdated extends NotifyEvent {
-  type: 'observerResultsUpdated'
-  query: Query<any, any, any, any>
-}
-
-interface NotifyEventQueryObserverOptionsUpdated extends NotifyEvent {
-  type: 'observerOptionsUpdated'
-  query: Query<any, any, any, any>
-  observer: QueryObserver<any, any, any, any, any>
-}
-
 /**
  * The event passed to a `QueryCache` subscriber. Fired whenever a query is added or removed from
- * the cache, its state is updated (e.g. via `query.setState` or `queryClient.removeQueries`), or
+ * the cache, its state is updated (e.g. via `query.setState` or `removeQueries`), or
  * one of its observers is added, removed, or has its results or options updated.
  */
 export type QueryCacheNotifyEvent =
@@ -126,6 +85,45 @@ export interface QueryStore {
   values: () => IterableIterator<Query>
 }
 
+interface NotifyEventQueryAdded extends NotifyEvent {
+  type: 'added'
+  query: Query<any, any, any, any>
+}
+
+interface NotifyEventQueryRemoved extends NotifyEvent {
+  type: 'removed'
+  query: Query<any, any, any, any>
+}
+
+interface NotifyEventQueryUpdated extends NotifyEvent {
+  type: 'updated'
+  query: Query<any, any, any, any>
+  action: QueryAction<any, any>
+}
+
+interface NotifyEventQueryObserverAdded extends NotifyEvent {
+  type: 'observerAdded'
+  query: Query<any, any, any, any>
+  observer: QueryObserver<any, any, any, any, any>
+}
+
+interface NotifyEventQueryObserverRemoved extends NotifyEvent {
+  type: 'observerRemoved'
+  query: Query<any, any, any, any>
+  observer: QueryObserver<any, any, any, any, any>
+}
+
+interface NotifyEventQueryObserverResultsUpdated extends NotifyEvent {
+  type: 'observerResultsUpdated'
+  query: Query<any, any, any, any>
+}
+
+interface NotifyEventQueryObserverOptionsUpdated extends NotifyEvent {
+  type: 'observerOptionsUpdated'
+  query: Query<any, any, any, any>
+  observer: QueryObserver<any, any, any, any, any>
+}
+
 // CLASS
 
 /**
@@ -159,13 +157,13 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * the reactive `QueryObserver` machinery.
    * @param client - The client the query belongs to, used to default its options.
    * @param options - The query options, including the `queryKey`. A new query is created with the
-   * options defaulted by {@link QueryClient#defaultQueryOptions}.
+   * options defaulted by {@link defaultQueryOptions}.
    * @param state - The initial state of a newly created query, e.g. when hydrating. Ignored if the
    * query already exists.
    * @returns The existing or newly created query.
    * @example
    * ```ts
-   * const queryCache = queryClient.getQueryCache()
+   * const queryCache = getQueryCache(queryClient)
    *
    * const query = queryCache.build(queryClient, {
    *   queryKey: ['posts'],
@@ -196,9 +194,9 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
         client,
         queryKey,
         queryHash,
-        options: client.defaultQueryOptions(options),
+        options: defaultQueryOptions(client, options),
         state,
-        defaultOptions: client.getQueryDefaults(queryKey),
+        defaultOptions: getQueryDefaults(client, queryKey),
       })
       this.add(query)
     }
@@ -231,8 +229,8 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * @param query - The query to remove.
    * @example
    * ```ts
-   * const queryCache = queryClient.getQueryCache()
-   * const query = queryCache.find({ queryKey: ['posts'] })
+   * const queryCache = getQueryCache(queryClient)
+   * const query = findCachedQuery(queryCache, { queryKey: ['posts'] })
    *
    * if (query) {
    *   queryCache.remove(query)
@@ -250,32 +248,15 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   /**
-   * Removes all queries from the cache.
-   * @example
-   * ```ts
-   * const queryCache = queryClient.getQueryCache()
-   *
-   * queryCache.clear()
-   * ```
-   */
-  clear(): void {
-    notifyManager.batch(() => {
-      this.getAll().forEach((query) => {
-        this.remove(query)
-      })
-    })
-  }
-
-  /**
    * Returns the `Query` instance stored under the given `queryHash`, or `undefined` if none
-   * exists. Unlike {@link QueryCache#find}, this looks up by the already-computed hash rather
+   * exists. Unlike {@link findCachedQuery}, this looks up by the already-computed hash rather
    * than by `QueryFilters`. Used by plugins (e.g. broadcast/hydration) that already have a hash
    * to look up directly.
    * @param queryHash - The hash of the query to look up.
    * @returns The query stored under the hash, or `undefined`.
    * @example
    * ```ts
-   * const queryCache = queryClient.getQueryCache()
+   * const queryCache = getQueryCache(queryClient)
    * const queryHash = hashKey(['posts'])
    *
    * const query = queryCache.get(queryHash)
@@ -299,68 +280,13 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * @returns Every query in the cache.
    * @example
    * ```ts
-   * const queryCache = queryClient.getQueryCache()
+   * const queryCache = getQueryCache(queryClient)
    *
    * const queries = queryCache.getAll()
    * ```
    */
   getAll(): Array<Query> {
     return [...this.#queries.values()]
-  }
-
-  /**
-   * A slightly more advanced method that can be used to get an existing query instance from the
-   * cache. This instance not only contains all the state for the query, but all of the instances,
-   * and underlying guts of the query as well. If the query does not exist, `undefined` is
-   * returned.
-   *
-   * This is not typically needed for most applications, but can come in handy when needing more
-   * information about a query in rare scenarios (e.g. looking at `query.state.dataUpdatedAt` to
-   * decide whether a query is fresh enough to be used as an initial value).
-   * @param filters - The filters to match, including the required `queryKey`. `exact` defaults to
-   * `true`.
-   * @returns The first matching query, or `undefined`.
-   * @see {@link QueryCache#findAll}
-   * @example
-   * ```ts
-   * const queryCache = queryClient.getQueryCache()
-   *
-   * const query = queryCache.find({ queryKey: ['posts'] })
-   * ```
-   */
-  find<TQueryFnData = unknown, TError = DefaultError, TData = TQueryFnData>(
-    filters: WithRequired<QueryFilters, 'queryKey'>,
-  ): Query<TQueryFnData, TError, TData> | undefined {
-    const defaultedFilters = { exact: true, ...filters }
-
-    return this.getAll().find((query) =>
-      matchQuery(defaultedFilters, query, this.config.queryKey),
-    ) as Query<TQueryFnData, TError, TData> | undefined
-  }
-
-  /**
-   * An even more advanced method that can be used to get existing query instances from the cache
-   * that partially match a query key. If no queries match, an empty array is returned.
-   *
-   * This is not typically needed for most applications, but can come in handy when needing more
-   * information about queries in rare scenarios.
-   * @param filters - The filters to match. Without filters, every query is returned.
-   * @returns The matching queries.
-   * @see {@link QueryCache#find}
-   * @example
-   * ```ts
-   * const queryCache = queryClient.getQueryCache()
-   *
-   * const queries = queryCache.findAll({ queryKey: ['posts'] })
-   * ```
-   */
-  findAll(filters: QueryFilters<any> = {}): Array<Query> {
-    const queries = this.getAll()
-    return Object.keys(filters).length > 0
-      ? queries.filter((query) =>
-          matchQuery(filters, query, this.config.queryKey),
-        )
-      : queries
   }
 
   /**
@@ -381,11 +307,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * @internal
    */
   onFocus(): void {
-    notifyManager.batch(() => {
-      this.getAll().forEach((query) => {
-        query.onFocus()
-      })
-    })
+    this.#resume('onFocus')
   }
 
   /**
@@ -393,10 +315,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
    * @internal
    */
   onOnline(): void {
-    notifyManager.batch(() => {
-      this.getAll().forEach((query) => {
-        query.onOnline()
-      })
-    })
+    this.#resume('onOnline')
+  }
+
+  #resume(event: 'onFocus' | 'onOnline'): void {
+    notifyManager.batch(() => this.getAll().forEach((query) => query[event]()))
   }
 }

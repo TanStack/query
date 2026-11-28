@@ -1,6 +1,10 @@
 import {
   QueryClient,
   QueryClientProvider,
+  invalidateQueries,
+  isFetching,
+  setDefaultOptions,
+  setQueryData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -54,7 +58,7 @@ function Root() {
   }, [localErrorRate, localFetchTimeMax, localFetchTimeMin])
 
   React.useEffect(() => {
-    queryClient.setDefaultOptions({
+    setDefaultOptions(queryClient, {
       queries: {
         staleTime,
         gcTime,
@@ -141,7 +145,7 @@ function App() {
   return (
     <div className="App">
       <div>
-        <button onClick={() => queryClient.invalidateQueries()}>
+        <button onClick={() => invalidateQueries(queryClient)}>
           Force Refetch All
         </button>
       </div>
@@ -185,9 +189,9 @@ function Todos({
 }) {
   const [filter, setFilter] = React.useState(initialFilter)
 
-  const { status, data, isFetching, error, failureCount, refetch } = useQuery(
-    todosQueries.list(filter),
-  )
+  const queryResult = useQuery(todosQueries.list(filter))
+  const { status, data, error, failureCount, refetch } = queryResult
+  const fetching = isFetching(queryResult)
 
   return (
     <div>
@@ -216,7 +220,7 @@ function Todos({
             ))}
           </ul>
           <div>
-            {isFetching ? (
+            {fetching ? (
               <span>
                 Background Refreshing... (Attempt: {failureCount + 1})
               </span>
@@ -239,9 +243,9 @@ function EditTodo({
 }) {
   const queryClient = useQueryClient()
 
-  const { status, data, isFetching, failureCount, refetch } = useQuery(
-    todosQueries.detail(editingIndex),
-  )
+  const queryResult = useQuery(todosQueries.detail(editingIndex))
+  const { status, data, failureCount, refetch } = queryResult
+  const fetching = isFetching(queryResult)
 
   const [draft, setDraft] = React.useState<Partial<Omit<Todo, 'id'>>>({})
 
@@ -249,8 +253,12 @@ function EditTodo({
     ...todosMutations.update(),
     onSuccess: (todo) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
-      queryClient.setQueryData(todosQueries.detail(editingIndex).queryKey, todo)
+      invalidateQueries(queryClient, { queryKey: todosQueries.lists() })
+      setQueryData(
+        queryClient,
+        todosQueries.detail(editingIndex).queryKey,
+        todo,
+      )
       setDraft({})
     },
   })
@@ -315,7 +323,7 @@ function EditTodo({
                   : null}
           </div>
           <div>
-            {isFetching ? (
+            {fetching ? (
               <span>
                 Background Refreshing... (Attempt: {failureCount + 1})
               </span>
@@ -336,7 +344,7 @@ function AddTodo() {
   const addMutation = useMutation({
     ...todosMutations.create(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
+      invalidateQueries(queryClient, { queryKey: todosQueries.lists() })
     },
   })
 

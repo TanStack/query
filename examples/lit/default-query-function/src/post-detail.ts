@@ -1,4 +1,10 @@
-import { createQueryController, defaultQueryFn } from '@tanstack/lit-query'
+import {
+  createQueryController,
+  defaultQueryFn,
+  isError,
+  isFetching,
+  isPending,
+} from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import type { Post } from './types'
 
@@ -25,7 +31,7 @@ class PostDetail extends LitElement {
   }
 
   render() {
-    const { isPending, isError, isFetching, data, error } = this.post()
+    const queryResult = this.post()
 
     return html`
       <div>
@@ -33,16 +39,18 @@ class PostDetail extends LitElement {
           <a href="#posts" @click=${this.back}>Back</a>
         </div>
         ${
-          !this.postId || isPending
+          !this.postId || isPending(queryResult)
             ? html`<div>Loading...</div>`
-            : isError
-              ? html`<span>Error: ${error.message}</span>`
+            : isError(queryResult)
+              ? html`<span>Error: ${queryResult.error.message}</span>`
               : html`
-                  <h1>${data.title}</h1>
+                  <h1>${queryResult.data.title}</h1>
                   <div>
-                    <p>${data.body}</p>
+                    <p>${queryResult.data.body}</p>
                   </div>
-                  <div>${isFetching ? 'Background Updating...' : ' '}</div>
+                  <div>
+                    ${isFetching(queryResult) ? 'Background Updating...' : ' '}
+                  </div>
                 `
         }
       </div>

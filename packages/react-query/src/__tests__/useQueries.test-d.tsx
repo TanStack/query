@@ -1,3 +1,7 @@
+import {
+  select,
+  placeholderData as withPlaceholder,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 import { skipToken } from '..'
@@ -67,13 +71,13 @@ describe('useQueries', () => {
       const query1 = queryOptions({
         queryKey: createKey(),
         queryFn: () => Promise.resolve(1),
-        select: (data) => data > 1,
+        select: select((data) => data > 1),
       })
 
       const query2 = {
         queryKey: createKey(),
         queryFn: () => Promise.resolve(1),
-        select: (data: number) => data > 1,
+        select: select((data: number) => data > 1),
       }
 
       const queryResults = useQueries({ queries: [query1, query2] })
@@ -223,18 +227,18 @@ describe('useQueries', () => {
             {
               queryKey: key1,
               queryFn: () => 'string',
-              select: (a) => {
+              select: select((a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
                 return a.toLowerCase()
-              },
+              }),
             },
             {
               queryKey: key2,
               queryFn: () => 'string',
-              select: (a) => {
+              select: select((a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
                 return parseInt(a)
-              },
+              }),
             },
           ],
         })
@@ -253,22 +257,22 @@ describe('useQueries', () => {
             {
               queryKey: key1,
               queryFn: () => 'string',
-              select: (a) => {
+              select: select((a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
                 return a.toLowerCase()
-              },
-              placeholderData: 'string',
+              }),
+              placeholderData: withPlaceholder('string'),
               // @ts-expect-error (initialData: string)
               initialData: 123,
             },
             {
               queryKey: key2,
               queryFn: () => 'string',
-              select: (a) => {
+              select: select((a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
                 return parseInt(a)
-              },
-              placeholderData: 'string',
+              }),
+              placeholderData: withPlaceholder('string'),
               // @ts-expect-error (initialData: string)
               initialData: 123,
             },
@@ -343,18 +347,18 @@ describe('useQueries', () => {
             {
               queryKey: key1,
               queryFn: () => 'string',
-              select: (a) => {
+              select: select((a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
                 return a.toLowerCase()
-              },
+              }),
             },
             {
               queryKey: key2,
               queryFn: () => 'string',
-              select: (a) => {
+              select: select((a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
                 return parseInt(a)
-              },
+              }),
             },
           ],
         })
@@ -373,18 +377,18 @@ describe('useQueries', () => {
             {
               queryKey: key1,
               queryFn: () => 'string',
-              select: (a) => {
+              select: select((a) => {
                 expectTypeOf(a).toEqualTypeOf<unknown>()
                 return a as string
-              },
+              }),
             },
             {
               queryKey: key2,
               queryFn: () => 'string',
-              select: (a) => {
+              select: select((a) => {
                 expectTypeOf(a).toEqualTypeOf<unknown>()
                 return a as number
-              },
+              }),
             },
           ],
         })
@@ -408,22 +412,22 @@ describe('useQueries', () => {
             {
               queryKey: key1,
               queryFn: () => 'string',
-              select: (a) => {
+              select: select((a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
                 return a.toLowerCase()
-              },
-              placeholderData: 'string',
+              }),
+              placeholderData: withPlaceholder('string'),
               // @ts-expect-error (initialData: string)
               initialData: 123,
             },
             {
               queryKey: key2,
               queryFn: () => 'string',
-              select: (a) => {
+              select: select((a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
                 return parseInt(a)
-              },
-              placeholderData: 'string',
+              }),
+              placeholderData: withPlaceholder('string'),
               // @ts-expect-error (initialData: string)
               initialData: 123,
             },
@@ -453,18 +457,18 @@ describe('useQueries', () => {
             queryOptions({
               queryKey: createKey(),
               queryFn: () => 'string',
-              select: (a) => {
+              select: select((a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
                 return a.toLowerCase()
-              },
+              }),
             }),
             queryOptions({
               queryKey: createKey(),
               queryFn: () => 'string',
-              select: (a) => {
+              select: select((a) => {
                 expectTypeOf(a).toEqualTypeOf<string>()
                 return parseInt(a)
-              },
+              }),
             }),
           ],
         })
@@ -484,6 +488,8 @@ describe('useQueries', () => {
 
       type BizError = { code: number }
       const throwOnError = (_error: BizError) => true
+      const selectNumber = select((a: string) => parseInt(a))
+      const selectConstant = select(() => 123)
 
       // @ts-expect-error (Page component is not rendered)
       function Page() {
@@ -522,7 +528,7 @@ describe('useQueries', () => {
           queries: Array(50).map((_, i) => ({
             queryKey: ['key', i] as const,
             queryFn: () => i + 10,
-            select: (data: number) => data.toString(),
+            select: select((data: number) => data.toString()),
           })),
         })
         expectTypeOf(result2).toEqualTypeOf<
@@ -533,7 +539,7 @@ describe('useQueries', () => {
           queries: Array(50).map((_, i) => ({
             queryKey: ['key', i] as const,
             queryFn: () => i + 10,
-            select: (data: number) => data.toString(),
+            select: select((data: number) => data.toString()),
             throwOnError,
           })),
         })
@@ -554,7 +560,7 @@ describe('useQueries', () => {
             {
               queryKey: key3,
               queryFn: () => ['string[]'],
-              select: () => 123,
+              select: selectConstant,
             },
             {
               queryKey: key5,
@@ -580,7 +586,7 @@ describe('useQueries', () => {
             {
               queryKey: key1,
               queryFn: () => 'string',
-              placeholderData: 'string',
+              placeholderData: withPlaceholder('string'),
               // @ts-expect-error (initialData: string)
               initialData: 123,
             },
@@ -588,7 +594,7 @@ describe('useQueries', () => {
               queryKey: key2,
               queryFn: () => 123,
               // @ts-expect-error (placeholderData: number)
-              placeholderData: 'string',
+              placeholderData: withPlaceholder('string'),
               initialData: 123,
             },
           ],
@@ -615,7 +621,7 @@ describe('useQueries', () => {
             {
               queryKey: key4,
               queryFn: () => 'string',
-              select: (a: string) => parseInt(a),
+              select: selectNumber,
             },
             {
               queryKey: key5,
@@ -630,14 +636,14 @@ describe('useQueries', () => {
           queries: Array(50).map((_, i) => ({
             queryKey: ['key', i] as const,
             queryFn: () => i + 10,
-            select: (data: number) => data.toString(),
+            select: select((data: number) => data.toString()),
           })),
         })
         useQueries({
           queries: Array(50).map((_, i) => ({
             queryKey: ['key', i] as const,
             queryFn: () => i + 10,
-            select: (data: number) => data.toString(),
+            select: select((data: number) => data.toString()),
           })),
         })
 
@@ -655,12 +661,12 @@ describe('useQueries', () => {
             {
               queryKey: key4,
               queryFn: () => 'string',
-              select: (a: string) => parseInt(a),
+              select: selectNumber,
             },
             {
               queryKey: key5,
               queryFn: () => 'string',
-              select: (a: string) => parseInt(a),
+              select: selectNumber,
               throwOnError,
             },
           ],
@@ -781,6 +787,9 @@ describe('useQueries', () => {
       type SelectorB = (data: string) => [string, number]
       const getSelectorB = (): SelectorB => (data) => [data, +data]
 
+      const selectTupleA = select(getSelectorA())
+      const selectTupleB = select(getSelectorB())
+
       // Wrapper with strongly typed array-parameter
       function useWrappedQueries<
         TQueryFnData,
@@ -838,12 +847,12 @@ describe('useQueries', () => {
             {
               queryKey: getQueryKeyA(),
               queryFn: getQueryFunctionA(),
-              select: getSelectorA(),
+              select: selectTupleA,
             },
             {
               queryKey: getQueryKeyB('id'),
               queryFn: getQueryFunctionB(),
-              select: getSelectorB(),
+              select: selectTupleB,
             },
           ],
         })
@@ -858,7 +867,7 @@ describe('useQueries', () => {
           Array(10).map(() => ({
             queryKey: getQueryKeyA(),
             queryFn: getQueryFunctionA(),
-            select: getSelectorA(),
+            select: selectTupleA,
           })),
         )
 
@@ -884,11 +893,11 @@ describe('useQueries', () => {
             {
               queryKey: createKey(),
               queryFn: () => Promise.resolve(1),
-              select: (data) => {
+              select: select((data) => {
                 expectTypeOf(data).toBeUnknown()
                 // @ts-expect-error `data` is `unknown`, not the expected `number`
                 return data.toFixed()
-              },
+              }),
             },
           ],
         })
@@ -900,7 +909,7 @@ describe('useQueries', () => {
             {
               queryKey: createKey(),
               queryFn: () => Promise.resolve(1),
-              select: (data: number) => data.toFixed(),
+              select: select((data: number) => data.toFixed()),
             },
           ],
         })
@@ -922,10 +931,10 @@ describe('useQueries', () => {
         const options = queryOptions({
           queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
-          select: (data) => {
+          select: select((data) => {
             expectTypeOf(data).toEqualTypeOf<number>()
             return data.toFixed()
-          },
+          }),
         })
         const queryResults = useQueries({ queries: [options] })
         expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
@@ -940,10 +949,10 @@ describe('useQueries', () => {
           queries: [
             queryOptions({
               ...baseOptions,
-              select: (data) => {
+              select: select((data) => {
                 expectTypeOf(data).toEqualTypeOf<number>()
                 return data.toFixed()
-              },
+              }),
             }),
             baseOptions,
           ],
@@ -956,16 +965,16 @@ describe('useQueries', () => {
         const baseOptions = queryOptions({
           queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
-          select: (data) => data + 1,
+          select: select((data) => data + 1),
         })
         const queryResults = useQueries({
           queries: [
             queryOptions({
               ...baseOptions,
-              select: (data) => {
+              select: select((data) => {
                 expectTypeOf(data).toEqualTypeOf<number>()
                 return data.toFixed()
-              },
+              }),
             }),
           ],
         })
@@ -974,6 +983,8 @@ describe('useQueries', () => {
     })
 
     describe('with queryOptions spread into an inline query object', () => {
+      const selectText = select((data: number) => data.toFixed())
+
       it('should leave an unannotated select as `unknown` without select in the factory', () => {
         const options = queryOptions({
           queryKey: createKey(),
@@ -984,10 +995,10 @@ describe('useQueries', () => {
             // @ts-expect-error Without an annotation the inline `select` receives `data: unknown`, which makes the whole spread query object unassignable to the expected options type
             {
               ...options,
-              select: (data) => {
+              select: select((data) => {
                 expectTypeOf(data).toBeUnknown()
                 return data
-              },
+              }),
             },
           ],
         })
@@ -999,7 +1010,12 @@ describe('useQueries', () => {
           queryFn: () => Promise.resolve(1),
         })
         const queryResults = useQueries({
-          queries: [{ ...options, select: (data: number) => data.toFixed() }],
+          queries: [
+            {
+              ...options,
+              select: selectText,
+            },
+          ],
         })
         expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
       })
@@ -1008,17 +1024,17 @@ describe('useQueries', () => {
         const options = queryOptions({
           queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
-          select: (data) => data + 1,
+          select: select((data) => data + 1),
         })
         useQueries({
           queries: [
             // @ts-expect-error Without an annotation the inline `select` receives `data: unknown`, which makes the whole spread query object unassignable to the expected options type
             {
               ...options,
-              select: (data) => {
+              select: select((data) => {
                 expectTypeOf(data).toBeUnknown()
                 return data
-              },
+              }),
             },
           ],
         })
@@ -1028,10 +1044,15 @@ describe('useQueries', () => {
         const options = queryOptions({
           queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
-          select: (data) => data + 1,
+          select: select((data) => data + 1),
         })
         const queryResults = useQueries({
-          queries: [{ ...options, select: (data: number) => data.toFixed() }],
+          queries: [
+            {
+              ...options,
+              select: selectText,
+            },
+          ],
         })
         expectTypeOf(queryResults[0].data).toEqualTypeOf<string | undefined>()
       })

@@ -18,7 +18,7 @@ describe('useIsFetching', () => {
   it('should properly return isFetching state', async () => {
     const key1 = createKey()
     const key2 = createKey()
-    const { isFetching: isFetchingQuery } = useQuery({
+    const { fetchStatus } = useQuery({
       queryKey: key1,
       queryFn: () => sleep(0).then(() => 'Some data'),
     })
@@ -28,10 +28,10 @@ describe('useIsFetching', () => {
     })
     const isFetching = useIsFetching()
 
-    expect(isFetchingQuery.value).toBe(true)
+    expect(fetchStatus.value).toBe('fetching')
     expect(isFetching.value).toBe(2)
     await vi.advanceTimersByTimeAsync(0)
-    expect(isFetchingQuery.value).toBe(false)
+    expect(fetchStatus.value).not.toBe('fetching')
     expect(isFetching.value).toBe(0)
   })
 

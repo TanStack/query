@@ -1,8 +1,19 @@
 import {
   MutationCache,
   QueryClient,
+  cancelQueries,
+  getQueryData,
+  invalidateQueries,
+  isError,
+  isFetching,
+  isLoading,
+  isPaused,
   noop,
   onlineManager,
+  query,
+  resumePausedMutations,
+  setMutationDefaults,
+  setQueryData,
   useIsRestoring,
   useMutation,
   useQuery,
@@ -36,7 +47,7 @@ const queryClient = new QueryClient({
 })
 
 // we need a default mutation function so that paused mutations can resume after a page reload
-queryClient.setMutationDefaults(moviesQueries.all(), {
+setMutationDefaults(queryClient, moviesQueries.all(), {
   ...moviesMutations.update(),
   onSuccess: (data) => {
     toaster.success({ title: data.message })
@@ -50,8 +61,8 @@ export default function App() {
       persistOptions={{ persister }}
       onSuccess={() => {
         // resume mutations after initial restore from localStorage was successful
-        queryClient.resumePausedMutations().then(() => {
-          queryClient.invalidateQueries()
+        resumePausedMutations(queryClient).then(() => {
+          invalidateQueries(queryClient)
         })
       }}
     >
@@ -71,7 +82,7 @@ function List() {
   const isRestoring = useIsRestoring()
   const moviesQuery = useQuery(moviesQueries.list())
 
-  if (moviesQuery.isLoading) {
+  if (isLoading(moviesQuery)) {
     return 'Loading...'
   }
 
@@ -93,9 +104,9 @@ function List() {
                   // do not prefetch if we are offline or hydrating because it returns a promise that is pending until we go online again
                   // we just let the Detail component handle it
                   if (onlineManager.isOnline() && !isRestoring) {
-                    queryClient
-                      .query(moviesQueries.detail(movie.id))
-                      .catch(noop)
+                    query(queryClient, moviesQueries.detail(movie.id)).catch(
+                      noop,
+                    )
                   }
                 }}
               >
@@ -107,12 +118,12 @@ function List() {
         <div>
           Updated at: {new Date(moviesQuery.data.ts).toLocaleTimeString()}
         </div>
-        <div>{moviesQuery.isFetching && 'fetching...'}</div>
+        <div>{isFetching(moviesQuery) && 'fetching...'}</div>
       </div>
     )
   }
 
-  if (moviesQuery.isError) {
+  if (isError(moviesQuery)) {
     return (
       <div>
         <h1>Couldn't load movies!</h1>
@@ -135,16 +146,17 @@ function Detail() {
     ...moviesMutations.update(),
     mutationKey: moviesQueries.detail(movieId).queryKey,
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({
+      await cancelQueries(queryClient, {
         queryKey: moviesQueries.detail(movieId).queryKey,
       })
       const { queryKey } = moviesQueries.detail(movieId)
-      const previousData = queryClient.getQueryData(queryKey)
+      const previousData = getQueryData(queryClient, queryKey)
 
       // remove local state so that server state is taken instead
       setCommentDraft(undefined)
 
-      queryClient.setQueryData(
+      setQueryData(
+        queryClient,
         queryKey,
         (old) =>
           old && {
@@ -159,13 +171,14 @@ function Detail() {
       return { previousData }
     },
     onError: (_, __, onMutateResult) => {
-      queryClient.setQueryData(
+      setQueryData(
+        queryClient,
         moviesQueries.detail(movieId).queryKey,
         onMutateResult?.previousData,
       )
     },
     onSettled: () => {
-      queryClient.invalidateQueries({
+      invalidateQueries(queryClient, {
         queryKey: moviesQueries.detail(movieId).queryKey,
       })
     },
@@ -173,7 +186,7 @@ function Detail() {
 
   const comment = commentDraft ?? movieQuery.data?.movie.comment
 
-  if (movieQuery.isLoading) {
+  if (isLoading(movieQuery)) {
     return 'Loading...'
   }
 
@@ -218,7 +231,7 @@ function Detail() {
         <div>
           Updated at: {new Date(movieQuery.data.ts).toLocaleTimeString()}
         </div>
-        <div>{movieQuery.isFetching && 'fetching...'}</div>
+        <div>{isFetching(movieQuery) && 'fetching...'}</div>
         <div>
           {updateMovie.isPaused
             ? 'mutation paused - offline'
@@ -228,7 +241,7 @@ function Detail() {
     )
   }
 
-  if (movieQuery.isError) {
+  if (isError(movieQuery)) {
     return (
       <div>
         <a href="/">Back</a>
@@ -238,7 +251,7 @@ function Detail() {
     )
   }
 
-  if (movieQuery.isPaused) {
+  if (isPaused(movieQuery)) {
     return "We're offline and have no data to show :("
   }
 

@@ -1,3 +1,6 @@
+import { QueryObserver } from '@tanstack/query-core'
+import { observerKey } from './queryDescriptor'
+import { queryPolicy } from './queryPolicy'
 import type {
   DefaultError,
   DefaultQueryFn,
@@ -9,6 +12,8 @@ import type {
   QueryKeyWithDataTag,
   SkipToken,
 } from '@tanstack/query-core'
+import type { QueryDescriptor } from './queryDescriptor'
+import type { SuspenseControls } from './suspenseQuery'
 import type { UseQueryOptions } from './types'
 
 /**
@@ -48,15 +53,16 @@ export type UndefinedInitialDataOptions<
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TQueryKey - The type of your `queryKey`.
  */
-export type UnusedSkipTokenOptions<
+export interface UnusedSkipTokenOptions<
   TQueryFnData = unknown,
   TError = DefaultError,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = OmitKeyof<
+> extends OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'queryFn'
-> & {
+> {
+  /** The query function or the configured client default. */
   queryFn: Exclude<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>['queryFn'],
     SkipToken
@@ -90,153 +96,177 @@ export type DefinedInitialDataOptions<
   queryFn: QueryFunction<TQueryFnData, TQueryKey> | DefaultQueryFn
 }
 
-/**
- * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
- * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
- * is the query key to generate options for.
- *
- * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
- * `undefined` (unless a `select` changes `TData` to include `undefined`).
- * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` known to be defined.
- * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @see {@link useQuery} to run a query with these options.
- * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
- * @example
- * ```tsx
- * import { queryOptions, useQuery } from '@tanstack/preact-query'
- *
- * export const postsOptions = queryOptions({
- *   queryKey: ['posts'],
- *   queryFn: fetchPosts,
- *   initialData: [],
- * })
- *
- * function Posts() {
- *   // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
- *   // so the list stays visible alongside the error.
- *   const { data, isError, error } = useQuery(postsOptions)
- *
- *   return (
- *     <div>
- *       {isError ? <span>Error: {error.message}</span> : null}
- *       <ul>
- *         {data.map((post) => <li key={post.id}>{post.title}</li>)}
- *       </ul>
- *     </div>
- *   )
- * }
- * ```
- */
-export function queryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
-  QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
+/** Identifies the observer selected at definition time by queryOptions. */
+export type QueryMode = QueryDescriptor<typeof QueryObserver>
 
-/**
- * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
- * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
- * is the query key to generate options for.
- * @param options - The {@link UnusedSkipTokenOptions} to use — everything you can pass to `useQuery`.
- * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @see {@link useQuery} to run a query with these options.
- * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
- * @example
- * A parameterized factory, so the same options object can be reused per `id`:
- * ```tsx
- * import { queryOptions, useQuery } from '@tanstack/preact-query'
- *
- * export const postOptions = (id: string) =>
- *   queryOptions({
- *     queryKey: ['post', id],
- *     queryFn: () => fetchPost(id),
- *   })
- *
- * function Post({ id }: { id: string }) {
- *   const { data, isPending, isError, error } = useQuery(postOptions(id))
- *
- *   if (isPending) return 'Loading...'
- *   if (isError) return <span>Error: {error.message}</span>
- *
- *   return <h1>{data.title}</h1>
- * }
- * ```
- */
-export function queryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> &
-  QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
+type QueryOptionsFactory<TPolicy> = {
+  /**
+   * Creates a regular query descriptor for `useQuery`. The tagged key also carries the cache data
+   * and error types into client operations.
+   *
+   * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
+   * `undefined` (unless a `select` changes `TData` to include `undefined`).
+   * @param options - The {@link DefinedInitialDataOptions} to use — everything you can pass to `useQuery`, with `initialData` known to be defined.
+   * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
+   * @see {@link useQuery} to run a query with these options.
+   * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
+   * @example
+   * ```tsx
+   * import { queryOptions, useQuery } from '@tanstack/preact-query'
+   *
+   * export const postsOptions = queryOptions({
+   *   queryKey: ['posts'],
+   *   queryFn: fetchPosts,
+   *   initialData: [],
+   * })
+   *
+   * function Posts() {
+   *   // `data` is `Post[]`, never `undefined`, thanks to `initialData` — even if a refetch fails,
+   *   // so the list stays visible alongside the error.
+   *   const { data, status, error } = useQuery(postsOptions)
+   *
+   *   return (
+   *     <div>
+   *       {status === 'error' ? <span>Error: {error.message}</span> : null}
+   *       <ul>
+   *         {data.map((post) => <li key={post.id}>{post.title}</li>)}
+   *       </ul>
+   *     </div>
+   *   )
+   * }
+   * ```
+   */
+  <
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
+      TPolicy,
+  ): DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
+    QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError> &
+    QueryMode &
+    TPolicy
 
-/**
- * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
- * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
- * is the query key to generate options for.
- * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
- * @returns The same options object, typed so that `queryKey` carries the inferred data type.
- * @remarks This is the only overload that accepts `queryFn: skipToken`, shown below.
- * @see {@link useQuery} to run a query with these options.
- * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
- * @example
- * A parameterized factory, so the same options object can be reused per `id`:
- * ```tsx
- * import { queryOptions, useQuery } from '@tanstack/preact-query'
- *
- * export const postOptions = (id: string) =>
- *   queryOptions({
- *     queryKey: ['post', id],
- *     queryFn: () => fetchPost(id),
- *   })
- *
- * function Post({ id }: { id: string }) {
- *   const { data, isPending, isError, error } = useQuery(postOptions(id))
- *
- *   if (isPending) return 'Loading...'
- *   if (isError) return <span>Error: {error.message}</span>
- *
- *   return <h1>{data.title}</h1>
- * }
- * ```
- * @example
- * A factory that disables the query, type safe, until `postId` is set:
- * ```tsx
- * import { queryOptions, skipToken, useQuery } from '@tanstack/preact-query'
- *
- * export const postOptions = (postId: number | undefined) =>
- *   queryOptions({
- *     queryKey: ['post', postId],
- *     queryFn: postId != null ? () => fetchPost(postId) : skipToken,
- *   })
- *
- * function Post({ postId }: { postId: number | undefined }) {
- *   const { data, isLoading, isError, error } = useQuery(postOptions(postId))
- *
- *   if (postId == null) return 'Select a post'
- *   if (isLoading) return 'Loading...'
- *   if (isError) return <span>Error: {error.message}</span>
- *
- *   return <h1>{data?.title}</h1>
- * }
- * ```
- */
-export function queryOptions<
-  TQueryFnData = unknown,
-  TError = DefaultError,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
-  QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>
+  /**
+   * Creates a regular query descriptor for `useQuery`. The tagged key also carries the cache data
+   * and error types into client operations.
+   * @param options - The {@link UnusedSkipTokenOptions} to use — everything you can pass to `useQuery`.
+   * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
+   * @see {@link useQuery} to run a query with these options.
+   * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
+   * @example
+   * A parameterized factory, so the same options object can be reused per `id`:
+   * ```tsx
+   * import { queryOptions, useQuery } from '@tanstack/preact-query'
+   *
+   * export const postOptions = (id: string) =>
+   *   queryOptions({
+   *     queryKey: ['post', id],
+   *     queryFn: () => fetchPost(id),
+   *   })
+   *
+   * function Post({ id }: { id: string }) {
+   *   const { data, status, error } = useQuery(postOptions(id))
+   *
+   *   if (status === 'pending') return 'Loading...'
+   *   if (status === 'error') return <span>Error: {error.message}</span>
+   *
+   *   return <h1>{data.title}</h1>
+   * }
+   * ```
+   */
+  <
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> &
+      TPolicy,
+  ): UnusedSkipTokenOptions<TQueryFnData, TError, TData, TQueryKey> &
+    QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError> &
+    QueryMode &
+    TPolicy
 
-export function queryOptions(options: unknown) {
-  return options
+  /**
+   * Creates a regular query descriptor for `useQuery`. The tagged key also carries the cache data
+   * and error types into client operations.
+   * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
+   * @returns A descriptor with its observer and a typed key, so that `queryKey` carries the inferred data type.
+   * @remarks This is the only overload that accepts `queryFn: skipToken`, shown below.
+   * @see {@link useQuery} to run a query with these options.
+   * @see [The Query Options API](https://tkdodo.eu/blog/the-query-options-api) for more on this pattern.
+   * @example
+   * A parameterized factory, so the same options object can be reused per `id`:
+   * ```tsx
+   * import { queryOptions, useQuery } from '@tanstack/preact-query'
+   *
+   * export const postOptions = (id: string) =>
+   *   queryOptions({
+   *     queryKey: ['post', id],
+   *     queryFn: () => fetchPost(id),
+   *   })
+   *
+   * function Post({ id }: { id: string }) {
+   *   const { data, status, error } = useQuery(postOptions(id))
+   *
+   *   if (status === 'pending') return 'Loading...'
+   *   if (status === 'error') return <span>Error: {error.message}</span>
+   *
+   *   return <h1>{data.title}</h1>
+   * }
+   * ```
+   * @example
+   * A factory that disables the query, type safe, until `postId` is set:
+   * ```tsx
+   * import { queryOptions, skipToken, useQuery } from '@tanstack/preact-query'
+   *
+   * export const postOptions = (postId: number | undefined) =>
+   *   queryOptions({
+   *     queryKey: ['post', postId],
+   *     queryFn: postId != null ? () => fetchPost(postId) : skipToken,
+   *   })
+   *
+   * function Post({ postId }: { postId: number | undefined }) {
+   *   const { data, status, fetchStatus, error } = useQuery(postOptions(postId))
+   *
+   *   if (postId == null) return 'Select a post'
+   *   if (status === 'pending' && fetchStatus === 'fetching') return 'Loading...'
+   *   if (status === 'error') return <span>Error: {error.message}</span>
+   *
+   *   return <h1>{data?.title}</h1>
+   * }
+   * ```
+   */
+  <
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: UndefinedInitialDataOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey
+    > &
+      TPolicy,
+  ): UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey> &
+    QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError> &
+    QueryMode &
+    TPolicy
 }
+
+/**
+ * Prepares a descriptor and tags its cache key with the data and error types.
+ * @param options - The fetcher and its configuration for the selected observer.
+ * @returns A new descriptor backed by QueryObserver.
+ */
+export const queryOptions: QueryOptionsFactory<SuspenseControls> &
+  QueryOptionsFactory<unknown> = <T extends object>(options: T) => ({
+  ...options,
+  renderPolicy: queryPolicy,
+  [observerKey]: QueryObserver,
+})

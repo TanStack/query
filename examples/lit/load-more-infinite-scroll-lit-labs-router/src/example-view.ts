@@ -1,4 +1,9 @@
-import { createInfiniteQueryController } from '@tanstack/lit-query'
+import {
+  createInfiniteQueryController,
+  isFetching,
+  isFetchingNextPage,
+  isFetchingPreviousPage,
+} from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { ref } from 'lit/directives/ref.js'
 import { projectsQueries } from './services/projects/queries'
@@ -26,9 +31,13 @@ class ExampleView extends LitElement {
   }
 
   protected override updated() {
-    const { hasNextPage, isFetchingNextPage } = this.projects()
+    const queryResult = this.projects()
 
-    if (this.inView && hasNextPage && !isFetchingNextPage) {
+    if (
+      this.inView &&
+      queryResult.hasNextPage &&
+      !isFetchingNextPage(queryResult)
+    ) {
       this.projects.fetchNextPage()
     }
   }
@@ -45,37 +54,29 @@ class ExampleView extends LitElement {
   }
 
   private renderProjects() {
-    const {
-      status,
-      data,
-      error,
-      isFetching,
-      isFetchingNextPage,
-      isFetchingPreviousPage,
-      hasNextPage,
-      hasPreviousPage,
-    } = this.projects()
+    const detailQuery = this.projects()
 
-    if (status === 'pending') return html`<p>Loading...</p>`
-    if (status === 'error') return html`<span>Error: ${error.message}</span>`
+    if (detailQuery.status === 'pending') return html`<p>Loading...</p>`
+    if (detailQuery.status === 'error')
+      return html`<span>Error: ${detailQuery.error.message}</span>`
 
     return html`
       <div>
         <button
           type="button"
           @click=${() => this.projects.fetchPreviousPage()}
-          ?disabled=${!hasPreviousPage || isFetchingPreviousPage}
+          ?disabled=${!detailQuery.hasPreviousPage || isFetchingPreviousPage(detailQuery)}
         >
           ${
-            isFetchingPreviousPage
+            isFetchingPreviousPage(detailQuery)
               ? 'Loading more...'
-              : hasPreviousPage
+              : detailQuery.hasPreviousPage
                 ? 'Load Older'
                 : 'Nothing more to load'
           }
         </button>
       </div>
-      ${data.pages.map((page) =>
+      ${detailQuery.data.pages.map((page) =>
         page.data.map(
           (project) => html`
             <p
@@ -93,19 +94,19 @@ class ExampleView extends LitElement {
           type="button"
           ${ref(this.observeLoadMoreButton)}
           @click=${() => this.projects.fetchNextPage()}
-          ?disabled=${!hasNextPage || isFetchingNextPage}
+          ?disabled=${!detailQuery.hasNextPage || isFetchingNextPage(detailQuery)}
         >
           ${
-            isFetchingNextPage
+            isFetchingNextPage(detailQuery)
               ? 'Loading more...'
-              : hasNextPage
+              : detailQuery.hasNextPage
                 ? 'Load Newer'
                 : 'Nothing more to load'
           }
         </button>
       </div>
       <div>
-        ${isFetching && !isFetchingNextPage ? 'Background Updating...' : null}
+        ${isFetching(detailQuery) && !isFetchingNextPage(detailQuery) ? 'Background Updating...' : null}
       </div>
     `
   }

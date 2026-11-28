@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { isError, isPending, useQuery } from '@tanstack/react-query'
 import * as React from 'react'
 import { FlatList, RefreshControl } from 'react-native'
 import { Divider } from '../components/Divider'
@@ -22,9 +22,8 @@ type Props = {
 }
 
 export function MoviesListScreen({ navigation }: Props) {
-  const { isPending, isError, error, data, refetch } = useQuery(
-    moviesQueries.list(),
-  )
+  const queryResult = useQuery(moviesQueries.list())
+  const { refetch } = queryResult
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
   useRefreshOnFocus()
 
@@ -44,12 +43,13 @@ export function MoviesListScreen({ navigation }: Props) {
     [onListItemPress],
   )
 
-  if (isPending) return <LoadingIndicator />
+  if (isPending(queryResult)) return <LoadingIndicator />
 
-  if (isError) return <ErrorMessage message={error.message}></ErrorMessage>
+  if (isError(queryResult))
+    return <ErrorMessage message={queryResult.error.message}></ErrorMessage>
   return (
     <FlatList
-      data={data}
+      data={queryResult.data}
       renderItem={renderItem}
       keyExtractor={(item) => item.title}
       ItemSeparatorComponent={() => <Divider />}

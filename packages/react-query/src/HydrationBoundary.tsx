@@ -1,5 +1,5 @@
 'use client'
-import { hydrate } from '@tanstack/query-core'
+import { getQueryCache, hydrateQueries } from '@tanstack/query-core'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
 import type {
@@ -61,13 +61,12 @@ export interface HydrationBoundaryProps {
  * @example
  * Server-side prefetch handed off to the client via `dehydrate`:
  * ```tsx
- * import { HydrationBoundary, dehydrate, noop } from '@tanstack/react-query'
+ * import { HydrationBoundary, dehydrate, noop, query } from '@tanstack/react-query'
  *
  * async function ServerComponent() {
  *   const queryClient = getQueryClient()
  *
- *   await queryClient
- *     .query({
+ *   await query(queryClient, {
  *       queryKey: ['posts'],
  *       queryFn: fetchPosts,
  *     })
@@ -98,7 +97,7 @@ export const HydrationBoundary = ({
   // Hydrate existing queries after commit so an aborted transition cannot update them.
   const hydrationQueue: DehydratedState['queries'] | undefined =
     React.useMemo(() => {
-      const queryCache = client.getQueryCache()
+      const queryCache = getQueryCache(client)
 
       const newQueries: DehydratedState['queries'] = []
       const existingQueries: DehydratedState['queries'] = []
@@ -125,14 +124,14 @@ export const HydrationBoundary = ({
 
       if (newQueries.length > 0) {
         // oxlint-disable-next-line react-hooks-js/refs -- new queries are hydrated during render on purpose, and 'options' is read through a ref so that a new 'options' object does not rerun this memo
-        hydrate(client, { queries: newQueries }, optionsRef.current)
+        hydrateQueries(client, newQueries, optionsRef.current)
       }
       return existingQueries.length > 0 ? existingQueries : undefined
     }, [client, state])
 
   React.useEffect(() => {
     if (hydrationQueue) {
-      hydrate(client, { queries: hydrationQueue }, optionsRef.current)
+      hydrateQueries(client, hydrationQueue, optionsRef.current)
     }
   }, [client, hydrationQueue])
 

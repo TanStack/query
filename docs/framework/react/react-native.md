@@ -94,7 +94,7 @@ This custom hook will refetch **all active stale queries** when the screen is fo
 
 ```tsx
 import { useFocusEffect } from '@react-navigation/native'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, refetchQueries } from '@tanstack/react-query'
 import React from 'react'
 
 export function useRefreshOnFocus() {
@@ -109,7 +109,7 @@ export function useRefreshOnFocus() {
       }
 
       // refetch all stale active queries
-      queryClient.refetchQueries({
+      refetchQueries(queryClient, {
         queryKey: ['posts'],
         stale: true,
         type: 'active',
@@ -130,17 +130,17 @@ Example usage:
 ```tsx
 import React from 'react'
 import { useIsFocused } from '@react-navigation/native'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, queryOptions } from '@tanstack/react-query'
 import { Text } from 'react-native'
 
 function MyComponent() {
   const isFocused = useIsFocused()
 
-  const { dataUpdatedAt } = useQuery({
+  const { dataUpdatedAt } = useQuery(queryOptions({
     queryKey: ['key'],
     queryFn: () => fetch(...),
     subscribed: isFocused,
-  })
+  }))
 
   return <Text>DataUpdatedAt: {dataUpdatedAt}</Text>
 }

@@ -1,14 +1,14 @@
 import { Title } from '@solidjs/meta'
-import { noop, useQueryClient } from '@tanstack/solid-query'
+import { noop, query, useQueryClient } from '@tanstack/solid-query'
 import { UserInfo, userInfoQueryOpts } from '~/components/user-info'
 
 export const route = {
   preload: () => {
     const queryClient = useQueryClient()
     // Prefetching the user info and caching it for 15 seconds.
-    queryClient
-      .query(userInfoQueryOpts({ sleep: 500, gcTime: 15000 }))
-      .catch(noop)
+    query(queryClient, userInfoQueryOpts({ sleep: 500, gcTime: 15000 })).catch(
+      noop,
+    )
   },
 }
 

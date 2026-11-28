@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/preact-query'
+import { suspenseQueryOptions, useQuery } from '@tanstack/preact-query'
 import { Suspense } from 'preact/compat'
 import ErrorBoundary from './ErrorBoundary'
 import { waitQueries } from './services/wait/queries'
@@ -7,7 +7,9 @@ export const waits = [100, 200, 300, 400, 500, 600, 700]
 export const combinedWaits = [800, 900, 1000]
 
 function MyComponent(props: { wait: number }) {
-  const { data } = useSuspenseQuery(waitQueries.detail(props.wait))
+  const { data } = useQuery(
+    suspenseQueryOptions(waitQueries.detail(props.wait)),
+  )
 
   return <div>result: {data}</div>
 }

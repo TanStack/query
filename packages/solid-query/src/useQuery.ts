@@ -29,7 +29,7 @@ import type {
  * (`status` never resolves to `pending` in this overload's type, since `initialData` guarantees data upfront).
  * `status` is `error` if the query has an error from a fetch that failed after its retries or if `select`
  * threw, and `success` otherwise. `isSuccess`/`isError` are derived booleans for convenience.
- * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
+ * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `query`.
  * @example
  * ```tsx
  * import { For } from 'solid-js'
@@ -76,7 +76,7 @@ export function useQuery<
  * a fetch that failed after its retries or if `select` threw, `success` if the query has cached data
  * (even if `select` returns `undefined`) or data from `placeholderData`, and `pending` otherwise.
  * `isPending`/`isSuccess`/`isError` are derived booleans for convenience.
- * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `queryClient.query`.
+ * @see {@link queryOptions} to share these options between `useQuery` and imperative APIs like `query`.
  * @example
  * ```tsx
  * import { For, Match, Switch } from 'solid-js'
@@ -107,14 +107,16 @@ export function useQuery<
  * actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
  * ```tsx
  * import { Match, Switch } from 'solid-js'
- * import { useQuery } from '@tanstack/solid-query'
+ * import { queryOptions, select, useQuery } from '@tanstack/solid-query'
  *
  * function PostCount() {
- *   const postsQuery = useQuery(() => ({
- *     queryKey: ['posts'],
- *     queryFn: fetchPosts,
- *     select: (posts) => posts.length,
- *   }))
+ *   const postsQuery = useQuery(() =>
+ *     queryOptions({
+ *       queryKey: ['posts'],
+ *       queryFn: fetchPosts,
+ *       select: select((posts) => posts.length),
+ *     }),
+ *   )
  *
  *   return (
  *     <Switch>
@@ -177,7 +179,7 @@ export function useQuery<
  * over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
  * fetched rather than from now:
  * ```tsx
- * import { useQuery, useQueryClient } from '@tanstack/solid-query'
+ * import { getQueryState, useQuery, useQueryClient } from '@tanstack/solid-query'
  *
  * function Post(props: { postId: number }) {
  *   const queryClient = useQueryClient()
@@ -190,7 +192,7 @@ export function useQuery<
  *         .getQueryData<Array<Post>>(['posts'])
  *         ?.find((post) => post.id === props.postId),
  *     initialDataUpdatedAt: () =>
- *       queryClient.getQueryState(['posts'])?.dataUpdatedAt,
+ *       getQueryState(queryClient, ['posts'])?.dataUpdatedAt,
  *   }))
  *
  *   return postQuery.isError ? <span>Error: {postQuery.error.message}</span> : <h1>{postQuery.data?.title}</h1>

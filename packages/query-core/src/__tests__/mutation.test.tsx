@@ -1,6 +1,17 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { MutationCache, QueryClient, focusManager, onlineManager } from '..'
+import {
+  MutationCache,
+  QueryClient,
+  clearQueryClient,
+  focusManager,
+  getMutationCache,
+  mountQueryClient,
+  onlineManager,
+  resumePausedMutations,
+  serialScope,
+  setMutationDefaults,
+} from '..'
 import { Mutation } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
 import { executeMutation, mockOnlineManagerIsOnline } from './utils'
@@ -13,11 +24,11 @@ describe('mutation', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
-    queryClient.mount()
+    mountQueryClient(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -46,7 +57,7 @@ describe('mutation', () => {
         ) => Promise<unknown>
       >()
 
-    queryClient.setMutationDefaults(key, {
+    setMutationDefaults(queryClient, key, {
       mutationFn: fn,
     })
 
@@ -268,7 +279,7 @@ describe('mutation', () => {
         ) => void
       >()
 
-    queryClient.setMutationDefaults(key, {
+    setMutationDefaults(queryClient, key, {
       mutationFn: (text: string) => sleep(10).then(() => text),
       onMutate,
       onSuccess,
@@ -305,7 +316,7 @@ describe('mutation', () => {
       submittedAt: 1,
     })
 
-    void queryClient.resumePausedMutations()
+    void resumePausedMutations(queryClient)
 
     // check that the mutation is correctly resumed
     expect(mutation.state).toStrictEqual({
@@ -346,7 +357,7 @@ describe('mutation', () => {
   })
 
   it('should not add an existing observer with addObserver', () => {
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const observer = new MutationObserver(queryClient, {})
     const currentMutation = Mutation.build(queryClient, {})
 
@@ -497,11 +508,11 @@ describe('mutation', () => {
       await vi.advanceTimersByTimeAsync(10)
       expect(count).toBe(1)
       expect(
-        queryClient.getMutationCache().find({ mutationKey: key })?.state
+        getMutationCache(queryClient).find({ mutationKey: key })?.state
           .isPaused,
       ).toBe(true)
 
-      void queryClient.resumePausedMutations()
+      void resumePausedMutations(queryClient)
       await vi.advanceTimersByTimeAsync(0)
       expect(count).toBe(1)
 
@@ -524,9 +535,7 @@ describe('mutation', () => {
         queryClient,
         {
           mutationKey: key1,
-          scope: {
-            id: 'scope',
-          },
+          scope: serialScope('scope'),
           mutationFn: async () => {
             results.push('start-A')
             await sleep(10)
@@ -537,7 +546,7 @@ describe('mutation', () => {
         'vars1',
       )
       expect(
-        queryClient.getMutationCache().find({ mutationKey: key1 })?.state,
+        getMutationCache(queryClient).find({ mutationKey: key1 })?.state,
       ).toMatchObject({
         status: 'pending',
         isPaused: false,
@@ -547,9 +556,7 @@ describe('mutation', () => {
         queryClient,
         {
           mutationKey: key2,
-          scope: {
-            id: 'scope',
-          },
+          scope: serialScope('scope'),
           mutationFn: async () => {
             results.push('start-B')
             await sleep(10)
@@ -560,7 +567,7 @@ describe('mutation', () => {
         'vars2',
       )
       expect(
-        queryClient.getMutationCache().find({ mutationKey: key2 })?.state,
+        getMutationCache(queryClient).find({ mutationKey: key2 })?.state,
       ).toMatchObject({
         status: 'pending',
         isPaused: true,
@@ -587,9 +594,7 @@ describe('mutation', () => {
           queryClient,
           {
             mutationKey: key1,
-            scope: {
-              id: 'scope',
-            },
+            scope: serialScope('scope'),
             networkMode: 'always',
             mutationFn: async () => {
               results.push('start-A')
@@ -605,9 +610,7 @@ describe('mutation', () => {
           queryClient,
           {
             mutationKey: key2,
-            scope: {
-              id: 'scope',
-            },
+            scope: serialScope('scope'),
             networkMode: 'always',
             mutationFn: async () => {
               results.push('start-B')
@@ -627,7 +630,7 @@ describe('mutation', () => {
           'finish-B',
         ])
         expect(
-          queryClient.getMutationCache().find({ mutationKey: key2 })?.state,
+          getMutationCache(queryClient).find({ mutationKey: key2 })?.state,
         ).toMatchObject({
           status: 'success',
           isPaused: false,
@@ -648,9 +651,7 @@ describe('mutation', () => {
           queryClient,
           {
             mutationKey: key1,
-            scope: {
-              id: 'scope',
-            },
+            scope: serialScope('scope'),
             mutationFn: async () => {
               results.push('start-A')
               await sleep(10)
@@ -665,9 +666,7 @@ describe('mutation', () => {
           queryClient,
           {
             mutationKey: key2,
-            scope: {
-              id: 'scope',
-            },
+            scope: serialScope('scope'),
             mutationFn: async () => {
               results.push('start-B')
               await sleep(10)
@@ -686,7 +685,7 @@ describe('mutation', () => {
         await vi.advanceTimersByTimeAsync(10)
         expect(results).toStrictEqual(['start-A', 'finish-A'])
         expect(
-          queryClient.getMutationCache().find({ mutationKey: key2 })?.state,
+          getMutationCache(queryClient).find({ mutationKey: key2 })?.state,
         ).toMatchObject({
           status: 'pending',
           isPaused: true,
@@ -716,9 +715,7 @@ describe('mutation', () => {
         queryClient,
         {
           mutationKey: key1,
-          scope: {
-            id: 'scope',
-          },
+          scope: serialScope('scope'),
           mutationFn: async () => {
             results.push('start-A')
             await sleep(10)
@@ -733,9 +730,7 @@ describe('mutation', () => {
         queryClient,
         {
           mutationKey: key2,
-          scope: {
-            id: 'scope',
-          },
+          scope: serialScope('scope'),
           mutationFn: async () => {
             results.push('start-B')
             await sleep(10)
@@ -749,11 +744,11 @@ describe('mutation', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(results).toStrictEqual(['start-A'])
       expect(
-        queryClient.getMutationCache().find({ mutationKey: key2 })?.state
+        getMutationCache(queryClient).find({ mutationKey: key2 })?.state
           .isPaused,
       ).toBe(true)
 
-      void queryClient.resumePausedMutations()
+      void resumePausedMutations(queryClient)
 
       await vi.advanceTimersByTimeAsync(0)
       expect(results).toStrictEqual(['start-A'])
@@ -769,7 +764,7 @@ describe('mutation', () => {
 
     it('should keep a queued mutation paused when its onMutate resolves before its turn', async () => {
       const isPaused: Array<boolean> = []
-      const unsubscribe = queryClient.getMutationCache().subscribe((event) => {
+      const unsubscribe = getMutationCache(queryClient).subscribe((event) => {
         if (
           event.type === 'updated' &&
           event.mutation.state.variables === 'vars2'
@@ -781,9 +776,7 @@ describe('mutation', () => {
       executeMutation(
         queryClient,
         {
-          scope: {
-            id: 'scope',
-          },
+          scope: serialScope('scope'),
           mutationFn: () => sleep(20).then(() => 'a'),
         },
         'vars1',
@@ -791,9 +784,7 @@ describe('mutation', () => {
       executeMutation(
         queryClient,
         {
-          scope: {
-            id: 'scope',
-          },
+          scope: serialScope('scope'),
           onMutate: () => sleep(10),
           mutationFn: () => sleep(10).then(() => 'b'),
         },
@@ -825,7 +816,7 @@ describe('mutation', () => {
       },
       'vars',
     )
-    const mutation = queryClient.getMutationCache().find({ mutationKey: key })!
+    const mutation = getMutationCache(queryClient).find({ mutationKey: key })!
     expect(mutation.state).toMatchObject({
       status: 'pending',
       isPaused: true,
@@ -892,9 +883,7 @@ describe('mutation', () => {
     executeMutation(
       queryClient,
       {
-        scope: {
-          id: '1',
-        },
+        scope: serialScope('1'),
         mutationFn: async () => {
           results.push('start-A1')
           await sleep(10)
@@ -908,9 +897,7 @@ describe('mutation', () => {
     executeMutation(
       queryClient,
       {
-        scope: {
-          id: '1',
-        },
+        scope: serialScope('1'),
         mutationFn: async () => {
           results.push('start-B1')
           await sleep(10)
@@ -924,9 +911,7 @@ describe('mutation', () => {
     executeMutation(
       queryClient,
       {
-        scope: {
-          id: '2',
-        },
+        scope: serialScope('2'),
         mutationFn: async () => {
           results.push('start-A2')
           await sleep(10)
@@ -940,9 +925,7 @@ describe('mutation', () => {
     executeMutation(
       queryClient,
       {
-        scope: {
-          id: '2',
-        },
+        scope: serialScope('2'),
         mutationFn: async () => {
           results.push('start-B2')
           await sleep(10)
@@ -1186,7 +1169,7 @@ describe('mutation', () => {
           },
         }),
       })
-      queryClient.mount()
+      mountQueryClient(queryClient)
 
       const key = createKey()
       const results: Array<string> = []
@@ -1294,7 +1277,7 @@ describe('mutation', () => {
           },
         }),
       })
-      queryClient.mount()
+      mountQueryClient(queryClient)
 
       const unhandledRejectionFn = vi.fn<NodeJS.UnhandledRejectionListener>()
       process.on('unhandledRejection', unhandledRejectionFn)
@@ -1444,7 +1427,7 @@ describe('mutation', () => {
           },
         }),
       })
-      queryClient.mount()
+      mountQueryClient(queryClient)
 
       const key = createKey()
       const results: Array<string> = []
@@ -1524,9 +1507,9 @@ describe('mutation', () => {
 
     observer1.mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+    expect(getMutationCache(queryClient).getAll()).toHaveLength(1)
 
-    const mutation = queryClient.getMutationCache().getAll()[0]!
+    const mutation = getMutationCache(queryClient).getAll()[0]!
     const observer2 = new MutationObserver(queryClient, {
       gcTime: 10,
       mutationFn: () => sleep(10).then(() => 'data'),
@@ -1535,7 +1518,7 @@ describe('mutation', () => {
 
     unsubscribe1()
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+    expect(getMutationCache(queryClient).getAll()).toHaveLength(1)
   })
 
   it('should release the retryer once a mutation settles', async () => {
@@ -1546,7 +1529,7 @@ describe('mutation', () => {
     observer.mutate('data')
     await vi.advanceTimersByTimeAsync(10)
 
-    const mutation = queryClient.getMutationCache().getAll()[0]!
+    const mutation = getMutationCache(queryClient).getAll()[0]!
     expect(mutation.state.status).toBe('success')
 
     // continue() is the only reader of the retryer outside execute(): while a
@@ -1563,7 +1546,7 @@ describe('mutation', () => {
     observer.mutate(undefined).catch(() => undefined)
     await vi.advanceTimersByTimeAsync(10)
 
-    const mutation = queryClient.getMutationCache().getAll()[0]!
+    const mutation = getMutationCache(queryClient).getAll()[0]!
     expect(mutation.state.status).toBe('error')
 
     // a retained retryer would hand back its rejected promise here
@@ -1579,7 +1562,7 @@ describe('mutation', () => {
     observer.mutate()
     await vi.advanceTimersByTimeAsync(10)
 
-    const mutation = queryClient.getMutationCache().getAll()[0]!
+    const mutation = getMutationCache(queryClient).getAll()[0]!
     expect(mutation.state.status).toBe('success')
     expect(mutationFn).toHaveBeenCalledTimes(1)
 

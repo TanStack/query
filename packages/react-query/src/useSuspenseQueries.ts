@@ -1,6 +1,7 @@
 'use client'
+
 import { skipToken } from '@tanstack/query-core'
-import { defaultThrowOnError, suspenseQueriesPolicy } from './suspense'
+import { suspenseQueriesPolicy } from './suspense'
 import { useBaseQueries } from './useQueries'
 import type {
   DefaultError,
@@ -9,9 +10,15 @@ import type {
   QueryClient,
   QueryFunction,
   QueryKey,
-  ThrowOnError,
+  Select,
+  placeholderData,
 } from '@tanstack/query-core'
-import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
+import type {
+  GroupThrowOnError,
+  TaggedQueryError,
+  UseSuspenseQueryOptions,
+  UseSuspenseQueryResult,
+} from './types'
 
 // `placeholderData` functions in useQueries never receive previous query data.
 type UseSuspenseQueryOptionsForUseSuspenseQueries<
@@ -23,7 +30,10 @@ type UseSuspenseQueryOptionsForUseSuspenseQueries<
   UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?: readonly [
+    typeof placeholderData,
+    TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>,
+  ]
 }
 
 // Avoid TS depth-limit error in case of large array literal
@@ -60,12 +70,12 @@ type GetUseSuspenseQueryOptions<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    select?: Select<any, infer TData>
+                    throwOnError?: GroupThrowOnError<infer TError>
                   }
                 ? UseSuspenseQueryOptionsForUseSuspenseQueries<
                     TQueryFnData,
-                    TError,
+                    TaggedQueryError<T, TError>,
                     TData,
                     TQueryKey
                   >
@@ -73,11 +83,11 @@ type GetUseSuspenseQueryOptions<T> =
                       queryFn?:
                         | QueryFunction<infer TQueryFnData, infer TQueryKey>
                         | SkipTokenForUseQueries
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
+                      throwOnError?: GroupThrowOnError<infer TError>
                     }
                   ? UseSuspenseQueryOptionsForUseSuspenseQueries<
                       TQueryFnData,
-                      TError,
+                      TaggedQueryError<T, TError>,
                       TQueryFnData,
                       TQueryKey
                     >
@@ -104,22 +114,28 @@ type GetUseSuspenseQueryResult<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    select?: Select<any, infer TData>
+                    throwOnError?: GroupThrowOnError<infer TError>
                   }
                 ? UseSuspenseQueryResult<
                     unknown extends TData ? TQueryFnData : TData,
-                    unknown extends TError ? DefaultError : TError
+                    TaggedQueryError<
+                      T,
+                      unknown extends TError ? DefaultError : TError
+                    >
                   >
                 : T extends {
                       queryFn?:
                         | QueryFunction<infer TQueryFnData, any>
                         | SkipTokenForUseQueries
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
+                      throwOnError?: GroupThrowOnError<infer TError>
                     }
                   ? UseSuspenseQueryResult<
                       TQueryFnData,
-                      unknown extends TError ? DefaultError : TError
+                      TaggedQueryError<
+                        T,
+                        unknown extends TError ? DefaultError : TError
+                      >
                     >
                   : // Fallback
                     UseSuspenseQueryResult
@@ -214,8 +230,7 @@ export type SuspenseQueriesResults<
  * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
- * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
- * flags set accordingly).
+ * defined and `status` is either `success` or `error`.
  *
  * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
  * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
@@ -233,7 +248,7 @@ export type SuspenseQueriesResults<
  * } from '@tanstack/react-query'
  *
  * function Posts({ ids }: { ids: Array<number> }) {
- *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
+ *   // Every result is guaranteed to be defined — no pending-state check for each query needed.
  *   const postQueries = useSuspenseQueries({
  *     queries: ids.map((id) => ({
  *       queryKey: ['post', id],
@@ -273,7 +288,7 @@ export type SuspenseQueriesResults<
  * }
  * ```
  * @example
- * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+ * Several different queries — use `useSuspenseQueries` instead of multiple `useQuery(suspenseQueryOptions(...))` calls, so
  * they fetch in parallel rather than suspending one after another:
  * ```tsx
  * import { Suspense } from 'react'
@@ -340,7 +355,7 @@ export type SuspenseQueriesResults<
  *       { queryKey: ['users'], queryFn: fetchUsers },
  *       { queryKey: ['teams'], queryFn: fetchTeams },
  *     ],
- *     combine: (results) => results.some((result) => result.isFetching),
+ *     combine: (results) => results.some((result) => result.fetchStatus === 'fetching'),
  *   })
  *
  *   return anyFetching ? <span>Refreshing…</span> : null
@@ -375,7 +390,7 @@ export function useSuspenseQueries<
 >(
   options: {
     /**
-     * An array with query option objects identical to `useSuspenseQuery`.
+     * An array with query option objects identical to `useQuery(suspenseQueryOptions(...))`.
      */
     queries:
       | readonly [...SuspenseQueriesOptions<T>]
@@ -396,8 +411,7 @@ export function useSuspenseQueries<
  * @param queryClient - Use this to provide a custom `QueryClient`. Otherwise, the one from the nearest context
  * will be used.
  * @returns The same structure as `useQueries`, except that for each `query`, `data` is guaranteed to be
- * defined, `isPlaceholderData` is missing, and `status` is either `success` or `error` (with the derived
- * flags set accordingly).
+ * defined and `status` is either `success` or `error`.
  *
  * Caveat: the component will only re-mount after all queries have finished loading. Hence, if a query has gone
  * stale in the time it took for all the queries to complete, it will be fetched again at re-mount. To avoid
@@ -415,7 +429,7 @@ export function useSuspenseQueries<
  * } from '@tanstack/react-query'
  *
  * function Posts({ ids }: { ids: Array<number> }) {
- *   // Every result is guaranteed to be defined — no per-query `isPending` check needed.
+ *   // Every result is guaranteed to be defined — no pending-state check for each query needed.
  *   const postQueries = useSuspenseQueries({
  *     queries: ids.map((id) => ({
  *       queryKey: ['post', id],
@@ -455,7 +469,7 @@ export function useSuspenseQueries<
  * }
  * ```
  * @example
- * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+ * Several different queries — use `useSuspenseQueries` instead of multiple `useQuery(suspenseQueryOptions(...))` calls, so
  * they fetch in parallel rather than suspending one after another:
  * ```tsx
  * import { Suspense } from 'react'
@@ -512,7 +526,7 @@ export function useSuspenseQueries<
 >(
   options: {
     /**
-     * An array with query option objects identical to `useSuspenseQuery`.
+     * An array with query option objects identical to `useQuery(suspenseQueryOptions(...))`.
      */
     queries: readonly [...SuspenseQueriesOptions<T>]
     /**
@@ -525,24 +539,11 @@ export function useSuspenseQueries<
 ): TCombinedResult
 
 export function useSuspenseQueries(options: any, queryClient?: QueryClient) {
-  return useBaseQueries(
-    {
-      ...options,
-      queries: options.queries.map((query: any) => {
-        if (process.env.NODE_ENV !== 'production') {
-          if (query.queryFn === skipToken) {
-            console.error('skipToken is not allowed for useSuspenseQueries')
-          }
-        }
-
-        return {
-          ...query,
-          throwOnError: defaultThrowOnError,
-          enabled: true,
-        }
-      }),
-    },
-    queryClient,
-    suspenseQueriesPolicy,
-  )
+  if (process.env.NODE_ENV !== 'production') {
+    options.queries.forEach((query: { queryFn?: unknown }) => {
+      if (query.queryFn === skipToken)
+        console.error('skipToken is not allowed for useSuspenseQueries')
+    })
+  }
+  return useBaseQueries(options, queryClient, suspenseQueriesPolicy)
 }

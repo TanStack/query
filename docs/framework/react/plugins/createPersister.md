@@ -39,7 +39,7 @@ bun add @tanstack/query-persist-client-core
 - Pass that `persister` as an option to your Query. This can be done either by passing it to the `defaultOptions` of the `QueryClient` or to any `useQuery` hook instance.
   - If you pass this `persister` as `defaultOptions`, all queries will be persisted to the provided `storage`. You can additionally narrow this down by passing `filters`. In contrast to the `persistClient` plugin, this will not persist the whole query client as a single item, but each query separately. As a key, the query hash is used.
   - If you provide this `persister` to a single `useQuery` hook, only this Query will be persisted.
-- Note: `queryClient.setQueryData()` operations are not persisted, this means that if you perform an optimistic update and refresh the page before the query has been invalidated, your changes to the query data will be lost. See https://github.com/TanStack/query/issues/6310
+- Note: `setQueryData(queryClient)` operations are not persisted, this means that if you perform an optimistic update and refresh the page before the query has been invalidated, your changes to the query data will be lost. See https://github.com/TanStack/query/issues/6310
 
 This way, you do not need to store whole `QueryClient`, but choose what is worth to be persisted in your application. Each query is lazily restored (when the Query is first used) and persisted (after each run of the `queryFn`), so it does not need to be throttled. `staleTime` is also respected after restoring the Query, so if data is considered `stale`, it will be refetched immediately after restoring. If data is `fresh`, the `queryFn` will not run.
 
@@ -91,7 +91,7 @@ useMutation({
   onMutate: async (newTodo) => {
     ...
     // Optimistically update to the new value
-    queryClient.setQueryData(['todos'], (old) => [...old, newTodo])
+    setQueryData(queryClient, ['todos'], (old) => [...old, newTodo])
     // And persist it to storage
     persister.persistQueryByKey(['todos'], queryClient)
     ...
@@ -130,7 +130,7 @@ For example `Object.entries(localStorage)` for `localStorage` or `entries` from 
 
 ### `removeQueries(filters): Promise<void>`
 
-When using `queryClient.removeQueries`, the data remains in the persister and needs to be removed separately.
+When using `removeQueries`, the data remains in the persister and needs to be removed separately.
 This function can be used to remove queries that are currently stored by persister.
 
 The filter object supports the following properties:

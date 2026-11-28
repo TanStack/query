@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { Mutation } from '@tanstack/query-core'
+import { Mutation, clearQueryClient } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/angular'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -158,7 +158,7 @@ describe('injectMutationState', () => {
     })
 
     it('should return variables after calling mutate 2', () => {
-      queryClient.clear()
+      clearQueryClient(queryClient)
       const mutationKey = ['mutation']
       const variables = 'bar234'
 
@@ -179,7 +179,7 @@ describe('injectMutationState', () => {
     })
 
     it('should support required signal inputs', async () => {
-      queryClient.clear()
+      clearQueryClient(queryClient)
       const fakeName = 'name1'
       const mutationKey1 = ['fake', fakeName]
 

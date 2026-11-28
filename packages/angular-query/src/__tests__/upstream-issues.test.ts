@@ -8,6 +8,11 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import {
+  clearQueryClient,
+  getQueryData,
+  setQueryData,
+} from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
@@ -44,7 +49,7 @@ describe('upstream Angular issue reproductions', () => {
 
   afterEach(() => {
     TestBed.resetTestingModule()
-    client.clear()
+    clearQueryClient(client)
   })
 
   it('#9910: a template signal read does not prevent whenStable from seeing success', async () => {
@@ -236,7 +241,7 @@ describe('upstream Angular issue reproductions', () => {
       mutation = injectMutation(() => ({
         mutationFn: async (title: string) => title,
         onMutate: (title: string) => {
-          client.setQueryData(['9735'], title)
+          setQueryData(client, ['9735'], title)
           snapshots.push(this.query.data())
         },
       }))
@@ -250,15 +255,15 @@ describe('upstream Angular issue reproductions', () => {
     fixture.detectChanges()
     fixture.componentInstance.save()
     expect(snapshots).toStrictEqual(['new title', 'new title'])
-    expect(client.getQueryData(['9735'])).toBe('new title')
+    expect(getQueryData(client, ['9735'])).toBe('new title')
     fixture.detectChanges()
     expect(fixture.nativeElement.textContent).toBe('new title')
     await fixture.whenStable()
   })
 
   it('#6567: changing to another cached key updates data immediately', () => {
-    client.setQueryData(['6567', 'a'], 'A')
-    client.setQueryData(['6567', 'b'], 'B')
+    setQueryData(client, ['6567', 'a'], 'A')
+    setQueryData(client, ['6567', 'b'], 'B')
     const key = signal('a')
     const query = TestBed.runInInjectionContext(() =>
       injectQuery(() => ({
@@ -273,7 +278,7 @@ describe('upstream Angular issue reproductions', () => {
   })
 
   it('#6771: enabling a fresh cached query and immediately refetching settles', async () => {
-    client.setQueryData(['6771'], 'cached')
+    setQueryData(client, ['6771'], 'cached')
     const enabled = signal(false)
     const query = TestBed.runInInjectionContext(() =>
       injectQuery(() => ({

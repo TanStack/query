@@ -1,4 +1,11 @@
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  findCachedQuery,
+  getQueryCache,
+  getQueryData,
+  getQueryState,
+  setQueryData,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { broadcastQueryClient } from '..'
@@ -41,7 +48,7 @@ describe('broadcastQueryClient', () => {
 
   beforeEach(() => {
     queryClient = new QueryClient()
-    queryCache = queryClient.getQueryCache()
+    queryCache = getQueryCache(queryClient)
     mockPostMessage.mockResolvedValue(undefined)
     mockClose.mockReset()
   })
@@ -94,7 +101,7 @@ describe('broadcastQueryClient', () => {
 
       // A later local change must still be broadcast to other tabs, instead
       // of being silently swallowed because the transaction flag got stuck.
-      queryClient.setQueryData(localKey, { value: 1 })
+      setQueryData(queryClient, localKey, { value: 1 })
       expect(mockPostMessage).toHaveBeenCalledWith(
         expect.objectContaining({ queryKey: localKey }),
       )
@@ -111,8 +118,10 @@ describe('broadcastQueryClient', () => {
 
       // Populate the cache with an existing query so the incoming message
       // below is applied via `query.setState` rather than `queryCache.build`.
-      queryClient.setQueryData(existingKey, { value: 0 })
-      const existingQuery = queryCache.find({ queryKey: existingKey })!
+      setQueryData(queryClient, existingKey, { value: 0 })
+      const existingQuery = findCachedQuery(queryCache, {
+        queryKey: existingKey,
+      })!
 
       const explodingUnsubscribe = queryCache.subscribe(() => {
         throw new Error('boom from an unrelated cache listener')
@@ -130,7 +139,7 @@ describe('broadcastQueryClient', () => {
       explodingUnsubscribe()
       mockPostMessage.mockClear()
 
-      queryClient.setQueryData(localKey, { value: 1 })
+      setQueryData(queryClient, localKey, { value: 1 })
       expect(mockPostMessage).toHaveBeenCalledWith(
         expect.objectContaining({ queryKey: localKey }),
       )
@@ -146,8 +155,10 @@ describe('broadcastQueryClient', () => {
 
       // A query that already resolved in this tab (e.g. it fetched before
       // another tab mounted the same key).
-      queryClient.setQueryData(existingKey, { value: 'resolved' })
-      const existingQuery = queryCache.find({ queryKey: existingKey })!
+      setQueryData(queryClient, existingKey, { value: 'resolved' })
+      const existingQuery = findCachedQuery(queryCache, {
+        queryKey: existingKey,
+      })!
 
       // Another tab just mounted the same key for the first time, so its
       // `build()` broadcasts an `added` message with a pending state and
@@ -158,10 +169,10 @@ describe('broadcastQueryClient', () => {
         queryKey: existingKey,
         state: { status: 'pending', data: undefined },
       })
-      expect(queryClient.getQueryData(existingKey)).toStrictEqual({
+      expect(getQueryData(queryClient, existingKey)).toStrictEqual({
         value: 'resolved',
       })
-      expect(queryClient.getQueryState(existingKey)?.status).toBe('success')
+      expect(getQueryState(queryClient, existingKey)?.status).toBe('success')
     })
 
     it('should adopt an "added" message\'s state for an existing query that has no data yet', () => {
@@ -186,7 +197,7 @@ describe('broadcastQueryClient', () => {
         queryKey: existingKey,
         state: { status: 'success', data: { value: 'from other tab' } },
       })
-      expect(queryClient.getQueryData(existingKey)).toStrictEqual({
+      expect(getQueryData(queryClient, existingKey)).toStrictEqual({
         value: 'from other tab',
       })
     })
@@ -225,7 +236,7 @@ describe('broadcastQueryClient', () => {
           onBroadcastError,
         })
 
-        queryClient.setQueryData(key, { value: 1 })
+        setQueryData(queryClient, key, { value: 1 })
         await sleep(0)
         expect(onBroadcastError).toHaveBeenCalledWith(
           cloneError,
@@ -260,7 +271,7 @@ describe('broadcastQueryClient', () => {
         },
       })
 
-      queryClient.setQueryData(key, { value: 1 })
+      setQueryData(queryClient, key, { value: 1 })
       await sleep(0)
       expect(consoleWarnMock).toHaveBeenCalledWith(
         expect.stringContaining('onBroadcastError threw while handling'),
@@ -290,7 +301,7 @@ describe('broadcastQueryClient', () => {
           onBroadcastError,
         })
 
-        queryClient.setQueryData(key, { value: 1 })
+        setQueryData(queryClient, key, { value: 1 })
         await sleep(10)
         expect(onBroadcastError).toHaveBeenCalledWith(
           cloneError,
@@ -323,7 +334,7 @@ describe('broadcastQueryClient', () => {
         onBroadcastError: () => Promise.reject(asyncError),
       })
 
-      queryClient.setQueryData(key, { value: 1 })
+      setQueryData(queryClient, key, { value: 1 })
       await sleep(10)
       expect(consoleWarnMock).toHaveBeenCalledWith(
         expect.stringContaining('onBroadcastError threw while handling'),
@@ -346,7 +357,7 @@ describe('broadcastQueryClient', () => {
         onBroadcastError,
       })
 
-      queryClient.setQueryData(key, { value: 1 })
+      setQueryData(queryClient, key, { value: 1 })
       await sleep(0)
       expect(onBroadcastError).toHaveBeenCalledWith(
         cloneError,
@@ -373,7 +384,7 @@ describe('broadcastQueryClient', () => {
         broadcastChannel: 'test_channel',
       })
 
-      queryClient.setQueryData(key, { value: 1 })
+      setQueryData(queryClient, key, { value: 1 })
       await sleep(0)
       expect(consoleWarnMock).toHaveBeenCalledWith(
         expect.stringContaining('cross-tab sync for this query was skipped'),
@@ -396,7 +407,7 @@ describe('broadcastQueryClient', () => {
         broadcastChannel: 'test_channel',
       })
 
-      queryClient.setQueryData(key, { value: 1 })
+      setQueryData(queryClient, key, { value: 1 })
       await sleep(0)
       expect(consoleWarnMock).not.toHaveBeenCalled()
     })

@@ -1,3 +1,4 @@
+import { isError, isPending, isSuccess } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue'
@@ -64,7 +65,7 @@ describe('Discriminated union return type', () => {
       }),
     )
 
-    if (query.isSuccess) {
+    if (isSuccess(query)) {
       // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
       expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
     }
@@ -81,7 +82,7 @@ describe('Discriminated union return type', () => {
       }),
     )
 
-    if (query.isSuccess) {
+    if (isSuccess(query)) {
       expectTypeOf(query.error).toEqualTypeOf<null>()
     }
   })
@@ -97,7 +98,7 @@ describe('Discriminated union return type', () => {
       }),
     )
 
-    if (query.isPending) {
+    if (isPending(query)) {
       expectTypeOf(query.data).toEqualTypeOf<undefined>()
     }
   })
@@ -113,7 +114,7 @@ describe('Discriminated union return type', () => {
       }),
     )
 
-    if (query.isError) {
+    if (isError(query)) {
       expectTypeOf(query.error).toEqualTypeOf<Error>()
     }
   })
@@ -128,7 +129,7 @@ describe('Discriminated union return type', () => {
     }))
     const query = reactive(useInfiniteQuery(options))
 
-    if (query.isSuccess) {
+    if (isSuccess(query)) {
       expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
     }
   })
@@ -145,7 +146,7 @@ describe('Discriminated union return type', () => {
     )
     const query = reactive(useInfiniteQuery(options))
 
-    if (query.isSuccess) {
+    if (isSuccess(query)) {
       expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
     }
   })
@@ -161,7 +162,7 @@ describe('Discriminated union return type', () => {
       })
     const query = reactive(useInfiniteQuery(options))
 
-    if (query.isSuccess) {
+    if (isSuccess(query)) {
       expectTypeOf(query.data).toEqualTypeOf<InfiniteData<string, unknown>>()
     }
   })

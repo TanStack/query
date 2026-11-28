@@ -1,3 +1,9 @@
+import {
+  isError,
+  isPending,
+  isSuccess as queryIsSuccess,
+  select,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue'
@@ -57,7 +63,7 @@ describe('useQuery', () => {
       const query = reactive(
         useQuery({
           ...options,
-          select: (data) => data > 1,
+          select: select((data) => data > 1),
         }),
       )
 
@@ -122,7 +128,7 @@ describe('useQuery', () => {
     it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
       const key = createKey()
 
-      const { data, isSuccess } = reactive(
+      const result = reactive(
         useQuery({
           queryKey: key,
           queryFn: () => {
@@ -134,8 +140,8 @@ describe('useQuery', () => {
         }),
       )
 
-      if (isSuccess) {
-        expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+      if (queryIsSuccess(result)) {
+        expectTypeOf(result.data).toEqualTypeOf<{ wow: boolean }>()
       }
     })
 
@@ -250,7 +256,7 @@ describe('useQuery', () => {
       expectTypeOf(state.status).toEqualTypeOf<
         'pending' | 'error' | 'success'
       >()
-      expectTypeOf(state.isPending).toEqualTypeOf<boolean>()
+      expectTypeOf(isPending(state)).toEqualTypeOf<boolean>()
       expectTypeOf(state.data).toEqualTypeOf<string | undefined>()
       expectTypeOf(state.refetch).toBeFunction()
     })
@@ -266,8 +272,7 @@ describe('useQuery', () => {
       if (state.status === 'success') {
         expectTypeOf(state.data).toEqualTypeOf<string>()
         expectTypeOf(state.error).toEqualTypeOf<null>()
-        expectTypeOf(state.isPending).toEqualTypeOf<false>()
-        expectTypeOf(state.isSuccess).toEqualTypeOf<true>()
+        expectTypeOf(state.status).toEqualTypeOf<'success'>()
       }
     })
 
@@ -279,7 +284,7 @@ describe('useQuery', () => {
         queryFn: () => sleep(0).then(() => 'Some data'),
       })
 
-      if (state.isSuccess) {
+      if (queryIsSuccess(state)) {
         expectTypeOf(state.data).toEqualTypeOf<string>()
         expectTypeOf(state.error).toEqualTypeOf<null>()
       }
@@ -296,10 +301,10 @@ describe('useQuery', () => {
       if (state.status === 'pending') {
         expectTypeOf(state.data).toEqualTypeOf<undefined>()
         expectTypeOf(state.error).toEqualTypeOf<null>()
-        expectTypeOf(state.isPending).toEqualTypeOf<true>()
+        expectTypeOf(state.status).toEqualTypeOf<'pending'>()
       }
 
-      if (state.isPending) {
+      if (isPending(state)) {
         expectTypeOf(state.data).toEqualTypeOf<undefined>()
       }
     })
@@ -315,7 +320,7 @@ describe('useQuery', () => {
       if (state.status === 'error') {
         expectTypeOf(state.error).toEqualTypeOf<Error>()
         expectTypeOf(state.data).toEqualTypeOf<string | undefined>()
-        expectTypeOf(state.isPending).toEqualTypeOf<false>()
+        expectTypeOf(state.status).toEqualTypeOf<'error'>()
       }
     })
 
@@ -342,7 +347,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn: () => 'fetched',
         initialData: 'initial',
-        select: (value: string) => () => value,
+        select: select((value: string) => () => value),
       })
 
       if (state.status === 'success') {
@@ -375,7 +380,7 @@ describe('useQuery', () => {
         }),
       )
 
-      if (query.isSuccess) {
+      if (queryIsSuccess(query)) {
         expectTypeOf(query.data).toEqualTypeOf<string>()
       }
     })
@@ -390,7 +395,7 @@ describe('useQuery', () => {
         }),
       )
 
-      if (query.isSuccess) {
+      if (queryIsSuccess(query)) {
         expectTypeOf(query.error).toEqualTypeOf<null>()
       }
     })
@@ -405,7 +410,7 @@ describe('useQuery', () => {
         }),
       )
 
-      if (query.isPending) {
+      if (isPending(query)) {
         expectTypeOf(query.data).toEqualTypeOf<undefined>()
       }
     })
@@ -420,7 +425,7 @@ describe('useQuery', () => {
         }),
       )
 
-      if (query.isError) {
+      if (isError(query)) {
         expectTypeOf(query.error).toEqualTypeOf<Error>()
       }
     })
@@ -460,7 +465,7 @@ describe('useQuery', () => {
 
       const query = reactive(useQuery(options))
 
-      if (query.isSuccess) {
+      if (queryIsSuccess(query)) {
         expectTypeOf(query.data).toEqualTypeOf<string>()
       }
     })
@@ -473,7 +478,7 @@ describe('useQuery', () => {
 
       const query = reactive(useQuery(options))
 
-      if (query.isSuccess) {
+      if (queryIsSuccess(query)) {
         expectTypeOf(query.data).toEqualTypeOf<string>()
       }
     })
@@ -488,7 +493,7 @@ describe('useQuery', () => {
 
       const query = reactive(useQuery(options))
 
-      if (query.isSuccess) {
+      if (queryIsSuccess(query)) {
         expectTypeOf(query.data).toEqualTypeOf<string>()
       }
     })
@@ -510,7 +515,7 @@ describe('useQuery', () => {
         }),
       )
 
-      if (query.isSuccess) {
+      if (queryIsSuccess(query)) {
         expectTypeOf(query.data).toEqualTypeOf<string>()
       }
     })
@@ -533,7 +538,7 @@ describe('useQuery', () => {
       const { data } = useQuery({
         queryKey: createKey(),
         queryFn: () => sleep(0).then(() => ['a', 'b', 'c']),
-        select: (posts) => posts.length,
+        select: select((posts) => posts.length),
       })
 
       expectTypeOf(data.value).toEqualTypeOf<number | undefined>()

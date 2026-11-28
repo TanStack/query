@@ -1,7 +1,11 @@
-import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
-import { useCallback, useState } from 'preact/hooks'
+import {
+  getMutationCache,
+  isMutating,
+  replaceEqualDeep,
+} from '@tanstack/query-core'
+import { useState } from 'preact/hooks'
 import { useQueryClient } from './QueryClientProvider'
-import { useSyncExternalStore } from './utils'
+import { useStoreSnapshot } from './useStoreSnapshot'
 import type {
   Mutation,
   MutationCache,
@@ -34,10 +38,9 @@ export function useIsMutating(
   queryClient?: QueryClient,
 ): number {
   const client = useQueryClient(queryClient)
-  return useMutationState(
-    { filters: { ...filters, status: 'pending' } },
-    client,
-  ).length
+  return useStoreSnapshot(getMutationCache(client), () =>
+    isMutating(client, filters),
+  )
 }
 
 type MutationTypeFromResult<TResult> = [TResult] extends [
@@ -77,22 +80,20 @@ function createSnapshotFactory<
     mutationCache: MutationCache,
     options: MutationStateOptions<TResult, TMutation>,
   ) => {
-    let inputs: Array<unknown> = []
+    let inputs: Array<readonly [Mutation, MutationState]> = []
     let snapshot: Array<TResult> | undefined
 
     return (): Array<TResult> => {
       const mutations = mutationCache.findAll(options.filters)
-      const nextInputs = mutations.flatMap((mutation) => [
-        mutation,
-        mutation.state,
-      ])
 
       if (
         !snapshot ||
-        nextInputs.length !== inputs.length ||
-        nextInputs.some((input, index) => !Object.is(input, inputs[index]))
+        mutations.length !== inputs.length ||
+        inputs.some(
+          ([previous, previousState], index) =>
+            previous !== mutations[index] || previous.state !== previousState,
+        )
       ) {
-        inputs = nextInputs
         snapshot = replaceEqualDeep(
           previousResult,
           mutations.map(
@@ -102,6 +103,7 @@ function createSnapshotFactory<
                 : mutation.state) as TResult,
           ),
         )
+        inputs = mutations.map((mutation) => [mutation, mutation.state])
         previousResult = snapshot
       }
 
@@ -187,18 +189,11 @@ export function useMutationState<
   options: MutationStateOptions<TResult, TMutation> = {},
   queryClient?: QueryClient,
 ): Array<TResult> {
-  const mutationCache = useQueryClient(queryClient).getMutationCache()
+  const mutationCache = getMutationCache(useQueryClient(queryClient))
   const [createSnapshot] = useState(() =>
     createSnapshotFactory<TResult, TMutation>(),
   )
   const getSnapshot = createSnapshot(mutationCache, options)
 
-  return useSyncExternalStore(
-    useCallback(
-      (onStoreChange) =>
-        mutationCache.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [mutationCache],
-    ),
-    getSnapshot,
-  )
+  return useStoreSnapshot(mutationCache, getSnapshot)
 }

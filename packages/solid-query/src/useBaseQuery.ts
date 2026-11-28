@@ -1,7 +1,15 @@
+import {
+  defaultQueryOptions,
+  hydrateQueries,
+  isError,
+  isFetching,
+  isLoading,
+  notifyManager,
+  shouldThrowError,
+} from '@tanstack/query-core'
 // Had to disable the lint rule because isServer type is defined as false
 // in solid-js/web package. I'll create a GitHub issue with them to see
 // why that happens.
-import { hydrate, notifyManager, shouldThrowError } from '@tanstack/query-core'
 import {
   createComputed,
   createMemo,
@@ -146,7 +154,7 @@ export function useBaseQuery<
   let unsubscribeQueued = false
 
   const defaultedOptions = createMemo(() => {
-    const defaultOptions = client().defaultQueryOptions(options())
+    const defaultOptions = defaultQueryOptions(client(), options())
     defaultOptions._optimisticResults = isRestoring()
       ? 'isRestoring'
       : 'optimistic'
@@ -279,8 +287,8 @@ export function useBaseQuery<
         obs.updateResult()
 
         if (
-          observerResult.isError &&
-          !observerResult.isFetching &&
+          isError(observerResult) &&
+          !isFetching(observerResult) &&
           !isRestoring() &&
           shouldThrowError(obs.options.throwOnError, [
             observerResult.error,
@@ -290,7 +298,7 @@ export function useBaseQuery<
           setStateWithReconciliation(observerResult)
           return reject(observerResult.error)
         }
-        if (!observerResult.isLoading) {
+        if (!isLoading(observerResult)) {
           resolver = null
           return resolve(
             hydratableObserverResult(obs.getCurrentQuery(), observerResult),
@@ -319,10 +327,10 @@ export function useBaseQuery<
        */
       onHydrated(_k, info) {
         if (info.value && 'hydrationData' in info.value) {
-          hydrate(client(), {
+          hydrateQueries(client(), [
             // @ts-expect-error - hydrationData is not correctly typed internally
-            queries: [{ ...info.value.hydrationData }],
-          })
+            { ...info.value.hydrationData },
+          ])
         }
 
         if (unsubscribe) return

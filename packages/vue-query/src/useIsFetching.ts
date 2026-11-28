@@ -1,4 +1,6 @@
+import { getQueryCache } from '@tanstack/query-core'
 import { getCurrentScope, onScopeDispose, ref, watchEffect } from 'vue'
+import { countFetchingQueries } from './queryClient'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type { QueryFilters } from '@tanstack/query-core'
@@ -73,10 +75,13 @@ export function useIsFetching(
       typeof fetchingFilters === 'function'
         ? fetchingFilters()
         : fetchingFilters
-    isFetching.value = client.isFetching(cloneDeepUnref(resolvedFilters))
+    isFetching.value = countFetchingQueries(
+      client,
+      cloneDeepUnref(resolvedFilters),
+    )
   }
 
-  const unsubscribe = client.getQueryCache().subscribe(listener)
+  const unsubscribe = getQueryCache(client).subscribe(listener)
 
   watchEffect(listener)
 

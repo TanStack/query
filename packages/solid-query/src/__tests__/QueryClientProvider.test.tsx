@@ -1,5 +1,5 @@
 import { render } from '@solidjs/testing-library'
-import { QueryCache } from '@tanstack/query-core'
+import { QueryCache, findCachedQuery } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { createMemo, createRoot } from 'solid-js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -43,7 +43,9 @@ describe('QueryClientProvider', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('test')).toBeInTheDocument()
 
-    expect(queryCache.find({ queryKey: key })?.state.data).toBe('test')
+    expect(findCachedQuery(queryCache, { queryKey: key })?.state.data).toBe(
+      'test',
+    )
   })
 
   it('should allow multiple caches to be partitioned', async () => {
@@ -96,10 +98,14 @@ describe('QueryClientProvider', () => {
     expect(rendered.getByText('test1')).toBeInTheDocument()
     expect(rendered.getByText('test2')).toBeInTheDocument()
 
-    expect(queryCache1.find({ queryKey: key1 })?.state.data).toBe('test1')
-    expect(queryCache1.find({ queryKey: key2 })).toBeUndefined()
-    expect(queryCache2.find({ queryKey: key1 })).toBeUndefined()
-    expect(queryCache2.find({ queryKey: key2 })?.state.data).toBe('test2')
+    expect(findCachedQuery(queryCache1, { queryKey: key1 })?.state.data).toBe(
+      'test1',
+    )
+    expect(findCachedQuery(queryCache1, { queryKey: key2 })).toBeUndefined()
+    expect(findCachedQuery(queryCache2, { queryKey: key1 })).toBeUndefined()
+    expect(findCachedQuery(queryCache2, { queryKey: key2 })?.state.data).toBe(
+      'test2',
+    )
   })
 
   it("should use defaultOptions for queries when they don't provide their own config", async () => {
@@ -137,7 +143,9 @@ describe('QueryClientProvider', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('test')).toBeInTheDocument()
 
-    expect(queryCache.find({ queryKey: key })?.options.gcTime).toBe(Infinity)
+    expect(findCachedQuery(queryCache, { queryKey: key })?.options.gcTime).toBe(
+      Infinity,
+    )
   })
 
   describe('useQueryClient', () => {

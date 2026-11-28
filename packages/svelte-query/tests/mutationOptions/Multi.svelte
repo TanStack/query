@@ -1,12 +1,15 @@
 <script lang="ts">
   import {
+    getMutationCache,
+    isMutating as queryIsMutating,
+  } from '@tanstack/query-core'
+  import {
     createMutation,
     setQueryClientContext,
     useIsMutating,
     useMutationState,
   } from '../../src/index.js'
-  import type { QueryClient } from '@tanstack/query-core'
-  import type { MutationFilters } from '@tanstack/query-core'
+  import type { MutationFilters, QueryClient } from '@tanstack/query-core'
   import type {
     Accessor,
     CreateMutationOptions,
@@ -39,15 +42,15 @@
   let clientIsMutating = $state(0)
 
   $effect(() => {
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     clientIsMutating = isMutatingFilters
-      ? queryClient.isMutating(isMutatingFilters)
-      : queryClient.isMutating()
+      ? queryIsMutating(queryClient, isMutatingFilters)
+      : queryIsMutating(queryClient)
 
     const unsubscribe = mutationCache.subscribe(() => {
       clientIsMutating = isMutatingFilters
-        ? queryClient.isMutating(isMutatingFilters)
-        : queryClient.isMutating()
+        ? queryIsMutating(queryClient, isMutatingFilters)
+        : queryIsMutating(queryClient)
     })
 
     return unsubscribe

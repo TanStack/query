@@ -1,16 +1,16 @@
-import { queryOptions } from '@tanstack/react-query'
+import { suspenseQueryOptions } from '@tanstack/react-query'
 import { contactsAPI } from './api'
 
 export const contactsQueries = {
   all: () => ['contacts'] as const,
   lists: () => [...contactsQueries.all(), 'list'] as const,
   list: (q?: string) =>
-    queryOptions({
+    suspenseQueryOptions({
       queryKey: [...contactsQueries.lists(), { q }] as const,
       queryFn: () => contactsAPI.getContacts(q),
     }),
   detail: (id: string) =>
-    queryOptions({
+    suspenseQueryOptions({
       queryKey: [...contactsQueries.all(), 'detail', id] as const,
       queryFn: async () => {
         const contact = await contactsAPI.getContact(id)

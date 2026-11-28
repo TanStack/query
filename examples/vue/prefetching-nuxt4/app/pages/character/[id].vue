@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
+import { isFetching as queryIsFetching, useQuery } from '@tanstack/vue-query'
 import { computed } from 'vue'
 import { charactersQueries } from '../../services/characters/queries'
 
@@ -11,11 +11,17 @@ const isValidId = computed(
     Number(route.params.id) > 0,
 )
 
-const { status, data, error, isFetching } = useQuery(() =>
+const {
+  state: queryState,
+  status,
+  data,
+  error,
+} = useQuery(() =>
   charactersQueries.detail(
     isValidId.value ? Number(route.params.id) : undefined,
   ),
 )
+const isFetching = computed(() => queryIsFetching(queryState))
 </script>
 
 <template>

@@ -24,7 +24,7 @@ import type {
  * the mutation settles removes the subscription and prevents them from firing.
  * @example
  * ```tsx
- * import { useMutation, useQueryClient } from '@tanstack/solid-query'
+ * import { invalidateQueries, useMutation, useQueryClient } from '@tanstack/solid-query'
  *
  * function TodoItem(props: { id: number }) {
  *   const queryClient = useQueryClient()
@@ -32,7 +32,7 @@ import type {
  *   const deleteTodoMutation = useMutation(() => ({
  *     mutationFn: deleteTodo,
  *     onSuccess: () => {
- *       queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *       invalidateQueries(queryClient, { queryKey: ['todos'] })
  *     },
  *   }))
  *
@@ -47,14 +47,14 @@ import type {
  * Rendering the mutation's own state, rather than just firing it off:
  * ```tsx
  * import { Match, Switch } from 'solid-js'
- * import { useMutation, useQueryClient } from '@tanstack/solid-query'
+ * import { invalidateQueries, useMutation, useQueryClient } from '@tanstack/solid-query'
  *
  * function AddTodo() {
  *   const queryClient = useQueryClient()
  *
  *   const addMutation = useMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  *
  *   return (
@@ -71,7 +71,7 @@ import type {
  * @example
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```tsx
- * import { useMutation, useQueryClient } from '@tanstack/solid-query'
+ * import { cancelQueries, invalidateQueries, setQueryData, useMutation, useQueryClient } from '@tanstack/solid-query'
  *
  * function AddTodo() {
  *   const queryClient = useQueryClient()
@@ -79,10 +79,10 @@ import type {
  *   const addMutation = useMutation(() => ({
  *     mutationFn: addTodo,
  *     onMutate: async (newTodo) => {
- *       await queryClient.cancelQueries({ queryKey: ['todos'] })
- *       const previousTodos = queryClient.getQueryData<Array<string>>(['todos'])
+ *       await cancelQueries(queryClient, { queryKey: ['todos'] })
+ *       const previousTodos = getQueryData<Array<string>>(['todos'])
  *
- *       queryClient.setQueryData<Array<string>>(['todos'], (old) => [
+ *       setQueryData<Array<string>>(['todos'], (old) => [
  *         ...(old ?? []),
  *         newTodo,
  *       ])
@@ -91,10 +91,10 @@ import type {
  *       return { previousTodos }
  *     },
  *     onError: (_err, _newTodo, onMutateResult) => {
- *       queryClient.setQueryData(['todos'], onMutateResult?.previousTodos)
+ *       setQueryData(queryClient, ['todos'], onMutateResult?.previousTodos)
  *     },
  *     onSettled: () => {
- *       queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *       invalidateQueries(queryClient, { queryKey: ['todos'] })
  *     },
  *   }))
  *
@@ -107,14 +107,14 @@ import type {
  * Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
  * promise per call instead, so you can wait for all of them when they succeed:
  * ```tsx
- * import { useMutation, useQueryClient } from '@tanstack/solid-query'
+ * import { invalidateQueries, useMutation, useQueryClient } from '@tanstack/solid-query'
  *
  * function AddTodos() {
  *   const queryClient = useQueryClient()
  *
  *   const addMutation = useMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  *
  *   async function handleAddAll(todos: Array<string>) {
@@ -137,14 +137,14 @@ import type {
  * did — rather than losing that information the moment the first one rejects — swap `Promise.all` for
  * `Promise.allSettled`:
  * ```tsx
- * import { useMutation, useQueryClient } from '@tanstack/solid-query'
+ * import { invalidateQueries, useMutation, useQueryClient } from '@tanstack/solid-query'
  *
  * function AddTodos() {
  *   const queryClient = useQueryClient()
  *
  *   const addMutation = useMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  *
  *   async function handleAddAll(todos: Array<string>) {

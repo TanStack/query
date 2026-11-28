@@ -12,9 +12,9 @@ Placeholder data allows a query to behave as if it already has data, similar to 
 There are a few ways to supply placeholder data for a query to the cache before you need it:
 
 - Declaratively:
-  - Provide `placeholderData` to a query to prepopulate its cache if empty
+  - Wrap a value or factory in `placeholderData(...)` to display it until the first cached result arrives
 - Imperatively:
-  - [Prefetch or fetch the data using `queryClient` and the `placeholderData` option](./prefetching.md)
+  - [Prefetch data with `query(queryClient, options)` to populate the cache](./prefetching.md)
 
 When we use `placeholderData`, our Query will not be in a `pending` state - it will start out as being in `success` state, because we have `data` to display - even if that data is just "placeholder" data. To distinguish it from "real" data, we will also have the `isPlaceholderData` flag set to `true` on the Query result.
 
@@ -24,11 +24,13 @@ When we use `placeholderData`, our Query will not be in a `pending` state - it w
 
 ```tsx
 function Todos() {
-  const result = useQuery({
-    queryKey: ['todos'],
-    queryFn: () => fetch('/todos'),
-    placeholderData: placeholderTodos,
-  })
+  const result = useQuery(
+    queryOptions({
+      queryKey: ['todos'],
+      queryFn: () => fetch('/todos'),
+      placeholderData: placeholderData(placeholderTodos),
+    }),
+  )
 }
 ```
 
@@ -41,12 +43,14 @@ If the process for accessing a query's placeholder data is intensive or just not
 
 ```tsx
 function Todos() {
-  const placeholderData = useMemo(() => generateFakeTodos(), [])
-  const result = useQuery({
-    queryKey: ['todos'],
-    queryFn: () => fetch('/todos'),
-    placeholderData,
-  })
+  const placeholderTodos = useMemo(() => generateFakeTodos(), [])
+  const result = useQuery(
+    queryOptions({
+      queryKey: ['todos'],
+      queryFn: () => fetch('/todos'),
+      placeholderData: placeholderData(placeholderTodos),
+    }),
+  )
 }
 ```
 
@@ -59,11 +63,15 @@ function Todos() {
 [//]: # 'ExampleFunction'
 
 ```tsx
-const result = useQuery({
-  queryKey: ['todos', id],
-  queryFn: () => fetch(`/todos/${id}`),
-  placeholderData: (previousData, previousQuery) => previousData,
-})
+const result = useQuery(
+  queryOptions({
+    queryKey: ['todos', id],
+    queryFn: () => fetch(`/todos/${id}`),
+    placeholderData: placeholderData(
+      (previousData, previousQuery) => previousData,
+    ),
+  }),
+)
 ```
 
 [//]: # 'ExampleFunction'
@@ -77,17 +85,19 @@ In some circumstances, you may be able to provide the placeholder data for a que
 ```tsx
 function BlogPost({ blogPostId }) {
   const queryClient = useQueryClient()
-  const result = useQuery({
-    queryKey: ['blogPost', blogPostId],
-    queryFn: () => fetch(`/blogPosts/${blogPostId}`),
-    placeholderData: () => {
-      // Use the smaller/preview version of the blogPost from the 'blogPosts'
-      // query as the placeholder data for this blogPost query
-      return queryClient
-        .getQueryData(['blogPosts'])
-        ?.find((d) => d.id === blogPostId)
-    },
-  })
+  const result = useQuery(
+    queryOptions({
+      queryKey: ['blogPost', blogPostId],
+      queryFn: () => fetch(`/blogPosts/${blogPostId}`),
+      placeholderData: placeholderData(() => {
+        // Use the smaller/preview version of the blogPost from the 'blogPosts'
+        // query as the placeholder data for this blogPost query
+        return getQueryData(queryClient, ['blogPosts'])?.find(
+          (d) => d.id === blogPostId,
+        )
+      }),
+    }),
+  )
 }
 ```
 

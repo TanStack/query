@@ -129,6 +129,42 @@ describe('prefer-query-options', () => {
     })
   })
 
+  describe('client-first query operations', () => {
+    ruleTester.run('prefer-query-options', rule, {
+      valid: [
+        {
+          code: normalizeIndent`
+            import { getQueryData, invalidateQueries, query } from '@tanstack/react-query'
+            query(client, todos)
+            getQueryData(client, todos.queryKey)
+            invalidateQueries(client, { queryKey: todos.queryKey })
+          `,
+        },
+        {
+          code: normalizeIndent`
+            import { query } from './other-library'
+            query(client, { queryKey: ['todos'], queryFn: fetchTodos })
+          `,
+        },
+      ],
+      invalid: [
+        {
+          code: normalizeIndent`
+            import { query as load, getQueryData, invalidateQueries } from '@tanstack/react-query'
+            load(client, { queryKey: ['todos'], queryFn: fetchTodos })
+            getQueryData(client, ['todos'])
+            invalidateQueries(client, { queryKey: ['todos'] })
+          `,
+          errors: [
+            { messageId: 'preferQueryOptions' },
+            { messageId: 'preferQueryOptionsQueryKey' },
+            { messageId: 'preferQueryOptionsQueryKey' },
+          ],
+        },
+      ],
+    })
+  })
+
   describe('queryClient methods referencing queryKey from options', () => {
     ruleTester.run('prefer-query-options', rule, {
       valid: [

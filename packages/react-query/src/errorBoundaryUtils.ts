@@ -1,103 +1,56 @@
 'use client'
-import { shouldThrowError } from '@tanstack/query-core'
-import * as React from 'react'
+
+import { getQueryCache, shouldThrowError } from '@tanstack/query-core'
 import type {
   DefaultedQueryObserverOptions,
-  Query,
-  QueryKey,
+  QueryClient,
   QueryObserverResult,
-  ThrowOnError,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 
+type Options = DefaultedQueryObserverOptions<any, any, any, any, any>
+
 /**
- * Turns off `retryOnMount` for a query that throws its errors (with `suspense` or `throwOnError`),
- * unless the error boundary has been reset, so a remount doesn't retry the failed query before the
- * user resets the boundary. Mutates the options.
- * @param options - The defaulted query options to adjust.
- * @param errorResetBoundary - The value of the nearest `QueryErrorResetBoundary`.
- * @param query - The query, used to evaluate a `throwOnError` function against its error.
+ * Stops a failed query retrying on mount until the boundary requests a reset.
+ * @param client - The cache owner.
+ * @param options - The observer options for this reader.
+ * @param boundary - The nearest reset boundary.
+ * @param group - Group readers may create a missing cache entry while assembling their result.
+ * @returns A check that sends a settled observer error to React.
  */
-export const ensurePreventErrorBoundaryRetry = <
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey extends QueryKey,
->(
-  options: DefaultedQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >,
-  errorResetBoundary: QueryErrorResetBoundaryValue,
-  query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
-) => {
-  const throwOnError =
-    query?.state.status === 'error' &&
-    typeof options.throwOnError === 'function'
-      ? shouldThrowError(options.throwOnError, [
-          query.state.error as TError,
-          query,
-        ])
+export function prepareErrorBoundary(
+  client: QueryClient,
+  options: Options,
+  boundary: QueryErrorResetBoundaryValue,
+  group = false,
+) {
+  const cache = getQueryCache(client)
+  const query = cache.get(options.queryHash)
+  const rule =
+    typeof options.throwOnError === 'object'
+      ? options.throwOnError[1]
       : options.throwOnError
-
-  if (options.suspense || throwOnError) {
-    // Prevent retrying failed query if the error boundary has not been reset yet
-    if (!errorResetBoundary.isReset()) {
-      options.retryOnMount = false
-    }
-  }
-}
-
-/**
- * Clears the reset state of the error boundary after the component mounts, so later errors are
- * thrown to the boundary again.
- * @param errorResetBoundary - The value of the nearest `QueryErrorResetBoundary`.
- */
-export const useClearResetErrorBoundary = (
-  errorResetBoundary: QueryErrorResetBoundaryValue,
-) => {
-  React.useEffect(() => {
-    errorResetBoundary.clearReset()
-  }, [errorResetBoundary])
-}
-
-/**
- * Checks whether the query error should be thrown to the nearest error boundary: the query errored
- * and isn't fetching, the boundary hasn't been reset, and either `suspense` is enabled with no data
- * or `throwOnError` says so.
- * @param params - The observer `result`, the `errorResetBoundary`, the `throwOnError` option, the
- * `query`, and the `suspense` option.
- * @returns `true` if the error should be thrown.
- */
-export const getHasError = <
-  TData,
-  TError,
-  TQueryFnData,
-  TQueryData,
-  TQueryKey extends QueryKey,
->({
-  result,
-  errorResetBoundary,
-  throwOnError,
-  query,
-  suspense,
-}: {
-  result: QueryObserverResult<TData, TError>
-  errorResetBoundary: QueryErrorResetBoundaryValue
-  throwOnError: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
-  query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined
-  suspense: boolean | undefined
-}) => {
-  return (
-    result.isError &&
-    !errorResetBoundary.isReset() &&
-    !result.isFetching &&
-    query &&
-    ((suspense && result.data === undefined) ||
-      shouldThrowError(throwOnError, [result.error, query]))
+  if (
+    (options.suspense ||
+      (query?.state.status === 'error' && typeof rule === 'function'
+        ? rule(query.state.error, query)
+        : rule)) &&
+    !boundary.isReset()
   )
+    options.retryOnMount = false
+  return (result: QueryObserverResult<any, any>) => {
+    if (
+      result.status !== 'error' ||
+      boundary.isReset() ||
+      result.fetchStatus === 'fetching'
+    )
+      return
+    const current = group ? cache.get(options.queryHash) : query
+    if (
+      current &&
+      ((options.suspense && result.data === undefined) ||
+        shouldThrowError(options.throwOnError, [result.error, current]))
+    )
+      throw result.error
+  }
 }

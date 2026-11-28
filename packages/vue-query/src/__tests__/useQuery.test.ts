@@ -1,10 +1,19 @@
+import * as queryPredicates from '@tanstack/query-core'
 import {
   QueryObserver,
+  isPending,
+  isSuccess,
   noop,
+  placeholderData,
+  select,
   skipToken,
   streamedQuery,
 } from '@tanstack/query-core'
-import { createKey, sleep } from '@tanstack/query-test-utils'
+import {
+  createKey,
+  createQueryResultSnapshot,
+  sleep,
+} from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   computed,
@@ -16,10 +25,13 @@ import {
   ref,
 } from 'vue'
 import { keepPreviousData } from '..'
+import { getQueryData, setQueryData } from '../queryClient'
 import { useBaseQuery } from '../useBaseQuery'
 import { useQuery } from '../useQuery'
 import { useQueryClient } from '../useQueryClient'
 import type { Query, QueryObserverResult } from '@tanstack/query-core'
+
+const snapshot = createQueryResultSnapshot(queryPredicates)
 
 vi.mock(import('../useQueryClient'))
 vi.mock(import('../useBaseQuery'))
@@ -62,13 +74,13 @@ describe('useQuery', () => {
     }))
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(query).toMatchObject({
-      status: { value: 'success' },
-      data: { value: 'result01' },
-      isPending: { value: false },
-      isFetching: { value: false },
-      isFetched: { value: true },
-      isSuccess: { value: true },
+    expect(snapshot(query.state)).toMatchObject({
+      status: 'success',
+      data: 'result01',
+      isPending: false,
+      isFetching: false,
+      isFetched: true,
+      isSuccess: true,
     })
   })
 
@@ -82,25 +94,25 @@ describe('useQuery', () => {
     }))
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(query).toMatchObject({
-      status: { value: 'success' },
-      data: { value: 'result02' },
-      isPending: { value: false },
-      isFetching: { value: false },
-      isFetched: { value: true },
-      isSuccess: { value: true },
+    expect(snapshot(query.state)).toMatchObject({
+      status: 'success',
+      data: 'result02',
+      isPending: false,
+      isFetching: false,
+      isFetched: true,
+      isSuccess: true,
     })
 
     resultRef.value = 'result021'
     keyRef.value = 'key012'
     await vi.advanceTimersByTimeAsync(0)
-    expect(query).toMatchObject({
-      status: { value: 'success' },
-      data: { value: 'result021' },
-      isPending: { value: false },
-      isFetching: { value: false },
-      isFetched: { value: true },
-      isSuccess: { value: true },
+    expect(snapshot(query.state)).toMatchObject({
+      status: 'success',
+      data: 'result021',
+      isPending: false,
+      isFetching: false,
+      isFetched: true,
+      isSuccess: true,
     })
   })
 
@@ -114,7 +126,7 @@ describe('useQuery', () => {
     expect(isRef(query.state)).toBe(false)
     expect(isReadonly(query.state)).toBe(true)
     expect(query.state.status).toBe('pending')
-    expect(query.state.isPending).toBe(true)
+    expect(isPending(query.state)).toBe(true)
     expect(query.state.data).toBeUndefined()
     expect(query.state.error).toBeNull()
 
@@ -124,8 +136,8 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
 
     expect(query.state.status).toBe('success')
-    expect(query.state.isPending).toBe(false)
-    expect(query.state.isSuccess).toBe(true)
+    expect(isPending(query.state)).toBe(false)
+    expect(isSuccess(query.state)).toBe(true)
     expect(query.state.data).toBe('Some data')
     expect(query.state.error).toBeNull()
     expect(query.data.value).toBe(query.state.data)
@@ -147,7 +159,7 @@ describe('useQuery', () => {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'fetched'),
       initialData: 'initial',
-      select: (value: string) => () => value,
+      select: select((value: string) => () => value),
     })
 
     expect(state.status).toBe('success')
@@ -166,11 +178,11 @@ describe('useQuery', () => {
       queryFn: () => sleep(0).then(() => 'Some data'),
     })
 
-    expect(query).toMatchObject({
-      status: { value: 'pending' },
-      isPending: { value: true },
-      isFetching: { value: true },
-      isStale: { value: true },
+    expect(snapshot(query.state)).toMatchObject({
+      status: 'pending',
+      isPending: true,
+      isFetching: true,
+      isStale: true,
     })
   })
 
@@ -182,13 +194,13 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(query).toMatchObject({
-      status: { value: 'success' },
-      data: { value: 'result2' },
-      isPending: { value: false },
-      isFetching: { value: false },
-      isFetched: { value: true },
-      isSuccess: { value: true },
+    expect(snapshot(query.state)).toMatchObject({
+      status: 'success',
+      data: 'result2',
+      isPending: false,
+      isFetching: false,
+      isFetched: true,
+      isSuccess: true,
     })
   })
 
@@ -201,13 +213,13 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(query).toMatchObject({
-      status: { value: 'success' },
-      data: { value: 'result31' },
-      isPending: { value: false },
-      isFetching: { value: false },
-      isFetched: { value: true },
-      isSuccess: { value: true },
+    expect(snapshot(query.state)).toMatchObject({
+      status: 'success',
+      data: 'result31',
+      isPending: false,
+      isFetching: false,
+      isFetched: true,
+      isSuccess: true,
     })
   })
 
@@ -220,13 +232,13 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(query).toMatchObject({
-      status: { value: 'success' },
-      data: { value: 'result32' },
-      isPending: { value: false },
-      isFetching: { value: false },
-      isFetched: { value: true },
-      isSuccess: { value: true },
+    expect(snapshot(query.state)).toMatchObject({
+      status: 'success',
+      data: 'result32',
+      isPending: false,
+      isFetching: false,
+      isFetched: true,
+      isSuccess: true,
     })
   })
 
@@ -239,16 +251,16 @@ describe('useQuery', () => {
     })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(query).toMatchObject({
-      status: { value: 'error' },
-      data: { value: undefined },
-      error: { value: { message: 'Some error' } },
-      isPending: { value: false },
-      isFetching: { value: false },
-      isFetched: { value: true },
-      isError: { value: true },
-      failureCount: { value: 1 },
-      failureReason: { value: { message: 'Some error' } },
+    expect(snapshot(query.state)).toMatchObject({
+      status: 'error',
+      data: undefined,
+      error: { message: 'Some error' },
+      isPending: false,
+      isFetching: false,
+      isFetched: true,
+      isError: true,
+      failureCount: 1,
+      failureReason: { message: 'Some error' },
     })
   })
 
@@ -353,7 +365,7 @@ describe('useQuery', () => {
 
     expect(status.value).toBe('pending')
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryClient.getQueryData(key)).toBe('Some data')
+    expect(getQueryData(queryClient, key)).toBe('Some data')
     expect(status.value).toBe('pending')
     await vi.advanceTimersByTimeAsync(0)
     expect(status.value).toBe('pending')
@@ -565,7 +577,7 @@ describe('useQuery', () => {
     const query = useQuery({
       queryKey: key,
       queryFn: () => sleep(10).then(() => ['a', 'b', 'c']),
-      select: (posts) => posts.length,
+      select: select((posts) => posts.length),
     })
 
     await vi.advanceTimersByTimeAsync(10)
@@ -576,7 +588,7 @@ describe('useQuery', () => {
 
     const queryClient = useQueryClient()
 
-    expect(queryClient.getQueryData(key)).toStrictEqual(['a', 'b', 'c'])
+    expect(getQueryData(queryClient, key)).toStrictEqual(['a', 'b', 'c'])
   })
 
   it('should stay disabled until the dependent value is set', async () => {
@@ -675,16 +687,16 @@ describe('useQuery', () => {
       retry: false,
     })
 
-    expect(query).toMatchObject({
-      status: { value: 'success' },
-      data: { value: 'initial' },
-      isError: { value: false },
+    expect(snapshot(query.state)).toMatchObject({
+      status: 'success',
+      data: 'initial',
+      isError: false,
     })
     await vi.advanceTimersByTimeAsync(10)
-    expect(query).toMatchObject({
-      status: { value: 'error' },
-      data: { value: 'initial' },
-      isError: { value: true },
+    expect(snapshot(query.state)).toMatchObject({
+      status: 'error',
+      data: 'initial',
+      isError: true,
     })
   })
 
@@ -694,19 +706,19 @@ describe('useQuery', () => {
     const query = useQuery({
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
-      placeholderData: 'placeholder',
+      placeholderData: placeholderData('placeholder'),
     })
 
-    expect(query).toMatchObject({
-      data: { value: 'placeholder' },
-      isSuccess: { value: true },
-      isPlaceholderData: { value: true },
+    expect(snapshot(query.state)).toMatchObject({
+      data: 'placeholder',
+      isSuccess: true,
+      isPlaceholderData: true,
     })
     await vi.advanceTimersByTimeAsync(10)
-    expect(query).toMatchObject({
-      data: { value: 'data' },
-      isSuccess: { value: true },
-      isPlaceholderData: { value: false },
+    expect(snapshot(query.state)).toMatchObject({
+      data: 'data',
+      isSuccess: true,
+      isPlaceholderData: false,
     })
   })
 
@@ -720,7 +732,7 @@ describe('useQuery', () => {
     const query = useQuery({
       queryKey: [...key, page],
       queryFn: () => queryFn(page.value),
-      placeholderData: keepPreviousData,
+      placeholderData: placeholderData(keepPreviousData),
     })
 
     await vi.advanceTimersByTimeAsync(10)
@@ -886,7 +898,7 @@ describe('useQuery', () => {
 
       const suspensePromise = query.suspense()
       await vi.advanceTimersByTimeAsync(10)
-      await expect(suspensePromise).resolves.toMatchObject({
+      expect(snapshot(await suspensePromise)).toMatchObject({
         status: 'error',
         isError: true,
       })
@@ -943,7 +955,7 @@ describe('useQuery', () => {
       const suspensePromise = query.suspense()
 
       const queryClient = useQueryClient()
-      queryClient.setQueryData(key, 'manual data')
+      setQueryData(queryClient, key, 'manual data')
 
       await vi.advanceTimersByTimeAsync(0)
       const result = await suspensePromise

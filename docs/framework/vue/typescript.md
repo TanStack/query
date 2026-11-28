@@ -26,15 +26,17 @@ const { data } = useQuery({
 [//]: # 'TypeInference2'
 
 ```tsx
+import { select, useQuery } from '@tanstack/vue-query'
+
 const { data } = useQuery({
   //      ^? const data: Ref<string> | Ref<undefined>
   queryKey: ['test'],
   queryFn: () => Promise.resolve(5),
-  select: (data) => data.toString(),
+  select: select((data) => data.toString()),
 })
 ```
 
-[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAOQACMAhgHaoMDGA1gPQBuOAtAEcc+KgFgAUBNYRm8JABN6DInAC8KDNlx4AFAglw4nTodNwAegH4DcIdoDS6PAC44AbSox0LKgF0ANDZ2+ABijK46AJRqAHxwAArkIMAYAHRQ3hAANtzoOgCskYHihhhZ6KwwEYoM0apxNfSpMBAAyjBQwIwA5lHFhJFAA)
+[typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgZwKYBtUGMYBo4CuaAigalAJ5wC+cAZlBCHAOQACMAhgHbJdYBrAPQA3MgFoAjmUosAUHKwRe8JABNOXGnAC8hEjIoAKBHLhwhQ89bgA9APxwlKuBq4AuOACVUdADx8UMDcAOYAfHAAPt6+fgTcar7BqGphZnDS5BQA0qgUngDaLDCofCwAurjpmZQAYtyeRgCUuhEACowgwGgAdFClEOgiqEYArE1V5miYOJ7T2DBGRm6cLToRKz0wEADKMEGhzRNy1E1AA)
 
 [//]: # 'TypeInference2'
 [//]: # 'TypeInference3'

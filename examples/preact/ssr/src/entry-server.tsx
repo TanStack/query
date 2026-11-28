@@ -3,6 +3,7 @@ import {
   dehydrate,
   hydrate,
   noop,
+  query,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { uneval } from 'devalue'
@@ -18,14 +19,14 @@ export async function render() {
 
   // The posts are critical content: without `.catch(noop)`, a failed fetch
   // throws here and the server responds with an error status
-  const posts = await prefetchClient.query(postsQueries.list())
+  const posts = await query(prefetchClient, postsQueries.list())
 
   // The author depends on the first post, so prefetch it once its id is known.
   // It's not critical: on failure it's left out of the dehydrated state and
   // fetched again on the client
   const authorId = posts[0]?.userId
   if (authorId) {
-    await prefetchClient.query(usersQueries.detail(authorId)).catch(noop)
+    await query(prefetchClient, usersQueries.detail(authorId)).catch(noop)
   }
 
   const dehydratedState = dehydrate(prefetchClient)

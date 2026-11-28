@@ -32,11 +32,13 @@ const {
 [//]: # 'Example2'
 
 ```tsx
+import { select } from '@tanstack/vue-query'
+
 // Get the users ids
 const { data: userIds } = useQuery({
   queryKey: ['users'],
   queryFn: getUsersData,
-  select: (users) => users.map((user) => user.id),
+  select: select((users) => users.map((user) => user.id)),
 })
 
 const queries = computed(() => {

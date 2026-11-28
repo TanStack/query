@@ -16,7 +16,13 @@ replace:
 [//]: # 'Example1'
 
 ```ts
-import { queryOptions } from '@tanstack/solid-query'
+import {
+  query,
+  queryOptions,
+  setQueryData,
+  useQueries,
+  useQuery,
+} from '@tanstack/solid-query'
 
 function groupOptions(id: number) {
   return queryOptions({
@@ -32,8 +38,8 @@ useQuery(() => groupOptions(1))
 useQueries(() => ({
   queries: [groupOptions(1), groupOptions(2)],
 }))
-queryClient.query(groupOptions(23))
-queryClient.setQueryData(groupOptions(42).queryKey, newGroups)
+query(queryClient, groupOptions(23))
+setQueryData(queryClient, groupOptions(42).queryKey, newGroups)
 ```
 
 [//]: # 'Example1'
@@ -45,12 +51,16 @@ You can still override some options at the component level. A very common and us
 [//]: # 'Example2'
 
 ```ts
+import { queryOptions, select } from '@tanstack/solid-query'
+
 // Type inference still works, so query.data will be the return type of select instead of queryFn
 
-const groupQuery = useQuery(() => ({
-  ...groupOptions(1),
-  select: (data) => data.groupName,
-}))
+const groupQuery = useQuery(() =>
+  queryOptions({
+    ...groupOptions(1),
+    select: select((data) => data.groupName),
+  }),
+)
 ```
 
 [//]: # 'Example2'

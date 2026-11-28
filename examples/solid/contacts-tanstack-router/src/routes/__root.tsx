@@ -1,5 +1,5 @@
 import { createDebouncer } from '@tanstack/solid-pacer/debouncer'
-import { useIsFetching, useQuery } from '@tanstack/solid-query'
+import { query, useIsFetching, useQuery } from '@tanstack/solid-query'
 import {
   Link,
   Outlet,
@@ -19,7 +19,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     }),
     loaderDeps: ({ search: { q } }) => ({ q }),
     loader: ({ context: { queryClient }, deps: { q } }) =>
-      queryClient.query({ ...contactsQueries.list(q), staleTime: 'static' }),
+      query(queryClient, { ...contactsQueries.list(q), staleTime: 'static' }),
     component: Root,
   },
 )

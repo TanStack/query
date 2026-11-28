@@ -1,10 +1,10 @@
-/* @refresh reload */
-
 import {
   QueryClient,
   QueryClientProvider,
+  isFetching,
   useQuery,
 } from '@tanstack/solid-query'
+/* @refresh reload */
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { For, Show, createSignal } from 'solid-js'
 import { render } from 'solid-js/web'
@@ -34,7 +34,7 @@ function ChatMessage(props: { id: string; question: string }) {
       <div>
         <Message message={{ content: props.question, isQuestion: true }} />
         <Message
-          inProgress={query.isFetching}
+          inProgress={isFetching(query)}
           message={{ content: (query.data ?? []).join(' '), isQuestion: false }}
         />
       </div>

@@ -1,5 +1,10 @@
-import { QueryObserver } from '@tanstack/query-core'
+import {
+  QueryObserver,
+  fetchOptimistic,
+  getQueryCache,
+} from '@tanstack/query-core'
 import { use } from 'react'
+import { throwOnError } from './throwOnError'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -9,11 +14,11 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
+import type { QueryRenderPolicy } from './queryDescriptor'
 
 type SuspensePromiseEntry = {
   fetchPromise: Promise<unknown>
   promise: Promise<void>
-  settled: boolean
 }
 
 const suspensePromiseCache = new WeakMap<
@@ -43,62 +48,33 @@ export const defaultThrowOnError = <
  * collected. A `'static'` `staleTime` is kept as is. Mutates the options.
  * @param defaultedOptions - The defaulted query options to adjust.
  */
-export const ensureSuspenseTimers = (
+const ensureSuspenseTimers = (
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
 ) => {
-  if (defaultedOptions.suspense) {
-    // Handle staleTime to ensure minimum 1000ms in Suspense mode
-    // This prevents unnecessary refetching when components remount after suspending
-    const MIN_SUSPENSE_TIME_MS = 1000
+  // Handle staleTime to ensure minimum 1000ms in Suspense mode
+  // This prevents unnecessary refetching when components remount after suspending
+  const MIN_SUSPENSE_TIME_MS = 1000
 
-    const clamp = (value: number | 'static' | undefined) =>
-      value === 'static'
-        ? value
-        : Math.max(value ?? MIN_SUSPENSE_TIME_MS, MIN_SUSPENSE_TIME_MS)
+  const clamp = (value: number | 'static' | undefined) =>
+    value === 'static' ? value : Math.max(value ?? 0, MIN_SUSPENSE_TIME_MS)
 
-    const originalStaleTime = defaultedOptions.staleTime
-    defaultedOptions.staleTime =
-      typeof originalStaleTime === 'function'
-        ? (...args) => clamp(originalStaleTime(...args))
-        : clamp(originalStaleTime)
+  const originalStaleTime = defaultedOptions.staleTime
+  defaultedOptions.staleTime =
+    typeof originalStaleTime === 'function'
+      ? (...args) => clamp(originalStaleTime(...args))
+      : clamp(originalStaleTime)
 
-    if (typeof defaultedOptions.gcTime === 'number') {
-      defaultedOptions.gcTime = Math.max(
-        defaultedOptions.gcTime,
-        MIN_SUSPENSE_TIME_MS,
-      )
-    }
+  if (typeof defaultedOptions.gcTime === 'number') {
+    defaultedOptions.gcTime = Math.max(
+      defaultedOptions.gcTime,
+      MIN_SUSPENSE_TIME_MS,
+    )
   }
-}
-
-/**
- * Decides whether a Suspense query needs to fetch during render.
- * @param result - The result for this render.
- * @param errorResetBoundary - The nearest query error reset boundary.
- * @param query - The query to fetch.
- * @returns `undefined` to skip the fetch, `false` to fetch in the background, or `true` to suspend.
- */
-const shouldSuspend = (
-  result: QueryObserverResult<any, any>,
-  errorResetBoundary: QueryErrorResetBoundaryValue,
-  query: Query<any, any, any, any>,
-): boolean | undefined => {
-  if (
-    result.isPending ||
-    (query.state.status === 'error' && errorResetBoundary.isReset())
-  ) {
-    return true
-  }
-
-  if (result.isFetching && result.isPlaceholderData) {
-    return false
-  }
-
-  return undefined
 }
 
 /**
  * Starts a fetch during render or reuses a promise for an existing fetch.
+ * @param client - The client that owns the query.
  * @param defaultedOptions - The options of the query.
  * @param observer - The observer that starts the fetch.
  * @param errorResetBoundary - The nearest query error reset boundary.
@@ -106,25 +82,24 @@ const shouldSuspend = (
  * @returns A promise that resolves when the fetch settles.
  */
 export function getSuspensePromise(
+  client: QueryClient,
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
   observer: QueryObserver<any, any, any, any, any>,
   errorResetBoundary: QueryErrorResetBoundaryValue,
   query: Query<any, any, any, any>,
 ): Promise<void> {
   let entry = suspensePromiseCache.get(query)
-  if (!entry || entry.settled) {
-    const fetchPromise = observer.fetchOptimistic(defaultedOptions)
+  if (!entry) {
+    const fetchPromise = fetchOptimistic(client, observer, defaultedOptions)
     const settle = () => {
-      pending.settled = true
+      suspensePromiseCache.delete(query)
     }
-    const pending: SuspensePromiseEntry = {
+    entry = {
       fetchPromise,
       // Retry the render when the fetch settles, even on failure.
       promise: fetchPromise.then(settle, settle),
-      settled: false,
     }
-    suspensePromiseCache.set(query, pending)
-    entry = pending
+    suspensePromiseCache.set(query, entry)
   }
 
   entry.fetchPromise.catch(() => errorResetBoundary.clearReset())
@@ -135,34 +110,68 @@ type SuspenseOptions = DefaultedQueryObserverOptions<any, any, any, any, any>
 type SuspenseResult = QueryObserverResult<any, any>
 type SnapshotReader<T> = { getSnapshot: () => T }
 
+/**
+ * Starts a pending fetch and returns its shared promise when this render should suspend.
+ * @param options - The options selected by the Suspense factory.
+ * @param result - The snapshot visible during this render.
+ * @param client - The cache owner.
+ * @param boundary - The current error reset boundary.
+ * @param observer - The existing observer of a single-query reader.
+ * @returns A promise to read through React, or undefined for a background fetch.
+ */
+function getPendingPromise(
+  options: SuspenseOptions,
+  result: SuspenseResult,
+  client: QueryClient,
+  boundary: QueryErrorResetBoundaryValue,
+  observer?: QueryObserver<any, any, any, any, any>,
+) {
+  const query = getQueryCache(client).build(client, options)
+  const suspend =
+    result.status === 'pending' ||
+    (query.state.status === 'error' && boundary.isReset())
+  if (
+    !suspend &&
+    !(result.fetchStatus === 'fetching' && result.isPlaceholderData)
+  )
+    return
+
+  const promise = getSuspensePromise(
+    client,
+    options,
+    observer ?? new QueryObserver(client, options),
+    boundary,
+    query,
+  )
+  return suspend ? promise : undefined
+}
+
 const useReadSuspenseQuery = (
-  defaultedOptions: SuspenseOptions,
+  options: SuspenseOptions,
   reader: SnapshotReader<SuspenseResult>,
   observer: QueryObserver<any, any, any, any, any>,
   client: QueryClient,
-  errorResetBoundary: QueryErrorResetBoundaryValue,
+  boundary: QueryErrorResetBoundaryValue,
 ) => {
-  if (!defaultedOptions.suspense) return
-
-  const snapshot = reader.getSnapshot()
-  const query = client.getQueryCache().build(client, defaultedOptions)
-  const suspend = shouldSuspend(snapshot, errorResetBoundary, query)
-  if (suspend === undefined) return
-
-  const promise = getSuspensePromise(
-    defaultedOptions,
+  const promise = getPendingPromise(
+    options,
+    reader.getSnapshot(),
+    client,
+    boundary,
     observer,
-    errorResetBoundary,
-    query,
   )
-  if (suspend) {
-    use(promise)
-  }
+  if (promise) use(promise)
+}
+
+const suspensePolicy: QueryRenderPolicy<true> = {
+  suspense: true,
+  prepare: ensureSuspenseTimers,
+  errorBoundary: throwOnError,
 }
 
 /** Supplies Suspense behavior for one query. */
-export const suspenseQueryPolicy = {
-  prepare: ensureSuspenseTimers,
+export const suspenseQueryPolicy: QueryRenderPolicy<true> = {
+  ...suspensePolicy,
   readQuery: useReadSuspenseQuery,
 }
 
@@ -174,30 +183,14 @@ const useReadSuspenseQueries = (
 ) => {
   const snapshot = reader.getSnapshot()
 
-  const suspensePromises = snapshot.map((result, index) => {
-    const opts = defaultedQueries[index]
-
-    if (!opts?.suspense) {
-      return undefined
-    }
-
-    const query = client.getQueryCache().build(client, opts)
-    const suspend = shouldSuspend(result, errorResetBoundary, query)
-
-    if (suspend === undefined) {
-      return undefined
-    }
-
-    const queryObserver = new QueryObserver(client, opts)
-    const promise = getSuspensePromise(
-      opts,
-      queryObserver,
+  const suspensePromises = snapshot.map((result, index) =>
+    getPendingPromise(
+      defaultedQueries[index]!,
+      result,
+      client,
       errorResetBoundary,
-      query,
-    )
-
-    return suspend ? promise : undefined
-  })
+    ),
+  )
 
   // Start every fetch before calling use(), because use() suspends immediately.
   for (const promise of suspensePromises) {
@@ -208,7 +201,13 @@ const useReadSuspenseQueries = (
 }
 
 /** Supplies Suspense behavior for parallel queries. */
-export const suspenseQueriesPolicy = {
-  prepare: ensureSuspenseTimers,
+export const suspenseQueriesPolicy: QueryRenderPolicy<true> & {
+  /** Forces group members to run with the Suspense error rule. */
+  readonly defaults: { enabled: true; throwOnError: typeof defaultThrowOnError }
+  /** Starts each member fetch before suspending the group. */
+  readQueries: typeof useReadSuspenseQueries
+} = {
+  ...suspensePolicy,
+  defaults: { enabled: true, throwOnError: defaultThrowOnError },
   readQueries: useReadSuspenseQueries,
 }

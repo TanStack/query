@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+  import { isPending, isSuccess, createQuery } from '@tanstack/svelte-query'
 
   type Repo = {
     full_name: string
@@ -24,14 +24,14 @@
 <h1>Simple</h1>
 <div class="my-4">
   <div>
-    {#if query.isPending}
+    {#if isPending(query)}
       Loading...
     {/if}
     {#if query.error}
       An error has occurred:
       {query.error.message}
     {/if}
-    {#if query.isSuccess}
+    {#if isSuccess(query)}
       <div>
         <h1>{query.data.full_name}</h1>
         <p>{query.data.description}</p>

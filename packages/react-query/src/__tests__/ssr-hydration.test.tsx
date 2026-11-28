@@ -1,3 +1,4 @@
+import { clearQueryClient, isFetching, query } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { act } from 'react'
 import { hydrateRoot } from 'react-dom/client'
@@ -10,9 +11,11 @@ import {
   dehydrate,
   hydrate,
   noop,
+  queryOptions,
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
+import type { UseQueryResult } from '..'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
   let root: any
@@ -29,8 +32,14 @@ async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
   return value
 }
 
-function PrintStateComponent({ componentName, result }: any): any {
-  return `${componentName} - status:${result.status} fetching:${result.isFetching} data:${result.data}`
+function PrintStateComponent({
+  componentName,
+  result,
+}: {
+  componentName: string
+  result: UseQueryResult
+}) {
+  return `${componentName} - status:${result.status} fetching:${isFetching(result)} data:${result.data}`
 }
 
 describe('Server side rendering with de/rehydration', () => {
@@ -57,10 +66,12 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Shared part --
     function SuccessComponent() {
-      const result = useQuery({
-        queryKey: key,
-        queryFn: () => fetchDataSuccess('success!'),
-      })
+      const result = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: () => fetchDataSuccess('success!'),
+        }),
+      )
       return (
         <PrintStateComponent componentName="SuccessComponent" result={result} />
       )
@@ -73,12 +84,10 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient
-      .query({
-        queryKey: key,
-        queryFn: () => fetchDataSuccess('success'),
-      })
-      .catch(noop)
+    await query(prefetchClient, {
+      queryKey: key,
+      queryFn: () => fetchDataSuccess('success'),
+    }).catch(noop)
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({
@@ -91,7 +100,7 @@ describe('Server side rendering with de/rehydration', () => {
       </QueryClientProvider>,
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
-    renderClient.clear()
+    clearQueryClient(renderClient)
     setIsServer(false)
 
     const expectedMarkup =
@@ -122,7 +131,7 @@ describe('Server side rendering with de/rehydration', () => {
     expect(el.innerHTML).toBe(expectedMarkup)
 
     unmount()
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   it('should not mismatch on error', async () => {
@@ -136,11 +145,13 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Shared part --
     function ErrorComponent() {
-      const result = useQuery({
-        queryKey: key,
-        queryFn: () => fetchDataError(),
-        retry: false,
-      })
+      const result = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: () => fetchDataError(),
+          retry: false,
+        }),
+      )
       return (
         <PrintStateComponent componentName="ErrorComponent" result={result} />
       )
@@ -152,12 +163,10 @@ describe('Server side rendering with de/rehydration', () => {
     const prefetchClient = new QueryClient({
       queryCache: prefetchCache,
     })
-    await prefetchClient
-      .query({
-        queryKey: key,
-        queryFn: () => fetchDataError(),
-      })
-      .catch(noop)
+    await query(prefetchClient, {
+      queryKey: key,
+      queryFn: () => fetchDataError(),
+    }).catch(noop)
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({
@@ -170,7 +179,7 @@ describe('Server side rendering with de/rehydration', () => {
       </QueryClientProvider>,
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
-    renderClient.clear()
+    clearQueryClient(renderClient)
     setIsServer(false)
 
     const expectedMarkup =
@@ -203,7 +212,7 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     unmount()
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
@@ -215,10 +224,12 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Shared part --
     function SuccessComponent() {
-      const result = useQuery({
-        queryKey: key,
-        queryFn: () => fetchDataSuccess('success!'),
-      })
+      const result = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: () => fetchDataSuccess('success!'),
+        }),
+      )
       return (
         <PrintStateComponent componentName="SuccessComponent" result={result} />
       )
@@ -237,7 +248,7 @@ describe('Server side rendering with de/rehydration', () => {
       </QueryClientProvider>,
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
-    renderClient.clear()
+    clearQueryClient(renderClient)
     setIsServer(false)
 
     const expectedMarkup =
@@ -271,6 +282,6 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     unmount()
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 })

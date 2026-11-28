@@ -1,78 +1,102 @@
-import { keepPreviousData, skipToken } from '@tanstack/query-core'
+import {
+  isPending,
+  isSuccess,
+  keepPreviousData,
+  placeholderData,
+  select,
+  skipToken,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { useSuspenseQuery } from '../useSuspenseQuery'
+import { suspenseQueryOptions, useQuery } from '..'
 
 describe('useSuspenseQuery', () => {
   it('should always have data defined', () => {
-    const { data } = useSuspenseQuery({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve(5),
-    })
+    const { data } = useQuery(
+      suspenseQueryOptions({
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve(5),
+      }),
+    )
 
     expectTypeOf(data).toEqualTypeOf<number>()
   })
 
   it('should not have pending status', () => {
-    const { status } = useSuspenseQuery({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve(5),
-    })
+    const { status } = useQuery(
+      suspenseQueryOptions({
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve(5),
+      }),
+    )
 
     expectTypeOf(status).toEqualTypeOf<'error' | 'success'>()
   })
 
   it('should allow undefined data when queryFn can be skipToken', () => {
-    const skipped = useSuspenseQuery<number>({
-      queryKey: createKey(),
-      queryFn: skipToken,
-    })
+    const skipped = useQuery(
+      suspenseQueryOptions<number>({
+        queryKey: createKey(),
+        queryFn: skipToken,
+      }),
+    )
     expectTypeOf(skipped.data).toEqualTypeOf<number | undefined>()
 
-    const result = useSuspenseQuery({
-      queryKey: createKey(),
-      queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
-      select: (data) => data.toString(),
-    })
+    const result = useQuery(
+      suspenseQueryOptions({
+        queryKey: createKey(),
+        queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
+        select: select((data) => data.toString()),
+      }),
+    )
 
     expectTypeOf(result.data).toEqualTypeOf<string | undefined>()
-    if (result.isSuccess) {
+    if (isSuccess(result)) {
       expectTypeOf(result.data).toEqualTypeOf<string>()
     }
-    if (result.isPending) {
+    if (isPending(result)) {
       expectTypeOf(result.data).toEqualTypeOf<undefined>()
     }
     expectTypeOf(result.isPlaceholderData).toEqualTypeOf<boolean>()
   })
 
   it('should allow placeholderData', () => {
-    const query = useSuspenseQuery({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve(5),
-      placeholderData: (previousData, previousQuery) => {
-        expectTypeOf(previousData).toEqualTypeOf<number | undefined>()
-        expectTypeOf(previousQuery).not.toBeAny()
-        return previousData ?? 0
-      },
-    })
+    const query = useQuery(
+      suspenseQueryOptions({
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve(5),
+        placeholderData: [
+          placeholderData,
+          (previousData, previousQuery) => {
+            expectTypeOf(previousData).toEqualTypeOf<number | undefined>()
+            expectTypeOf(previousQuery).not.toBeAny()
+            return previousData ?? 0
+          },
+        ],
+      }),
+    )
 
     expectTypeOf(query.data).toEqualTypeOf<number>()
     expectTypeOf(query.isPlaceholderData).toEqualTypeOf<boolean>()
 
     assertType(
-      useSuspenseQuery({
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve(5),
-        placeholderData: keepPreviousData,
-      }),
+      useQuery(
+        suspenseQueryOptions({
+          queryKey: createKey(),
+          queryFn: () => Promise.resolve(5),
+          placeholderData: placeholderData(keepPreviousData),
+        }),
+      ),
     )
 
-    const selected = useSuspenseQuery({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve(5),
-      placeholderData: 0,
-      select: (data) => data.toString(),
-    })
+    const selected = useQuery(
+      suspenseQueryOptions({
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve(5),
+        placeholderData: placeholderData(0),
+        select: select((data) => data.toString()),
+      }),
+    )
 
     expectTypeOf(selected.data).toEqualTypeOf<string>()
 
@@ -84,28 +108,34 @@ describe('useSuspenseQuery', () => {
 
   it('should not allow enabled or throwOnError props', () => {
     assertType(
-      useSuspenseQuery({
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve(5),
-        // @ts-expect-error TS2345
-        enabled: true,
-      }),
+      useQuery(
+        suspenseQueryOptions({
+          queryKey: createKey(),
+          queryFn: () => Promise.resolve(5),
+          // @ts-expect-error TS2345
+          enabled: true,
+        }),
+      ),
     )
     assertType(
-      useSuspenseQuery({
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve(5),
-        // @ts-expect-error TS2345
-        throwOnError: true,
-      }),
+      useQuery(
+        suspenseQueryOptions({
+          queryKey: createKey(),
+          queryFn: () => Promise.resolve(5),
+          // @ts-expect-error TS2345
+          throwOnError: true,
+        }),
+      ),
     )
   })
 
   it('should type-narrow the error field', () => {
-    const query = useSuspenseQuery({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve(5),
-    })
+    const query = useQuery(
+      suspenseQueryOptions({
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve(5),
+      }),
+    )
 
     if (query.status === 'error') {
       expectTypeOf(query.error).toEqualTypeOf<Error>()

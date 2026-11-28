@@ -50,6 +50,9 @@ In the example below, you can see TanStack Query in its most basic and simple fo
 
 ```tsx
 import {
+  isError,
+  isPending,
+  queryOptions,
   QueryClient,
   QueryClientProvider,
   useQuery,
@@ -66,20 +69,23 @@ export default function App() {
 }
 
 function Example() {
-  const { isPending, error, data } = useQuery({
-    queryKey: ['repoData'],
-    queryFn: async () => {
-      const response = await fetch(
-        'https://api.github.com/repos/TanStack/query',
-      )
-      if (!response.ok) throw new Error('Failed to fetch repo data')
-      return response.json()
-    },
-  })
+  const repo = useQuery(
+    queryOptions({
+      queryKey: ['repoData'],
+      queryFn: async () => {
+        const response = await fetch(
+          'https://api.github.com/repos/TanStack/query',
+        )
+        if (!response.ok) throw new Error('Failed to fetch repo data')
+        return response.json()
+      },
+    }),
+  )
 
-  if (isPending) return 'Loading...'
+  if (isPending(repo)) return 'Loading...'
 
-  if (error) return 'An error has occurred: ' + error.message
+  if (isError(repo)) return 'An error has occurred: ' + repo.error.message
+  const { data } = repo
 
   return (
     <div>

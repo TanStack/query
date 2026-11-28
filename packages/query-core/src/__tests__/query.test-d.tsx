@@ -1,6 +1,19 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { QueryClient } from '..'
+import {
+  QueryClient,
+  clearQueryClient,
+  getQueryCache,
+  getQueryObserverCount,
+  invalidateCachedQuery,
+  isQueryActive,
+  isQueryDisabled,
+  isQueryFetched,
+  isQueryStale,
+  isQueryStatic,
+  mountQueryClient,
+  resetCachedQuery,
+} from '..'
 import type {
   CancelOptions,
   DefaultError,
@@ -20,6 +33,11 @@ import type {
   fetchState,
 } from '../query'
 
+type OperationArgs<
+  TOperation extends (...args: Array<never>) => unknown,
+  TClient,
+> = Parameters<TOperation> extends [TClient, ...infer TArgs] ? TArgs : never
+
 class CustomError extends Error {
   override name = 'CustomError' as const
 }
@@ -29,11 +47,11 @@ describe('query', () => {
 
   beforeEach(() => {
     queryClient = new QueryClient()
-    queryClient.mount()
+    mountQueryClient(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   describe('QueryState', () => {
@@ -336,17 +354,15 @@ describe('query', () => {
     })
 
     it('should carry the query key type parameter of its instance', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<
-          { value: string },
-          CustomError,
-          { value: string },
-          ['k', number]
-        >(queryClient, {
-          queryKey: ['k', 1],
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError,
+        { value: string },
+        ['k', number]
+      >(queryClient, {
+        queryKey: ['k', 1],
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.queryKey).toEqualTypeOf<['k', number]>()
     })
@@ -354,12 +370,13 @@ describe('query', () => {
 
   describe('queryHash', () => {
     it('should be typed as a string', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.queryHash).toEqualTypeOf<string>()
     })
@@ -367,12 +384,13 @@ describe('query', () => {
 
   describe('state', () => {
     it('should carry the data and error types of the query', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.state).toEqualTypeOf<
         QueryState<{ value: string }, CustomError>
@@ -382,12 +400,13 @@ describe('query', () => {
 
   describe('options', () => {
     it('should carry the type parameters of the query', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.options).toEqualTypeOf<
         QueryOptions<
@@ -424,12 +443,13 @@ describe('query', () => {
 
   describe('meta', () => {
     it('should be typed as the query meta or undefined', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.meta).toEqualTypeOf<
         Record<string, unknown> | undefined
@@ -439,12 +459,13 @@ describe('query', () => {
 
   describe('resetState', () => {
     it('should carry the data and error types of the query', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.resetState).toEqualTypeOf<
         QueryState<{ value: string }, CustomError>
@@ -454,12 +475,13 @@ describe('query', () => {
 
   describe('queryType', () => {
     it('should be the infinite literal or undefined', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.queryType).toEqualTypeOf<'infinite' | undefined>()
     })
@@ -467,12 +489,13 @@ describe('query', () => {
 
   describe('promise', () => {
     it('should resolve with the data type or be undefined', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.promise).toEqualTypeOf<
         Promise<{ value: string }> | undefined
@@ -482,12 +505,13 @@ describe('query', () => {
 
   describe('observers', () => {
     it('should be an array', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.observers).toEqualTypeOf<
         Array<QueryObserver<any, any, any, any, any>>
@@ -497,12 +521,13 @@ describe('query', () => {
 
   describe('setData', () => {
     it('should return the data type it is given', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.setData).returns.toEqualTypeOf<{
         value: string
@@ -513,12 +538,13 @@ describe('query', () => {
     })
 
     it('should require manual on the options it is given', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       query.setData({ value: 'data' })
       query.setData({ value: 'data' }, { manual: true, updatedAt: 1 })
@@ -534,12 +560,13 @@ describe('query', () => {
     })
 
     it('should reject a data type other than its own', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       // @ts-expect-error the data must be the query data type
       query.setData('data')
@@ -552,12 +579,13 @@ describe('query', () => {
 
   describe('setState', () => {
     it('should accept a partial state and return void', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       query.setState({ status: 'success' })
 
@@ -568,12 +596,13 @@ describe('query', () => {
     })
 
     it('should reject a state field that is not its own type', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       // @ts-expect-error the data must be the query data type
       query.setState({ data: 'data' })
@@ -587,23 +616,25 @@ describe('query', () => {
 
   describe('cancel', () => {
     it('should resolve with void', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.cancel).returns.toEqualTypeOf<Promise<void>>()
     })
 
     it('should only accept CancelOptions', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.cancel).parameters.toEqualTypeOf<
         [options?: CancelOptions]
@@ -617,12 +648,13 @@ describe('query', () => {
 
   describe('destroy', () => {
     it('should take no arguments and return void', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.destroy).parameters.toEqualTypeOf<[]>()
       expectTypeOf(query.destroy).returns.toEqualTypeOf<void>()
@@ -631,102 +663,114 @@ describe('query', () => {
 
   describe('reset', () => {
     it('should take no arguments and return void', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
-      expectTypeOf(query.reset).parameters.toEqualTypeOf<[]>()
-      expectTypeOf(query.reset).returns.toEqualTypeOf<void>()
+      expectTypeOf<
+        OperationArgs<typeof resetCachedQuery, typeof query>
+      >().toEqualTypeOf<[]>()
+      expectTypeOf(() => resetCachedQuery(query)).returns.toEqualTypeOf<void>()
     })
   })
 
   describe('isActive', () => {
     it('should return a boolean', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
-      expectTypeOf(query.isActive).returns.toEqualTypeOf<boolean>()
+      expectTypeOf(() => isQueryActive(query)).returns.toEqualTypeOf<boolean>()
     })
   })
 
   describe('isDisabled', () => {
     it('should return a boolean', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
-      expectTypeOf(query.isDisabled).returns.toEqualTypeOf<boolean>()
+      expectTypeOf(() =>
+        isQueryDisabled(query),
+      ).returns.toEqualTypeOf<boolean>()
     })
   })
 
   describe('isFetched', () => {
     it('should return a boolean', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
-      expectTypeOf(query.isFetched).returns.toEqualTypeOf<boolean>()
+      expectTypeOf(() => isQueryFetched(query)).returns.toEqualTypeOf<boolean>()
     })
   })
 
   describe('isStatic', () => {
     it('should return a boolean', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
-      expectTypeOf(query.isStatic).returns.toEqualTypeOf<boolean>()
+      expectTypeOf(() => isQueryStatic(query)).returns.toEqualTypeOf<boolean>()
     })
   })
 
   describe('isStale', () => {
     it('should return a boolean', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
-      expectTypeOf(query.isStale).returns.toEqualTypeOf<boolean>()
+      expectTypeOf(() => isQueryStale(query)).returns.toEqualTypeOf<boolean>()
     })
   })
 
   describe('isStaleByTime', () => {
     it('should return a boolean', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.isStaleByTime).returns.toEqualTypeOf<boolean>()
     })
 
     it('should only accept an optional stale time', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       query.isStaleByTime(1000)
       query.isStaleByTime('static')
@@ -742,39 +786,48 @@ describe('query', () => {
 
   describe('getObserversCount', () => {
     it('should return a number', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
-      expectTypeOf(query.getObserversCount).returns.toEqualTypeOf<number>()
+      expectTypeOf(() =>
+        getQueryObserverCount(query),
+      ).returns.toEqualTypeOf<number>()
     })
   })
 
   describe('invalidate', () => {
     it('should take no arguments and return void', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
-      expectTypeOf(query.invalidate).parameters.toEqualTypeOf<[]>()
-      expectTypeOf(query.invalidate).returns.toEqualTypeOf<void>()
+      expectTypeOf<
+        OperationArgs<typeof invalidateCachedQuery, typeof query>
+      >().toEqualTypeOf<[]>()
+      expectTypeOf(() =>
+        invalidateCachedQuery(query),
+      ).returns.toEqualTypeOf<void>()
     })
   })
 
   describe('onFocus', () => {
     it('should take no arguments and return void', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.onFocus).parameters.toEqualTypeOf<[]>()
       expectTypeOf(query.onFocus).returns.toEqualTypeOf<void>()
@@ -783,12 +836,13 @@ describe('query', () => {
 
   describe('onOnline', () => {
     it('should take no arguments and return void', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.onOnline).parameters.toEqualTypeOf<[]>()
       expectTypeOf(query.onOnline).returns.toEqualTypeOf<void>()
@@ -797,12 +851,13 @@ describe('query', () => {
 
   describe('addObserver', () => {
     it('should take a single observer and return void', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.addObserver).parameters.toEqualTypeOf<
         [observer: QueryObserver<any, any, any, any, any>]
@@ -813,12 +868,13 @@ describe('query', () => {
 
   describe('removeObserver', () => {
     it('should take a single observer and return void', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.removeObserver).parameters.toEqualTypeOf<
         [observer: QueryObserver<any, any, any, any, any>]
@@ -829,12 +885,13 @@ describe('query', () => {
 
   describe('setOptions', () => {
     it('should accept the query options or nothing', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       query.setOptions()
       query.setOptions({
@@ -853,12 +910,13 @@ describe('query', () => {
 
   describe('fetch', () => {
     it('should resolve with the query data type', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.fetch).returns.toEqualTypeOf<
         Promise<{ value: string }>
@@ -866,12 +924,14 @@ describe('query', () => {
     })
 
     it('should resolve with its data type while typing its fetch options from its query fn data type', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError, number>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError,
+        number
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       expectTypeOf(query.fetch).returns.toEqualTypeOf<Promise<number>>()
       expectTypeOf(query.fetch).parameters.toEqualTypeOf<
@@ -888,12 +948,13 @@ describe('query', () => {
     })
 
     it('should accept the query options or nothing', () => {
-      const query = queryClient
-        .getQueryCache()
-        .build<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-        })
+      const query = getQueryCache(queryClient).build<
+        { value: string },
+        CustomError
+      >(queryClient, {
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve({ value: 'data' }),
+      })
 
       query.fetch()
       query.fetch({
@@ -942,7 +1003,7 @@ describe('query', () => {
     })
 
     it('should declare exactly its public members', () => {
-      expectTypeOf<keyof Query>().toEqualTypeOf<
+      expectTypeOf<Extract<keyof Query, string>>().toEqualTypeOf<
         | 'queryKey'
         | 'queryHash'
         | 'options'
@@ -958,19 +1019,11 @@ describe('query', () => {
         | 'setState'
         | 'cancel'
         | 'destroy'
-        | 'reset'
-        | 'isActive'
-        | 'isDisabled'
-        | 'isFetched'
-        | 'isStatic'
-        | 'isStale'
         | 'isStaleByTime'
         | 'onFocus'
         | 'onOnline'
         | 'addObserver'
         | 'removeObserver'
-        | 'getObserversCount'
-        | 'invalidate'
         | 'fetch'
       >()
     })

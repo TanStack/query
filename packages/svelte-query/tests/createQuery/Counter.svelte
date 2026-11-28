@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { isFetching, isSuccess } from '@tanstack/query-core'
   import { createQuery, setQueryClientContext } from '../../src/index.js'
   import type { QueryClient } from '@tanstack/query-core'
   import type { CreateQueryOptions } from '../../src/index.js'
@@ -24,6 +25,6 @@
 <div data-testid="data">{query.data ?? 'undefined'}</div>
 <div data-testid="status">{query.status}</div>
 <div data-testid="fetchStatus">{query.fetchStatus}</div>
-<div data-testid="isFetching">{query.isFetching}</div>
-<div data-testid="isSuccess">{query.isSuccess}</div>
+<div data-testid="isFetching">{isFetching(query)}</div>
+<div data-testid="isSuccess">{isSuccess(query)}</div>
 <div data-testid="isPlaceholderData">{query.isPlaceholderData}</div>

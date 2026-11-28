@@ -1,5 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { MutationObserver, QueryClient, QueryObserver } from '..'
+import {
+  MutationObserver,
+  QueryClient,
+  QueryObserver,
+  clearQueryClient,
+  query as fetchQueryData,
+  getMutationCache,
+  getQueryCache,
+  getQueryData,
+  setQueryData,
+} from '..'
 import { Mutation } from '../mutation'
 
 describe('garbage collection after cache removal', () => {
@@ -16,12 +26,12 @@ describe('garbage collection after cache removal', () => {
   })
 
   afterEach(() => {
-    client.clear()
+    clearQueryClient(client)
     vi.useRealTimers()
   })
 
   it('clears an existing mutation timer on clear', () => {
-    const cache = client.getMutationCache()
+    const cache = getMutationCache(client)
     Mutation.build(client, {})
     expect(vi.getTimerCount()).toBe(1)
 
@@ -32,7 +42,7 @@ describe('garbage collection after cache removal', () => {
   })
 
   it('clears an existing mutation timer on remove', () => {
-    const cache = client.getMutationCache()
+    const cache = getMutationCache(client)
     const mutation = Mutation.build(client, {})
     expect(vi.getTimerCount()).toBe(1)
 
@@ -49,7 +59,7 @@ describe('garbage collection after cache removal', () => {
     await observer.mutate()
     expect(vi.getTimerCount()).toBe(0)
 
-    client.clear()
+    clearQueryClient(client)
     observer.reset()
 
     expect(vi.getTimerCount()).toBe(0)
@@ -57,7 +67,7 @@ describe('garbage collection after cache removal', () => {
 
   it('keeps only the replacement query timer when a removed fetch settles', async () => {
     const queryKey = ['replacement']
-    const pending = client.query({
+    const pending = fetchQueryData(client, {
       queryKey,
       queryFn: ({ signal }) =>
         new Promise<never>((_, reject) => {
@@ -65,20 +75,20 @@ describe('garbage collection after cache removal', () => {
         }),
     })
 
-    client.clear()
-    client.setQueryData(queryKey, 'replacement')
+    clearQueryClient(client)
+    setQueryData(client, queryKey, 'replacement')
     await expect(pending).rejects.toThrow('CancelledError')
 
-    expect(client.getQueryData(queryKey)).toBe('replacement')
+    expect(getQueryData(client, queryKey)).toBe('replacement')
     expect(vi.getTimerCount()).toBe(1)
     vi.advanceTimersByTime(1000)
-    expect(client.getQueryCache().getAll()).toHaveLength(0)
+    expect(getQueryCache(client).getAll()).toHaveLength(0)
   })
 
   it('does not schedule query GC when an observer unsubscribes after clear', async () => {
     const queryKey = ['observed']
     const queryFn = () => Promise.resolve('data')
-    await client.query({ queryKey, queryFn })
+    await fetchQueryData(client, { queryKey, queryFn })
     const observer = new QueryObserver(client, {
       queryKey,
       queryFn,
@@ -87,7 +97,7 @@ describe('garbage collection after cache removal', () => {
     const unsubscribe = observer.subscribe(() => {})
     expect(vi.getTimerCount()).toBe(0)
 
-    client.clear()
+    clearQueryClient(client)
     unsubscribe()
 
     expect(vi.getTimerCount()).toBe(0)
@@ -108,7 +118,7 @@ describe('garbage collection after cache removal', () => {
     const query = observer.getCurrentQuery()
     expect(vi.getTimerCount()).toBe(0)
 
-    client.clear()
+    clearQueryClient(client)
     const timersAfterClear = vi.getTimerCount()
     await query.cancel()
 

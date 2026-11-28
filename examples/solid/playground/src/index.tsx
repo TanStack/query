@@ -1,12 +1,15 @@
-/* @refresh reload */
-
 import {
   QueryClient,
   QueryClientProvider,
+  invalidateQueries,
+  isFetching,
+  setDefaultOptions,
+  setQueryData,
   useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/solid-query'
+/* @refresh reload */
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import {
   For,
@@ -68,7 +71,7 @@ function Root() {
   })
 
   createEffect(() => {
-    queryClient.setDefaultOptions({
+    setDefaultOptions(queryClient, {
       queries: {
         staleTime: staleTime(),
         gcTime: gcTime(),
@@ -159,7 +162,7 @@ function App() {
   return (
     <div class="App">
       <div>
-        <button onClick={() => queryClient.invalidateQueries()}>
+        <button onClick={() => invalidateQueries(queryClient)}>
           Force Refetch All
         </button>
       </div>
@@ -240,7 +243,7 @@ function Todos(props: {
                 </For>
               </ul>
               <div>
-                <Show when={query.isFetching} fallback={<span>&nbsp;</span>}>
+                <Show when={isFetching(query)} fallback={<span>&nbsp;</span>}>
                   <span>
                     Background Refreshing... (Attempt: {query.failureCount + 1})
                   </span>
@@ -268,8 +271,9 @@ function EditTodo(props: {
     ...todosMutations.update(),
     onSuccess: (todo) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
-      queryClient.setQueryData(
+      invalidateQueries(queryClient, { queryKey: todosQueries.lists() })
+      setQueryData(
+        queryClient,
         todosQueries.detail(props.editingIndex).queryKey,
         todo,
       )
@@ -351,7 +355,7 @@ function EditTodo(props: {
                 </Switch>
               </div>
               <div>
-                <Show when={query.isFetching} fallback={<span>&nbsp;</span>}>
+                <Show when={isFetching(query)} fallback={<span>&nbsp;</span>}>
                   <span>
                     Background Refreshing... (Attempt: {query.failureCount + 1})
                   </span>
@@ -372,7 +376,7 @@ function AddTodo() {
   const addMutation = useMutation(() => ({
     ...todosMutations.create(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
+      invalidateQueries(queryClient, { queryKey: todosQueries.lists() })
     },
   }))
 

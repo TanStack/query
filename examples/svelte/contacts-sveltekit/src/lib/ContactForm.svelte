@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useQueryClient } from '@tanstack/svelte-query'
+  import { invalidateQueries, useQueryClient } from '@tanstack/svelte-query'
   import { enhance } from '$app/forms'
   import { contactsQueries } from '$lib/services/contacts/queries'
   import type { Contact } from '$lib/services/contacts/types'
@@ -18,7 +18,7 @@
   id="contact-form"
   use:enhance={() => {
     return async ({ update }) => {
-      void queryClient.invalidateQueries({ queryKey: contactsQueries.all() })
+      void invalidateQueries(queryClient, { queryKey: contactsQueries.all() })
       await update()
     }
   }}

@@ -1,3 +1,4 @@
+import { refetchInterval, select } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { skipToken, usePrefetchQuery } from '..'
@@ -18,7 +19,7 @@ describe('usePrefetchQuery', () => {
         queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         // @ts-expect-error TS2345
-        refetchInterval: 1000,
+        refetchInterval: refetchInterval(1000),
       }),
     )
 
@@ -62,11 +63,11 @@ describe('usePrefetchQuery', () => {
     usePrefetchQuery<string, Error, number, { value: string }>({
       queryKey: createKey(),
       queryFn: () => Promise.resolve('data'),
-      select: (data) => {
+      select: select((data) => {
         expectTypeOf(data).toEqualTypeOf<{ value: string }>()
 
         return data.value.length
-      },
+      }),
     })
   })
 })

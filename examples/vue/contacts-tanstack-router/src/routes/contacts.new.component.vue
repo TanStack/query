@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import {
+  invalidateQueries,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/vue-query'
 import { useNavigate, useSearch } from '@tanstack/vue-router'
 import ContactForm from '../ContactForm.vue'
 import {
@@ -14,7 +18,7 @@ const queryClient = useQueryClient()
 const { mutate } = useMutation({
   ...contactsMutations.create(),
   onSuccess: async (contact) => {
-    await queryClient.invalidateQueries({ queryKey: contactsQueries.lists() })
+    await invalidateQueries(queryClient, { queryKey: contactsQueries.lists() })
     await navigate({
       to: '/contacts/$contactId',
       params: { contactId: contact.id },

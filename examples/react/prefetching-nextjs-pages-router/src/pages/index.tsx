@@ -1,4 +1,12 @@
-import { noop, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  isError,
+  isPending,
+  noop,
+  query,
+  queryOptions,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import Link from 'next/link'
 import React from 'react'
@@ -14,18 +22,18 @@ function CharacterItem({
 }) {
   const queryClient = useQueryClient()
 
-  const { data } = useQuery({
-    ...charactersQueries.detail(char.id),
-    enabled: false,
-  })
+  const { data } = useQuery(
+    queryOptions({
+      ...charactersQueries.detail(char.id),
+      enabled: false,
+    }),
+  )
 
   const prefetch = () => {
-    queryClient
-      .query({
-        ...charactersQueries.detail(char.id),
-        staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-      })
-      .catch(noop)
+    query(queryClient, {
+      ...charactersQueries.detail(char.id),
+      staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+    }).catch(noop)
   }
 
   return (
@@ -60,9 +68,9 @@ export default function Example() {
         details page will render it without a loading state.
       </p>
       <h2>Characters</h2>
-      {charactersQuery.isPending ? (
+      {isPending(charactersQuery) ? (
         'Loading...'
-      ) : charactersQuery.isError ? (
+      ) : isError(charactersQuery) ? (
         <span>Error: {charactersQuery.error.message}</span>
       ) : (
         <>
@@ -77,9 +85,9 @@ export default function Example() {
           </ul>
 
           <h3>Selected Character</h3>
-          {characterQuery.isPending ? (
+          {isPending(characterQuery) ? (
             'Loading...'
-          ) : characterQuery.isError ? (
+          ) : isError(characterQuery) ? (
             <span>Error: {characterQuery.error.message}</span>
           ) : (
             <>

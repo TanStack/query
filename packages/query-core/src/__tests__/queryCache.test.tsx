@@ -1,6 +1,19 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryCache, QueryClient, QueryObserver, hashKey, noop } from '..'
+import {
+  QueryCache,
+  QueryClient,
+  QueryObserver,
+  clearQueryClient,
+  query as fetchQueryData,
+  findCachedQueries,
+  findCachedQuery,
+  getQueryCache,
+  hashKey,
+  invalidateQueries,
+  noop,
+  setQueryData,
+} from '..'
 import type { DefaultError, Query, QueryCacheNotifyEvent } from '..'
 
 describe('queryCache', () => {
@@ -10,11 +23,11 @@ describe('queryCache', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
-    queryCache = queryClient.getQueryCache()
+    queryCache = getQueryCache(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -23,8 +36,8 @@ describe('queryCache', () => {
       const key = createKey()
       const subscriber = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       const unsubscribe = queryCache.subscribe(subscriber)
-      queryClient.setQueryData(key, 'foo')
-      const query = queryCache.find({ queryKey: key })
+      setQueryData(queryClient, key, 'foo')
+      const query = findCachedQuery(queryCache, { queryKey: key })
       expect(subscriber).toHaveBeenNthCalledWith(1, { query, type: 'added' })
 
       unsubscribe()
@@ -34,14 +47,12 @@ describe('queryCache', () => {
       const key = createKey()
       const callback = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       queryCache.subscribe(callback)
-      void queryClient
-        .query({
-          queryKey: key,
-          queryFn: () => sleep(100).then(() => 'data'),
-        })
-        .catch(noop)
+      void fetchQueryData(queryClient, {
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => 'data'),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(100)
-      const query = queryCache.find({ queryKey: key })
+      const query = findCachedQuery(queryCache, { queryKey: key })
       expect(callback).toHaveBeenNthCalledWith(1, { query, type: 'added' })
     })
 
@@ -75,7 +86,7 @@ describe('queryCache', () => {
         'observerResultsUpdated', // 8. Observer result updated -> stale
       ])
 
-      const cachedQuery = queryCache.find({ queryKey: key })
+      const cachedQuery = findCachedQuery(queryCache, { queryKey: key })
       queries.forEach((query) => {
         expect(query).toBe(cachedQuery)
       })
@@ -88,14 +99,12 @@ describe('queryCache', () => {
       const key = createKey()
       const callback = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       queryCache.subscribe(callback)
-      void queryClient
-        .query({
-          queryKey: key,
-          queryFn: () => sleep(100).then(() => 'data'),
-        })
-        .catch(noop)
+      void fetchQueryData(queryClient, {
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => 'data'),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(100)
-      const query = queryCache.find({ queryKey: key })
+      const query = findCachedQuery(queryCache, { queryKey: key })
       expect(callback).toHaveBeenNthCalledWith(1, { query, type: 'added' })
     })
 
@@ -103,15 +112,13 @@ describe('queryCache', () => {
       const key = createKey()
       const callback = vi.fn<(event: QueryCacheNotifyEvent) => void>()
       queryCache.subscribe(callback)
-      void queryClient
-        .query({
-          queryKey: key,
-          queryFn: () => sleep(100).then(() => 'data'),
-          initialData: 'initial',
-        })
-        .catch(noop)
+      void fetchQueryData(queryClient, {
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => 'data'),
+        initialData: 'initial',
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(100)
-      const query = queryCache.find({ queryKey: key })
+      const query = findCachedQuery(queryCache, { queryKey: key })
       expect(callback).toHaveBeenNthCalledWith(1, { query, type: 'added' })
     })
 
@@ -121,14 +128,12 @@ describe('queryCache', () => {
       const unsubscribe = testCache.subscribe((event) => {
         if (event.type === 'added') {
           if (testCache.getAll().length > 2) {
-            testCache
-              .findAll({
-                type: 'inactive',
-                predicate: (q) => q !== event.query,
-              })
-              .forEach((query) => {
-                testCache.remove(query)
-              })
+            findCachedQueries(testCache, {
+              type: 'inactive',
+              predicate: (q) => q !== event.query,
+            }).forEach((query) => {
+              testCache.remove(query)
+            })
           }
         }
       })
@@ -138,29 +143,23 @@ describe('queryCache', () => {
       const key1 = createKey()
       const key2 = createKey()
       const key3 = createKey()
-      void testClient
-        .query({
-          queryKey: key1,
-          queryFn: () => sleep(100).then(() => 'data1'),
-        })
-        .catch(noop)
-      expect(testCache.findAll()).toHaveLength(1)
-      void testClient
-        .query({
-          queryKey: key2,
-          queryFn: () => sleep(100).then(() => 'data2'),
-        })
-        .catch(noop)
-      expect(testCache.findAll()).toHaveLength(2)
-      void testClient
-        .query({
-          queryKey: key3,
-          queryFn: () => sleep(100).then(() => 'data3'),
-        })
-        .catch(noop)
+      void fetchQueryData(testClient, {
+        queryKey: key1,
+        queryFn: () => sleep(100).then(() => 'data1'),
+      }).catch(noop)
+      expect(findCachedQueries(testCache)).toHaveLength(1)
+      void fetchQueryData(testClient, {
+        queryKey: key2,
+        queryFn: () => sleep(100).then(() => 'data2'),
+      }).catch(noop)
+      expect(findCachedQueries(testCache)).toHaveLength(2)
+      void fetchQueryData(testClient, {
+        queryKey: key3,
+        queryFn: () => sleep(100).then(() => 'data3'),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(100)
-      expect(testCache.findAll()).toHaveLength(1)
-      expect(testCache.findAll()[0]!.state.data).toBe('data3')
+      expect(findCachedQueries(testCache)).toHaveLength(1)
+      expect(findCachedQueries(testCache)[0]!.state.data).toBe('data3')
 
       unsubscribe()
     })
@@ -169,27 +168,26 @@ describe('queryCache', () => {
   describe('find', () => {
     it('should filter correctly with find', async () => {
       const key = createKey()
-      void queryClient
-        .query({
-          queryKey: key,
-          queryFn: () => sleep(100).then(() => 'data1'),
-        })
-        .catch(noop)
+      void fetchQueryData(queryClient, {
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => 'data1'),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(100)
-      const query = queryCache.find({ queryKey: key })!
+      const query = findCachedQuery(queryCache, { queryKey: key })!
       expect(query.state.data).toBe('data1')
     })
 
     it('should filter correctly with find when exact is set to false', async () => {
       const key = createKey()
-      void queryClient
-        .query({
-          queryKey: key,
-          queryFn: () => sleep(100).then(() => 'data1'),
-        })
-        .catch(noop)
+      void fetchQueryData(queryClient, {
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => 'data1'),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(100)
-      const query = queryCache.find({ queryKey: key, exact: false })!
+      const query = findCachedQuery(queryCache, {
+        queryKey: key,
+        exact: false,
+      })!
       expect(query.state.data).toBe('data1')
     })
 
@@ -200,21 +198,23 @@ describe('queryCache', () => {
           : a === b
       const testCache = new QueryCache({ queryKey: { equalityFn } })
       const testClient = new QueryClient({ queryCache: testCache })
-      const query = testClient.getQueryCache().build(testClient, {
+      const query = getQueryCache(testClient).build(testClient, {
         queryKey: ['todos', { status: 'done' }],
       })
 
       expect(
-        testCache.find({
+        findCachedQuery(testCache, {
           queryKey: ['TODOS', { status: 'DONE' }],
           exact: false,
         }),
       ).toBe(query)
       expect(
-        testCache.findAll({ queryKey: ['TODOS', { status: 'DONE' }] }),
+        findCachedQueries(testCache, {
+          queryKey: ['TODOS', { status: 'DONE' }],
+        }),
       ).toStrictEqual([query])
 
-      testClient.clear()
+      clearQueryClient(testClient)
     })
   })
 
@@ -223,76 +223,78 @@ describe('queryCache', () => {
       const key1 = createKey()
       const key2 = createKey()
       const keyFetching = createKey()
-      void queryClient
-        .query({
-          queryKey: key1,
-          queryFn: () => sleep(100).then(() => 'data1'),
-        })
-        .catch(noop)
-      void queryClient
-        .query({
-          queryKey: key2,
-          queryFn: () => sleep(100).then(() => 'data2'),
-        })
-        .catch(noop)
-      void queryClient
-        .query({
-          queryKey: [{ a: 'a', b: 'b' }],
-          queryFn: () => sleep(100).then(() => 'data3'),
-        })
-        .catch(noop)
-      void queryClient
-        .query({
-          queryKey: ['posts', 1],
-          queryFn: () => sleep(100).then(() => 'data4'),
-        })
-        .catch(noop)
+      void fetchQueryData(queryClient, {
+        queryKey: key1,
+        queryFn: () => sleep(100).then(() => 'data1'),
+      }).catch(noop)
+      void fetchQueryData(queryClient, {
+        queryKey: key2,
+        queryFn: () => sleep(100).then(() => 'data2'),
+      }).catch(noop)
+      void fetchQueryData(queryClient, {
+        queryKey: [{ a: 'a', b: 'b' }],
+        queryFn: () => sleep(100).then(() => 'data3'),
+      }).catch(noop)
+      void fetchQueryData(queryClient, {
+        queryKey: ['posts', 1],
+        queryFn: () => sleep(100).then(() => 'data4'),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(100)
-      queryClient.invalidateQueries({ queryKey: key2 })
-      const query1 = queryCache.find({ queryKey: key1 })!
-      const query2 = queryCache.find({ queryKey: key2 })!
-      const query3 = queryCache.find({ queryKey: [{ a: 'a', b: 'b' }] })!
-      const query4 = queryCache.find({ queryKey: ['posts', 1] })!
+      invalidateQueries(queryClient, { queryKey: key2 })
+      const query1 = findCachedQuery(queryCache, { queryKey: key1 })!
+      const query2 = findCachedQuery(queryCache, { queryKey: key2 })!
+      const query3 = findCachedQuery(queryCache, {
+        queryKey: [{ a: 'a', b: 'b' }],
+      })!
+      const query4 = findCachedQuery(queryCache, { queryKey: ['posts', 1] })!
 
-      expect(queryCache.findAll({ queryKey: key1 })).toStrictEqual([query1])
+      expect(findCachedQueries(queryCache, { queryKey: key1 })).toStrictEqual([
+        query1,
+      ])
       // wrapping in an extra array doesn't yield the same results anymore since v4 because keys need to be an array
-      expect(queryCache.findAll({ queryKey: [key1] })).toStrictEqual([])
-      expect(queryCache.findAll()).toStrictEqual([
-        query1,
-        query2,
-        query3,
-        query4,
-      ])
-      expect(queryCache.findAll({})).toStrictEqual([
-        query1,
-        query2,
-        query3,
-        query4,
-      ])
-      expect(
-        queryCache.findAll({ queryKey: key1, type: 'inactive' }),
-      ).toStrictEqual([query1])
-      expect(
-        queryCache.findAll({ queryKey: key1, type: 'active' }),
-      ).toStrictEqual([])
-      expect(queryCache.findAll({ queryKey: key1, stale: true })).toStrictEqual(
+      expect(findCachedQueries(queryCache, { queryKey: [key1] })).toStrictEqual(
         [],
       )
+      expect(findCachedQueries(queryCache)).toStrictEqual([
+        query1,
+        query2,
+        query3,
+        query4,
+      ])
+      expect(findCachedQueries(queryCache, {})).toStrictEqual([
+        query1,
+        query2,
+        query3,
+        query4,
+      ])
       expect(
-        queryCache.findAll({ queryKey: key1, stale: false }),
+        findCachedQueries(queryCache, { queryKey: key1, type: 'inactive' }),
       ).toStrictEqual([query1])
       expect(
-        queryCache.findAll({ queryKey: key1, stale: false, type: 'active' }),
+        findCachedQueries(queryCache, { queryKey: key1, type: 'active' }),
       ).toStrictEqual([])
       expect(
-        queryCache.findAll({
+        findCachedQueries(queryCache, { queryKey: key1, stale: true }),
+      ).toStrictEqual([])
+      expect(
+        findCachedQueries(queryCache, { queryKey: key1, stale: false }),
+      ).toStrictEqual([query1])
+      expect(
+        findCachedQueries(queryCache, {
+          queryKey: key1,
+          stale: false,
+          type: 'active',
+        }),
+      ).toStrictEqual([])
+      expect(
+        findCachedQueries(queryCache, {
           queryKey: key1,
           stale: false,
           type: 'inactive',
         }),
       ).toStrictEqual([query1])
       expect(
-        queryCache.findAll({
+        findCachedQueries(queryCache, {
           queryKey: key1,
           stale: false,
           type: 'inactive',
@@ -300,92 +302,103 @@ describe('queryCache', () => {
         }),
       ).toStrictEqual([query1])
 
-      expect(queryCache.findAll({ queryKey: key2 })).toStrictEqual([query2])
-      expect(
-        queryCache.findAll({ queryKey: key2, stale: undefined }),
-      ).toStrictEqual([query2])
-      expect(queryCache.findAll({ queryKey: key2, stale: true })).toStrictEqual(
-        [query2],
-      )
-      expect(
-        queryCache.findAll({ queryKey: key2, stale: false }),
-      ).toStrictEqual([])
-      expect(queryCache.findAll({ queryKey: [{ b: 'b' }] })).toStrictEqual([
-        query3,
-      ])
-      expect(
-        queryCache.findAll({ queryKey: [{ a: 'a' }], exact: false }),
-      ).toStrictEqual([query3])
-      expect(
-        queryCache.findAll({ queryKey: [{ a: 'a' }], exact: true }),
-      ).toStrictEqual([])
-      expect(
-        queryCache.findAll({ queryKey: [{ a: 'a', b: 'b' }], exact: true }),
-      ).toStrictEqual([query3])
-      expect(
-        queryCache.findAll({ queryKey: [{ a: 'a', b: 'b' }] }),
-      ).toStrictEqual([query3])
-      expect(
-        queryCache.findAll({ queryKey: [{ a: 'a', b: 'b', c: 'c' }] }),
-      ).toStrictEqual([])
-      expect(
-        queryCache.findAll({ queryKey: [{ a: 'a' }], stale: false }),
-      ).toStrictEqual([query3])
-      expect(
-        queryCache.findAll({ queryKey: [{ a: 'a' }], stale: true }),
-      ).toStrictEqual([])
-      expect(
-        queryCache.findAll({ queryKey: [{ a: 'a' }], type: 'active' }),
-      ).toStrictEqual([])
-      expect(
-        queryCache.findAll({ queryKey: [{ a: 'a' }], type: 'inactive' }),
-      ).toStrictEqual([query3])
-      expect(
-        queryCache.findAll({ predicate: (query) => query === query3 }),
-      ).toStrictEqual([query3])
-      expect(queryCache.findAll({ queryKey: ['posts'] })).toStrictEqual([
-        query4,
-      ])
-
-      expect(queryCache.findAll({ fetchStatus: 'idle' })).toStrictEqual([
-        query1,
+      expect(findCachedQueries(queryCache, { queryKey: key2 })).toStrictEqual([
         query2,
-        query3,
-        query4,
       ])
       expect(
-        queryCache.findAll({ queryKey: key2, fetchStatus: undefined }),
+        findCachedQueries(queryCache, { queryKey: key2, stale: undefined }),
+      ).toStrictEqual([query2])
+      expect(
+        findCachedQueries(queryCache, { queryKey: key2, stale: true }),
+      ).toStrictEqual([query2])
+      expect(
+        findCachedQueries(queryCache, { queryKey: key2, stale: false }),
+      ).toStrictEqual([])
+      expect(
+        findCachedQueries(queryCache, { queryKey: [{ b: 'b' }] }),
+      ).toStrictEqual([query3])
+      expect(
+        findCachedQueries(queryCache, { queryKey: [{ a: 'a' }], exact: false }),
+      ).toStrictEqual([query3])
+      expect(
+        findCachedQueries(queryCache, { queryKey: [{ a: 'a' }], exact: true }),
+      ).toStrictEqual([])
+      expect(
+        findCachedQueries(queryCache, {
+          queryKey: [{ a: 'a', b: 'b' }],
+          exact: true,
+        }),
+      ).toStrictEqual([query3])
+      expect(
+        findCachedQueries(queryCache, { queryKey: [{ a: 'a', b: 'b' }] }),
+      ).toStrictEqual([query3])
+      expect(
+        findCachedQueries(queryCache, {
+          queryKey: [{ a: 'a', b: 'b', c: 'c' }],
+        }),
+      ).toStrictEqual([])
+      expect(
+        findCachedQueries(queryCache, { queryKey: [{ a: 'a' }], stale: false }),
+      ).toStrictEqual([query3])
+      expect(
+        findCachedQueries(queryCache, { queryKey: [{ a: 'a' }], stale: true }),
+      ).toStrictEqual([])
+      expect(
+        findCachedQueries(queryCache, {
+          queryKey: [{ a: 'a' }],
+          type: 'active',
+        }),
+      ).toStrictEqual([])
+      expect(
+        findCachedQueries(queryCache, {
+          queryKey: [{ a: 'a' }],
+          type: 'inactive',
+        }),
+      ).toStrictEqual([query3])
+      expect(
+        findCachedQueries(queryCache, {
+          predicate: (query) => query === query3,
+        }),
+      ).toStrictEqual([query3])
+      expect(
+        findCachedQueries(queryCache, { queryKey: ['posts'] }),
+      ).toStrictEqual([query4])
+
+      expect(
+        findCachedQueries(queryCache, { fetchStatus: 'idle' }),
+      ).toStrictEqual([query1, query2, query3, query4])
+      expect(
+        findCachedQueries(queryCache, {
+          queryKey: key2,
+          fetchStatus: undefined,
+        }),
       ).toStrictEqual([query2])
 
-      void queryClient
-        .query({
-          queryKey: keyFetching,
-          queryFn: () => sleep(20).then(() => 'dataFetching'),
-        })
-        .catch(noop)
-      expect(queryCache.findAll({ fetchStatus: 'fetching' })).toStrictEqual([
-        queryCache.find({ queryKey: keyFetching }),
-      ])
+      void fetchQueryData(queryClient, {
+        queryKey: keyFetching,
+        queryFn: () => sleep(20).then(() => 'dataFetching'),
+      }).catch(noop)
+      expect(
+        findCachedQueries(queryCache, { fetchStatus: 'fetching' }),
+      ).toStrictEqual([findCachedQuery(queryCache, { queryKey: keyFetching })])
       await vi.advanceTimersByTimeAsync(20)
-      expect(queryCache.findAll({ fetchStatus: 'fetching' })).toStrictEqual([])
+      expect(
+        findCachedQueries(queryCache, { fetchStatus: 'fetching' }),
+      ).toStrictEqual([])
     })
 
     it('should return all the queries when no filters are defined', async () => {
       const key1 = createKey()
       const key2 = createKey()
-      await queryClient
-        .query({
-          queryKey: key1,
-          queryFn: () => 'data1',
-        })
-        .catch(noop)
-      await queryClient
-        .query({
-          queryKey: key2,
-          queryFn: () => 'data2',
-        })
-        .catch(noop)
-      expect(queryCache.findAll()).toHaveLength(2)
+      await fetchQueryData(queryClient, {
+        queryKey: key1,
+        queryFn: () => 'data1',
+      }).catch(noop)
+      await fetchQueryData(queryClient, {
+        queryKey: key2,
+        queryFn: () => 'data2',
+      }).catch(noop)
+      expect(findCachedQueries(queryCache)).toHaveLength(2)
     })
 
     it('should return all the queries when key contains object with an undefined property (#3741)', async () => {
@@ -401,13 +414,16 @@ describe('queryCache', () => {
 
       const keyForId = (id?: number) => [{ ...baseKey, a: id }]
 
-      await client.query({ queryKey: keyForId(1), queryFn: () => 'data1' })
-      await client.query({
+      await fetchQueryData(client, {
+        queryKey: keyForId(1),
+        queryFn: () => 'data1',
+      })
+      await fetchQueryData(client, {
         queryKey: keyForId(),
         queryFn: () => 'data-nothing',
       })
       expect(
-        client.getQueryCache().findAll({ queryKey: keyForId() }),
+        findCachedQueries(getQueryCache(client), { queryKey: keyForId() }),
       ).toHaveLength(2)
     })
 
@@ -425,17 +441,17 @@ describe('queryCache', () => {
         }),
       })
 
-      await client.query({
+      await fetchQueryData(client, {
         queryKey: ['report', { from: new Date('2020-01-01') }],
         queryFn: () => 'data1',
       })
-      await client.query({
+      await fetchQueryData(client, {
         queryKey: ['report', { from: new Date('2021-06-25') }],
         queryFn: () => 'data2',
       })
 
       expect(
-        client.getQueryCache().findAll({
+        findCachedQueries(getQueryCache(client), {
           queryKey: ['report', { from: new Date('2020-01-01') }],
         }),
       ).toHaveLength(1)
@@ -463,15 +479,12 @@ describe('queryCache', () => {
         >()
       const testCache = new QueryCache({ onSuccess, onError, onSettled })
       const testClient = new QueryClient({ queryCache: testCache })
-      void testClient
-        .query({
-          queryKey: key,
-          queryFn: () =>
-            sleep(100).then(() => Promise.reject<unknown>('error')),
-        })
-        .catch(noop)
+      void fetchQueryData(testClient, {
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => Promise.reject<unknown>('error')),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(100)
-      const query = testCache.find({ queryKey: key })
+      const query = findCachedQuery(testCache, { queryKey: key })
       expect(onError).toHaveBeenCalledWith('error', query)
       expect(onError).toHaveBeenCalledTimes(1)
       expect(onSuccess).not.toHaveBeenCalled()
@@ -501,14 +514,12 @@ describe('queryCache', () => {
         >()
       const testCache = new QueryCache({ onSuccess, onError, onSettled })
       const testClient = new QueryClient({ queryCache: testCache })
-      void testClient
-        .query({
-          queryKey: key,
-          queryFn: () => sleep(100).then(() => ({ data: 5 })),
-        })
-        .catch(noop)
+      void fetchQueryData(testClient, {
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => ({ data: 5 })),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(100)
-      const query = testCache.find({ queryKey: key })
+      const query = findCachedQuery(testCache, { queryKey: key })
       expect(onSuccess).toHaveBeenCalledWith({ data: 5 }, query)
       expect(onSuccess).toHaveBeenCalledTimes(1)
       expect(onError).not.toHaveBeenCalled()
@@ -537,7 +548,7 @@ describe('queryCache', () => {
       const query = testCache.build(testClient, { queryKey: key })
 
       expect(query.queryHash).toBe('custom-hash')
-      expect(testCache.find({ queryKey: key })).toBe(query)
+      expect(findCachedQuery(testCache, { queryKey: key })).toBe(query)
       expect(hashFn).toHaveBeenCalledWith(key)
     })
 
@@ -581,15 +592,13 @@ describe('queryCache', () => {
     it('should not try to add a query already added to the cache', async () => {
       const key = createKey()
 
-      void queryClient
-        .query({
-          queryKey: key,
-          queryFn: () => sleep(100).then(() => 'data1'),
-        })
-        .catch(noop)
+      void fetchQueryData(queryClient, {
+        queryKey: key,
+        queryFn: () => sleep(100).then(() => 'data1'),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(100)
 
-      const query = queryCache.findAll()[0]!
+      const query = findCachedQueries(queryCache)[0]!
       const queryClone = Object.assign({}, query)
 
       queryCache.add(queryClone)

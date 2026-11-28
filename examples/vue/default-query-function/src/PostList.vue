@@ -1,15 +1,31 @@
 <script setup lang="ts">
-import { defaultQueryFn, useQuery, useQueryClient } from '@tanstack/vue-query'
+import {
+  defaultQueryFn,
+  getQueryData,
+  isError as queryIsError,
+  isFetching as queryIsFetching,
+  isPending as queryIsPending,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/vue-query'
+import { computed } from 'vue'
 import type { Post } from './types'
 
 defineEmits<{ setPostId: [id: number] }>()
 
 const queryClient = useQueryClient()
 
-const { isPending, isError, isFetching, data, error } = useQuery<Array<Post>>({
+const {
+  state: queryState,
+  data,
+  error,
+} = useQuery<Array<Post>>({
   queryKey: ['/posts'],
   queryFn: defaultQueryFn,
 })
+const isPending = computed(() => queryIsPending(queryState))
+const isError = computed(() => queryIsError(queryState))
+const isFetching = computed(() => queryIsFetching(queryState))
 </script>
 
 <template>
@@ -25,7 +41,7 @@ const { isPending, isError, isFetching, data, error } = useQuery<Array<Post>>({
             <a
               :href="`#${post.id}`"
               :style="
-                queryClient.getQueryData([`/posts/${post.id}`])
+                getQueryData(queryClient, [`/posts/${post.id}`])
                   ? { fontWeight: 'bold', color: 'green' }
                   : {}
               "

@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/solid-query'
+import {
+  invalidateQueries,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/solid-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/solid-router'
 import { Show } from 'solid-js'
 import {
@@ -24,7 +29,7 @@ function ContactPage() {
     ...contactsMutations.delete(),
     onSuccess: async () => {
       await navigate({ to: '/', search: { q: search().q } })
-      await queryClient.invalidateQueries({ queryKey: contactsQueries.all() })
+      await invalidateQueries(queryClient, { queryKey: contactsQueries.all() })
     },
   }))
 
@@ -97,7 +102,7 @@ function Favorite(props: { contact: Contact }) {
   const updateContact = useMutation(() => ({
     ...contactsMutations.update(),
     onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: contactsQueries.all() }),
+      invalidateQueries(queryClient, { queryKey: contactsQueries.all() }),
   }))
   const favorite = () =>
     updateContact.isPending

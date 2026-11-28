@@ -1,6 +1,6 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { QueryClient } from '..'
+import { QueryClient, getMutationCache } from '..'
 import { Mutation } from '../mutation'
 import {
   addConsumeAwareSignal,
@@ -559,7 +559,7 @@ describe('core/utils', () => {
       const mutation = new Mutation({
         client: queryClient,
         mutationId: 1,
-        mutationCache: queryClient.getMutationCache(),
+        mutationCache: getMutationCache(queryClient),
         options: {},
       })
 
@@ -762,6 +762,13 @@ describe('core/utils', () => {
   })
 
   describe('shouldThrowError', () => {
+    it('should evaluate the rule supplied by an adapter boundary policy', () => {
+      const rule = (error: Error) => error.message === 'show'
+      expect(shouldThrowError([{}, rule], [new Error('hide')])).toBe(false)
+      expect(shouldThrowError([{}, rule], [new Error('show')])).toBe(true)
+      expect(shouldThrowError([{}, true], [])).toBe(true)
+    })
+
     it('should return the result of executing throwOnError if throwOnError parameter is a function', () => {
       const throwOnError = (error: Error) => error.message === 'test error'
       expect(shouldThrowError(throwOnError, [new Error('test error')])).toBe(

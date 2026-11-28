@@ -7,13 +7,32 @@ import {
   expectTypeOf,
   it,
 } from 'vitest'
-import { QueryClient, QueryObserver, defaultQueryFn } from '..'
+import {
+  QueryClient,
+  QueryObserver,
+  clearQueryClient,
+  defaultQueryFn,
+  fetchOptimistic,
+  isError,
+  isFetched,
+  isLoading,
+  isLoadingError,
+  isPending,
+  isRefetchError,
+  isSuccess,
+  mountQueryClient,
+  placeholderData,
+  refetchInterval,
+  select,
+} from '..'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
   InitialDataFunction,
   PlaceholderDataFunction,
   Query,
+  QueryErrorBoundaryOption,
+  QueryKey,
   QueryMeta,
   QueryObserverBaseResult,
   QueryObserverLoadingErrorResult,
@@ -27,7 +46,39 @@ import type {
   QueryPersister,
   QueryStatus,
   RefetchOptions,
+  Select,
+  isFetching,
+  isPaused,
+  isRefetching,
 } from '..'
+import type { FlagFor, Guarded, GuardedProperties } from './helpers/result'
+
+type IntervalInput<TOption> = Extract<TOption, { value: unknown }>['value']
+
+type PlaceholderInput<T> = T extends readonly [unknown, infer TInput]
+  ? TInput
+  : T
+
+/** The boundary rule an adapter can attach to observer options. */
+type QueryBoundaryTuple = Exclude<
+  QueryErrorBoundaryOption<unknown, DefaultError, unknown, QueryKey>,
+  false
+>
+
+type OptimisticArgs<TObserver> =
+  TObserver extends QueryObserver<
+    infer TFetchData,
+    infer TError,
+    infer TData,
+    infer TQueryData,
+    infer TKey
+  >
+    ? [
+        Parameters<
+          typeof fetchOptimistic<TFetchData, TError, TData, TQueryData, TKey>
+        >[2],
+      ]
+    : never
 
 class CustomError extends Error {
   override name = 'CustomError' as const
@@ -38,11 +89,11 @@ describe('queryObserver', () => {
 
   beforeEach(() => {
     queryClient = new QueryClient()
-    queryClient.mount()
+    mountQueryClient(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   describe('QueryObserverOptions', () => {
@@ -71,7 +122,7 @@ describe('queryObserver', () => {
       expectTypeOf<
         QueryObserverOptions<{ value: string }>['select']
       >().toEqualTypeOf<
-        ((data: { value: string }) => { value: string }) | undefined
+        Select<{ value: string }, { value: string }> | undefined
       >()
     })
 
@@ -191,7 +242,7 @@ describe('queryObserver', () => {
             expectTypeOf(query.state.data).toEqualTypeOf<
               { value: string } | undefined
             >()
-            return false
+            return refetchInterval(false)
           },
         })
       })
@@ -201,18 +252,18 @@ describe('queryObserver', () => {
           queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error a refetchInterval callback must return a number, false or undefined
-          refetchInterval: () => 'often',
+          refetchInterval: refetchInterval(() => 'often'),
         })
 
         expectTypeOf<
           Extract<
-            QueryObserverOptions['refetchInterval'],
+            IntervalInput<QueryObserverOptions['refetchInterval']>,
             (...args: Array<any>) => any
           >
         >().returns.toEqualTypeOf<number | false | undefined>()
         expectTypeOf<
           Exclude<
-            QueryObserverOptions['refetchInterval'],
+            IntervalInput<QueryObserverOptions['refetchInterval']>,
             (...args: Array<any>) => any
           >
         >().toEqualTypeOf<number | false | undefined>()
@@ -379,7 +430,7 @@ describe('queryObserver', () => {
             QueryObserverOptions['throwOnError'],
             (...args: Array<any>) => any
           >
-        >().toEqualTypeOf<boolean | undefined>()
+        >().toEqualTypeOf<boolean | undefined | QueryBoundaryTuple>()
       })
     })
 
@@ -474,7 +525,10 @@ describe('queryObserver', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => Promise.resolve({ count: 1 }),
-          select: (data) => data.count,
+          select: select((data) => {
+            expectTypeOf(data).toEqualTypeOf<{ count: number }>()
+            return data.count
+          }),
         })
 
         expectTypeOf(observer.getCurrentResult().data).toEqualTypeOf<
@@ -486,7 +540,7 @@ describe('queryObserver', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => ({ count: 1 }),
-          select: (data) => ({ myCount: data.count }),
+          select: select((data) => ({ myCount: data.count })),
         })
 
         observer.subscribe((result) => {
@@ -500,7 +554,7 @@ describe('queryObserver', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => ({ count: 1 }),
-          select: (data) => ({ myCount: data.count }),
+          select: select((data) => ({ myCount: data.count })),
         })
 
         const observerResult = await observer.refetch()
@@ -514,13 +568,16 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => Promise.resolve({ count: 1 }),
-          select: (data) => data.count,
-          placeholderData: (previousData) => {
-            expectTypeOf(previousData).toEqualTypeOf<
-              { count: number } | undefined
-            >()
-            return { count: 0 }
-          },
+          select: select((data) => data.count),
+          placeholderData: [
+            placeholderData,
+            (previousData) => {
+              expectTypeOf(previousData).toEqualTypeOf<
+                { count: number } | undefined
+              >()
+              return { count: 0 }
+            },
+          ],
           enabled: (query) => {
             expectTypeOf(query.state.data).toEqualTypeOf<
               { count: number } | undefined
@@ -530,12 +587,14 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          QueryObserverOptions<
-            { count: number },
-            DefaultError,
-            number,
-            { count: number }
-          >['placeholderData']
+          PlaceholderInput<
+            QueryObserverOptions<
+              { count: number },
+              DefaultError,
+              number,
+              { count: number }
+            >['placeholderData']
+          >
         >()
           .extract<(...args: Array<any>) => any>()
           .parameter(0)
@@ -580,12 +639,14 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
-          placeholderData: { value: 'placeholder' },
+          placeholderData: placeholderData({ value: 'placeholder' }),
         })
 
         expectTypeOf<
           Exclude<
-            QueryObserverOptions<{ value: string }>['placeholderData'],
+            PlaceholderInput<
+              QueryObserverOptions<{ value: string }>['placeholderData']
+            >,
             (...args: Array<any>) => any
           >
         >().toEqualTypeOf<{ value: string } | undefined>()
@@ -597,13 +658,16 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: testQueryKey,
           queryFn: defaultQueryFn,
-          placeholderData: (_, previousQuery) => {
-            if (previousQuery) {
-              expectTypeOf(previousQuery.queryKey).toEqualTypeOf<
-                typeof testQueryKey
-              >()
-            }
-          },
+          placeholderData: [
+            placeholderData,
+            (_, previousQuery) => {
+              if (previousQuery) {
+                expectTypeOf(previousQuery.queryKey).toEqualTypeOf<
+                  typeof testQueryKey
+                >()
+              }
+            },
+          ],
         })
       })
 
@@ -611,14 +675,17 @@ describe('queryObserver', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
           queryKey: createKey(),
           queryFn: defaultQueryFn,
-          placeholderData: (_, previousQuery) => {
-            if (previousQuery) {
-              expectTypeOf(
-                previousQuery.state.error,
-              ).toEqualTypeOf<CustomError | null>()
-            }
-            return undefined
-          },
+          placeholderData: [
+            placeholderData,
+            (_, previousQuery) => {
+              if (previousQuery) {
+                expectTypeOf(
+                  previousQuery.state.error,
+                ).toEqualTypeOf<CustomError | null>()
+              }
+              return undefined
+            },
+          ],
         })
       })
 
@@ -628,13 +695,16 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => queryData,
-          select: (data) => data.foo,
-          placeholderData: (previousData) => {
-            expectTypeOf(previousData).toEqualTypeOf<
-              typeof queryData | undefined
-            >()
-            return undefined
-          },
+          select: select((data) => data.foo),
+          placeholderData: [
+            placeholderData,
+            (previousData) => {
+              expectTypeOf(previousData).toEqualTypeOf<
+                typeof queryData | undefined
+              >()
+              return undefined
+            },
+          ],
         })
       })
     })
@@ -765,22 +835,68 @@ describe('queryObserver', () => {
           TFilter
         >
 
+        expectTypeOf<Branch<{ status: 'pending' }>>().toEqualTypeOf<
+          Writable<Branch<{ status: 'pending' }>>
+        >()
         expectTypeOf<
-          Branch<{ status: 'pending'; isLoading: boolean }>
+          GuardedProperties<
+            typeof isLoading<
+              QueryObserverResult<{ value: string }, CustomError>
+            >
+          >
         >().toEqualTypeOf<
-          Writable<Branch<{ status: 'pending'; isLoading: boolean }>>
+          Writable<
+            GuardedProperties<
+              typeof isLoading<
+                QueryObserverResult<{ value: string }, CustomError>
+              >
+            >
+          >
         >()
-        expectTypeOf<Branch<{ isLoading: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isLoading: true }>>
+        expectTypeOf<
+          GuardedProperties<
+            typeof isSuccess<
+              QueryObserverResult<{ value: string }, CustomError>
+            >
+          >
+        >().toEqualTypeOf<
+          Writable<
+            GuardedProperties<
+              typeof isSuccess<
+                QueryObserverResult<{ value: string }, CustomError>
+              >
+            >
+          >
         >()
-        expectTypeOf<Branch<{ isSuccess: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isSuccess: true }>>
+        expectTypeOf<
+          GuardedProperties<
+            typeof isLoadingError<
+              QueryObserverResult<{ value: string }, CustomError>
+            >
+          >
+        >().toEqualTypeOf<
+          Writable<
+            GuardedProperties<
+              typeof isLoadingError<
+                QueryObserverResult<{ value: string }, CustomError>
+              >
+            >
+          >
         >()
-        expectTypeOf<Branch<{ isLoadingError: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isLoadingError: true }>>
-        >()
-        expectTypeOf<Branch<{ isRefetchError: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isRefetchError: true }>>
+        expectTypeOf<
+          GuardedProperties<
+            typeof isRefetchError<
+              QueryObserverResult<{ value: string }, CustomError>
+            >
+          >
+        >().toEqualTypeOf<
+          Writable<
+            GuardedProperties<
+              typeof isRefetchError<
+                QueryObserverResult<{ value: string }, CustomError>
+              >
+            >
+          >
         >()
         expectTypeOf<Branch<{ isPlaceholderData: true }>>().toEqualTypeOf<
           Writable<Branch<{ isPlaceholderData: true }>>
@@ -862,7 +978,9 @@ describe('queryObserver', () => {
 
           const result = observer.getCurrentResult()
 
-          expectTypeOf(result.isFetching).toEqualTypeOf<boolean>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isFetching<typeof result>>
+          >().toEqualTypeOf<boolean>()
         })
       })
 
@@ -875,7 +993,9 @@ describe('queryObserver', () => {
 
           const result = observer.getCurrentResult()
 
-          expectTypeOf(result.isRefetching).toEqualTypeOf<boolean>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetching<typeof result>>
+          >().toEqualTypeOf<boolean>()
         })
       })
 
@@ -888,7 +1008,9 @@ describe('queryObserver', () => {
 
           const result = observer.getCurrentResult()
 
-          expectTypeOf(result.isPaused).toEqualTypeOf<boolean>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPaused<typeof result>>
+          >().toEqualTypeOf<boolean>()
         })
       })
 
@@ -927,7 +1049,7 @@ describe('queryObserver', () => {
 
           const result = observer.getCurrentResult()
 
-          expectTypeOf(result.isFetched).toEqualTypeOf<boolean>()
+          expectTypeOf(isFetched(result)).toEqualTypeOf<boolean>()
         })
       })
 
@@ -959,7 +1081,7 @@ describe('queryObserver', () => {
 
           const result = observer.getCurrentResult()
 
-          if (result.isError) {
+          if (isError(result)) {
             expectTypeOf(result.data).toEqualTypeOf<
               { value: string } | undefined
             >()
@@ -1014,7 +1136,7 @@ describe('queryObserver', () => {
 
           const result = observer.getCurrentResult()
 
-          if (result.isError) {
+          if (isError(result)) {
             expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
           }
         })
@@ -1036,7 +1158,12 @@ describe('queryObserver', () => {
       describe('isPending', () => {
         it('should be typed as a boolean', () => {
           expectTypeOf<
-            QueryObserverBaseResult<{ value: string }, CustomError>['isPending']
+            FlagFor<
+              QueryObserverBaseResult<{ value: string }, CustomError>,
+              typeof isPending<
+                QueryObserverBaseResult<{ value: string }, CustomError>
+              >
+            >
           >().toEqualTypeOf<boolean>()
         })
       })
@@ -1044,7 +1171,12 @@ describe('queryObserver', () => {
       describe('isSuccess', () => {
         it('should be typed as a boolean', () => {
           expectTypeOf<
-            QueryObserverBaseResult<{ value: string }, CustomError>['isSuccess']
+            FlagFor<
+              QueryObserverBaseResult<{ value: string }, CustomError>,
+              typeof isSuccess<
+                QueryObserverBaseResult<{ value: string }, CustomError>
+              >
+            >
           >().toEqualTypeOf<boolean>()
         })
       })
@@ -1052,7 +1184,12 @@ describe('queryObserver', () => {
       describe('isError', () => {
         it('should be typed as a boolean', () => {
           expectTypeOf<
-            QueryObserverBaseResult<{ value: string }, CustomError>['isError']
+            FlagFor<
+              QueryObserverBaseResult<{ value: string }, CustomError>,
+              typeof isError<
+                QueryObserverBaseResult<{ value: string }, CustomError>
+              >
+            >
           >().toEqualTypeOf<boolean>()
         })
       })
@@ -1060,10 +1197,12 @@ describe('queryObserver', () => {
       describe('isLoadingError', () => {
         it('should be typed as a boolean', () => {
           expectTypeOf<
-            QueryObserverBaseResult<
-              { value: string },
-              CustomError
-            >['isLoadingError']
+            FlagFor<
+              QueryObserverBaseResult<{ value: string }, CustomError>,
+              typeof isLoadingError<
+                QueryObserverBaseResult<{ value: string }, CustomError>
+              >
+            >
           >().toEqualTypeOf<boolean>()
         })
       })
@@ -1071,10 +1210,12 @@ describe('queryObserver', () => {
       describe('isRefetchError', () => {
         it('should be typed as a boolean', () => {
           expectTypeOf<
-            QueryObserverBaseResult<
-              { value: string },
-              CustomError
-            >['isRefetchError']
+            FlagFor<
+              QueryObserverBaseResult<{ value: string }, CustomError>,
+              typeof isRefetchError<
+                QueryObserverBaseResult<{ value: string }, CustomError>
+              >
+            >
           >().toEqualTypeOf<boolean>()
         })
       })
@@ -1169,10 +1310,12 @@ describe('queryObserver', () => {
       it('should be extractable from the result union by its isPending literal', () => {
         type Pending = Extract<
           QueryObserverResult<{ value: string }>,
-          { status: 'pending'; isLoading: boolean }
+          { status: 'pending' }
         >
 
-        expectTypeOf<Pending['isPending']>().toEqualTypeOf<true>()
+        expectTypeOf<
+          FlagFor<Pending, typeof isPending<Pending>>
+        >().toEqualTypeOf<true>()
       })
 
       it('should pin every flag along with its data and error types', () => {
@@ -1183,14 +1326,24 @@ describe('queryObserver', () => {
 
         const result = observer.getCurrentResult()
 
-        if (result.isPending) {
+        if (isPending(result)) {
           expectTypeOf(result.data).toEqualTypeOf<undefined>()
           expectTypeOf(result.error).toEqualTypeOf<null>()
-          expectTypeOf(result.isError).toEqualTypeOf<false>()
-          expectTypeOf(result.isPending).toEqualTypeOf<true>()
-          expectTypeOf(result.isLoading).toEqualTypeOf<boolean>()
-          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPending<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoading<typeof result>>
+          >().toEqualTypeOf<boolean>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoadingError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetchError<typeof result>>
+          >().toEqualTypeOf<false>()
           expectTypeOf(result.status).toEqualTypeOf<'pending'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
@@ -1205,12 +1358,13 @@ describe('queryObserver', () => {
 
     describe('QueryObserverLoadingResult', () => {
       it('should be extractable from the result union by its isLoading literal', () => {
-        type Loading = Extract<
-          QueryObserverResult<{ value: string }>,
-          { isLoading: true }
+        type Loading = Guarded<
+          typeof isLoading<QueryObserverResult<{ value: string }>>
         >
 
-        expectTypeOf<Loading['isLoading']>().toEqualTypeOf<true>()
+        expectTypeOf<
+          FlagFor<Loading, typeof isLoading<Loading>>
+        >().toEqualTypeOf<true>()
       })
 
       it('should pin every flag along with its data and error types', () => {
@@ -1221,15 +1375,27 @@ describe('queryObserver', () => {
 
         const result = observer.getCurrentResult()
 
-        if (result.isLoading) {
+        if (isLoading(result)) {
           expectTypeOf(result.data).toEqualTypeOf<undefined>()
           expectTypeOf(result.error).toEqualTypeOf<null>()
-          expectTypeOf(result.isError).toEqualTypeOf<false>()
-          expectTypeOf(result.isPending).toEqualTypeOf<true>()
-          expectTypeOf(result.isLoading).toEqualTypeOf<true>()
-          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-          expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPending<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoading<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoadingError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetchError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isSuccess<typeof result>>
+          >().toEqualTypeOf<false>()
           expectTypeOf(result.status).toEqualTypeOf<'pending'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
@@ -1244,12 +1410,13 @@ describe('queryObserver', () => {
 
     describe('QueryObserverLoadingErrorResult', () => {
       it('should be extractable from the result union by its isLoadingError literal', () => {
-        type LoadingError = Extract<
-          QueryObserverResult<{ value: string }>,
-          { isLoadingError: true }
+        type LoadingError = Guarded<
+          typeof isLoadingError<QueryObserverResult<{ value: string }>>
         >
 
-        expectTypeOf<LoadingError['isLoadingError']>().toEqualTypeOf<true>()
+        expectTypeOf<
+          FlagFor<LoadingError, typeof isLoadingError<LoadingError>>
+        >().toEqualTypeOf<true>()
       })
 
       it('should pin every flag along with its data and error types', () => {
@@ -1260,15 +1427,27 @@ describe('queryObserver', () => {
 
         const result = observer.getCurrentResult()
 
-        if (result.isLoadingError) {
+        if (isLoadingError(result)) {
           expectTypeOf(result.data).toEqualTypeOf<undefined>()
           expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
-          expectTypeOf(result.isError).toEqualTypeOf<true>()
-          expectTypeOf(result.isPending).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoading).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoadingError).toEqualTypeOf<true>()
-          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-          expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isError<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPending<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoading<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoadingError<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetchError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isSuccess<typeof result>>
+          >().toEqualTypeOf<false>()
           expectTypeOf(result.status).toEqualTypeOf<'error'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
@@ -1283,12 +1462,13 @@ describe('queryObserver', () => {
 
     describe('QueryObserverRefetchErrorResult', () => {
       it('should be extractable from the result union by its isRefetchError literal', () => {
-        type RefetchError = Extract<
-          QueryObserverResult<{ value: string }>,
-          { isRefetchError: true }
+        type RefetchError = Guarded<
+          typeof isRefetchError<QueryObserverResult<{ value: string }>>
         >
 
-        expectTypeOf<RefetchError['isRefetchError']>().toEqualTypeOf<true>()
+        expectTypeOf<
+          FlagFor<RefetchError, typeof isRefetchError<RefetchError>>
+        >().toEqualTypeOf<true>()
       })
 
       it('should pin every flag along with its data and error types', () => {
@@ -1299,15 +1479,27 @@ describe('queryObserver', () => {
 
         const result = observer.getCurrentResult()
 
-        if (result.isRefetchError) {
+        if (isRefetchError(result)) {
           expectTypeOf(result.data).toEqualTypeOf<{ value: string }>()
           expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
-          expectTypeOf(result.isError).toEqualTypeOf<true>()
-          expectTypeOf(result.isPending).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoading).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-          expectTypeOf(result.isRefetchError).toEqualTypeOf<true>()
-          expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isError<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPending<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoading<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoadingError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetchError<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isSuccess<typeof result>>
+          >().toEqualTypeOf<false>()
           expectTypeOf(result.status).toEqualTypeOf<'error'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
@@ -1327,7 +1519,9 @@ describe('queryObserver', () => {
           { status: 'success'; isPlaceholderData: false }
         >
 
-        expectTypeOf<Success['isSuccess']>().toEqualTypeOf<true>()
+        expectTypeOf<
+          FlagFor<Success, typeof isSuccess<Success>>
+        >().toEqualTypeOf<true>()
       })
 
       it('should pin every flag along with its data and error types', () => {
@@ -1338,15 +1532,27 @@ describe('queryObserver', () => {
 
         const result = observer.getCurrentResult()
 
-        if (result.isSuccess) {
+        if (isSuccess(result)) {
           expectTypeOf(result.data).toEqualTypeOf<{ value: string }>()
           expectTypeOf(result.error).toEqualTypeOf<null>()
-          expectTypeOf(result.isError).toEqualTypeOf<false>()
-          expectTypeOf(result.isPending).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoading).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-          expectTypeOf(result.isSuccess).toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPending<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoading<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoadingError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetchError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isSuccess<typeof result>>
+          >().toEqualTypeOf<true>()
           expectTypeOf(result.status).toEqualTypeOf<'success'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<boolean>()
         }
@@ -1380,12 +1586,24 @@ describe('queryObserver', () => {
         if (result.isPlaceholderData) {
           expectTypeOf(result.data).toEqualTypeOf<{ value: string }>()
           expectTypeOf(result.error).toEqualTypeOf<null>()
-          expectTypeOf(result.isError).toEqualTypeOf<false>()
-          expectTypeOf(result.isPending).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoading).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-          expectTypeOf(result.isSuccess).toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPending<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoading<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoadingError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetchError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isSuccess<typeof result>>
+          >().toEqualTypeOf<true>()
           expectTypeOf(result.status).toEqualTypeOf<'success'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<true>()
         }
@@ -1441,10 +1659,10 @@ describe('queryObserver', () => {
       observer.setOptions({
         queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
-        select: (data) => {
+        select: select((data) => {
           expectTypeOf(data).toEqualTypeOf<{ value: string }>()
           return data
-        },
+        }),
       })
 
       observer.setOptions({
@@ -1474,7 +1692,7 @@ describe('queryObserver', () => {
         .parameter(0)
         .toEqualTypeOf<CustomError>()
       expectTypeOf(observer.options.select).toEqualTypeOf<
-        ((data: { value: string }) => { value: string }) | undefined
+        Select<{ value: string }, { value: string }> | undefined
       >()
     })
   })
@@ -1595,7 +1813,7 @@ describe('queryObserver', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: createKey(),
         queryFn: () => Promise.resolve({ count: 1 }),
-        select: (data) => data.count,
+        select: select((data) => data.count),
       })
 
       expectTypeOf(observer.getCurrentQuery().state.data).toEqualTypeOf<
@@ -1744,11 +1962,13 @@ describe('queryObserver', () => {
         queryFn: () => Promise.resolve({ value: 'data' }),
       })
 
-      expectTypeOf(observer.fetchOptimistic).returns.toEqualTypeOf<
+      expectTypeOf(() =>
+        fetchOptimistic(queryClient, observer, observer.options),
+      ).returns.toEqualTypeOf<
         Promise<QueryObserverResult<{ value: string }, DefaultError>>
       >()
 
-      observer.fetchOptimistic({
+      fetchOptimistic(queryClient, observer, {
         queryKey: createKey(),
         // @ts-expect-error the queryFn must return the observed data type
         queryFn: () => 42,
@@ -1762,16 +1982,17 @@ describe('queryObserver', () => {
         },
       )
 
-      expectTypeOf(withCustomError.fetchOptimistic).returns.toEqualTypeOf<
+      expectTypeOf(() =>
+        fetchOptimistic(queryClient, withCustomError, withCustomError.options),
+      ).returns.toEqualTypeOf<
         Promise<QueryObserverResult<{ value: string }, CustomError>>
       >()
 
-      expectTypeOf(observer.fetchOptimistic)
-        .parameter(0)
-        .toHaveProperty('select')
-        .toEqualTypeOf<
-          ((data: { value: string }) => { value: string }) | undefined
-        >()
+      expectTypeOf<
+        OptimisticArgs<typeof observer>[0]['select']
+      >().toEqualTypeOf<
+        Select<{ value: string }, { value: string }> | undefined
+      >()
     })
   })
 

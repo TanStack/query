@@ -31,7 +31,7 @@ import type {
  * @returns The current query result, plus `fetchNextPage`/`fetchPreviousPage`/`hasNextPage`/`hasPreviousPage`
  * to page through the query.
  * @see {@link infiniteQueryOptions} to share these options between `createInfiniteQuery` and imperative APIs
- * like `queryClient.infiniteQuery`.
+ * like `infiniteQuery`.
  */
 export function createInfiniteQuery<
   TQueryFnData = unknown,
@@ -65,7 +65,7 @@ export function createInfiniteQuery<
  * @returns The current query result, plus `fetchNextPage`/`fetchPreviousPage`/`hasNextPage`/`hasPreviousPage`
  * to page through the query.
  * @see {@link infiniteQueryOptions} to share these options between `createInfiniteQuery` and imperative APIs
- * like `queryClient.infiniteQuery`.
+ * like `infiniteQuery`.
  */
 export function createInfiniteQuery<
   TQueryFnData = unknown,
@@ -96,7 +96,7 @@ export function createInfiniteQuery<
  * @returns The current query result, plus `fetchNextPage`/`fetchPreviousPage`/`hasNextPage`/`hasPreviousPage`
  * to page through the query.
  * @see {@link infiniteQueryOptions} to share these options between `createInfiniteQuery` and imperative APIs
- * like `queryClient.infiniteQuery`.
+ * like `infiniteQuery`.
  * @example
  * Fetching the next page from a "Load More" button click:
  * ```svelte

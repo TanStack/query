@@ -1,5 +1,5 @@
 import { useDebouncedCallback } from '@tanstack/react-pacer/debouncer'
-import { useIsFetching, useSuspenseQuery } from '@tanstack/react-query'
+import { query, useIsFetching, useQuery } from '@tanstack/react-query'
 import {
   Link,
   Outlet,
@@ -18,14 +18,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     }),
     loaderDeps: ({ search: { q } }) => ({ q }),
     loader: ({ context: { queryClient }, deps: { q } }) =>
-      queryClient.query({ ...contactsQueries.list(q), staleTime: 'static' }),
+      query(queryClient, { ...contactsQueries.list(q), staleTime: 'static' }),
     component: Root,
   },
 )
 
 function Root() {
   const { q } = Route.useSearch()
-  const { data: contacts } = useSuspenseQuery(contactsQueries.list(q))
+  const { data: contacts } = useQuery(contactsQueries.list(q))
   const searching = useIsFetching({ queryKey: contactsQueries.lists() }) > 0
   const loading = useRouterState({ select: (state) => state.isLoading })
   const navigate = useNavigate()

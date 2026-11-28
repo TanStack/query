@@ -1,4 +1,10 @@
-import { HydrationBoundary, dehydrate, noop } from '@tanstack/react-query'
+import {
+  HydrationBoundary,
+  dehydrate,
+  noop,
+  query,
+  queryOptions,
+} from '@tanstack/react-query'
 import React from 'react'
 import { getTodos } from '@/app/api/todos/data'
 import { getQueryClient } from '@/app/get-query-client'
@@ -8,12 +14,13 @@ import { todosQueries } from '../services/todos/queries'
 export default function Home() {
   const queryClient = getQueryClient()
 
-  void queryClient
-    .query({
+  void query(
+    queryClient,
+    queryOptions({
       ...todosQueries.list(),
       queryFn: getTodos,
-    })
-    .catch(noop)
+    }),
+  ).catch(noop)
 
   return (
     <main style={{ maxWidth: 600, margin: '0 auto', padding: '2rem 1rem' }}>

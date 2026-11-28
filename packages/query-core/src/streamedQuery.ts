@@ -1,4 +1,6 @@
-import { addConsumeAwareSignal, fetchSignal } from './utils'
+import { getQueryCache, getQueryData, setQueryData } from './queryClient'
+import { isQueryFetched } from './queryPredicates'
+import { addConsumeAwareSignal, fetchSignal, hashKeyByOptions } from './utils'
 import type {
   OmitKeyof,
   QueryFunction,
@@ -7,19 +9,9 @@ import type {
 } from './types'
 import type { FetchSignalContext } from './utils'
 
-type BaseStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = {
-  /** Returns an `AsyncIterable` or a promise that resolves to one. */
-  streamFn: (
-    context: QueryFunctionContext<TQueryKey>,
-  ) => AsyncIterable<TQueryFnData> | Promise<AsyncIterable<TQueryFnData>>
-  /**
-   * Defines how refetches are handled.
-   * - `'reset'` (default): resets the query to its initial state before reading the stream.
-   * - `'append'`: appends new data to the existing data.
-   * - `'replace'`: writes all data to the cache once the stream ends.
-   */
-  refetchMode?: 'append' | 'reset' | 'replace'
-}
+type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
+  | SimpleStreamedQueryParams<TQueryFnData, TQueryKey>
+  | ReducibleStreamedQueryParams<TQueryFnData, TData, TQueryKey>
 
 type SimpleStreamedQueryParams<
   TQueryFnData,
@@ -45,9 +37,19 @@ type ReducibleStreamedQueryParams<
   initialValue: TData
 }
 
-type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
-  | SimpleStreamedQueryParams<TQueryFnData, TQueryKey>
-  | ReducibleStreamedQueryParams<TQueryFnData, TData, TQueryKey>
+type BaseStreamedQueryParams<TQueryFnData, TQueryKey extends QueryKey> = {
+  /** Returns an `AsyncIterable` or a promise that resolves to one. */
+  streamFn: (
+    context: QueryFunctionContext<TQueryKey>,
+  ) => AsyncIterable<TQueryFnData> | Promise<AsyncIterable<TQueryFnData>>
+  /**
+   * Defines how refetches are handled.
+   * - `'reset'` (default): resets the query to its initial state before reading the stream.
+   * - `'append'`: appends new data to the existing data.
+   * - `'replace'`: writes all data to the cache once the stream ends.
+   */
+  refetchMode?: 'append' | 'reset' | 'replace'
+}
 
 /**
  * Creates a query function that streams data from an `AsyncIterable`.
@@ -63,7 +65,7 @@ type StreamedQueryParams<TQueryFnData, TData, TQueryKey extends QueryKey> =
  * @returns A query function to pass as `queryFn`.
  * @example
  * ```ts
- * await queryClient.query({
+ * await query(queryClient, {
  *   queryKey: ['data'],
  *   queryFn: streamedQuery({
  *     streamFn: fetchDataInChunks,
@@ -86,16 +88,14 @@ export function streamedQuery<
   TQueryKey
 > {
   return async (context) => {
+    const { client, queryKey } = context
     const signalContext: FetchSignalContext = context
     const signal = signalContext[fetchSignal]
-    if (signal?.aborted) {
-      return initialValue
-    }
+    if (signal?.aborted) return initialValue
 
-    const query = context.client
-      .getQueryCache()
-      .find({ queryKey: context.queryKey, exact: true })
-    const isRefetch = !!query && query.isFetched()
+    const cache = getQueryCache(client)
+    const query = cache.get(hashKeyByOptions(queryKey, cache.config.queryKey))
+    const isRefetch = !!query && isQueryFetched(query)
     if (isRefetch && refetchMode === 'reset') {
       query.setState({
         ...query.resetState,
@@ -110,9 +110,9 @@ export function streamedQuery<
       OmitKeyof<typeof context, 'signal'>
     >(
       {
-        client: context.client,
+        client,
         meta: context.meta,
-        queryKey: context.queryKey,
+        queryKey,
         pageParam: context.pageParam,
       },
       () => context.signal,
@@ -134,7 +134,7 @@ export function streamedQuery<
         // don't append to the cache directly when replace-refetching
         result = reducer(result, chunk)
       } else {
-        context.client.setQueryData<TData>(context.queryKey, (prev) =>
+        setQueryData<TData>(client, queryKey, (prev) =>
           reducer(prev === undefined ? initialValue : prev, chunk),
         )
       }
@@ -142,10 +142,10 @@ export function streamedQuery<
 
     // finalize result: replace-refetching needs to write to the cache
     if (isReplaceRefetch && !isStreamInactive()) {
-      context.client.setQueryData<TData>(context.queryKey, result)
+      setQueryData<TData>(client, queryKey, result)
     }
 
-    const data = context.client.getQueryData<TData>(context.queryKey)
+    const data = getQueryData<TData>(client, queryKey)
     return data === undefined ? initialValue : data
   }
 }

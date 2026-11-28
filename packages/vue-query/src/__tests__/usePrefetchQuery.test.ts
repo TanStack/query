@@ -1,7 +1,8 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick, ref } from 'vue'
-import { QueryClient } from '../queryClient'
+import * as clientOperations from '../queryClient'
+import { QueryClient, setQueryData } from '../queryClient'
 import { usePrefetchQuery } from '../usePrefetchQuery'
 
 describe('usePrefetchQuery', () => {
@@ -15,7 +16,7 @@ describe('usePrefetchQuery', () => {
 
   it('should prefetch query if query state does not exist', () => {
     const queryClient = new QueryClient()
-    const querySpy = vi.spyOn(queryClient, 'query')
+    const querySpy = vi.spyOn(clientOperations, 'query')
     const queryFn = () => Promise.resolve('prefetched')
     const key = createKey()
 
@@ -28,7 +29,7 @@ describe('usePrefetchQuery', () => {
     )
 
     expect(querySpy).toHaveBeenCalledTimes(1)
-    expect(querySpy).toHaveBeenCalledWith({
+    expect(querySpy).toHaveBeenCalledWith(queryClient, {
       queryKey: key,
       queryFn,
     })
@@ -36,10 +37,10 @@ describe('usePrefetchQuery', () => {
 
   it('should not prefetch query if query state exists', () => {
     const queryClient = new QueryClient()
-    const querySpy = vi.spyOn(queryClient, 'query')
+    const querySpy = vi.spyOn(clientOperations, 'query')
     const queryFn = () => Promise.resolve('prefetched')
     const key = createKey()
-    queryClient.setQueryData(key, 'existing')
+    setQueryData(queryClient, key, 'existing')
 
     usePrefetchQuery(
       {
@@ -54,7 +55,7 @@ describe('usePrefetchQuery', () => {
 
   it('should unwrap refs in query options', () => {
     const queryClient = new QueryClient()
-    const querySpy = vi.spyOn(queryClient, 'query')
+    const querySpy = vi.spyOn(clientOperations, 'query')
     const nestedRef = ref('value')
     const key = createKey()
     const queryFn = () => Promise.resolve('prefetched')
@@ -67,7 +68,7 @@ describe('usePrefetchQuery', () => {
       queryClient,
     )
 
-    expect(querySpy).toHaveBeenCalledWith({
+    expect(querySpy).toHaveBeenCalledWith(queryClient, {
       queryKey: [...key, 'value'],
       queryFn,
     })
@@ -75,7 +76,7 @@ describe('usePrefetchQuery', () => {
 
   it('should prefetch again when query key changes reactively', async () => {
     const queryClient = new QueryClient()
-    const querySpy = vi.spyOn(queryClient, 'query')
+    const querySpy = vi.spyOn(clientOperations, 'query')
     const keyRef = ref('first')
     const key = createKey()
     const queryFn = () => Promise.resolve(keyRef.value)
@@ -89,7 +90,7 @@ describe('usePrefetchQuery', () => {
     )
 
     expect(querySpy).toHaveBeenCalledTimes(1)
-    expect(querySpy).toHaveBeenNthCalledWith(1, {
+    expect(querySpy).toHaveBeenNthCalledWith(1, queryClient, {
       queryKey: [...key, 'first'],
       queryFn,
     })
@@ -97,7 +98,7 @@ describe('usePrefetchQuery', () => {
     keyRef.value = 'second'
     await nextTick()
     expect(querySpy).toHaveBeenCalledTimes(2)
-    expect(querySpy).toHaveBeenNthCalledWith(2, {
+    expect(querySpy).toHaveBeenNthCalledWith(2, queryClient, {
       queryKey: [...key, 'second'],
       queryFn,
     })

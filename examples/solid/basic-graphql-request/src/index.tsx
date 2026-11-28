@@ -1,9 +1,11 @@
-/* @refresh reload */
 import {
   QueryClient,
   QueryClientProvider,
+  getQueryData,
+  isFetching,
   useQuery,
 } from '@tanstack/solid-query'
+/* @refresh reload */
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { For, Match, Show, Switch, createSignal } from 'solid-js'
 import { render } from 'solid-js/web'
@@ -59,7 +61,8 @@ function Posts(props: { setPostId: Setter<string | null> }) {
                         style={
                           // We can find the existing query data here to show bold links for
                           // ones that are cached
-                          queryClient.getQueryData(
+                          getQueryData(
+                            queryClient,
                             postsQueries.detail(post.id).queryKey,
                           )
                             ? {
@@ -75,7 +78,7 @@ function Posts(props: { setPostId: Setter<string | null> }) {
                   )}
                 </For>
               </div>
-              <div>{state.isFetching ? 'Background Updating...' : ' '}</div>
+              <div>{isFetching(state) ? 'Background Updating...' : ' '}</div>
             </>
           </Match>
         </Switch>
@@ -105,7 +108,7 @@ function Post(props: { postId: string; setPostId: Setter<string | null> }) {
             <div>
               <p>{state.data?.body}</p>
             </div>
-            <div>{state.isFetching ? 'Background Updating...' : ' '}</div>
+            <div>{isFetching(state) ? 'Background Updating...' : ' '}</div>
           </>
         </Match>
       </Switch>

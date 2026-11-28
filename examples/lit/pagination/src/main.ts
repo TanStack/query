@@ -1,10 +1,19 @@
 import {
   QueryClient,
   QueryClientProvider,
+  cancelQueries,
   createMutationController,
   createQueryController,
+  getQueriesData,
+  invalidateQueries,
+  isError,
+  isFetching,
   keepPreviousData,
   noop,
+  placeholderData,
+  query as queryQuery,
+  resetQueries,
+  setQueryData,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import {
@@ -108,7 +117,7 @@ class PaginationDemo extends LitElement {
 
     this.projectsQueryOptions = {
       ...projectsQueries.list(this.page, this.delayMs, this.forceErrorMode),
-      placeholderData: keepPreviousData,
+      placeholderData: placeholderData(keepPreviousData),
     }
 
     this.projectsQuery = createQueryController(this, this.projectsQueryOptions)
@@ -128,7 +137,7 @@ class PaginationDemo extends LitElement {
           this.draftName = ''
           this.draftOwner = 'Team 6'
           this.syncProjectsQueryOptions()
-          await queryClient.invalidateQueries({
+          await invalidateQueries(queryClient, {
             queryKey: projectsQueries.all(),
             refetchType: 'none',
           })
@@ -145,9 +154,9 @@ class PaginationDemo extends LitElement {
         onMutate: async (variables) => {
           this.mutationControlStatus = 'idle'
           this.mutationControlError = undefined
-          await queryClient.cancelQueries({ queryKey: projectsQueries.all() })
+          await cancelQueries(queryClient, { queryKey: projectsQueries.all() })
 
-          const snapshots = queryClient.getQueriesData<ProjectsPageResponse>({
+          const snapshots = getQueriesData<ProjectsPageResponse>(queryClient, {
             queryKey: projectsQueries.all(),
           })
 
@@ -156,7 +165,7 @@ class PaginationDemo extends LitElement {
               continue
             }
 
-            queryClient.setQueryData<ProjectsPageResponse>(key, {
+            setQueryData<ProjectsPageResponse>(queryClient, key, {
               ...existing,
               projects: existing.projects.map((project) =>
                 project.id === variables.id
@@ -170,11 +179,11 @@ class PaginationDemo extends LitElement {
         },
         onError: (_error, _variables, onMutateResult) => {
           for (const [key, snapshot] of onMutateResult?.snapshots ?? []) {
-            queryClient.setQueryData(key, snapshot)
+            setQueryData(queryClient, key, snapshot)
           }
         },
         onSettled: async () => {
-          await queryClient.invalidateQueries({
+          await invalidateQueries(queryClient, {
             queryKey: projectsQueries.all(),
           })
         },
@@ -254,11 +263,10 @@ class PaginationDemo extends LitElement {
     this.prefetchStatus = `pending:${targetPage}`
 
     try {
-      await queryClient
-        .query(
-          projectsQueries.list(targetPage, this.delayMs, this.forceErrorMode),
-        )
-        .catch(noop)
+      await queryQuery(
+        queryClient,
+        projectsQueries.list(targetPage, this.delayMs, this.forceErrorMode),
+      ).catch(noop)
       this.prefetchStatus = `ready:${targetPage}`
     } catch (error) {
       this.prefetchStatus = `error:${String(error)}`
@@ -312,7 +320,7 @@ class PaginationDemo extends LitElement {
       this.syncProjectsQueryOptions()
       this.createProjectMutation.reset()
       this.favoriteMutation.reset()
-      await queryClient.resetQueries({ queryKey: projectsQueries.all() })
+      await resetQueries(queryClient, { queryKey: projectsQueries.all() })
       await this.projectsQuery.refetch()
     } catch (error) {
       this.resetError = String(error)
@@ -367,7 +375,7 @@ class PaginationDemo extends LitElement {
         <section>
           <div data-testid="query-status">query: ${query.status}</div>
           <div data-testid="is-fetching">
-            isFetching: ${query.isFetching ? 'yes' : 'no'}
+            isFetching: ${isFetching(query) ? 'yes' : 'no'}
           </div>
           <div data-testid="is-placeholder">
             isPlaceholderData: ${query.isPlaceholderData ? 'yes' : 'no'}
@@ -395,7 +403,7 @@ class PaginationDemo extends LitElement {
         </section>
 
         ${
-          query.isError
+          isError(query)
             ? html`<p data-testid="query-error">${query.error.message}</p>`
             : null
         }

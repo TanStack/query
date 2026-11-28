@@ -1,5 +1,11 @@
 import { A } from '@solidjs/router'
-import { noop, useQuery, useQueryClient } from '@tanstack/solid-query'
+import {
+  isSuccess,
+  noop,
+  query,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/solid-query'
 import { ErrorBoundary, For, Suspense, createSignal } from 'solid-js'
 import { charactersQueries } from '~/services/characters/queries'
 import type { Character } from '~/services/characters/types'
@@ -16,19 +22,17 @@ function CharacterItem(props: {
   }))
 
   const prefetch = () => {
-    queryClient
-      .query({
-        ...charactersQueries.detail(props.char.id),
-        staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-      })
-      .catch(noop)
+    query(queryClient, {
+      ...charactersQueries.detail(props.char.id),
+      staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+    }).catch(noop)
   }
 
   return (
     <li onMouseEnter={prefetch} onFocusIn={prefetch}>
       <button
         type="button"
-        style={characterQuery.isSuccess ? { 'font-weight': 'bold' } : {}}
+        style={isSuccess(characterQuery) ? { 'font-weight': 'bold' } : {}}
         onClick={() => {
           props.onSelect(props.char.id)
         }}

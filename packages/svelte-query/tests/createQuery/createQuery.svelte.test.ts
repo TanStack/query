@@ -1,4 +1,24 @@
-import { createKey, sleep } from '@tanstack/query-test-utils'
+import * as queryPredicates from '@tanstack/query-core'
+import {
+  clearQueryClient,
+  findCachedQuery,
+  getQueryCache,
+  getQueryState,
+  invalidateQueries,
+  isError,
+  placeholderData,
+  query as queryQuery,
+  refetchQueries,
+  removeQueries,
+  select,
+  setQueryData,
+  setQueryDefaults,
+} from '@tanstack/query-core'
+import {
+  createKey,
+  createQueryResultSnapshot,
+  sleep,
+} from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/svelte'
 import { flushSync } from 'svelte'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -17,6 +37,8 @@ import Select from './Select.svelte'
 import TwoQueries from './TwoQueries.svelte'
 import type { CreateQueryResult, QueryCache } from '../../src/index.js'
 
+const snapshot = createQueryResultSnapshot(queryPredicates)
+
 describe('createQuery', () => {
   let queryClient: QueryClient
   let queryCache: QueryCache
@@ -24,11 +46,11 @@ describe('createQuery', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
-    queryCache = queryClient.getQueryCache()
+    queryCache = getQueryCache(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -46,7 +68,7 @@ describe('createQuery', () => {
         () => queryClient,
       )
 
-      expect(query).toStrictEqual({
+      expect(snapshot(query)).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: null,
@@ -75,7 +97,7 @@ describe('createQuery', () => {
 
       resolve('resolved')
       await vi.advanceTimersByTimeAsync(0)
-      expect(query).toStrictEqual({
+      expect(snapshot(query)).toStrictEqual({
         data: 'resolved',
         dataUpdatedAt: expect.any(Number),
         error: null,
@@ -127,9 +149,9 @@ describe('createQuery', () => {
 
       await vi.advanceTimersByTimeAsync(1)
       await vi.advanceTimersByTimeAsync(0)
-      expect(query.isError).toBe(true)
+      expect(isError(query)).toBe(true)
 
-      expect(states[0]).toStrictEqual({
+      expect(snapshot(states[0])).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: null,
@@ -156,7 +178,7 @@ describe('createQuery', () => {
         fetchStatus: 'fetching',
       })
 
-      expect(states[1]).toStrictEqual({
+      expect(snapshot(states[1])).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: null,
@@ -183,7 +205,7 @@ describe('createQuery', () => {
         fetchStatus: 'fetching',
       })
 
-      expect(states[2]).toStrictEqual({
+      expect(snapshot(states[2])).toStrictEqual({
         data: undefined,
         dataUpdatedAt: 0,
         error: new Error('rejected #2'),
@@ -215,12 +237,10 @@ describe('createQuery', () => {
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
     const key = createKey()
 
-    await queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => Promise.resolve('prefetched'),
-      })
-      .catch(noop)
+    await queryQuery(queryClient, {
+      queryKey: key,
+      queryFn: () => Promise.resolve('prefetched'),
+    }).catch(noop)
 
     const { promise, resolve } = promiseWithResolvers<string>()
 
@@ -365,7 +385,7 @@ describe('createQuery', () => {
   it('should use the default query function for the query key', async () => {
     const key = createKey()
 
-    queryClient.setQueryDefaults(key, {
+    setQueryDefaults(queryClient, key, {
       queryFn: () => 'data',
     })
 
@@ -399,7 +419,7 @@ describe('createQuery', () => {
         () => queryClient,
       )
 
-      expect(query).toMatchObject({
+      expect(snapshot(query)).toMatchObject({
         isPending: true,
         isSuccess: false,
         isFetching: true,
@@ -409,7 +429,7 @@ describe('createQuery', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(query.data).toBe('resolved: 1')
 
-      expect(query).toMatchObject({
+      expect(snapshot(query)).toMatchObject({
         isPending: false,
         isSuccess: true,
         isFetching: false,
@@ -429,7 +449,7 @@ describe('createQuery', () => {
         () => queryClient,
       )
 
-      expect(query).toMatchObject({
+      expect(snapshot(query)).toMatchObject({
         data: 'resolved: 1',
         isPending: false,
         isSuccess: true,
@@ -440,7 +460,7 @@ describe('createQuery', () => {
       await vi.advanceTimersByTimeAsync(0)
       expect(query.data).toBe('resolved: 2')
 
-      expect(query).toMatchObject({
+      expect(snapshot(query)).toMatchObject({
         data: 'resolved: 2',
         isPending: false,
         isSuccess: true,
@@ -475,7 +495,7 @@ describe('createQuery', () => {
 
     // Simulate rerender by removing the query and mounting again
     await withEffectRoot(async () => {
-      queryClient.removeQueries({ queryKey: key })
+      removeQueries(queryClient, { queryKey: key })
 
       const query = createQuery<string>(
         () => ({
@@ -499,22 +519,22 @@ describe('createQuery', () => {
     })()
 
     expect(states).toHaveLength(4)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       isPending: true,
       isSuccess: false,
       data: undefined,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       isPending: false,
       isSuccess: true,
       data: 'data',
     })
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       isPending: true,
       isSuccess: false,
       data: undefined,
     })
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       isPending: false,
       isSuccess: true,
       data: 'data',
@@ -547,7 +567,7 @@ describe('createQuery', () => {
     const key = createKey()
     const queryFn = vi.fn<() => string>(() => 'test')
 
-    queryClient.setQueryData(key, 'prefetched')
+    setQueryData(queryClient, key, 'prefetched')
 
     const rendered = render(Base, {
       props: {
@@ -575,7 +595,7 @@ describe('createQuery', () => {
         options: () => ({
           queryKey: key,
           queryFn: () => ({ name: 'test' }),
-          select: (data: { name: string }) => data.name,
+          select: select((data: { name: string }) => data.name),
         }),
       },
     })
@@ -595,9 +615,9 @@ describe('createQuery', () => {
         options: () => ({
           queryKey: key,
           queryFn: () => ({ name: 'test' }),
-          select: () => {
+          select: select(() => {
             throw error
-          },
+          }),
         }),
       },
     })
@@ -631,7 +651,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('data')).toHaveTextContent('1')
 
     // Remove the query, then refetch — it should reset to pending first
-    queryClient.removeQueries({ queryKey: key })
+    removeQueries(queryClient, { queryKey: key })
     fireEvent.click(rendered.getByRole('button', { name: /^refetch$/i }))
     expect(rendered.getByTestId('status')).toHaveTextContent('pending')
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
@@ -650,7 +670,7 @@ describe('createQuery', () => {
         options: (count: number) => ({
           queryKey: [...key, count],
           queryFn: () => sleep(10).then(() => count),
-          placeholderData: keepPreviousData,
+          placeholderData: placeholderData(keepPreviousData),
         }),
       },
     })
@@ -695,7 +715,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('data')).toHaveTextContent('1')
 
     // Remove the query, then refetch — a new query starts from scratch
-    queryClient.removeQueries({ queryKey: key })
+    removeQueries(queryClient, { queryKey: key })
     fireEvent.click(rendered.getByRole('button', { name: /^refetch$/i }))
     expect(rendered.getByTestId('data')).toHaveTextContent('undefined')
     expect(rendered.getByTestId('dataUpdatedAt')).toHaveTextContent('0')
@@ -765,7 +785,7 @@ describe('createQuery', () => {
   it('should use query function from hook when the existing query does not have a query function', async () => {
     const key = createKey()
 
-    queryClient.setQueryData(key, 'set')
+    setQueryData(queryClient, key, 'set')
 
     const rendered = render(Base, {
       props: {
@@ -782,7 +802,7 @@ describe('createQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByTestId('data')).toHaveTextContent('set')
 
-    queryClient.refetchQueries({ queryKey: key })
+    refetchQueries(queryClient, { queryKey: key })
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('fetched')
@@ -808,7 +828,7 @@ describe('createQuery', () => {
     expect(rendered.getByTestId('isStale')).toHaveTextContent('false')
     expect(rendered.getByTestId('isFetching')).toHaveTextContent('false')
 
-    queryClient.invalidateQueries({ queryKey: key })
+    invalidateQueries(queryClient, { queryKey: key })
 
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByTestId('data')).toHaveTextContent('2')
@@ -856,7 +876,7 @@ describe('createQuery', () => {
       },
     })
 
-    queryClient.invalidateQueries({ queryKey: key })
+    invalidateQueries(queryClient, { queryKey: key })
 
     // Wait long enough for the invalidation and potential refetch
     await vi.advanceTimersByTimeAsync(100)
@@ -907,7 +927,7 @@ describe('createQuery', () => {
         options: () => ({
           queryKey: key,
           queryFn: () => sleep(10).then(() => 'data'),
-          placeholderData: 'placeholder',
+          placeholderData: placeholderData('placeholder'),
         }),
       },
     })
@@ -930,7 +950,7 @@ describe('createQuery', () => {
         options: (count: number) => ({
           queryKey: [...key, count],
           queryFn: () => sleep(10).then(() => count),
-          placeholderData: keepPreviousData,
+          placeholderData: placeholderData(keepPreviousData),
         }),
       },
     })
@@ -970,7 +990,7 @@ describe('createQuery', () => {
         options: (count: number) => ({
           queryKey: [...key, count],
           queryFn: () => sleep(10).then(() => count),
-          placeholderData: keepPreviousData,
+          placeholderData: placeholderData(keepPreviousData),
           initialData: 99,
         }),
       },
@@ -1006,7 +1026,7 @@ describe('createQuery', () => {
     const key = createKey()
 
     // Set initial query data
-    queryClient.setQueryData([...key, 10], 10)
+    setQueryData(queryClient, [...key, 10], 10)
 
     const rendered = render(Counter, {
       props: {
@@ -1016,7 +1036,7 @@ describe('createQuery', () => {
           queryKey: [...key, count],
           queryFn: () => sleep(10).then(() => count),
           enabled: false,
-          placeholderData: keepPreviousData,
+          placeholderData: placeholderData(keepPreviousData),
           notifyOnChangeProps: 'all',
         }),
       },
@@ -1091,15 +1111,13 @@ describe('createQuery', () => {
     const key = createKey()
 
     // Prefetch the query
-    const prefetchPromise = queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'prefetch'),
-      })
-      .catch(noop)
+    const prefetchPromise = queryQuery(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'prefetch'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     await prefetchPromise
-    expect(queryClient.getQueryState(key)?.data).toBe('prefetch')
+    expect(getQueryState(queryClient, key)?.data).toBe('prefetch')
     // Advance time so secondQuery (staleTime: 10) sees prefetched data as stale
     await vi.advanceTimersByTimeAsync(10)
 
@@ -1265,7 +1283,9 @@ describe('createQuery', () => {
       )
 
       // The last options should win
-      expect(queryCache.find({ queryKey: key })!.options.retryDelay).toBe(20)
+      expect(
+        findCachedQuery(queryCache, { queryKey: key })!.options.retryDelay,
+      ).toBe(20)
     }),
   )
 
@@ -1450,12 +1470,10 @@ describe('createQuery', () => {
     const key = createKey()
 
     // Prefetch the query
-    await queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => 'prefetched',
-      })
-      .catch(noop)
+    await queryQuery(queryClient, {
+      queryKey: key,
+      queryFn: () => 'prefetched',
+    }).catch(noop)
 
     const rendered = render(Base, {
       props: {
@@ -1485,12 +1503,10 @@ describe('createQuery', () => {
     const key = createKey()
 
     // Prefetch the query
-    await queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => 'prefetched',
-      })
-      .catch(noop)
+    await queryQuery(queryClient, {
+      queryKey: key,
+      queryFn: () => 'prefetched',
+    }).catch(noop)
 
     const rendered = render(Base, {
       props: {
@@ -1575,13 +1591,15 @@ describe('createQuery', () => {
       )
 
       expect(
-        queryClient1.getQueryCache().find({ queryKey: key })?.queryKey,
+        findCachedQuery(getQueryCache(queryClient1), { queryKey: key })
+          ?.queryKey,
       ).toStrictEqual(key)
 
       currentClient = queryClient2
       flushSync()
       expect(
-        queryClient2.getQueryCache().find({ queryKey: key })?.queryKey,
+        findCachedQuery(getQueryCache(queryClient2), { queryKey: key })
+          ?.queryKey,
       ).toStrictEqual(key)
     }),
   )

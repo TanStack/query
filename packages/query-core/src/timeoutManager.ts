@@ -46,32 +46,16 @@ export type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> =
     readonly clearInterval: (intervalId: TTimerId | undefined) => void
   }
 
-type SystemTimerId = ReturnType<typeof setTimeout>
-
-export const defaultTimeoutProvider: TimeoutProvider = {
-  // We need the wrapper function syntax below instead of direct references to
-  // global setTimeout etc.
-  //
-  // BAD: `setTimeout: setTimeout`
-  // GOOD: `setTimeout: (cb, delay) => setTimeout(cb, delay)`
-  //
-  // If we use direct references here, then anything that wants to spy on or
-  // replace the global setTimeout (like tests) won't work since we'll already
-  // have a hard reference to the original implementation at the time when this
-  // file was imported.
-  setTimeout: (callback, delay) => setTimeout(callback, delay),
-  clearTimeout: (timeoutId) =>
-    clearTimeout(timeoutId as SystemTimerId | undefined),
-
-  setInterval: (callback, delay) => setInterval(callback, delay),
-  clearInterval: (intervalId) =>
-    clearInterval(intervalId as SystemTimerId | undefined),
-}
+// Reading timer methods from their owning global at call time also respects
+// fake timers or a platform that replaces its timer implementation after import.
+export const defaultTimeoutProvider = globalThis satisfies TimeoutProvider<
+  ReturnType<typeof setTimeout>
+> as TimeoutProvider
 
 /**
  * Allows customization of how timeouts are created.
  *
- * `@tanstack/query-core` makes liberal use of timeouts to implement `staleTime`
+ * The query runtime uses timeouts to implement `staleTime`
  * and `gcTime`. The default TimeoutManager provider uses the platform's global
  * `setTimeout` implementation, which is known to have scalability issues with
  * thousands of timeouts on the event loop.

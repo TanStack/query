@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, clearQueryClient } from '@tanstack/query-core'
 import { fireEvent, render } from '@testing-library/svelte'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Base from './Base.svelte'
@@ -12,7 +12,7 @@ describe('useIsFetching', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 

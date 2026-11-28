@@ -1,5 +1,6 @@
 import { Component, input, inputBinding, signal } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import { getQueryCache, query } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/angular'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -90,7 +91,7 @@ describe('injectIsFetching', () => {
   it('should support signal reads in filter predicates', async () => {
     const key = createKey()
 
-    void queryClient.query({
+    void query(queryClient, {
       queryKey: key,
       queryFn: () => sleep(100).then(() => 'data'),
     })
@@ -105,7 +106,7 @@ describe('injectIsFetching', () => {
       }))
     }
 
-    const subscribe = vi.spyOn(queryClient.getQueryCache(), 'subscribe')
+    const subscribe = vi.spyOn(getQueryCache(queryClient), 'subscribe')
     const includeQuery = signal(true)
     const rendered = await render(Page, {
       bindings: [inputBinding('includeQuery', includeQuery)],

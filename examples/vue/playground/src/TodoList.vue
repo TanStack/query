@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
-import { ref } from 'vue'
+import { isFetching as queryIsFetching, useQuery } from '@tanstack/vue-query'
+import { computed, ref } from 'vue'
 import { todosQueries } from './services/todos/queries'
 
 const props = withDefaults(defineProps<{ initialFilter?: string }>(), {
@@ -10,9 +10,15 @@ defineEmits<{ setEditingIndex: [editingIndex: number | null] }>()
 
 const filter = ref(props.initialFilter)
 
-const { status, data, isFetching, error, failureCount, refetch } = useQuery(
-  () => todosQueries.list(filter.value),
-)
+const {
+  state: queryState,
+  status,
+  data,
+  error,
+  failureCount,
+  refetch,
+} = useQuery(() => todosQueries.list(filter.value))
+const isFetching = computed(() => queryIsFetching(queryState))
 </script>
 
 <template>

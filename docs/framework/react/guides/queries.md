@@ -9,7 +9,7 @@ A query is a declarative dependency on an asynchronous source of data that is ti
 
 [//]: # 'SubscribeDescription'
 
-To subscribe to a query in your components or custom hooks, call the `useQuery` hook with at least:
+To subscribe to a query in your components or custom hooks, pass prepared options to `useQuery`. Define the following in `queryOptions`:
 
 [//]: # 'SubscribeDescription'
 
@@ -21,10 +21,12 @@ To subscribe to a query in your components or custom hooks, call the `useQuery` 
 [//]: # 'Example'
 
 ```tsx
-import { useQuery } from '@tanstack/react-query'
+import { queryOptions, useQuery } from '@tanstack/react-query'
 
 function App() {
-  const info = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
+  const info = useQuery(
+    queryOptions({ queryKey: ['todos'], queryFn: fetchTodoList }),
+  )
 }
 ```
 
@@ -37,7 +39,9 @@ The query result returned by `useQuery` contains all of the information about th
 [//]: # 'Example2'
 
 ```tsx
-const result = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
+const result = useQuery(
+  queryOptions({ queryKey: ['todos'], queryFn: fetchTodoList }),
+)
 ```
 
 [//]: # 'Example2'
@@ -59,24 +63,33 @@ For **most** queries, it's usually sufficient to check for the `isPending` state
 [//]: # 'Example3'
 
 ```tsx
-function Todos() {
-  const { isPending, isError, data, error } = useQuery({
-    queryKey: ['todos'],
-    queryFn: fetchTodoList,
-  })
+import {
+  isError,
+  isPending,
+  queryOptions,
+  useQuery,
+} from '@tanstack/react-query'
 
-  if (isPending) {
+function Todos() {
+  const todos = useQuery(
+    queryOptions({
+      queryKey: ['todos'],
+      queryFn: fetchTodoList,
+    }),
+  )
+
+  if (isPending(todos)) {
     return <span>Loading...</span>
   }
 
-  if (isError) {
-    return <span>Error: {error.message}</span>
+  if (isError(todos)) {
+    return <span>Error: {todos.error.message}</span>
   }
 
-  // We can assume by this point that `isSuccess === true`
+  // The remaining result has defined data.
   return (
     <ul>
-      {data.map((todo) => (
+      {todos.data.map((todo) => (
         <li key={todo.id}>{todo.title}</li>
       ))}
     </ul>
@@ -92,10 +105,12 @@ If booleans aren't your thing, you can always use the `status` state as well:
 
 ```tsx
 function Todos() {
-  const { status, data, error } = useQuery({
-    queryKey: ['todos'],
-    queryFn: fetchTodoList,
-  })
+  const { status, data, error } = useQuery(
+    queryOptions({
+      queryKey: ['todos'],
+      queryFn: fetchTodoList,
+    }),
+  )
 
   if (status === 'pending') {
     return <span>Loading...</span>

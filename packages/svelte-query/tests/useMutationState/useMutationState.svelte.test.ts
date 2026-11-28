@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, clearQueryClient } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/svelte'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -15,7 +15,7 @@ describe('useMutationState', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 

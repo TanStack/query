@@ -8,8 +8,8 @@ There are many ways to supply initial data for a query to the cache before you n
 - Declaratively:
   - Provide `initialData` to a query to prepopulate its cache if empty
 - Imperatively:
-  - [Prefetch the data using `queryClient.query`](./prefetching.md)
-  - [Manually place the data into the cache using `queryClient.setQueryData`](./prefetching.md)
+  - [Prefetch the data using `query`](./prefetching.md)
+  - [Manually place the data into the cache using `setQueryData`](./prefetching.md)
 
 ## Using `initialData` to prepopulate a query
 
@@ -20,11 +20,13 @@ There may be times when you already have the initial data for a query available 
 [//]: # 'Example'
 
 ```tsx
-const result = useQuery({
-  queryKey: ['todos'],
-  queryFn: () => fetch('/todos'),
-  initialData: initialTodos,
-})
+const result = useQuery(
+  queryOptions({
+    queryKey: ['todos'],
+    queryFn: () => fetch('/todos'),
+    initialData: initialTodos,
+  }),
+)
 ```
 
 [//]: # 'Example'
@@ -39,11 +41,13 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
 
   ```tsx
   // Will show initialTodos immediately, but also immediately refetch todos after mount
-  const result = useQuery({
-    queryKey: ['todos'],
-    queryFn: () => fetch('/todos'),
-    initialData: initialTodos,
-  })
+  const result = useQuery(
+    queryOptions({
+      queryKey: ['todos'],
+      queryFn: () => fetch('/todos'),
+      initialData: initialTodos,
+    }),
+  )
   ```
 
   [//]: # 'Example2'
@@ -54,12 +58,14 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
 
   ```tsx
   // Show initialTodos immediately, but won't refetch until another interaction event is encountered after 1000 ms
-  const result = useQuery({
-    queryKey: ['todos'],
-    queryFn: () => fetch('/todos'),
-    initialData: initialTodos,
-    staleTime: 1000,
-  })
+  const result = useQuery(
+    queryOptions({
+      queryKey: ['todos'],
+      queryFn: () => fetch('/todos'),
+      initialData: initialTodos,
+      staleTime: 1000,
+    }),
+  )
   ```
 
   [//]: # 'Example3'
@@ -70,14 +76,16 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
 
   ```tsx
   // Show initialTodos immediately, but won't refetch until another interaction event is encountered after 1000 ms
-  const result = useQuery({
-    queryKey: ['todos'],
-    queryFn: () => fetch('/todos'),
-    initialData: initialTodos,
-    staleTime: 60 * 1000, // 1 minute
-    // This could be 10 seconds ago or 10 minutes ago
-    initialDataUpdatedAt: initialTodosUpdatedTimestamp, // eg. 1608412420052
-  })
+  const result = useQuery(
+    queryOptions({
+      queryKey: ['todos'],
+      queryFn: () => fetch('/todos'),
+      initialData: initialTodos,
+      staleTime: 60 * 1000, // 1 minute
+      // This could be 10 seconds ago or 10 minutes ago
+      initialDataUpdatedAt: initialTodosUpdatedTimestamp, // eg. 1608412420052
+    }),
+  )
   ```
 
   [//]: # 'Example4'
@@ -93,11 +101,13 @@ If the process for accessing a query's initial data is intensive or just not som
 [//]: # 'Example5'
 
 ```tsx
-const result = useQuery({
-  queryKey: ['todos'],
-  queryFn: () => fetch('/todos'),
-  initialData: () => getExpensiveTodos(),
-})
+const result = useQuery(
+  queryOptions({
+    queryKey: ['todos'],
+    queryFn: () => fetch('/todos'),
+    initialData: () => getExpensiveTodos(),
+  }),
+)
 ```
 
 [//]: # 'Example5'
@@ -109,14 +119,16 @@ In some circumstances, you may be able to provide the initial data for a query f
 [//]: # 'Example6'
 
 ```tsx
-const result = useQuery({
-  queryKey: ['todo', todoId],
-  queryFn: () => fetch('/todos'),
-  initialData: () => {
-    // Use a todo from the 'todos' query as the initial data for this todo query
-    return queryClient.getQueryData(['todos'])?.find((d) => d.id === todoId)
-  },
-})
+const result = useQuery(
+  queryOptions({
+    queryKey: ['todo', todoId],
+    queryFn: () => fetch('/todos'),
+    initialData: () => {
+      // Use a todo from the 'todos' query as the initial data for this todo query
+      return getQueryData(queryClient, ['todos'])?.find((d) => d.id === todoId)
+    },
+  }),
+)
 ```
 
 [//]: # 'Example6'
@@ -128,41 +140,45 @@ Getting initial data from the cache means the source query you're using to look 
 [//]: # 'Example7'
 
 ```tsx
-const result = useQuery({
-  queryKey: ['todos', todoId],
-  queryFn: () => fetch(`/todos/${todoId}`),
-  initialData: () =>
-    queryClient.getQueryData(['todos'])?.find((d) => d.id === todoId),
-  initialDataUpdatedAt: () =>
-    queryClient.getQueryState(['todos'])?.dataUpdatedAt,
-})
+const result = useQuery(
+  queryOptions({
+    queryKey: ['todos', todoId],
+    queryFn: () => fetch(`/todos/${todoId}`),
+    initialData: () =>
+      getQueryData(queryClient, ['todos'])?.find((d) => d.id === todoId),
+    initialDataUpdatedAt: () =>
+      getQueryState(queryClient, ['todos'])?.dataUpdatedAt,
+  }),
+)
 ```
 
 [//]: # 'Example7'
 
 ### Conditional Initial Data from Cache
 
-If the source query you're using to look up the initial data from is old, you may not want to use the cached data at all and just fetch from the server. To make this decision easier, you can use the `queryClient.getQueryState` method instead to get more information about the source query, including a `state.dataUpdatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
+If the source query you're using to look up the initial data from is old, you may not want to use the cached data at all and just fetch from the server. To make this decision easier, you can use the `getQueryState` method instead to get more information about the source query, including a `state.dataUpdatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
 
 [//]: # 'Example8'
 
 ```tsx
-const result = useQuery({
-  queryKey: ['todo', todoId],
-  queryFn: () => fetch(`/todos/${todoId}`),
-  initialData: () => {
-    // Get the query state
-    const state = queryClient.getQueryState(['todos'])
+const result = useQuery(
+  queryOptions({
+    queryKey: ['todo', todoId],
+    queryFn: () => fetch(`/todos/${todoId}`),
+    initialData: () => {
+      // Get the query state
+      const state = getQueryState(queryClient, ['todos'])
 
-    // If the query exists and has data that is no older than 10 seconds...
-    if (state && Date.now() - state.dataUpdatedAt <= 10 * 1000) {
-      // return the individual todo
-      return state.data.find((d) => d.id === todoId)
-    }
+      // If the query exists and has data that is no older than 10 seconds...
+      if (state && Date.now() - state.dataUpdatedAt <= 10 * 1000) {
+        // return the individual todo
+        return state.data.find((d) => d.id === todoId)
+      }
 
-    // Otherwise, return undefined and let it fetch from a hard loading state!
-  },
-})
+      // Otherwise, return undefined and let it fetch from a hard loading state!
+    },
+  }),
+)
 ```
 
 [//]: # 'Example8'

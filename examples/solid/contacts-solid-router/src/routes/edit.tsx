@@ -1,5 +1,5 @@
 import { action, redirect, useNavigate, useParams } from '@solidjs/router'
-import { useQuery } from '@tanstack/solid-query'
+import { invalidateQueries, useQuery } from '@tanstack/solid-query'
 import { Show } from 'solid-js'
 import { queryClient } from '../queryClient'
 import { contactsAPI } from '../services/contacts/api'
@@ -11,7 +11,7 @@ export const editContact = action(
   async (contactId: string, formData: FormData) => {
     const updates = Object.fromEntries(formData)
     await contactsAPI.updateContact(contactId, updates)
-    queryClient.invalidateQueries({ queryKey: contactsQueries.all() })
+    invalidateQueries(queryClient, { queryKey: contactsQueries.all() })
     throw redirect(`/contacts/${contactId}`)
   },
   'editContact',

@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { createInfiniteQuery } from '@tanstack/svelte-query'
+  import {
+    isFetchingPreviousPage,
+    isFetchingNextPage,
+    isFetching,
+    createInfiniteQuery,
+  } from '@tanstack/svelte-query'
   import { projectsQueries } from '$lib/services/projects/queries'
 
   const query = createInfiniteQuery(() => projectsQueries.infinite())
@@ -17,9 +22,9 @@
     <div>
       <button
         onclick={() => query.fetchPreviousPage()}
-        disabled={!query.hasPreviousPage || query.isFetchingPreviousPage}
+        disabled={!query.hasPreviousPage || isFetchingPreviousPage(query)}
       >
-        {query.isFetchingPreviousPage
+        {isFetchingPreviousPage(query)
           ? 'Loading more...'
           : query.hasPreviousPage
             ? 'Load Older'
@@ -39,9 +44,9 @@
     <div>
       <button
         onclick={() => query.fetchNextPage()}
-        disabled={!query.hasNextPage || query.isFetchingNextPage}
+        disabled={!query.hasNextPage || isFetchingNextPage(query)}
       >
-        {query.isFetchingNextPage
+        {isFetchingNextPage(query)
           ? 'Loading more...'
           : query.hasNextPage
             ? 'Load Newer'
@@ -49,7 +54,7 @@
       </button>
     </div>
     <div>
-      {query.isFetching && !query.isFetchingNextPage
+      {isFetching(query) && !isFetchingNextPage(query)
         ? 'Background Updating...'
         : null}
     </div>

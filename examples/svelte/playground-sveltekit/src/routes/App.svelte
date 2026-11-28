@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useQueryClient } from '@tanstack/svelte-query'
+  import { invalidateQueries, useQueryClient } from '@tanstack/svelte-query'
   import { views, editingIndex } from '../lib/stores.svelte'
   import AddTodo from './AddTodo.svelte'
   import EditTodo from './EditTodo.svelte'
@@ -10,7 +10,7 @@
 
 <div>
   <div>
-    <button onclick={() => queryClient.invalidateQueries()}>
+    <button onclick={() => invalidateQueries(queryClient)}>
       Force Refetch All
     </button>
   </div>

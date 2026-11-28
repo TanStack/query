@@ -31,11 +31,13 @@ function App() {
 [//]: # 'Example2'
 
 ```tsx
-useQuery({
-  queryKey: ['todos'],
-  queryFn: fetchTodos,
-  refetchOnWindowFocus: false,
-})
+useQuery(
+  queryOptions({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+    refetchOnWindowFocus: false,
+  }),
+)
 ```
 
 [//]: # 'Example2'

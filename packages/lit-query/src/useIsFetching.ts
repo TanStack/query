@@ -1,3 +1,4 @@
+import { countFetchingQueries, getQueryCache } from '@tanstack/query-core'
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { BaseController } from './controllers/BaseController.js'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
@@ -95,7 +96,7 @@ class IsFetchingController extends BaseController<number> {
       return
     }
 
-    this.unsubscribe = this.queryClient.getQueryCache().subscribe(() => {
+    this.unsubscribe = getQueryCache(this.queryClient).subscribe(() => {
       this.setResult(this.computeValue())
     })
   }
@@ -105,7 +106,7 @@ class IsFetchingController extends BaseController<number> {
       return 0
     }
 
-    return this.queryClient.isFetching(readAccessor(this.filters))
+    return countFetchingQueries(this.queryClient, readAccessor(this.filters))
   }
 }
 

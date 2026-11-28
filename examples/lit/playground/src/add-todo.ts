@@ -1,4 +1,7 @@
-import { createMutationController } from '@tanstack/lit-query'
+import {
+  createMutationController,
+  invalidateQueries,
+} from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { todosMutations, todosQueries } from './services/todos/queries'
 
@@ -12,7 +15,7 @@ class AddTodo extends LitElement {
   private readonly addMutation = createMutationController(this, {
     ...todosMutations.create(),
     onSuccess: (_data, _variables, _onMutateResult, { client }) => {
-      client.invalidateQueries({ queryKey: todosQueries.lists() })
+      invalidateQueries(client, { queryKey: todosQueries.lists() })
     },
   })
 

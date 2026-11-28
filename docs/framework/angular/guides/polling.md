@@ -8,10 +8,12 @@ replace: { '@tanstack/react-query': '@tanstack/angular-query' }
 [//]: # 'Example1'
 
 ```ts
+import { refetchInterval } from '@tanstack/angular-query'
+
 injectQuery(() => ({
   queryKey: ['prices'],
   queryFn: fetchPrices,
-  refetchInterval: 5 * 1000, // every 5 seconds
+  refetchInterval: refetchInterval(5 * 1000), // every 5 seconds
 }))
 ```
 
@@ -19,17 +21,19 @@ injectQuery(() => ({
 [//]: # 'Example2'
 
 ```ts
+import { refetchInterval } from '@tanstack/angular-query'
+
 injectQuery(() => {
   const jobId = this.jobId()
 
   return {
     queryKey: ['job', jobId],
     queryFn: () => fetchJobStatus(jobId),
-    refetchInterval: (query) => {
+    refetchInterval: refetchInterval((query) => {
       // Stop polling once the job finishes
       if (query.state.data?.status === 'complete') return false
       return 2 * 1000
-    },
+    }),
   }
 })
 ```
@@ -38,10 +42,12 @@ injectQuery(() => {
 [//]: # 'Example3'
 
 ```ts
+import { refetchInterval } from '@tanstack/angular-query'
+
 injectQuery(() => ({
   queryKey: ['portfolio'],
   queryFn: fetchPortfolio,
-  refetchInterval: 30 * 1000,
+  refetchInterval: refetchInterval(30 * 1000),
   refetchIntervalInBackground: true,
 }))
 ```
@@ -50,6 +56,8 @@ injectQuery(() => ({
 [//]: # 'Example4'
 
 ```ts
+import { refetchInterval } from '@tanstack/angular-query'
+
 injectQuery(() => {
   // Read signals here so the query reacts when they change
   const tokenAddress = this.tokenAddress()
@@ -58,10 +66,10 @@ injectQuery(() => {
   return {
     queryKey: ['prices', tokenAddress],
     queryFn: () => fetchPrice(tokenAddress),
-    refetchInterval: () => {
+    refetchInterval: refetchInterval(() => {
       if (!tokenAddress || isPaused) return false
       return 15 * 1000
-    },
+    }),
   }
 })
 ```
@@ -70,10 +78,12 @@ injectQuery(() => {
 [//]: # 'Example5'
 
 ```ts
+import { refetchInterval } from '@tanstack/angular-query'
+
 injectQuery(() => ({
   queryKey: ['chainStatus'],
   queryFn: fetchChainStatus,
-  refetchInterval: 10 * 1000,
+  refetchInterval: refetchInterval(10 * 1000),
   networkMode: 'always',
 }))
 ```

@@ -1,4 +1,10 @@
-import { Mutation, QueryClient, dehydrate } from '@tanstack/query-core'
+import {
+  Mutation,
+  QueryClient,
+  clearQueryClient,
+  dehydrate,
+  setQueryData,
+} from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { removeOldestQuery } from '../retryStrategies'
 import type { PersistedClient } from '../persist'
@@ -13,14 +19,14 @@ describe('removeOldestQuery', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   function createQuery(
     queryHash: string,
     dataUpdatedAt: number,
   ): PersistedQuery {
-    queryClient.setQueryData([queryHash], 'data')
+    setQueryData(queryClient, [queryHash], 'data')
     const query = dehydrate(queryClient).queries.find(
       (dehydratedQuery) => dehydratedQuery.queryHash === `["${queryHash}"]`,
     )!

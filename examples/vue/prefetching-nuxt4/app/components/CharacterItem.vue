@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { noop, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { noop, query, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { charactersQueries } from '../services/characters/queries'
 import type { Character } from '../services/characters/types'
 
@@ -14,12 +14,10 @@ const { data } = useQuery(() => ({
 }))
 
 const prefetch = () => {
-  queryClient
-    .query({
-      ...charactersQueries.detail(props.char.id),
-      staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-    })
-    .catch(noop)
+  query(queryClient, {
+    ...charactersQueries.detail(props.char.id),
+    staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+  }).catch(noop)
 }
 </script>
 

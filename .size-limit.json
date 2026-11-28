@@ -2,14 +2,21 @@
   {
     "name": "react full",
     "path": "packages/react-query/build/index.js",
-    "limit": "13.00 kB",
+    "limit": "13365 B",
     "ignore": ["react", "react-dom"]
   },
   {
     "name": "react minimal",
     "path": "packages/react-query/build/index.js",
     "limit": "9.99 kB",
-    "import": "{ useQuery, QueryClient, QueryClientProvider }",
+    "import": "{ queryOptions, useQuery, QueryClient, QueryClientProvider }",
+    "ignore": ["react", "react-dom"]
+  },
+  {
+    "name": "react paginated bookmarks",
+    "path": "packages/react-query/build/index.js",
+    "limit": "8196 B",
+    "import": "{ QueryClient, QueryClientProvider, queryOptions, useQuery, infiniteQueryOptions, isError, isFetching, isPending, mutationOptions, useMutation }",
     "ignore": ["react", "react-dom"]
   }
 ]

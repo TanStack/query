@@ -1,3 +1,4 @@
+import { clearQueryClient, query } from '@tanstack/query-core'
 import * as coreModule from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/preact'
@@ -9,6 +10,7 @@ import {
   QueryClientProvider,
   dehydrate,
   noop,
+  queryOptions,
   useQuery,
 } from '..'
 import type { hydrate } from '@tanstack/query-core'
@@ -22,16 +24,14 @@ describe('Preact hydration', () => {
   beforeEach(async () => {
     vi.useFakeTimers()
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: stringKey,
-        queryFn: () => sleep(10).then(() => ['stringCached']),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: stringKey,
+      queryFn: () => sleep(10).then(() => ['stringCached']),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     const dehydrated = dehydrate(queryClient)
     stringifiedState = JSON.stringify(dehydrated)
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   afterEach(() => {
@@ -43,10 +43,12 @@ describe('Preact hydration', () => {
     const queryClient = new QueryClient()
 
     function Page() {
-      const { data } = useQuery({
-        queryKey: stringKey,
-        queryFn: () => sleep(20).then(() => ['string']),
-      })
+      const { data } = useQuery(
+        queryOptions({
+          queryKey: stringKey,
+          queryFn: () => sleep(20).then(() => ['string']),
+        }),
+      )
       return (
         <div>
           <h1>{data}</h1>
@@ -65,7 +67,7 @@ describe('Preact hydration', () => {
     expect(rendered.getByText('stringCached')).toBeInTheDocument()
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('string')).toBeInTheDocument()
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   it('should hydrate queries to the cache on custom context', async () => {
@@ -75,10 +77,12 @@ describe('Preact hydration', () => {
     const dehydratedState = JSON.parse(stringifiedState)
 
     function Page() {
-      const { data } = useQuery({
-        queryKey: stringKey,
-        queryFn: () => sleep(20).then(() => ['string']),
-      })
+      const { data } = useQuery(
+        queryOptions({
+          queryKey: stringKey,
+          queryFn: () => sleep(20).then(() => ['string']),
+        }),
+      )
       return (
         <div>
           <h1>{data}</h1>
@@ -100,8 +104,8 @@ describe('Preact hydration', () => {
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('string')).toBeInTheDocument()
 
-    queryClientInner.clear()
-    queryClientOuter.clear()
+    clearQueryClient(queryClientInner)
+    clearQueryClient(queryClientOuter)
   })
 
   describe('PreactQueryCacheProvider with hydration support', () => {
@@ -110,10 +114,12 @@ describe('Preact hydration', () => {
       const queryClient = new QueryClient()
 
       function Page({ queryKey: pageKey }: { queryKey: Array<string> }) {
-        const { data } = useQuery({
-          queryKey: pageKey,
-          queryFn: () => sleep(20).then(() => pageKey),
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: pageKey,
+            queryFn: () => sleep(20).then(() => pageKey),
+          }),
+        )
         return (
           <div>
             <h1>{data}</h1>
@@ -135,21 +141,17 @@ describe('Preact hydration', () => {
 
       const intermediateClient = new QueryClient()
 
-      void intermediateClient
-        .query({
-          queryKey: stringKey,
-          queryFn: () => sleep(20).then(() => ['should change']),
-        })
-        .catch(noop)
-      void intermediateClient
-        .query({
-          queryKey: addedKey,
-          queryFn: () => sleep(20).then(() => [addedKey[0]]),
-        })
-        .catch(noop)
+      void query(intermediateClient, {
+        queryKey: stringKey,
+        queryFn: () => sleep(20).then(() => ['should change']),
+      }).catch(noop)
+      void query(intermediateClient, {
+        queryKey: addedKey,
+        queryFn: () => sleep(20).then(() => [addedKey[0]]),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(20)
       const dehydrated = dehydrate(intermediateClient)
-      intermediateClient.clear()
+      clearQueryClient(intermediateClient)
 
       rendered.rerender(
         <QueryClientProvider client={queryClient}>
@@ -170,7 +172,7 @@ describe('Preact hydration', () => {
       expect(rendered.queryByText(stringKey[0]!)).not.toBeInTheDocument()
       expect(rendered.getByText('should change')).toBeInTheDocument()
 
-      queryClient.clear()
+      clearQueryClient(queryClient)
     })
 
     // When we hydrate in transitions that are later aborted, it could be
@@ -184,10 +186,12 @@ describe('Preact hydration', () => {
       const queryClient = new QueryClient()
 
       function Page({ queryKey: pageKey }: { queryKey: Array<string> }) {
-        const { data } = useQuery({
-          queryKey: pageKey,
-          queryFn: () => sleep(20).then(() => pageKey),
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: pageKey,
+            queryFn: () => sleep(20).then(() => pageKey),
+          }),
+        )
         return (
           <div>
             <h1>{data}</h1>
@@ -208,22 +212,18 @@ describe('Preact hydration', () => {
       expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
 
       const intermediateClient = new QueryClient()
-      void intermediateClient
-        .query({
-          queryKey: stringKey,
-          queryFn: () => sleep(20).then(() => ['should not change']),
-        })
-        .catch(noop)
-      void intermediateClient
-        .query({
-          queryKey: addedKey,
-          queryFn: () => sleep(20).then(() => [addedKey[0]]),
-        })
-        .catch(noop)
+      void query(intermediateClient, {
+        queryKey: stringKey,
+        queryFn: () => sleep(20).then(() => ['should not change']),
+      }).catch(noop)
+      void query(intermediateClient, {
+        queryKey: addedKey,
+        queryFn: () => sleep(20).then(() => [addedKey[0]]),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(20)
 
       const newDehydratedState = dehydrate(intermediateClient)
-      intermediateClient.clear()
+      clearQueryClient(intermediateClient)
 
       function Thrower(): never {
         throw new Promise(() => {
@@ -273,7 +273,7 @@ describe('Preact hydration', () => {
       expect(rendered.getByText(stringKey[0]!)).toBeInTheDocument()
       expect(rendered.queryByText('should not change')).not.toBeInTheDocument()
 
-      queryClient.clear()
+      clearQueryClient(queryClient)
     })
 
     it('should hydrate queries to new cache if cache changes', async () => {
@@ -281,10 +281,12 @@ describe('Preact hydration', () => {
       const queryClient = new QueryClient()
 
       function Page() {
-        const { data } = useQuery({
-          queryKey: stringKey,
-          queryFn: () => sleep(20).then(() => ['string']),
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: stringKey,
+            queryFn: () => sleep(20).then(() => ['string']),
+          }),
+        )
         return (
           <div>
             <h1>{data}</h1>
@@ -316,8 +318,8 @@ describe('Preact hydration', () => {
       await vi.advanceTimersByTimeAsync(20)
       expect(rendered.getByText('string')).toBeInTheDocument()
 
-      queryClient.clear()
-      newClientQueryClient.clear()
+      clearQueryClient(queryClient)
+      clearQueryClient(newClientQueryClient)
     })
   })
 
@@ -341,12 +343,10 @@ describe('Preact hydration', () => {
     // For the bug to trigger, there needs to already be a query in the cache,
     // with a dataUpdatedAt earlier than the dehydratedAt of the next query
     const clientQueryClient = new QueryClient()
-    void clientQueryClient
-      .query({
-        queryKey: promiseKey,
-        queryFn: () => sleep(20).then(() => 'existing'),
-      })
-      .catch(noop)
+    void query(clientQueryClient, {
+      queryKey: promiseKey,
+      queryFn: () => sleep(20).then(() => 'existing'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(20)
 
     const prefetchQueryClient = new QueryClient({
@@ -356,13 +356,11 @@ describe('Preact hydration', () => {
         },
       },
     })
-    void prefetchQueryClient
-      .query({
-        queryKey: promiseKey,
-        queryFn: () =>
-          sleep(10).then(() => Promise.reject(new Error('Query failed'))),
-      })
-      .catch(noop)
+    void query(prefetchQueryClient, {
+      queryKey: promiseKey,
+      queryFn: () =>
+        sleep(10).then(() => Promise.reject(new Error('Query failed'))),
+    }).catch(noop)
 
     const dehydratedState = dehydrate(prefetchQueryClient)
 
@@ -371,10 +369,12 @@ describe('Preact hydration', () => {
     dehydratedState.queries[0].promise.status = 'failure'
 
     function Page() {
-      const { data } = useQuery({
-        queryKey: promiseKey,
-        queryFn: () => sleep(20).then(() => ['new']),
-      })
+      const { data } = useQuery(
+        queryOptions({
+          queryKey: promiseKey,
+          queryFn: () => sleep(20).then(() => ['new']),
+        }),
+      )
       return (
         <div>
           <h1>{data}</h1>
@@ -394,7 +394,7 @@ describe('Preact hydration', () => {
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('new')).toBeInTheDocument()
 
-    prefetchQueryClient.clear()
-    clientQueryClient.clear()
+    clearQueryClient(prefetchQueryClient)
+    clearQueryClient(clientQueryClient)
   })
 })

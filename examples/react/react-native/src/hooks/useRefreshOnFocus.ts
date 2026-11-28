@@ -1,5 +1,5 @@
 import { useFocusEffect } from '@react-navigation/native'
-import { useQueryClient } from '@tanstack/react-query'
+import { refetchQueries, useQueryClient } from '@tanstack/react-query'
 import * as React from 'react'
 
 export function useRefreshOnFocus() {
@@ -13,7 +13,7 @@ export function useRefreshOnFocus() {
         return
       }
 
-      queryClient.refetchQueries({ stale: true, type: 'active' })
+      refetchQueries(queryClient, { stale: true, type: 'active' })
     }, [queryClient]),
   )
 }

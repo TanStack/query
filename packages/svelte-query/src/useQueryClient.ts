@@ -11,12 +11,12 @@ import type { QueryClient } from '@tanstack/query-core'
  * @example
  * ```svelte
  * <script lang="ts">
- *   import { useQueryClient } from '@tanstack/svelte-query'
+ *   import { invalidateQueries, useQueryClient } from '@tanstack/svelte-query'
  *
  *   const queryClient = useQueryClient()
  *
  *   function refreshPosts() {
- *     queryClient.invalidateQueries({ queryKey: ['posts'] })
+ *     invalidateQueries(queryClient, { queryKey: ['posts'] })
  *   }
  * </script>
  * ```

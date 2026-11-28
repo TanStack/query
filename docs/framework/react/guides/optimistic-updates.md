@@ -16,7 +16,7 @@ const addTodoMutation = useMutation({
   mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
   // make sure to _return_ the Promise from the query invalidation
   // so that the mutation stays in `pending` state until the refetch is finished
-  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  onSettled: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
 })
 
 const { isPending, submittedAt, variables, mutate, isError } = addTodoMutation
@@ -68,7 +68,7 @@ This approach works very well if the mutation and the query live in the same com
 // somewhere in your app
 const { mutate } = useMutation({
   mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
-  onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  onSettled: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
   mutationKey: ['addTodo'],
 })
 
@@ -102,13 +102,13 @@ useMutation({
   onMutate: async (newTodo, context) => {
     // Cancel any outgoing refetches
     // (so they don't overwrite our optimistic update)
-    await context.client.cancelQueries({ queryKey: ['todos'] })
+    await cancelQueries(context.client, { queryKey: ['todos'] })
 
     // Snapshot the previous value
-    const previousTodos = context.client.getQueryData(['todos'])
+    const previousTodos = getQueryData(context.client, ['todos'])
 
     // Optimistically update to the new value
-    context.client.setQueryData(['todos'], (old) => [...old, newTodo])
+    setQueryData(context.client, ['todos'], (old) => [...old, newTodo])
 
     // Return a result with the snapshotted value
     return { previousTodos }
@@ -116,11 +116,11 @@ useMutation({
   // If the mutation fails,
   // use the result returned from onMutate to roll back
   onError: (err, newTodo, onMutateResult, context) => {
-    context.client.setQueryData(['todos'], onMutateResult.previousTodos)
+    setQueryData(context.client, ['todos'], onMutateResult.previousTodos)
   },
   // Always refetch after error or success:
   onSettled: (data, error, variables, onMutateResult, context) =>
-    context.client.invalidateQueries({ queryKey: ['todos'] }),
+    invalidateQueries(context.client, { queryKey: ['todos'] }),
 })
 ```
 
@@ -137,27 +137,28 @@ useMutation({
   onMutate: async (newTodo, context) => {
     // Cancel any outgoing refetches
     // (so they don't overwrite our optimistic update)
-    await context.client.cancelQueries({ queryKey: ['todos', newTodo.id] })
+    await cancelQueries(context.client, { queryKey: ['todos', newTodo.id] })
 
     // Snapshot the previous value
-    const previousTodo = context.client.getQueryData(['todos', newTodo.id])
+    const previousTodo = getQueryData(context.client, ['todos', newTodo.id])
 
     // Optimistically update to the new value
-    context.client.setQueryData(['todos', newTodo.id], newTodo)
+    setQueryData(context.client, ['todos', newTodo.id], newTodo)
 
     // Return a result with the previous and new todo
     return { previousTodo, newTodo }
   },
   // If the mutation fails, use the result we returned above
   onError: (err, newTodo, onMutateResult, context) => {
-    context.client.setQueryData(
+    setQueryData(
+      context.client,
       ['todos', onMutateResult.newTodo.id],
       onMutateResult.previousTodo,
     )
   },
   // Always refetch after error or success:
   onSettled: (newTodo, error, variables, onMutateResult, context) =>
-    context.client.invalidateQueries({ queryKey: ['todos', newTodo.id] }),
+    invalidateQueries(context.client, { queryKey: ['todos', newTodo.id] }),
 })
 ```
 

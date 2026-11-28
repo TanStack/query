@@ -110,18 +110,18 @@ import {
   HydrationBoundary,
   QueryClient,
   useQuery,
+  query,
+  queryOptions,
 } from '@tanstack/react-query'
 
 // This could also be getServerSideProps
 export async function getStaticProps() {
   const queryClient = new QueryClient()
 
-  await queryClient
-    .query({
-      queryKey: ['posts'],
-      queryFn: getPosts,
-    })
-    .catch(noop)
+  await query(queryClient, {
+    queryKey: ['posts'],
+    queryFn: getPosts,
+  }).catch(noop)
 
   return {
     props: {
@@ -134,19 +134,23 @@ function Posts() {
   // This useQuery could just as well happen in some deeper child to
   // the <PostsRoute>, data will be available immediately either way
   //
-  // Note that we are using useQuery here instead of useSuspenseQuery.
+  // Note that we are passing regular queryOptions to useQuery here.
   // Because this data has already been prefetched, there is no need to
   // ever suspend in the component itself. If we forget or remove the
   // prefetch, this will instead fetch the data on the client, while
-  // using useSuspenseQuery would have had worse side effects.
-  const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts })
+  // suspending during the client render would change that behavior.
+  const { data } = useQuery(
+    queryOptions({ queryKey: ['posts'], queryFn: getPosts }),
+  )
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix
-  const { data: commentsData } = useQuery({
-    queryKey: ['posts-comments'],
-    queryFn: getComments,
-  })
+  const { data: commentsData } = useQuery(
+    queryOptions({
+      queryKey: ['posts-comments'],
+      queryFn: getComments,
+    }),
+  )
 
   // ...
 }
@@ -168,18 +172,17 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
+  query,
 } from '@tanstack/react-query'
 import Posts from './posts'
 
 export default async function PostsPage() {
   const queryClient = new QueryClient()
 
-  await queryClient
-    .query({
-      queryKey: ['posts'],
-      queryFn: getPosts,
-    })
-    .catch(noop)
+  await query(queryClient, {
+    queryKey: ['posts'],
+    queryFn: getPosts,
+  }).catch(noop)
 
   return (
     // Neat! Serialization is now as easy as passing props.
@@ -200,17 +203,21 @@ Next, we'll look at what the Client Component part looks like:
 export default function Posts() {
   // This useQuery could just as well happen in some deeper
   // child to <Posts>, data will be available immediately either way
-  const { data } = useQuery({
-    queryKey: ['posts'],
-    queryFn: () => getPosts(),
-  })
+  const { data } = useQuery(
+    queryOptions({
+      queryKey: ['posts'],
+      queryFn: () => getPosts(),
+    }),
+  )
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix.
-  const { data: commentsData } = useQuery({
-    queryKey: ['posts-comments'],
-    queryFn: getComments,
-  })
+  const { data: commentsData } = useQuery(
+    queryOptions({
+      queryKey: ['posts-comments'],
+      queryFn: getComments,
+    }),
+  )
 
   // ...
 }
@@ -234,6 +241,7 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
+  query,
 } from '@tanstack/react-query'
 import CommentsServerComponent from './comments-server'
 import Posts from './posts'
@@ -241,12 +249,10 @@ import Posts from './posts'
 export default async function PostsPage() {
   const queryClient = new QueryClient()
 
-  await queryClient
-    .query({
-      queryKey: ['posts'],
-      queryFn: getPosts,
-    })
-    .catch(noop)
+  await query(queryClient, {
+    queryKey: ['posts'],
+    queryFn: getPosts,
+  }).catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -267,12 +273,10 @@ import Comments from './comments'
 export default async function CommentsServerComponent() {
   const queryClient = new QueryClient()
 
-  await queryClient
-    .query({
-      queryKey: ['posts-comments'],
-      queryFn: getComments,
-    })
-    .catch(noop)
+  await query(queryClient, {
+    queryKey: ['posts-comments'],
+    queryFn: getComments,
+  }).catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -327,6 +331,7 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
+  query,
 } from '@tanstack/react-query'
 import Posts from './posts'
 
@@ -334,7 +339,7 @@ export default async function PostsPage() {
   const queryClient = new QueryClient()
 
   // Note we are getting the result from query
-  const posts = await queryClient.query({
+  const posts = await query(queryClient, {
     queryKey: ['posts'],
     queryFn: getPosts,
   })
@@ -363,7 +368,7 @@ Using React Query with Server Components makes most sense if:
 
 It's hard to give general advice on when it makes sense to pair React Query with Server Components and not. **If you are just starting out with a new Server Components app, we suggest you start out with any tools for data fetching your framework provides you with and avoid bringing in React Query until you actually need it.** This might be never, and that's fine, use the right tool for the job!
 
-If you do use it, a good rule of thumb is to avoid rendering the result of `queryClient.query` on the server or passing it to another component, even a Client Component one.
+If you do use it, a good rule of thumb is to avoid rendering the result of `query` on the server or passing it to another component, even a Client Component one.
 
 From the React Query perspective, treat Server Components as a place to prefetch data, nothing more.
 
@@ -436,7 +441,7 @@ Then, all we need to do is provide a `HydrationBoundary`, but we don't need to `
 
 ```tsx
 // app/posts/page.tsx
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import { dehydrate, HydrationBoundary, query } from '@tanstack/react-query'
 import { getQueryClient } from './get-query-client'
 import Posts from './posts'
 
@@ -445,12 +450,10 @@ export default function PostsPage() {
   const queryClient = getQueryClient()
 
   // look ma, no await
-  void queryClient
-    .query({
-      queryKey: ['posts'],
-      queryFn: getPosts,
-    })
-    .catch(noop)
+  void query(queryClient, {
+    queryKey: ['posts'],
+    queryFn: getPosts,
+  }).catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -460,20 +463,22 @@ export default function PostsPage() {
 }
 ```
 
-On the client, the Promise will be put into the QueryCache for us. That means we can now call `useSuspenseQuery` inside the `Posts` component to "use" that Promise (which was created on the Server):
+On the client, the Promise will be put into the QueryCache for us. That means we can now call `useQuery(suspenseQueryOptions(...))` inside the `Posts` component to "use" that Promise (which was created on the Server):
 
 ```tsx
 // app/posts/posts.tsx
 'use client'
 
 export default function Posts() {
-  const { data } = useSuspenseQuery({ queryKey: ['posts'], queryFn: getPosts })
+  const { data } = useQuery(
+    suspenseQueryOptions({ queryKey: ['posts'], queryFn: getPosts }),
+  )
 
   // ...
 }
 ```
 
-> Note that you could also `useQuery` instead of `useSuspenseQuery`, and the Promise would still be picked up correctly. However, NextJs won't suspend in that case and the component will render in the `pending` status, which also opts out of server rendering the content.
+> Note that you could also pass `queryOptions` to `useQuery`, and the Promise would still be picked up correctly. However, NextJs won't suspend in that case and the component will render in the `pending` status, which also opts out of server rendering the content.
 
 If you're using non-JSON data types and serialize the query results on the server, you can specify the `dehydrate.serializeData` and `hydrate.deserializeData` options to serialize and deserialize the data on each side of the boundary to ensure the data in the cache is the same format both on the server and the client:
 
@@ -505,6 +510,7 @@ import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
+  query,
 } from '@tanstack/react-query'
 import { getQueryClient } from './get-query-client'
 import Posts from './posts'
@@ -514,12 +520,10 @@ export default function PostsPage() {
   const queryClient = getQueryClient()
 
   // look ma, no await
-  void queryClient
-    .query({
-      queryKey: ['posts'],
-      queryFn: () => getPosts().then(serialize), // <-- serialize the data on the server
-    })
-    .catch(noop)
+  void query(queryClient, {
+    queryKey: ['posts'],
+    queryFn: () => getPosts().then(serialize), // <-- serialize the data on the server
+  }).catch(noop)
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
@@ -534,7 +538,9 @@ export default function PostsPage() {
 'use client'
 
 export default function Posts() {
-  const { data } = useSuspenseQuery({ queryKey: ['posts'], queryFn: getPosts })
+  const { data } = useQuery(
+    suspenseQueryOptions({ queryKey: ['posts'], queryFn: getPosts }),
+  )
 
   // ...
 }
@@ -567,7 +573,7 @@ This ensures that only successfully resolved queries are persisted to storage, p
 
 While we recommend the prefetching solution detailed above because it flattens request waterfalls both on the initial page load **and** any subsequent page navigation, there is an experimental way to skip prefetching altogether and still have streaming SSR work: `@tanstack/react-query-next-experimental`
 
-This package will allow you to fetch data on the server (in a Client Component) by just calling `useSuspenseQuery` in your component. Results will then be streamed from the server to the client as SuspenseBoundaries resolve. If you call `useSuspenseQuery` without wrapping it in a `<Suspense>` boundary, the HTML response won't start until the fetch resolves. This can be what you want depending on the situation, but keep in mind that this will hurt your TTFB.
+This package will allow you to fetch data on the server (in a Client Component) by calling `useQuery` with `suspenseQueryOptions` in your component. Results will then be streamed from the server to the client as SuspenseBoundaries resolve. If you render the query without wrapping the component in a `<Suspense>` boundary, the HTML response won't start until the fetch resolves. This can be what you want depending on the situation, but keep in mind that this will hurt your TTFB.
 
 To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 

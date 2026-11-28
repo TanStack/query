@@ -1,4 +1,9 @@
-import { useInfiniteQuery } from '@tanstack/react-query'
+import {
+  isFetching,
+  isFetchingNextPage,
+  isFetchingPreviousPage,
+  useQuery,
+} from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import Link from 'next/link'
 import React from 'react'
@@ -8,24 +13,25 @@ import { projectsQueries } from '../services/projects/queries'
 export default function Example() {
   const { ref, inView } = useInView()
 
+  const queryResult = useQuery(projectsQueries.infinite())
   const {
     status,
     data,
     error,
-    isFetching,
-    isFetchingNextPage,
-    isFetchingPreviousPage,
     fetchNextPage,
     fetchPreviousPage,
     hasNextPage,
     hasPreviousPage,
-  } = useInfiniteQuery(projectsQueries.infinite())
+  } = queryResult
+  const fetching = isFetching(queryResult)
+  const fetchingNextPage = isFetchingNextPage(queryResult)
+  const fetchingPreviousPage = isFetchingPreviousPage(queryResult)
 
   React.useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
+    if (inView && hasNextPage && !fetchingNextPage) {
       fetchNextPage()
     }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
+  }, [inView, hasNextPage, fetchingNextPage, fetchNextPage])
 
   return (
     <div>
@@ -39,9 +45,9 @@ export default function Example() {
           <div>
             <button
               onClick={() => fetchPreviousPage()}
-              disabled={!hasPreviousPage || isFetchingPreviousPage}
+              disabled={!hasPreviousPage || fetchingPreviousPage}
             >
-              {isFetchingPreviousPage
+              {fetchingPreviousPage
                 ? 'Loading more...'
                 : hasPreviousPage
                   ? 'Load Older'
@@ -69,9 +75,9 @@ export default function Example() {
             <button
               ref={ref}
               onClick={() => fetchNextPage()}
-              disabled={!hasNextPage || isFetchingNextPage}
+              disabled={!hasNextPage || fetchingNextPage}
             >
-              {isFetchingNextPage
+              {fetchingNextPage
                 ? 'Loading more...'
                 : hasNextPage
                   ? 'Load Newer'
@@ -79,9 +85,7 @@ export default function Example() {
             </button>
           </div>
           <div>
-            {isFetching && !isFetchingNextPage
-              ? 'Background Updating...'
-              : null}
+            {fetching && !fetchingNextPage ? 'Background Updating...' : null}
           </div>
         </>
       )}

@@ -1,19 +1,26 @@
-import { useQuery } from '@tanstack/preact-query'
+import {
+  queryOptions,
+  isPending,
+  isError,
+  useQuery,
+} from '@tanstack/preact-query'
 
 const App = () => {
-  const query = useQuery({
-    queryKey: ['test'],
-    queryFn: async () => {
-      await new Promise((r) => setTimeout(r, 1000))
-      return 'Success'
-    },
-  })
+  const query = useQuery(
+    queryOptions({
+      queryKey: ['test'],
+      queryFn: async () => {
+        await new Promise((r) => setTimeout(r, 1000))
+        return 'Success'
+      },
+    }),
+  )
 
-  if (query.isPending) {
+  if (isPending(query)) {
     return <div>Loading...</div>
   }
 
-  if (query.isError) {
+  if (isError(query)) {
     return <div>An error has occurred!</div>
   }
 

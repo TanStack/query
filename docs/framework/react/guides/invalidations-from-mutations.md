@@ -20,7 +20,11 @@ When a successful `postTodo` mutation happens, we likely want all `todos` querie
 [//]: # 'Example2'
 
 ```tsx
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  useMutation,
+  useQueryClient,
+  invalidateQueries,
+} from '@tanstack/react-query'
 
 const queryClient = useQueryClient()
 
@@ -29,12 +33,12 @@ const mutation = useMutation({
   mutationFn: addTodo,
   onSuccess: async () => {
     // If you're invalidating a single query
-    await queryClient.invalidateQueries({ queryKey: ['todos'] })
+    await invalidateQueries(queryClient, { queryKey: ['todos'] })
 
     // If you're invalidating multiple queries
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['todos'] }),
-      queryClient.invalidateQueries({ queryKey: ['reminders'] }),
+      invalidateQueries(queryClient, { queryKey: ['todos'] }),
+      invalidateQueries(queryClient, { queryKey: ['reminders'] }),
     ])
   },
 })

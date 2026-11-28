@@ -1,6 +1,7 @@
 import {
   QueryClient,
   QueryClientProvider,
+  isFetching,
   useQuery,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -22,11 +23,9 @@ export default function App() {
 }
 
 function ChatMessage({ id, question }: { id: string; question: string }) {
-  const {
-    error,
-    data = [],
-    isFetching,
-  } = useQuery(messagesQueries.detail(id, question))
+  const queryResult = useQuery(messagesQueries.detail(id, question))
+  const { error, data = [] } = queryResult
+  const fetching = isFetching(queryResult)
 
   if (error) return 'An error has occurred: ' + error.message
 
@@ -34,7 +33,7 @@ function ChatMessage({ id, question }: { id: string; question: string }) {
     <div>
       <Message message={{ content: question, isQuestion: true }} />
       <Message
-        inProgress={isFetching}
+        inProgress={fetching}
         message={{ content: data.join(' '), isQuestion: false }}
       />
     </div>

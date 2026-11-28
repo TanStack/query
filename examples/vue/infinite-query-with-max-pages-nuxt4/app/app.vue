@@ -1,20 +1,29 @@
 <script setup lang="ts">
-import { useInfiniteQuery } from '@tanstack/vue-query'
+import {
+  isFetching as queryIsFetching,
+  isFetchingNextPage as queryIsFetchingNextPage,
+  isFetchingPreviousPage as queryIsFetchingPreviousPage,
+  useInfiniteQuery,
+} from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { computed } from 'vue'
 import { projectsQueries } from './services/projects/queries'
 
 const {
+  state: queryState,
   status,
   data,
   error,
-  isFetching,
-  isFetchingNextPage,
-  isFetchingPreviousPage,
   fetchNextPage,
   fetchPreviousPage,
   hasNextPage,
   hasPreviousPage,
 } = useInfiniteQuery(projectsQueries.infinite())
+const isFetching = computed(() => queryIsFetching(queryState))
+const isFetchingNextPage = computed(() => queryIsFetchingNextPage(queryState))
+const isFetchingPreviousPage = computed(() =>
+  queryIsFetchingPreviousPage(queryState),
+)
 </script>
 
 <template>

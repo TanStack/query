@@ -3,9 +3,9 @@ id: infinite-queries
 title: Infinite Queries
 ---
 
-Rendering lists that can additively "load more" data onto an existing set of data or "infinite scroll" is also a very common UI pattern. TanStack Query supports a useful version of `useQuery` called `useInfiniteQuery` for querying these types of lists.
+Pass `infiniteQueryOptions` to `useQuery` to load additional pages when a user scrolls or clicks “Load more”.
 
-When using `useInfiniteQuery`, you'll notice a few things are different:
+When using `infiniteQueryOptions`, you'll notice a few things are different:
 
 - `data` is now an object containing infinite query data:
 - `data.pages` array containing the fetched pages
@@ -36,14 +36,19 @@ fetch('/api/projects?cursor=9')
 
 With this information, we can create a "Load More" UI by:
 
-- Waiting for `useInfiniteQuery` to request the first group of data by default
+- Waiting for `useQuery` to request the first group of data by default
 - Returning the information for the next query in `getNextPageParam`
 - Calling `fetchNextPage` function
 
 [//]: # 'Example'
 
 ```tsx
-import { useInfiniteQuery } from '@tanstack/react-query'
+import {
+  useQuery,
+  infiniteQueryOptions,
+  isFetching,
+  isFetchingNextPage,
+} from '@tanstack/react-query'
 
 function Projects() {
   const fetchProjects = async ({ pageParam }) => {
@@ -51,28 +56,22 @@ function Projects() {
     return res.json()
   }
 
-  const {
-    data,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-    status,
-  } = useInfiniteQuery({
-    queryKey: ['projects'],
-    queryFn: fetchProjects,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-  })
+  const infiniteQueryResult = useQuery(
+    infiniteQueryOptions({
+      queryKey: ['projects'],
+      queryFn: fetchProjects,
+      initialPageParam: 0,
+      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    }),
+  )
 
-  return status === 'pending' ? (
+  return infiniteQueryResult.status === 'pending' ? (
     <p>Loading...</p>
-  ) : status === 'error' ? (
-    <p>Error: {error.message}</p>
+  ) : infiniteQueryResult.status === 'error' ? (
+    <p>Error: {infiniteQueryResult.error.message}</p>
   ) : (
     <>
-      {data.pages.map((group, i) => (
+      {infiniteQueryResult.data.pages.map((group, i) => (
         <React.Fragment key={i}>
           {group.data.map((project) => (
             <p key={project.id}>{project.name}</p>
@@ -81,17 +80,24 @@ function Projects() {
       ))}
       <div>
         <button
-          onClick={() => fetchNextPage()}
-          disabled={!hasNextPage || isFetching}
+          onClick={() => infiniteQueryResult.fetchNextPage()}
+          disabled={
+            !infiniteQueryResult.hasNextPage || isFetching(infiniteQueryResult)
+          }
         >
-          {isFetchingNextPage
+          {isFetchingNextPage(infiniteQueryResult)
             ? 'Loading more...'
-            : hasNextPage
+            : infiniteQueryResult.hasNextPage
               ? 'Load More'
               : 'Nothing more to load'}
         </button>
       </div>
-      <div>{isFetching && !isFetchingNextPage ? 'Fetching...' : null}</div>
+      <div>
+        {isFetching(infiniteQueryResult) &&
+        !isFetchingNextPage(infiniteQueryResult)
+          ? 'Fetching...'
+          : null}
+      </div>
     </>
   )
 }
@@ -126,13 +132,15 @@ Bi-directional lists can be implemented by using the `getPreviousPageParam`, `fe
 [//]: # 'Example3'
 
 ```tsx
-useInfiniteQuery({
-  queryKey: ['projects'],
-  queryFn: fetchProjects,
-  initialPageParam: 0,
-  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-  getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
-})
+useQuery(
+  infiniteQueryOptions({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
+  }),
+)
 ```
 
 [//]: # 'Example3'
@@ -144,14 +152,16 @@ Sometimes you may want to show the pages in reversed order. If this is case, you
 [//]: # 'Example4'
 
 ```tsx
-useInfiniteQuery({
-  queryKey: ['projects'],
-  queryFn: fetchProjects,
-  select: (data) => ({
-    pages: [...data.pages].reverse(),
-    pageParams: [...data.pageParams].reverse(),
+useQuery(
+  infiniteQueryOptions({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+    select: select((data) => ({
+      pages: [...data.pages].reverse(),
+      pageParams: [...data.pageParams].reverse(),
+    })),
   }),
-})
+)
 ```
 
 [//]: # 'Example4'
@@ -163,7 +173,7 @@ useInfiniteQuery({
 [//]: # 'Example5'
 
 ```tsx
-queryClient.setQueryData(['projects'], (data) => ({
+setQueryData(queryClient, ['projects'], (data) => ({
   pages: data.pages.slice(1),
   pageParams: data.pageParams.slice(1),
 }))
@@ -181,7 +191,7 @@ const newPagesArray =
     page.filter((val) => val.id !== updatedId),
   ) ?? []
 
-queryClient.setQueryData(['projects'], (data) => ({
+setQueryData(queryClient, ['projects'], (data) => ({
   pages: newPagesArray,
   pageParams: data.pageParams,
 }))
@@ -194,7 +204,7 @@ queryClient.setQueryData(['projects'], (data) => ({
 [//]: # 'Example7'
 
 ```tsx
-queryClient.setQueryData(['projects'], (data) => ({
+setQueryData(queryClient, ['projects'], (data) => ({
   pages: data.pages.slice(0, 1),
   pageParams: data.pageParams.slice(0, 1),
 }))
@@ -218,14 +228,16 @@ In the following example only 3 pages are kept in the query data pages array. If
 [//]: # 'Example8'
 
 ```tsx
-useInfiniteQuery({
-  queryKey: ['projects'],
-  queryFn: fetchProjects,
-  initialPageParam: 0,
-  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-  getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
-  maxPages: 3,
-})
+useQuery(
+  infiniteQueryOptions({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
+    maxPages: 3,
+  }),
+)
 ```
 
 [//]: # 'Example8'
@@ -237,23 +249,25 @@ If your API doesn't return a cursor, you can use the `pageParam` as a cursor. Be
 [//]: # 'Example9'
 
 ```tsx
-return useInfiniteQuery({
-  queryKey: ['projects'],
-  queryFn: fetchProjects,
-  initialPageParam: 0,
-  getNextPageParam: (lastPage, allPages, lastPageParam) => {
-    if (lastPage.length === 0) {
-      return undefined
-    }
-    return lastPageParam + 1
-  },
-  getPreviousPageParam: (firstPage, allPages, firstPageParam) => {
-    if (firstPageParam <= 1) {
-      return undefined
-    }
-    return firstPageParam - 1
-  },
-})
+return useQuery(
+  infiniteQueryOptions({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      if (lastPage.length === 0) {
+        return undefined
+      }
+      return lastPageParam + 1
+    },
+    getPreviousPageParam: (firstPage, allPages, firstPageParam) => {
+      if (firstPageParam <= 1) {
+        return undefined
+      }
+      return firstPageParam - 1
+    },
+  }),
+)
 ```
 
 [//]: # 'Example9'

@@ -1,12 +1,12 @@
+type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
+
 type NotifyCallback = () => void
 
 type NotifyFunction = (callback: () => void) => void
 
-type BatchNotifyFunction = (callback: () => void) => void
-
-type BatchCallsCallback<T extends Array<unknown>> = (...args: T) => void
-
 type ScheduleFunction = (callback: () => void) => void
+
+const batchNotify = Symbol()
 
 /**
  * Default scheduling function used by the notify manager.
@@ -25,9 +25,7 @@ export function createNotifyManager() {
   let notifyFn: NotifyFunction = (callback) => {
     callback()
   }
-  let batchNotifyFn: BatchNotifyFunction = (callback: () => void) => {
-    callback()
-  }
+  let batchNotifyFn: NotifyFunction = notifyFn
   let scheduleFn = defaultScheduler
 
   const schedule = (callback: NotifyCallback): void => {
@@ -45,15 +43,16 @@ export function createNotifyManager() {
     if (originalQueue.length) {
       scheduleFn(() => {
         batchNotifyFn(() => {
-          originalQueue.forEach((callback) => {
-            notifyFn(callback)
-          })
+          originalQueue.forEach((callback) => notifyFn(callback))
         })
       })
     }
   }
 
-  return {
+  const manager = {
+    [batchNotify]: (fn: NotifyFunction) => {
+      batchNotifyFn = fn
+    },
     /**
      * Batches all updates scheduled inside the passed callback.
      * This is mainly used internally to optimize query client updating.
@@ -63,17 +62,15 @@ export function createNotifyManager() {
      * @returns The return value of `callback`.
      */
     batch: <T>(callback: () => T): T => {
-      let result
       transactions++
       try {
-        result = callback()
+        return callback()
       } finally {
         transactions--
         if (!transactions) {
           flush()
         }
       }
-      return result
     },
     /**
      * All calls to the wrapped function will be batched.
@@ -103,22 +100,6 @@ export function createNotifyManager() {
       notifyFn = fn
     },
     /**
-     * Use this method to set a custom function to batch notifications together into a single tick.
-     * Framework adapters use this to plug in their own batching primitive, so that a single query
-     * update only triggers one re-render instead of one per subscriber.
-     * @param fn - Receives a function that runs a batch of notifications and must call it.
-     * @example
-     * ```ts
-     * import { notifyManager } from '@tanstack/query-core'
-     * import { batch } from 'solid-js'
-     *
-     * notifyManager.setBatchNotifyFunction(batch)
-     * ```
-     */
-    setBatchNotifyFunction: (fn: BatchNotifyFunction) => {
-      batchNotifyFn = fn
-    },
-    /**
      * Configures a custom callback that schedules when the next batch runs.
      * The default behavior is `queueMicrotask(callback)`.
      * @param fn - Receives a callback that runs the next batch, and schedules it.
@@ -140,6 +121,19 @@ export function createNotifyManager() {
       scheduleFn = fn
     },
   } as const
+  return manager
+}
+
+/**
+ * Configures the framework batching primitive around each flush of queued notifications.
+ * @param manager - The notification manager used by the adapter.
+ * @param batch - Runs all queued notifications within one framework update.
+ */
+export function setBatchNotifyFunction(
+  manager: ReturnType<typeof createNotifyManager>,
+  batch: NotifyFunction,
+): void {
+  manager[batchNotify](batch)
 }
 
 // SINGLETON

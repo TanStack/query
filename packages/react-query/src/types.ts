@@ -1,10 +1,9 @@
-/* istanbul ignore file */
-
 import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
   DefinedQueryObserverResult,
   DistributiveOmit,
+  InferErrorFromTag,
   InfiniteData,
   InfiniteQueryExecuteOptions,
   InfiniteQueryObserverOptions,
@@ -15,13 +14,20 @@ import type {
   MutationObserverResult,
   OmitKeyof,
   Override,
+  QueryErrorBoundaryOption,
   QueryExecuteOptions,
   QueryKey,
   QueryObserverOptions,
   QueryObserverPlaceholderResult,
   QueryObserverResult,
   SkipToken,
+  ThrowOnError,
 } from '@tanstack/query-core'
+
+/** Error options recognized when inferring a query inside a parallel group. */
+export type GroupThrowOnError<TError> =
+  | ThrowOnError<any, TError, any, any>
+  | QueryErrorBoundaryOption<any, TError, any, any>
 
 /**
  * {@link UseBaseQueryOptions} with all type parameters set to `any`, useful when the specific types aren't
@@ -35,8 +41,8 @@ export type AnyUseBaseQueryOptions = UseBaseQueryOptions<
   any
 >
 /**
- * The options shared by `useQuery` and `useSuspenseQuery`. Extends {@link QueryObserverOptions} from
- * `@tanstack/query-core` with the `react-query`-specific `subscribed` option.
+ * The options shared by `useQuery` and `useQuery(suspenseQueryOptions(...))`. Extends {@link QueryObserverOptions}
+ * with the React-specific `subscribed` option.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
@@ -66,7 +72,7 @@ export interface UseBaseQueryOptions<
 }
 
 /**
- * The options accepted by `usePrefetchQuery` — everything you can pass to `queryClient.query`, with a
+ * The options accepted by `usePrefetchQuery` — everything you can pass to `query`, with a
  * required `queryFn`. Pass `defaultQueryFn` to use the client defaults.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -102,7 +108,7 @@ export type UsePrefetchQueryOptions<
 }
 
 /**
- * The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `queryClient.infiniteQuery`,
+ * The options accepted by `usePrefetchInfiniteQuery` — everything you can pass to `infiniteQuery(client, options)`,
  * with a required `queryFn`. Pass `defaultQueryFn` to use the client defaults.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -149,8 +155,7 @@ export type UsePrefetchInfiniteQueryOptions<
  */
 export type AnyUseQueryOptions = UseQueryOptions<any, any, any, any>
 /**
- * The options accepted by `useQuery`. Same as {@link UseBaseQueryOptions}, minus `suspense` (which
- * `react-query` derives from which hook you call rather than exposing as an option).
+ * The ordinary options accepted by {@link queryOptions}. The factory selects the render policy for `useQuery`.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
@@ -164,8 +169,16 @@ export interface UseQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > extends OmitKeyof<
   UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
-  'suspense'
-> {}
+  'suspense' | 'throwOnError'
+> {
+  /** Pass [throwOnError, true] or [throwOnError, predicate] to route a settled error to React. */
+  throwOnError?: QueryErrorBoundaryOption<
+    TQueryFnData,
+    TError,
+    TQueryFnData,
+    TQueryKey
+  >
+}
 
 /**
  * {@link UseSuspenseQueryOptions} with all type parameters set to `any`, useful when the specific types aren't
@@ -178,7 +191,7 @@ export type AnyUseSuspenseQueryOptions = UseSuspenseQueryOptions<
   any
 >
 /**
- * Options for a `useSuspenseQuery` call whose data is defined. The options match those of
+ * Options for a `useQuery(suspenseQueryOptions(...))` call whose data is defined. The options match those of
  * {@link UseQueryOptions} except for `throwOnError` and `enabled`.
  * Use the other overload for a query function that can be `skipToken`.
  * @template TQueryFnData - The type your `queryFn` resolves to.
@@ -217,9 +230,8 @@ export type AnyUseInfiniteQueryOptions = UseInfiniteQueryOptions<
   any
 >
 /**
- * The options accepted by `useInfiniteQuery`. Extends {@link InfiniteQueryObserverOptions} from
- * `@tanstack/query-core` with the `react-query`-specific `subscribed` option, minus `suspense` (which
- * `react-query` derives from which hook you call rather than exposing as an option).
+ * The options accepted by `useQuery(infiniteQueryOptions(...))`. Extends {@link InfiniteQueryObserverOptions}
+ * with the React-specific `subscribed` option. {@link infiniteQueryOptions} and {@link suspenseInfiniteQueryOptions} select the render policy.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs — defaults to `InfiniteData<TQueryFnData>`,
@@ -241,8 +253,15 @@ export interface UseInfiniteQueryOptions<
     TQueryKey,
     TPageParam
   >,
-  'suspense'
+  'suspense' | 'throwOnError'
 > {
+  /** Enables error boundary handling for the paginated query. */
+  throwOnError?: QueryErrorBoundaryOption<
+    TQueryFnData,
+    TError,
+    InfiniteData<TQueryFnData, TPageParam>,
+    TQueryKey
+  >
   /**
    * Set this to `false` to unsubscribe this observer from updates to the query cache.
    * @defaultValue true
@@ -257,7 +276,7 @@ export interface UseInfiniteQueryOptions<
 export type AnyUseSuspenseInfiniteQueryOptions =
   UseSuspenseInfiniteQueryOptions<any, any, any, any, any>
 /**
- * The options accepted by `useSuspenseInfiniteQuery`. Same as {@link UseInfiniteQueryOptions}, except for
+ * The options accepted by `useQuery(suspenseInfiniteQueryOptions(...))`. Same as {@link UseInfiniteQueryOptions}, except for
  * `enabled` and `throwOnError`. If `placeholderData` provides data, the query can render while the fetch runs.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -293,7 +312,7 @@ export interface UseSuspenseInfiniteQueryOptions<
 
 /**
  * The result of `useQuery` when `initialData` isn't set — `data` may be `undefined` while the query is
- * `pending`. Re-exports {@link QueryObserverResult} from `@tanstack/query-core`. `useInfiniteQuery` returns
+ * `pending`. Re-exports {@link QueryObserverResult}. `useQuery(infiniteQueryOptions(...))` returns
  * {@link UseInfiniteQueryResult} instead.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
@@ -313,14 +332,14 @@ export type UseQueryResult<
   TError = DefaultError,
 > = UseBaseQueryResult<TData, TError>
 
-/** The result of `useSuspenseQuery`, including defined placeholder data when configured. */
+/** The result of `useQuery(suspenseQueryOptions(...))`, including defined placeholder data when configured. */
 export type UseSuspenseQueryResult<TData = unknown, TError = DefaultError> =
   | DefinedQueryObserverResult<TData, TError>
   | QueryObserverPlaceholderResult<TData, TError>
 
 /**
  * The result of `useQuery` when `initialData` is set. The `data` is never `undefined` (unless a `select` changes `TData` to include `undefined`).
- * Re-exports {@link DefinedQueryObserverResult} from `@tanstack/query-core`.
+ * Re-exports {@link DefinedQueryObserverResult}.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -330,8 +349,8 @@ export type DefinedUseQueryResult<
 > = DefinedQueryObserverResult<TData, TError>
 
 /**
- * The result of `useInfiniteQuery` when `initialData` isn't set — `data` may be `undefined` while the query is
- * `pending`. Re-exports {@link InfiniteQueryObserverResult} from `@tanstack/query-core`.
+ * The result of `useQuery(infiniteQueryOptions(...))` when `initialData` isn't set — `data` may be `undefined` while the query is
+ * `pending`. Re-exports {@link InfiniteQueryObserverResult}.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -341,9 +360,9 @@ export type UseInfiniteQueryResult<
 > = InfiniteQueryObserverResult<TData, TError>
 
 /**
- * The result of `useInfiniteQuery` when `initialData` is set — `data` is never `undefined` (unless a
+ * The result of `useQuery(infiniteQueryOptions(...))` when `initialData` is set — `data` is never `undefined` (unless a
  * `select` changes `TData` to include `undefined`). Re-exports {@link DefinedInfiniteQueryObserverResult}
- * from `@tanstack/query-core`.
+ *.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -353,7 +372,7 @@ export type DefinedUseInfiniteQueryResult<
 > = DefinedInfiniteQueryObserverResult<TData, TError>
 
 /**
- * The result of `useSuspenseInfiniteQuery`, including defined placeholder data when configured.
+ * The result of `useQuery(suspenseInfiniteQueryOptions(...))`, including defined placeholder data when configured.
  * @template TData - The type `data` ends up as after `select` runs.
  * @template TError - The type of errors your `queryFn` may throw.
  */
@@ -370,7 +389,7 @@ export type UseSuspenseInfiniteQueryResult<
  */
 export type AnyUseMutationOptions = UseMutationOptions<any, any, any, any>
 /**
- * The options accepted by `useMutation`. Same as {@link MutationObserverOptions} from `@tanstack/query-core`,
+ * The options accepted by `useMutation`. Same as {@link MutationObserverOptions},
  * minus the internal `_defaulted` flag.
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
@@ -427,7 +446,7 @@ export type UseMutateAsyncFunction<
 > = MutateFunction<TData, TError, TVariables, TOnMutateResult>
 
 /**
- * The result of `useMutation`. Same as {@link MutationObserverResult} from `@tanstack/query-core`, with
+ * The result of `useMutation`. Same as {@link MutationObserverResult}, with
  * `mutate` narrowed to the fire-and-forget {@link UseMutateFunction} signature, plus the added `mutateAsync`.
  * @template TData - The type your mutation function resolves to.
  * @template TError - The type of errors your mutation function may throw.
@@ -469,3 +488,10 @@ export type UseMutationResult<
   TVariables = unknown,
   TOnMutateResult = unknown,
 > = UseBaseMutationResult<TData, TError, TVariables, TOnMutateResult>
+
+/** Recovers the error type retained in a prepared query key when an error handler is absent. */
+export type TaggedQueryError<T, TFallback> = T extends {
+  queryKey: infer K extends QueryKey
+}
+  ? InferErrorFromTag<TFallback, K>
+  : TFallback

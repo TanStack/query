@@ -1,8 +1,14 @@
-// @vitest-environment node
-
 import { render } from '@lit-labs/ssr'
+// @vitest-environment node
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js'
-import { QueryCache, QueryClient, noop } from '@tanstack/query-core'
+import {
+  QueryCache,
+  QueryClient,
+  clearQueryClient,
+  infiniteQuery,
+  noop,
+  query as queryQuery,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import { html as staticHtml, unsafeStatic } from 'lit/static-html.js'
@@ -36,7 +42,7 @@ describe('Server Side Rendering', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -82,7 +88,7 @@ describe('Server Side Rendering', () => {
       }
     }
 
-    queryClient.query({ queryKey: key, queryFn }).catch(noop)
+    queryQuery(queryClient, { queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = await renderToString(Page)
@@ -143,14 +149,12 @@ describe('Server Side Rendering', () => {
       }
     }
 
-    queryClient
-      .infiniteQuery({
-        queryKey: key,
-        queryFn,
-        getNextPageParam: () => undefined,
-        initialPageParam: 0,
-      })
-      .catch(noop)
+    infiniteQuery(queryClient, {
+      queryKey: key,
+      queryFn,
+      getNextPageParam: () => undefined,
+      initialPageParam: 0,
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = await renderToString(Page)
@@ -178,7 +182,7 @@ describe('Server Side Rendering', () => {
       }
     }
 
-    queryClient.query({ queryKey: key, queryFn }).catch(noop)
+    queryQuery(queryClient, { queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = await renderToString(Page)
@@ -214,8 +218,8 @@ describe('Server Side Rendering', () => {
       }
     }
 
-    queryClient.query({ queryKey: key1, queryFn: queryFn1 }).catch(noop)
-    queryClient.query({ queryKey: key2, queryFn: queryFn2 }).catch(noop)
+    queryQuery(queryClient, { queryKey: key1, queryFn: queryFn1 }).catch(noop)
+    queryQuery(queryClient, { queryKey: key2, queryFn: queryFn2 }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = await renderToString(Page)

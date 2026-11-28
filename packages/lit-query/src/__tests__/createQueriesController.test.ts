@@ -1,4 +1,16 @@
-import { QueryClient } from '@tanstack/query-core'
+import * as core from '@tanstack/query-core'
+import {
+  QueryClient,
+  clearQueryClient,
+  findCachedQuery,
+  getQueryCache,
+  getQueryObserverCount,
+  invalidateQueries,
+  isFetching,
+  isSuccess,
+  select,
+  setQueryData,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import {
@@ -36,7 +48,7 @@ describe('createQueriesController', () => {
 
   afterEach(() => {
     container.remove()
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -156,11 +168,14 @@ describe('createQueriesController', () => {
       'results: success:alpha, success:beta',
     )
     expect(
-      queryClient.getQueryCache().find({ queryKey: consumer.queryKeys[0]! })
-        ?.state.data,
+      findCachedQuery(getQueryCache(queryClient), {
+        queryKey: consumer.queryKeys[0]!,
+      })?.state.data,
     ).toBe('alpha')
     expect(
-      providerClient.getQueryCache().find({ queryKey: consumer.queryKeys[0]! }),
+      findCachedQuery(getQueryCache(providerClient), {
+        queryKey: consumer.queryKeys[0]!,
+      }),
     ).toBeUndefined()
 
     consumer.queries.destroy()
@@ -300,7 +315,7 @@ describe('createQueriesController', () => {
     try {
       container.append(host)
       await vi.advanceTimersByTimeAsync(10)
-      expect(queries()[0].isSuccess).toBe(true)
+      expect(isSuccess(queries()[0])).toBe(true)
 
       host.updatesRequested = 0
 
@@ -377,12 +392,7 @@ describe('createQueriesController', () => {
   })
 
   it('should not re-default query options when subscribed queries emit', async () => {
-    const originalDefaultQueryOptions = queryClient.defaultQueryOptions
-    let defaultQueryOptionsCalls = 0
-    queryClient.defaultQueryOptions = ((options) => {
-      defaultQueryOptionsCalls += 1
-      return originalDefaultQueryOptions.call(queryClient, options as never)
-    }) as typeof queryClient.defaultQueryOptions
+    const defaultQueryOptions = vi.spyOn(core, 'defaultQueryOptions')
 
     const key = createKey()
     let resolveRefetch: (() => void) | undefined
@@ -414,23 +424,23 @@ describe('createQueriesController', () => {
     try {
       container.append(host)
       await host.updateComplete
-      expect(queries()[0].isFetching).toBe(false)
+      expect(isFetching(queries()[0])).toBe(false)
       await vi.advanceTimersByTimeAsync(0)
 
-      defaultQueryOptionsCalls = 0
+      defaultQueryOptions.mockClear()
 
       const refetch = queries()[0].refetch()
 
       expect(resolveRefetch).toBeDefined()
       await vi.advanceTimersByTimeAsync(0)
-      expect(queries()[0].isFetching).toBe(true)
-      expect(defaultQueryOptionsCalls).toBe(0)
+      expect(isFetching(queries()[0])).toBe(true)
+      expect(defaultQueryOptions).not.toHaveBeenCalled()
 
       resolveRefetch!()
       await refetch
       await vi.advanceTimersByTimeAsync(0)
-      expect(queries()[0].isFetching).toBe(false)
-      expect(defaultQueryOptionsCalls).toBe(0)
+      expect(isFetching(queries()[0])).toBe(false)
+      expect(defaultQueryOptions).not.toHaveBeenCalled()
     } finally {
       queries.destroy()
     }
@@ -477,7 +487,7 @@ describe('createQueriesController', () => {
 
       host.updatesRequested = 0
 
-      queryClient.setQueryData(key, 'updated-data')
+      setQueryData(queryClient, key, 'updated-data')
       await vi.advanceTimersByTimeAsync(0)
       expect(host.updatesRequested).toBe(0)
 
@@ -959,7 +969,7 @@ describe('createQueriesController', () => {
             queryKey: key,
             queryFn: () => sleep(10).then(() => 'fetched'),
             initialData: 'seed',
-            select: (data: string) => data.toUpperCase(),
+            select: select<string, string>((data) => data.toUpperCase()),
           },
         ],
         combine: (result) => result[0].data,
@@ -1089,7 +1099,7 @@ describe('createQueriesController', () => {
     const key = createKey()
     let queryFnCalls = 0
 
-    queryClient.setQueryData(key, 'hydrated-value')
+    setQueryData(queryClient, key, 'hydrated-value')
 
     class Host extends LitElement {
       queries?: QueriesResultAccessor<Array<QueryObserverResult<string>>>
@@ -1132,8 +1142,8 @@ describe('createQueriesController', () => {
   it('should not throw for a queries controller on an already-connected host with an explicit client', async () => {
     const key1 = createKey()
     const key2 = createKey()
-    queryClient.setQueryData(key1, 'alpha')
-    queryClient.setQueryData(key2, 'beta')
+    setQueryData(queryClient, key1, 'alpha')
+    setQueryData(queryClient, key2, 'beta')
 
     class Host extends LitElement {
       queries?: QueriesResultAccessor<
@@ -1225,28 +1235,29 @@ describe('createQueriesController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]).toBe('q-1')
     expect(consumer.shadowRoot).toHaveTextContent('data: q-1')
-    const cacheAEntryBeforeSwitch = clientA
-      .getQueryCache()
-      .find({ queryKey: consumer.queryKey })
-    expect(cacheAEntryBeforeSwitch?.getObserversCount()).toBe(1)
+    const cacheAEntryBeforeSwitch = findCachedQuery(getQueryCache(clientA), {
+      queryKey: consumer.queryKey,
+    })
+    expect(getQueryObserverCount(cacheAEntryBeforeSwitch!)).toBe(1)
 
     provider.client = clientB
     await provider.updateComplete
 
     await vi.advanceTimersByTimeAsync(10)
     expect(
-      clientB
-        .getQueryCache()
-        .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(clientB), {
+          queryKey: consumer.queryKey,
+        })!,
+      ),
     ).toBe(1)
     expect(consumer.shadowRoot).toHaveTextContent('data: q-2')
-    const cacheAEntryAfterSwitch = clientA
-      .getQueryCache()
-      .find({ queryKey: consumer.queryKey })
-    expect(cacheAEntryAfterSwitch?.getObserversCount()).toBe(0)
+    const cacheAEntryAfterSwitch = findCachedQuery(getQueryCache(clientA), {
+      queryKey: consumer.queryKey,
+    })
+    expect(getQueryObserverCount(cacheAEntryAfterSwitch!)).toBe(0)
 
-    void clientB.invalidateQueries({ queryKey: consumer.queryKey })
+    void invalidateQueries(clientB, { queryKey: consumer.queryKey })
     expect(consumer.queryCalls).toBe(3)
     await vi.advanceTimersByTimeAsync(10)
     expect(consumer.queries()[0]).toBe('q-3')
@@ -1300,10 +1311,11 @@ describe('createQueriesController', () => {
 
     consumer.remove()
     expect(
-      clientA
-        .getQueryCache()
-        .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(clientA), {
+          queryKey: consumer.queryKey,
+        })!,
+      ),
     ).toBe(0)
 
     providerA.remove()
@@ -1315,16 +1327,18 @@ describe('createQueriesController', () => {
     expect(consumer.queries()[0]).toBe('q-2')
     expect(consumer.queryCalls).toBe(2)
     expect(
-      clientA
-        .getQueryCache()
-        .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(clientA), {
+          queryKey: consumer.queryKey,
+        })!,
+      ),
     ).toBe(0)
     expect(
-      clientB
-        .getQueryCache()
-        .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(clientB), {
+          queryKey: consumer.queryKey,
+        })!,
+      ),
     ).toBe(1)
 
     consumer.queries.destroy()

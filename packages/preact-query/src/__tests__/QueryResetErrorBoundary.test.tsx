@@ -1,3 +1,4 @@
+import { clearQueryClient } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent } from '@testing-library/preact'
 import { Suspense } from 'preact/compat'
@@ -7,10 +8,12 @@ import {
   QueryCache,
   QueryClient,
   QueryErrorResetBoundary,
+  throwOnError as queryBoundary,
+  queryOptions,
+  suspenseQueryOptions,
   useQueries,
   useQuery,
   useSuspenseQueries,
-  useSuspenseQuery,
 } from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
@@ -26,7 +29,7 @@ describe('QueryErrorResetBoundary', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -38,16 +41,18 @@ describe('QueryErrorResetBoundary', () => {
       let succeed = false
 
       function Page() {
-        const { data } = useQuery({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => {
-              if (!succeed) throw new Error('Error')
-              return 'data'
-            }),
-          retry: false,
-          throwOnError: true,
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => {
+                if (!succeed) throw new Error('Error')
+                return 'data'
+              }),
+            retry: false,
+            throwOnError: [queryBoundary, true],
+          }),
+        )
 
         return <div>{data}</div>
       }
@@ -95,17 +100,19 @@ describe('QueryErrorResetBoundary', () => {
       let succeed = false
 
       function Page() {
-        const { data, status } = useQuery({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => {
-              if (!succeed) throw new Error('Error')
-              return 'data'
-            }),
-          retry: false,
-          enabled: !succeed,
-          throwOnError: true,
-        })
+        const { data, status } = useQuery(
+          queryOptions({
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => {
+                if (!succeed) throw new Error('Error')
+                return 'data'
+              }),
+            retry: false,
+            enabled: !succeed,
+            throwOnError: [queryBoundary, true],
+          }),
+        )
 
         return (
           <div>
@@ -160,17 +167,19 @@ describe('QueryErrorResetBoundary', () => {
 
       function Page() {
         const [enabled, setEnabled] = useState(false)
-        const { data } = useQuery({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => {
-              if (!succeed) throw new Error('Error')
-              return 'data'
-            }),
-          retry: false,
-          enabled,
-          throwOnError: true,
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => {
+                if (!succeed) throw new Error('Error')
+                return 'data'
+              }),
+            retry: false,
+            enabled,
+            throwOnError: [queryBoundary, true],
+          }),
+        )
 
         useEffect(() => {
           setEnabled(true)
@@ -221,14 +230,16 @@ describe('QueryErrorResetBoundary', () => {
       const key = createKey()
 
       function Page() {
-        const { data, refetch, status, fetchStatus } = useQuery<string>({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => Promise.reject(new Error('Error'))),
-          retry: false,
-          enabled: false,
-          throwOnError: true,
-        })
+        const { data, refetch, status, fetchStatus } = useQuery(
+          queryOptions<string>({
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => Promise.reject(new Error('Error'))),
+            retry: false,
+            enabled: false,
+            throwOnError: [queryBoundary, true],
+          }),
+        )
 
         return (
           <div>
@@ -287,16 +298,18 @@ describe('QueryErrorResetBoundary', () => {
       let succeed = false
 
       function Page() {
-        const { data } = useQuery({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => {
-              if (!succeed) throw new Error('Error')
-              return 'data'
-            }),
-          retry: false,
-          throwOnError: true,
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => {
+                if (!succeed) throw new Error('Error')
+                return 'data'
+              }),
+            retry: false,
+            throwOnError: [queryBoundary, true],
+          }),
+        )
 
         return <div>{data}</div>
       }
@@ -344,17 +357,19 @@ describe('QueryErrorResetBoundary', () => {
       let succeed = false
 
       function Page() {
-        const { data } = useQuery({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => {
-              if (!succeed) throw new Error('Error')
-              return 'data'
-            }),
-          retry: false,
-          throwOnError: true,
-          initialData: 'initial',
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => {
+                if (!succeed) throw new Error('Error')
+                return 'data'
+              }),
+            retry: false,
+            throwOnError: [queryBoundary, true],
+            initialData: 'initial',
+          }),
+        )
 
         return <div>{data}</div>
       }
@@ -405,16 +420,18 @@ describe('QueryErrorResetBoundary', () => {
       let shouldReset = false
 
       function Page() {
-        const { data } = useQuery({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => {
-              if (!succeed) throw new Error('Error')
-              return 'data'
-            }),
-          retry: false,
-          throwOnError: true,
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => {
+                if (!succeed) throw new Error('Error')
+                return 'data'
+              }),
+            retry: false,
+            throwOnError: [queryBoundary, true],
+          }),
+        )
 
         return <div>{data}</div>
       }
@@ -481,16 +498,18 @@ describe('QueryErrorResetBoundary', () => {
       let fetchCount = 0
 
       function Page() {
-        const { data } = useQuery<string>({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => {
-              fetchCount++
-              throw new Error('Error')
-            }),
-          retry: false,
-          throwOnError: true,
-        })
+        const { data } = useQuery(
+          queryOptions<string>({
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => {
+                fetchCount++
+                throw new Error('Error')
+              }),
+            retry: false,
+            throwOnError: [queryBoundary, true],
+          }),
+        )
 
         return <div>{data}</div>
       }
@@ -544,16 +563,18 @@ describe('QueryErrorResetBoundary', () => {
       let renders = 0
 
       function Page() {
-        const { data } = useSuspenseQuery({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => {
-              fetchCount++
-              if (fetchCount > 2) return 'data'
-              throw new Error('Error')
-            }),
-          retry: false,
-        })
+        const { data } = useQuery(
+          suspenseQueryOptions({
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => {
+                fetchCount++
+                if (fetchCount > 2) return 'data'
+                throw new Error('Error')
+              }),
+            retry: false,
+          }),
+        )
 
         renders++
 
@@ -636,16 +657,18 @@ describe('QueryErrorResetBoundary', () => {
       let succeed = false
 
       function Page() {
-        const { data } = useQuery({
-          queryKey: key,
-          queryFn: () =>
-            sleep(10).then(() => {
-              if (!succeed) throw new Error('Error')
-              return 'data'
-            }),
-          retry: false,
-          throwOnError: true,
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: key,
+            queryFn: () =>
+              sleep(10).then(() => {
+                if (!succeed) throw new Error('Error')
+                return 'data'
+              }),
+            retry: false,
+            throwOnError: [queryBoundary, true],
+          }),
+        )
 
         return <div>{data}</div>
       }
@@ -705,7 +728,7 @@ describe('QueryErrorResetBoundary', () => {
                   return 'data'
                 }),
               retry: false,
-              throwOnError: true,
+              throwOnError: [queryBoundary, true],
               retryOnMount: () => true,
             },
           ],

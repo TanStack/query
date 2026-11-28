@@ -4,6 +4,8 @@ import {
   injectQuery,
   keepPreviousData,
   noop,
+  placeholderData,
+  query,
 } from '@tanstack/angular-query'
 import { ProjectsQueries } from '../services/projects/queries'
 
@@ -18,7 +20,7 @@ export class ExampleComponent {
 
   readonly query = injectQuery(() => ({
     ...this.#projectsQueries.list(this.page()),
-    placeholderData: keepPreviousData,
+    placeholderData: placeholderData(keepPreviousData),
     staleTime: 5000,
   }))
 
@@ -29,9 +31,9 @@ export class ExampleComponent {
 
     untracked(() => {
       if (!isPlaceholderData && data?.hasMore) {
-        void this.queryClient
-          .query(this.#projectsQueries.list(newPage))
-          .catch(noop)
+        void query(this.queryClient, this.#projectsQueries.list(newPage)).catch(
+          noop,
+        )
       }
     })
   })

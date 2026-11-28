@@ -1,4 +1,4 @@
-import { replaceEqualDeep } from '@tanstack/query-core'
+import { getMutationCache, replaceEqualDeep } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient.js'
 import type {
   Mutation,
@@ -108,7 +108,7 @@ export function useMutationState<
   options: MutationStateOptions<TResult, TMutation> = {},
   queryClient?: QueryClient,
 ): Array<TResult> {
-  const mutationCache = useQueryClient(queryClient).getMutationCache()
+  const mutationCache = getMutationCache(useQueryClient(queryClient))
   const result = $state(getResult(mutationCache, options))
 
   $effect(() => {

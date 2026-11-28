@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import {
+  invalidateQueries,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/vue-query'
 import { useRouter } from 'vue-router'
 import ContactForm from '../ContactForm.vue'
 import { contactsAPI } from '../services/contacts/api'
@@ -12,7 +16,7 @@ const { mutate } = useMutation({
   mutationFn: (formData: FormData) =>
     contactsAPI.createContact(Object.fromEntries(formData) as any),
   onSuccess: (contact) => {
-    queryClient.invalidateQueries({ queryKey: contactsQueries.lists() })
+    invalidateQueries(queryClient, { queryKey: contactsQueries.lists() })
     router.push(`/contacts/${contact.id}`)
   },
 })

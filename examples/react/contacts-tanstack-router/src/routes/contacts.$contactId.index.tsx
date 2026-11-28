@@ -1,7 +1,8 @@
 import {
+  invalidateQueries,
   useMutation,
+  useQuery,
   useQueryClient,
-  useSuspenseQuery,
 } from '@tanstack/react-query'
 import { Link, createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
@@ -17,14 +18,14 @@ export const Route = createFileRoute('/contacts/$contactId/')({
 function ContactPage() {
   const { contactId } = Route.useParams()
   const { q } = Route.useSearch()
-  const { data: contact } = useSuspenseQuery(contactsQueries.detail(contactId))
+  const { data: contact } = useQuery(contactsQueries.detail(contactId))
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const deleteContact = useMutation({
     ...contactsMutations.delete(),
     onSuccess: async () => {
       await navigate({ to: '/', search: { q } })
-      await queryClient.invalidateQueries({ queryKey: contactsQueries.all() })
+      await invalidateQueries(queryClient, { queryKey: contactsQueries.all() })
     },
   })
 
@@ -87,7 +88,7 @@ function Favorite({ contact }: { contact: Contact }) {
   const updateContact = useMutation({
     ...contactsMutations.update(),
     onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: contactsQueries.all() }),
+      invalidateQueries(queryClient, { queryKey: contactsQueries.all() }),
   })
   const favorite = updateContact.isPending
     ? Boolean(updateContact.variables.updates.favorite)

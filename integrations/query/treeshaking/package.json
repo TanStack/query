@@ -1,0 +1,32 @@
+{
+  "name": "@tanstack/query-integration-treeshaking",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:types": "tsc --noEmit",
+    "test:build": "node check.ts"
+  },
+  "nx": {
+    "targets": {
+      "test:build": {
+        "dependsOn": [
+          "^build"
+        ]
+      }
+    }
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "catalog:",
+    "@tanstack/angular-query": "workspace:*",
+    "@tanstack/lit-query": "workspace:*",
+    "@tanstack/preact-query": "workspace:*",
+    "@tanstack/react-query": "workspace:*",
+    "@tanstack/solid-query": "workspace:*",
+    "@tanstack/svelte-query": "workspace:*",
+    "@tanstack/vue-query": "workspace:*",
+    "@types/node": "^24.19.2",
+    "svelte": "catalog:",
+    "typescript": "catalog:",
+    "vite": "^8.3.8"
+  }
+}

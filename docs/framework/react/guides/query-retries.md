@@ -20,14 +20,16 @@ You can configure retries both on a global level and an individual query level.
 [//]: # 'Example'
 
 ```tsx
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, queryOptions } from '@tanstack/react-query'
 
 // Make a specific query retry a certain number of times
-const result = useQuery({
-  queryKey: ['todos', 1],
-  queryFn: fetchTodoListPage,
-  retry: 10, // Will retry failed requests 10 times before displaying an error
-})
+const result = useQuery(
+  queryOptions({
+    queryKey: ['todos', 1],
+    queryFn: fetchTodoListPage,
+    retry: 10, // Will retry failed requests 10 times before displaying an error
+  }),
+)
 ```
 
 [//]: # 'Example'
@@ -54,11 +56,13 @@ Set `retryDelay` in the query client's default query options or in the options f
 [//]: # 'Example3'
 
 ```tsx
-const result = useQuery({
-  queryKey: ['todos'],
-  queryFn: fetchTodoList,
-  retryDelay: 1000, // Will always wait 1000ms to retry, regardless of how many retries
-})
+const result = useQuery(
+  queryOptions({
+    queryKey: ['todos'],
+    queryFn: fetchTodoList,
+    retryDelay: 1000, // Will always wait 1000ms to retry, regardless of how many retries
+  }),
+)
 ```
 
 [//]: # 'Example3'
@@ -72,16 +76,18 @@ If you need continuous retries in the background, consider disabling retries and
 [//]: # 'Example4'
 
 ```tsx
-const result = useQuery({
-  queryKey: ['todos'],
-  queryFn: fetchTodos,
-  refetchInterval: (query) => {
-    // Refetch more frequently when in error state
-    return query.state.status === 'error' ? 5000 : 30000
-  },
-  refetchIntervalInBackground: true,
-  retry: false, // Disable built-in retries
-})
+const result = useQuery(
+  queryOptions({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+    refetchInterval: refetchInterval((query) => {
+      // Refetch more frequently when in error state
+      return query.state.status === 'error' ? 5000 : 30000
+    }),
+    refetchIntervalInBackground: true,
+    retry: false, // Disable built-in retries
+  }),
+)
 ```
 
 [//]: # 'Example4'

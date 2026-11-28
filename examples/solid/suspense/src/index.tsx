@@ -1,11 +1,11 @@
-/* @refresh reload */
-
 import {
   QueryClient,
   QueryClientProvider,
   noop,
+  query,
   useQueryClient,
 } from '@tanstack/solid-query'
+/* @refresh reload */
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { ErrorBoundary, Show, Suspense, createSignal, lazy } from 'solid-js'
 import { render } from 'solid-js/web'
@@ -41,7 +41,7 @@ function Example() {
       <Button
         onClick={() => {
           if (!showProjects()) {
-            queryClient.query(projectsQueries.list()).catch(noop)
+            query(queryClient, projectsQueries.list()).catch(noop)
           }
           setShowProjects((old) => !old)
         }}

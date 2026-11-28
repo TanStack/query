@@ -1,3 +1,4 @@
+import { placeholderData, select } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { skipToken, useSuspenseQueries } from '..'
@@ -11,11 +12,14 @@ describe('UseSuspenseQueries config object overload', () => {
       {
         queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
-        placeholderData: (previousData, previousQuery) => {
-          expectTypeOf(previousData).toEqualTypeOf<undefined>()
-          expectTypeOf(previousQuery).toEqualTypeOf<undefined>()
-          return 0
-        },
+        placeholderData: [
+          placeholderData,
+          (previousData, previousQuery) => {
+            expectTypeOf(previousData).toEqualTypeOf<undefined>()
+            expectTypeOf(previousQuery).toEqualTypeOf<undefined>()
+            return 0
+          },
+        ],
       },
     ]
     const [query] = useSuspenseQueries({ queries })
@@ -26,8 +30,8 @@ describe('UseSuspenseQueries config object overload', () => {
     const selectedOptions = queryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
-      placeholderData: 0,
-      select: (data) => data.toString(),
+      placeholderData: placeholderData(0),
+      select: select((data) => data.toString()),
     })
     const [selectedQuery] = useSuspenseQueries({
       queries: [selectedOptions],
@@ -83,13 +87,13 @@ describe('UseSuspenseQueries config object overload', () => {
     const query1 = queryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve(1),
-      select: (data) => data > 1,
+      select: select((data) => data > 1),
     })
 
     const query2 = {
       queryKey: createKey(),
       queryFn: () => Promise.resolve(1),
-      select: (data: number) => data > 1,
+      select: select((data: number) => data > 1),
     }
 
     const queryResults = useSuspenseQueries({ queries: [query1, query2] })
@@ -212,9 +216,9 @@ describe('UseSuspenseQueries config object overload', () => {
         ...queries1List,
         {
           ...Queries2.get(),
-          select(data: boolean) {
+          select: select((data: boolean) => {
             return data
-          },
+          }),
         },
       ],
     })
@@ -276,9 +280,9 @@ describe('UseSuspenseQueries config object overload', () => {
               queryKey: createKey(),
               queryFn: () => 'Query Data',
             }),
-            select(data: string) {
+            select: select((data: string) => {
               return data
-            },
+            }),
           },
         ],
       }),

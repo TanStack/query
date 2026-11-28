@@ -1,4 +1,10 @@
-import { noop, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import {
+  isFetching,
+  noop,
+  query,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import React from 'react'
 import { projectsQueries } from '../services/projects/queries'
 import Button from './Button'
@@ -10,19 +16,22 @@ export default function Projects({
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>
 }) {
   const queryClient = useQueryClient()
-  const { data, isFetching } = useSuspenseQuery(projectsQueries.list())
+  const queryResult = useQuery(projectsQueries.list())
+  const { data } = queryResult
+  const fetching = isFetching(queryResult)
 
   return (
     <div>
-      <h1>TanStack Repositories {isFetching ? <Spinner /> : null}</h1>
+      <h1>TanStack Repositories {fetching ? <Spinner /> : null}</h1>
       {data.map((project) => (
         <p key={project.full_name}>
           <Button
             onClick={() => {
               // Prefetch the project query
-              queryClient
-                .query(projectsQueries.detail(project.full_name))
-                .catch(noop)
+              query(
+                queryClient,
+                projectsQueries.detail(project.full_name),
+              ).catch(noop)
               setActiveProject(project.full_name)
             }}
           >

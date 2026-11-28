@@ -3,12 +3,18 @@ id: query-options
 title: Query Options
 ---
 
-One of the best ways to share `queryKey` and `queryFn` between multiple places, yet keep them co-located to one another, is to use the `queryOptions` helper. At runtime, this helper just returns whatever you pass into it, but it has a lot of advantages when using it [with TypeScript](../typescript.md#typing-query-options). You can define all possible options for a query in one place, and you'll also get type inference and type safety for all of them.
+Keep the cache key, fetch function, and options together in a factory. TypeScript carries the fetcher's data type through the factory to the component and the imperative cache APIs.
 
 [//]: # 'Example1'
 
 ```ts
-import { queryOptions } from '@tanstack/react-query'
+import {
+  query,
+  queryOptions,
+  setQueryData,
+  useQueries,
+  useQuery,
+} from '@tanstack/react-query'
 
 function groupOptions(id: number) {
   return queryOptions({
@@ -21,12 +27,11 @@ function groupOptions(id: number) {
 // usage:
 
 useQuery(groupOptions(1))
-useSuspenseQuery(groupOptions(5))
 useQueries({
   queries: [groupOptions(1), groupOptions(2)],
 })
-queryClient.query(groupOptions(23))
-queryClient.setQueryData(groupOptions(42).queryKey, newGroups)
+void query(queryClient, groupOptions(23))
+setQueryData(queryClient, groupOptions(42).queryKey, newGroups)
 ```
 
 [//]: # 'Example1'
@@ -35,18 +40,37 @@ For Infinite Queries, a separate [`infiniteQueryOptions`](../reference/functions
 
 [//]: # 'SelectDescription'
 
-You can still override some options at the component level. A very common and useful pattern is to create per-component [`select`](./render-optimizations.md#select) functions:
+A component can select part of the cached data by passing a callback to `select`. Spreading a prepared query into `queryOptions` preserves the fetcher's data type for the callback.
 
 [//]: # 'SelectDescription'
 [//]: # 'Example2'
 
 ```ts
-// Type inference still works, so query.data will be the return type of select instead of queryFn
+import { queryOptions, select, useQuery } from '@tanstack/react-query'
 
-const query = useQuery({
-  ...groupOptions(1),
-  select: (data) => data.groupName,
-})
+// selected.data has the selected name's type.
+
+const selected = useQuery(
+  queryOptions({
+    ...groupOptions(1),
+    select: select((group) => group.groupName),
+  }),
+)
 ```
 
 [//]: # 'Example2'
+
+For a dynamic `useQueries` list, prepare each entry so TypeScript can infer its selector input independently.
+
+```ts
+const groups = useQueries({
+  queries: ids.map((id) =>
+    queryOptions({
+      ...groupOptions(id),
+      select: select((group) => group.groupName),
+    }),
+  ),
+})
+```
+
+When passing raw entries with different result types directly to `useQueries`, define a reusable selection first, such as `const groupName = select((group: Group) => group.groupName)`, and pass `select: groupName` in the entry. For an infinite query whose fetcher derives its return type from `pageParam`, typing the fetcher's parameter lets the selector infer the page data.

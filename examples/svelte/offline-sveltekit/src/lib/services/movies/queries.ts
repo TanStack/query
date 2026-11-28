@@ -1,4 +1,8 @@
-import { mutationOptions, queryOptions } from '@tanstack/svelte-query'
+import {
+  cancelQueries,
+  mutationOptions,
+  queryOptions,
+} from '@tanstack/svelte-query'
 import { moviesAPI } from './api'
 
 export const moviesQueries = {
@@ -23,7 +27,7 @@ export const moviesMutations = {
         context,
       ) => {
         // to avoid clashes with our optimistic update when an offline mutation continues
-        await context.client.cancelQueries({
+        await cancelQueries(context.client, {
           queryKey: moviesQueries.detail(id).queryKey,
         })
         return moviesAPI.updateMovie(id, comment)

@@ -1,6 +1,5 @@
-/* istanbul ignore file */
-
 import type { Signal } from '@angular/core'
+/* istanbul ignore file */
 import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
@@ -20,6 +19,8 @@ import type {
   InfiniteQueryResultFields,
   MutationResultFields,
   QueryResultFields,
+  infiniteQueryStatusSignals,
+  queryStatusSignals,
 } from './utils/result-fields'
 import type { MapToSignals } from './utils/signal-proxy'
 
@@ -277,6 +278,10 @@ export type CreateBaseQueryResult<
     TError
   >,
 > = BaseQueryNarrowing<TData, TError> &
+  Omit<
+    ReturnType<typeof queryStatusSignals>,
+    'isError' | 'isPending' | 'isSuccess'
+  > &
   MapToSignals<
     OmitKeyof<TState, keyof BaseQueryNarrowing, 'safely'>,
     QueryResultFields
@@ -305,6 +310,10 @@ export type DefinedCreateQueryResult<
   TState extends DefinedQueryObserverResult<TData, TError> =
     DefinedQueryObserverResult<TData, TError>,
 > = DefinedQueryNarrowing<TData, TError> &
+  Omit<
+    ReturnType<typeof queryStatusSignals>,
+    'isError' | 'isPending' | 'isSuccess'
+  > &
   MapToSignals<
     OmitKeyof<TState, keyof DefinedQueryNarrowing, 'safely'>,
     QueryResultFields
@@ -324,6 +333,10 @@ export type CreateInfiniteQueryResult<
   TState extends InfiniteQueryObserverResult<TData, TError> =
     InfiniteQueryObserverResult<TData, TError>,
 > = BaseInfiniteQueryNarrowing<TData, TError> &
+  Omit<
+    ReturnType<typeof infiniteQueryStatusSignals>,
+    'isError' | 'isPending' | 'isSuccess'
+  > &
   MapToSignals<TState, InfiniteQueryResultFields>
 
 /**
@@ -341,6 +354,10 @@ export type DefinedCreateInfiniteQueryResult<
     TError
   > = DefinedInfiniteQueryObserverResult<TData, TError>,
 > = DefinedInfiniteQueryNarrowing<TData, TError> &
+  Omit<
+    ReturnType<typeof infiniteQueryStatusSignals>,
+    'isError' | 'isPending' | 'isSuccess'
+  > &
   MapToSignals<TDefinedInfiniteQueryObserver, InfiniteQueryResultFields>
 
 /**

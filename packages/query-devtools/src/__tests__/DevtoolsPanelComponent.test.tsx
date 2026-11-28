@@ -1,5 +1,9 @@
 import { render } from '@solidjs/testing-library'
-import { QueryClient, onlineManager } from '@tanstack/query-core'
+import {
+  QueryClient,
+  clearQueryClient,
+  onlineManager,
+} from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import DevtoolsPanelComponent from '../DevtoolsPanelComponent'
 
@@ -60,7 +64,7 @@ describe('DevtoolsPanelComponent', () => {
 
   afterEach(() => {
     Object.keys(storage).forEach((key) => delete storage[key])
-    queryClient.clear()
+    clearQueryClient(queryClient)
     document.documentElement.style.fontSize = previousRootFontSize
   })
 

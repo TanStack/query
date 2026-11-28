@@ -1,36 +1,46 @@
-import { keepPreviousData, skipToken } from '@tanstack/query-core'
+import {
+  isSuccess,
+  keepPreviousData,
+  placeholderData,
+  select,
+  skipToken,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
-import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
+import { suspenseInfiniteQueryOptions, useQuery } from '..'
 import type { InfiniteData } from '@tanstack/query-core'
 import type { UseSuspenseInfiniteQueryOptions } from '../types'
 
 describe('useSuspenseInfiniteQuery', () => {
   it('should always have data defined', () => {
-    const { data } = useSuspenseInfiniteQuery({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve(5),
-      initialPageParam: 1,
-      getNextPageParam: () => 1,
-    })
+    const { data } = useQuery(
+      suspenseInfiniteQueryOptions({
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve(5),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+      }),
+    )
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<number, number>>()
   })
 
   it('should allow undefined data when queryFn can be skipToken', () => {
-    const result = useSuspenseInfiniteQuery({
-      queryKey: createKey(),
-      queryFn:
-        Math.random() > 0.5
-          ? skipToken
-          : ({ pageParam }) => pageParam.toFixed(),
-      initialPageParam: 1,
-      getNextPageParam: () => undefined,
-      select: (data) => data.pages,
-    })
+    const result = useQuery(
+      suspenseInfiniteQueryOptions({
+        queryKey: createKey(),
+        queryFn:
+          Math.random() > 0.5
+            ? skipToken
+            : ({ pageParam }: { pageParam: number }) => pageParam.toFixed(),
+        initialPageParam: 1,
+        getNextPageParam: () => undefined,
+        select: select((data) => data.pages),
+      }),
+    )
 
     expectTypeOf(result.data).toEqualTypeOf<Array<string> | undefined>()
-    if (result.isSuccess) {
+    if (isSuccess(result)) {
       expectTypeOf(result.data).toEqualTypeOf<Array<string>>()
     }
     expectTypeOf(result.isPlaceholderData).toEqualTypeOf<boolean>()
@@ -38,78 +48,96 @@ describe('useSuspenseInfiniteQuery', () => {
   })
 
   it('should not have pending status', () => {
-    const { status } = useSuspenseInfiniteQuery({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve(5),
-      initialPageParam: 1,
-      getNextPageParam: () => 1,
-    })
+    const { status } = useQuery(
+      suspenseInfiniteQueryOptions({
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve(5),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+      }),
+    )
 
     expectTypeOf(status).toEqualTypeOf<'error' | 'success'>()
   })
 
   it('should allow placeholderData', () => {
-    const query = useSuspenseInfiniteQuery({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve(5),
-      initialPageParam: 1,
-      getNextPageParam: () => 1,
-      placeholderData: keepPreviousData,
-    })
+    const query = useQuery(
+      suspenseInfiniteQueryOptions({
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve(5),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+        placeholderData: placeholderData(keepPreviousData),
+      }),
+    )
 
-    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<number, unknown>>()
+    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<number, number>>()
     expectTypeOf(query.isPlaceholderData).toEqualTypeOf<boolean>()
 
-    const selected = useSuspenseInfiniteQuery({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve(5),
-      initialPageParam: 1,
-      getNextPageParam: () => 1,
-      placeholderData: (previousData) => {
-        expectTypeOf(previousData).toEqualTypeOf<
-          InfiniteData<number, number> | undefined
-        >()
-        return previousData ?? { pages: [0], pageParams: [1] }
-      },
-      select: (data) => data.pages.length,
-    })
+    const selected = useQuery(
+      suspenseInfiniteQueryOptions({
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve(5),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+        placeholderData: [
+          placeholderData,
+          (previousData) => {
+            expectTypeOf(previousData).toEqualTypeOf<
+              InfiniteData<number, number> | undefined
+            >()
+            return previousData ?? { pages: [0], pageParams: [1] }
+          },
+        ],
+        select: select((data) => data.pages.length),
+      }),
+    )
 
     expectTypeOf(selected.data).toEqualTypeOf<number>()
   })
 
   it('should not allow enabled or throwOnError props', () => {
     assertType(
-      useSuspenseInfiniteQuery({
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve(5),
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-        placeholderData: { pages: [5], pageParams: [1] },
-        // @ts-expect-error TS2345
-        enabled: true,
-      }),
+      useQuery(
+        suspenseInfiniteQueryOptions({
+          queryKey: createKey(),
+          queryFn: () => Promise.resolve(5),
+          initialPageParam: 1,
+          getNextPageParam: () => 1,
+          placeholderData: placeholderData({
+            pages: [5],
+            pageParams: [1],
+          }),
+          // @ts-expect-error TS2345
+          enabled: true,
+        }),
+      ),
     )
 
     assertType(
-      useSuspenseInfiniteQuery({
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve(5),
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-        // @ts-expect-error TS2345
-        enabled: true,
-      }),
+      useQuery(
+        suspenseInfiniteQueryOptions({
+          queryKey: createKey(),
+          queryFn: () => Promise.resolve(5),
+          initialPageParam: 1,
+          getNextPageParam: () => 1,
+          // @ts-expect-error TS2345
+          enabled: true,
+        }),
+      ),
     )
 
     assertType(
-      useSuspenseInfiniteQuery({
-        queryKey: createKey(),
-        queryFn: () => Promise.resolve(5),
-        initialPageParam: 1,
-        getNextPageParam: () => 1,
-        // @ts-expect-error TS2345
-        throwOnError: true,
-      }),
+      useQuery(
+        suspenseInfiniteQueryOptions({
+          queryKey: createKey(),
+          queryFn: () => Promise.resolve(5),
+          initialPageParam: 1,
+          getNextPageParam: () => 1,
+          // @ts-expect-error TS2345
+          throwOnError: true,
+        }),
+      ),
     )
   })
 
@@ -120,18 +148,20 @@ describe('useSuspenseInfiniteQuery', () => {
       initialPageParam: 1,
       getNextPageParam: () => 1,
     }
-    const { data } = useSuspenseInfiniteQuery(options)
+    const { data } = useQuery(suspenseInfiniteQueryOptions(options))
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
   })
 
   it('should return isPlaceholderData', () => {
-    const query = useSuspenseInfiniteQuery({
-      queryKey: createKey(),
-      queryFn: () => Promise.resolve(5),
-      initialPageParam: 1,
-      getNextPageParam: () => 1,
-    })
+    const query = useQuery(
+      suspenseInfiniteQueryOptions({
+        queryKey: createKey(),
+        queryFn: () => Promise.resolve(5),
+        initialPageParam: 1,
+        getNextPageParam: () => 1,
+      }),
+    )
 
     expectTypeOf(query).toHaveProperty('isPlaceholderData')
   })

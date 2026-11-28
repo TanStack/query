@@ -59,7 +59,7 @@ Beyond those primary states, more information is available depending on the stat
 
 In the example above, you also saw that you can pass variables to your mutations function by calling the `mutate` function with a **single variable or object**.
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](../reference/classes/QueryClient.md#invalidatequeries) and the [Query Client's `setQueryData` method](../reference/classes/QueryClient.md#setquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [`invalidateQueries` operation](./query-invalidation.md) and the [`setQueryData` operation](./migrating-to-v6.md#client-operations-across-frameworks), mutations become a very powerful tool.
 
 [//]: # 'Info1'
 
@@ -294,24 +294,24 @@ Mutations can be persisted to storage if needed and resumed at a later point. Th
 const queryClient = new QueryClient()
 
 // Define the "addTodo" mutation
-queryClient.setMutationDefaults(['addTodo'], {
+setMutationDefaults(queryClient, ['addTodo'], {
   mutationFn: addTodo,
   onMutate: async (variables, context) => {
     // Cancel current queries for the todos list
-    await context.client.cancelQueries({ queryKey: ['todos'] })
+    await cancelQueries(context.client, { queryKey: ['todos'] })
 
     // Create optimistic todo
     const optimisticTodo = { id: uuid(), title: variables.title }
 
     // Add optimistic todo to todos list
-    context.client.setQueryData(['todos'], (old) => [...old, optimisticTodo])
+    setQueryData(context.client, ['todos'], (old) => [...old, optimisticTodo])
 
     // Return a result with the optimistic todo
     return { optimisticTodo }
   },
   onSuccess: (result, variables, onMutateResult, context) => {
     // Replace optimistic todo in the todos list with the result
-    context.client.setQueryData(['todos'], (old) =>
+    setQueryData(context.client, ['todos'], (old) =>
       old.map((todo) =>
         todo.id === onMutateResult.optimisticTodo.id ? result : todo,
       ),
@@ -319,7 +319,7 @@ queryClient.setMutationDefaults(['addTodo'], {
   },
   onError: (error, variables, onMutateResult, context) => {
     // Remove optimistic todo from the todos list
-    context.client.setQueryData(['todos'], (old) =>
+    setQueryData(context.client, ['todos'], (old) =>
       old.filter((todo) => todo.id !== onMutateResult.optimisticTodo.id),
     )
   },
@@ -338,7 +338,7 @@ const state = dehydrate(queryClient)
 hydrate(queryClient, state)
 
 // Resume the paused mutations:
-queryClient.resumePausedMutations()
+resumePausedMutations(queryClient)
 ```
 
 [//]: # 'Example10'
@@ -367,7 +367,7 @@ const queryClient = new QueryClient({
 })
 
 // we need a default mutation function so that paused mutations can resume after a page reload
-queryClient.setMutationDefaults(['todos'], {
+setMutationDefaults(queryClient, ['todos'], {
   mutationFn: ({ id, data }) => {
     return api.updateTodo(id, data)
   },
@@ -380,7 +380,7 @@ export default function App() {
       persistOptions={{ persister }}
       onSuccess={() => {
         // resume mutations after initial restore from localStorage was successful
-        queryClient.resumePausedMutations()
+        resumePausedMutations(queryClient)
       }}
     >
       <RestOfTheApp />
@@ -398,16 +398,14 @@ We also have an extensive [offline example](../examples/offline-tanstack-router)
 
 ## Mutation Scopes
 
-Per default, all mutations run in parallel - even if you invoke `.mutate()` of the same mutation multiple times. Mutations can be given a `scope` with an `id` to avoid that. All mutations with the same `scope.id` will run in serial, which means when they are triggered, they will start in `isPaused: true` state if there is already a mutation for that scope in progress. They will be put into a queue and will automatically resume once their time in the queue has come.
+Per default, all mutations run in parallel - even if you invoke `.mutate()` of the same mutation multiple times. Use `scope: serialScope(id)` to queue related mutations. All mutations with the same scope ID will run in serial, which means when they are triggered, they will start in `isPaused: true` state if there is already a mutation for that scope in progress. They will be put into a queue and will automatically resume once their time in the queue has come.
 
 [//]: # 'ExampleScopes'
 
 ```tsx
 const mutation = useMutation({
   mutationFn: addTodo,
-  scope: {
-    id: 'todo',
-  },
+  scope: serialScope('todo'),
 })
 ```
 

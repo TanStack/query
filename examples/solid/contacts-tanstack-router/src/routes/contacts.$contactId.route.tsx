@@ -1,9 +1,10 @@
+import { query } from '@tanstack/solid-query'
 import { createFileRoute } from '@tanstack/solid-router'
 import { contactsQueries } from '../services/contacts/queries'
 
 export const Route = createFileRoute('/contacts/$contactId')({
   loader: ({ context: { queryClient }, params: { contactId } }) =>
-    queryClient.query({
+    query(queryClient, {
       ...contactsQueries.detail(contactId),
       staleTime: 'static',
     }),

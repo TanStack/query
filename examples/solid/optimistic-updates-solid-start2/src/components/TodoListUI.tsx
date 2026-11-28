@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/solid-query'
+import {
+  invalidateQueries,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/solid-query'
 import { For, Show, createSignal } from 'solid-js'
 import { todosMutations, todosQueries } from '~/services/todos/queries'
 import type { JSX } from 'solid-js'
@@ -15,7 +20,9 @@ export default function TodoListUI() {
   const addTodoMutation = useMutation(() => ({
     ...todosMutations.create(),
     onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
+      invalidateQueries(queryClient, {
+        queryKey: todosQueries.list().queryKey,
+      }),
   }))
 
   const handleSubmit: JSX.EventHandler<HTMLFormElement, SubmitEvent> = (e) => {

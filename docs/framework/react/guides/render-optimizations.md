@@ -14,27 +14,29 @@ React Query uses a technique called "structural sharing" to ensure that as many 
 If your data contains custom value types, you can pass an equality function to `replaceEqualDeep` from your `structuralSharing` function. The previous value is kept when the function returns `true`:
 
 ```tsx
-import { replaceEqualDeep, useQuery } from '@tanstack/react-query'
+import { replaceEqualDeep, useQuery, queryOptions } from '@tanstack/react-query'
 
 const equalityFn = (a: unknown, b: unknown) =>
   a === b ||
   (a instanceof Date && b instanceof Date && a.getTime() === b.getTime())
 
-useQuery({
-  queryKey: ['events'],
-  queryFn: fetchEvents,
-  structuralSharing: (oldData, newData) =>
-    replaceEqualDeep(oldData, newData, equalityFn),
-})
+useQuery(
+  queryOptions({
+    queryKey: ['events'],
+    queryFn: fetchEvents,
+    structuralSharing: (oldData, newData) =>
+      replaceEqualDeep(oldData, newData, equalityFn),
+  }),
+)
 ```
 
 ### referential identity
 
-The top level object returned from `useQuery`, `useInfiniteQuery`, `useMutation` and the Array returned from `useQueries` is **not referentially stable**. It will be a new reference on every render. However, the `data` properties returned from these hooks will be as stable as possible.
+The top level object returned from `useQuery`, `useMutation` and the Array returned from `useQueries` is **not referentially stable**. It will be a new reference on every render. However, the `data` properties returned from these hooks will be as stable as possible.
 
 ## tracked properties
 
-React Query will only trigger a re-render if one of the properties returned from `useQuery` is actually "used". This is done by using [Proxy object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). This avoids a lot of unnecessary re-renders, e.g. because properties like `isFetching` or `isStale` might change often, but are not used in the component.
+React Query will only trigger a re-render if one of the properties returned from `useQuery` is actually "used". This is done by using [Proxy object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy). This avoids a lot of unnecessary re-renders, e.g. because properties like `fetchStatus` or `isStale` might change often, but are not used in the component.
 
 Set `notifyOnChangeProps: 'all'` to notify the component whenever the query result changes. Set `notifyOnChangeProps: 'none'` to suppress these notifications while the query can still fetch. If you set `throwOnError`, changes to the error still notify the component. You can set these options in the query defaults or on individual queries.
 
@@ -45,12 +47,16 @@ Set `notifyOnChangeProps: 'all'` to notify the component whenever the query resu
 You can use the `select` option to select a subset of the data that your component should subscribe to. This is useful for highly optimized data transformations or to avoid unnecessary re-renders.
 
 ```js
-export const useTodos = (select) => {
-  return useQuery({
-    queryKey: ['todos'],
-    queryFn: fetchTodos,
-    select,
-  })
+import { queryOptions, select, useQuery } from '@tanstack/react-query'
+
+export const useTodos = (transform) => {
+  return useQuery(
+    queryOptions({
+      queryKey: ['todos'],
+      queryFn: fetchTodos,
+      select: select(transform),
+    }),
+  )
 }
 
 export const useTodoCount = () => {
@@ -60,7 +66,7 @@ export const useTodoCount = () => {
 
 A component using the `useTodoCount` custom hook will only re-render if the length of the todos changes. It will **not** re-render if e.g. the name of a todo changed.
 
-> Note: `select` operates on successfully cached data and is not the appropriate place to throw errors. The source of truth for errors is the `queryFn`, and a `select` function that returns an error results in `data` being `undefined` and `isSuccess` being `true`. We recommend handling errors in the `queryFn` if you wish to have a query fail on incorrect data, or outside of the query hook if you have an error case not related to caching.
+> Note: `select` operates on successfully cached data and is not the appropriate place to throw errors. The source of truth for errors is the `queryFn`, and a `select` function that returns an error results in `data` being `undefined` and `isSuccess(result)` returning `true`. We recommend handling errors in the `queryFn` if you wish to have a query fail on incorrect data, or outside of the query hook if you have an error case not related to caching.
 
 ### memoization
 

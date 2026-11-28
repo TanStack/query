@@ -10,7 +10,15 @@ import {
   makeStateKey,
   provideEnvironmentInitializer,
 } from '@angular/core'
-import { QueryClient, dehydrate, hydrate } from '@tanstack/query-core'
+import {
+  QueryClient,
+  dehydrate,
+  getDefaultOptions,
+  hydrate,
+  mountQueryClient,
+  setDefaultOptions,
+  unmountQueryClient,
+} from '@tanstack/query-core'
 import { INTERNAL_TANSTACK_QUERY_HYDRATION_TRANSFER_KEY } from './hydration-state-key'
 import { injectQueryZone } from './utils/inject-query-zone'
 import type { EnvironmentProviders } from '@angular/core'
@@ -32,8 +40,8 @@ function configureQueryClient() {
   if (isPlatformServer(platformId)) {
     // DOM emulation can fool core's runtime detection. Apply server defaults to
     // this client without changing other clients or global scheduling providers.
-    const defaults = queryClient.getDefaultOptions()
-    queryClient.setDefaultOptions({
+    const defaults = getDefaultOptions(queryClient)
+    setDefaultOptions(queryClient, {
       ...defaults,
       queries: { gcTime: Infinity, retry: false, ...defaults.queries },
       mutations: { gcTime: Infinity, ...defaults.mutations },
@@ -58,8 +66,8 @@ function configureQueryClient() {
     }
   }
 
-  queryClient.mount()
-  destroyRef.onDestroy(() => queryClient.unmount())
+  mountQueryClient(queryClient)
+  destroyRef.onDestroy(() => unmountQueryClient(queryClient))
 }
 
 /**

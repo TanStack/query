@@ -216,7 +216,7 @@ ReactDOM.createRoot(rootElement).render(
 - `onSuccess?: () => Promise<unknown> | unknown`
   - optional
   - will be called when the initial restore is finished
-  - can be used to [resumePausedMutations](../reference/classes/QueryClient.md#resumepausedmutations)
+  - can be used to [resumePausedMutations](../guides/mutations.md#persisting-offline-mutations)
   - if a Promise is returned, it will be awaited; restoring is seen as ongoing until then
 - `onError?: () => Promise<unknown> | unknown`
   - optional

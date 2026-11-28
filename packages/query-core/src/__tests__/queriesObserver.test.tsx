@@ -2,7 +2,24 @@ import { setFlagsFromString } from 'node:v8'
 import { runInNewContext } from 'node:vm'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueriesObserver, QueryClient, QueryObserver, defaultQueryFn } from '..'
+import {
+  QueriesObserver,
+  QueryClient,
+  QueryObserver,
+  clearQueryClient,
+  defaultQueryFn,
+  defaultQueryOptions,
+  findCachedQuery,
+  getQueryCache,
+  getQueryObserverCount,
+  mountQueryClient,
+  refetchQueries,
+  removeQueries,
+  resetQueries,
+  select as selectResult,
+  setQueryData,
+  placeholderData as withPlaceholder,
+} from '..'
 import type { QueryObserverResult } from '..'
 
 describe('queriesObserver', () => {
@@ -11,11 +28,11 @@ describe('queriesObserver', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
-    queryClient.mount()
+    mountQueryClient(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -23,8 +40,8 @@ describe('queriesObserver', () => {
     it('keeps active queries and combine state unchanged until commit', () => {
       const keyA = createKey()
       const keyB = createKey()
-      queryClient.setQueryData(keyA, 1)
-      queryClient.setQueryData(keyB, 10)
+      setQueryData(queryClient, keyA, 1)
+      setQueryData(queryClient, keyB, 10)
       const optionsA = {
         queryKey: keyA,
         queryFn: defaultQueryFn,
@@ -68,13 +85,12 @@ describe('queriesObserver', () => {
       expect(observer.getCurrentResult()).toBe(current)
       expect(observer.getObservers()).toBe(observers)
       expect(
-        queryClient
-          .getQueryCache()
-          .find({ queryKey: keyB })!
-          .getObserversCount(),
+        getQueryObserverCount(
+          findCachedQuery(getQueryCache(queryClient), { queryKey: keyB })!,
+        ),
       ).toBe(0)
 
-      queryClient.setQueryData(keyA, 2)
+      setQueryData(queryClient, keyA, 2)
       expect(listener).toHaveBeenCalledTimes(1)
       expect(readerA.combineResult(readerA.getSnapshot())).toStrictEqual({
         data: 2,
@@ -84,11 +100,13 @@ describe('queriesObserver', () => {
       listener.mockClear()
       readerB.commit()
       expect(listener).toHaveBeenCalledTimes(1)
-      expect(observer.getQueries()[0]!.queryKey).toStrictEqual(keyB)
+      expect(
+        observer.getObservers()[0]!.getCurrentQuery().queryKey,
+      ).toStrictEqual(keyB)
       listener.mockClear()
-      queryClient.setQueryData(keyA, 3)
+      setQueryData(queryClient, keyA, 3)
       expect(listener).not.toHaveBeenCalled()
-      queryClient.setQueryData(keyB, 11)
+      setQueryData(queryClient, keyB, 11)
       expect(listener).toHaveBeenCalledTimes(1)
       expect(readerB.combineResult(readerB.getSnapshot())).toStrictEqual({
         data: 11,
@@ -96,8 +114,32 @@ describe('queriesObserver', () => {
       unsubscribe()
     })
 
+    it('keeps the last successful selection from reader creation until its first read', () => {
+      const query = {
+        queryKey: createKey(),
+        queryFn: () => 1,
+        initialData: 1,
+      }
+      const group = new QueriesObserver(queryClient, [
+        { ...query, select: selectResult(() => 'before') },
+      ])
+      const error = new Error('selection failed')
+      const reader = group.createResultReader([
+        {
+          ...query,
+          select: selectResult(() => {
+            throw error
+          }),
+        },
+      ])
+      group.setQueries([{ ...query, select: selectResult(() => 'after') }])
+
+      expect(reader.getSnapshot()[0]).toMatchObject({ data: 'before', error })
+      expect(group.getCurrentResult()[0]?.data).toBe('after')
+    })
+
     it('keeps the snapshot stable when predicted fetching starts', async () => {
-      const options = queryClient.defaultQueryOptions({
+      const options = defaultQueryOptions(queryClient, {
         queryKey: createKey(),
         queryFn: () => sleep(10).then(() => 'data'),
         _optimisticResults: 'optimistic',
@@ -119,8 +161,8 @@ describe('queriesObserver', () => {
     it('reuses selection when committing added and reordered queries', () => {
       const keyA = createKey()
       const keyB = createKey()
-      queryClient.setQueryData(keyA, { value: 1 })
-      queryClient.setQueryData(keyB, { value: 2 })
+      setQueryData(queryClient, keyA, { value: 1 })
+      setQueryData(queryClient, keyB, { value: 2 })
       const select = vi.fn<(data: { value: number }) => Array<number>>(
         (data: { value: number }) => [data.value],
       )
@@ -133,7 +175,7 @@ describe('queriesObserver', () => {
         queryKey: keyB,
         queryFn: defaultQueryFn,
         staleTime: Infinity,
-        select,
+        select: selectResult(select),
         structuralSharing: false,
       } as const
       const observer = new QueriesObserver(queryClient, [optionsA])
@@ -144,27 +186,29 @@ describe('queriesObserver', () => {
       expect(select).toHaveBeenCalledTimes(1)
       expect(observer.getCurrentResult()[0]!.data).toBe(snapshot[0]!.data)
       expect(
-        observer.getQueries().map((query) => query.queryKey),
+        observer
+          .getObservers()
+          .map((entry) => entry.getCurrentQuery().queryKey),
       ).toStrictEqual([keyB, keyA])
       unsubscribe()
     })
 
     it('checks cache updates between reading and committing', () => {
       const key = createKey()
-      queryClient.setQueryData(key, 1)
+      setQueryData(queryClient, key, 1)
       const select = vi.fn<(data: number) => Array<number>>((data: number) => [
         data,
       ])
       const options = {
         queryKey: key,
         queryFn: defaultQueryFn,
-        select,
+        select: selectResult(select),
         structuralSharing: false,
       } as const
       const observer = new QueriesObserver(queryClient, [])
       const reader = observer.createResultReader([options])
       const snapshot = reader.getSnapshot()
-      queryClient.setQueryData(key, 2)
+      setQueryData(queryClient, key, 2)
       reader.commit()
       expect(observer.getCurrentResult()[0]!.data).toStrictEqual([2])
       expect(observer.getCurrentResult()[0]!.data).not.toBe(snapshot[0]!.data)
@@ -173,7 +217,7 @@ describe('queriesObserver', () => {
 
     it('combines the complete result when several selectors change on commit', () => {
       const keys = [createKey(), createKey()]
-      keys.forEach((key, index) => queryClient.setQueryData(key, index + 1))
+      keys.forEach((key, index) => setQueryData(queryClient, key, index + 1))
       const queries = keys.map(
         (key) =>
           ({
@@ -196,7 +240,7 @@ describe('queriesObserver', () => {
       const reader = observer.createResultReader(
         queries.map((query) => ({
           ...query,
-          select: (data: number) => data * 10,
+          select: selectResult((data: number) => data * 10),
         })),
         { combine },
       )
@@ -212,7 +256,7 @@ describe('queriesObserver', () => {
 
     it('updates a stable combine when only selection options change', () => {
       const key = createKey()
-      queryClient.setQueryData(key, 2)
+      setQueryData(queryClient, key, 2)
       const options = {
         queryKey: key,
         queryFn: defaultQueryFn,
@@ -230,7 +274,7 @@ describe('queriesObserver', () => {
       })
       first.commit()
       const second = observer.createResultReader(
-        [{ ...options, select: (data: number) => data * 3 }],
+        [{ ...options, select: selectResult((data: number) => data * 3) }],
         { combine },
       )
       expect(second.combineResult(second.getSnapshot())).toStrictEqual({
@@ -239,7 +283,7 @@ describe('queriesObserver', () => {
       expect(observer.getCurrentResult()[0]!.data).toBe(2)
       second.commit()
       const third = observer.createResultReader(
-        [{ ...options, select: (data: number) => data * 3 }],
+        [{ ...options, select: selectResult((data: number) => data * 3) }],
         { combine },
       )
       expect(third.combineResult(third.getSnapshot())).toStrictEqual({
@@ -253,26 +297,29 @@ describe('queriesObserver', () => {
     const first = {
       queryKey: createKey(),
       enabled: false,
-      placeholderData: 1,
+      placeholderData: withPlaceholder(1),
       queryFn: defaultQueryFn,
     } as const
     const second = {
       queryKey: createKey(),
       enabled: false,
-      placeholderData: 2,
+      placeholderData: withPlaceholder(2),
       queryFn: defaultQueryFn,
     } as const
     const third = {
       queryKey: createKey(),
       enabled: false,
-      placeholderData: 3,
+      placeholderData: withPlaceholder(3),
       queryFn: defaultQueryFn,
     } as const
     const observer = new QueriesObserver(queryClient, [first, second])
     const current = observer.getCurrentResult()
 
     const optimistic = observer
-      .createResultReader([{ ...first, placeholderData: 4 }, third])
+      .createResultReader([
+        { ...first, placeholderData: withPlaceholder(4) },
+        third,
+      ])
       .getSnapshot()
 
     expect(optimistic.map((result) => result.data)).toStrictEqual([4, 3])
@@ -298,7 +345,7 @@ describe('queriesObserver', () => {
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
-  it('should return current queries via getQueries', async () => {
+  it('should return current queries in order', async () => {
     const key1 = createKey()
     const key2 = createKey()
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
@@ -310,7 +357,9 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(0)
 
-    const queries = observer.getQueries()
+    const queries = observer
+      .getObservers()
+      .map((item) => item.getCurrentQuery())
 
     expect(queries).toHaveLength(2)
     expect(queries[0]?.queryKey).toStrictEqual(key1)
@@ -334,7 +383,7 @@ describe('queriesObserver', () => {
       results.push(result)
     })
     await vi.advanceTimersByTimeAsync(0)
-    queryClient.setQueryData(key2, 3)
+    setQueryData(queryClient, key2, 3)
     unsubscribe()
 
     expect(results).toHaveLength(6)
@@ -402,16 +451,22 @@ describe('queriesObserver', () => {
     await vi.advanceTimersByTimeAsync(0)
     observer.setQueries([{ queryKey: key2, queryFn: queryFn2 }])
 
-    const queryCache = queryClient.getQueryCache()
+    const queryCache = getQueryCache(queryClient)
 
-    expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
     expect(
-      queryCache.find({ queryKey: key2, type: 'active' })?.queryKey,
+      findCachedQuery(queryCache, { queryKey: key1, type: 'active' }),
+    ).toBeUndefined()
+    expect(
+      findCachedQuery(queryCache, { queryKey: key2, type: 'active' })?.queryKey,
     ).toStrictEqual(key2)
 
     unsubscribe()
-    expect(queryCache.find({ queryKey: key1, type: 'active' })).toBeUndefined()
-    expect(queryCache.find({ queryKey: key2, type: 'active' })).toBeUndefined()
+    expect(
+      findCachedQuery(queryCache, { queryKey: key1, type: 'active' }),
+    ).toBeUndefined()
+    expect(
+      findCachedQuery(queryCache, { queryKey: key2, type: 'active' }),
+    ).toBeUndefined()
     expect(results).toHaveLength(6)
     expect(results[0]).toMatchObject([
       { status: 'pending', fetchStatus: 'idle', data: undefined },
@@ -650,8 +705,8 @@ describe('queriesObserver', () => {
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
-    queryClient.setQueryData(key1, 1)
-    queryClient.setQueryData(key2, 2)
+    setQueryData(queryClient, key1, 1)
+    setQueryData(queryClient, key2, 2)
 
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
@@ -673,12 +728,12 @@ describe('queriesObserver', () => {
       {
         queryKey: key1,
         queryFn: queryFn1,
-        select: (d: any) => d + 100,
+        select: selectResult((d: any) => d + 100),
       },
       {
         queryKey: key2,
         queryFn: queryFn2,
-        select: (d: any) => d + 100,
+        select: selectResult((d: any) => d + 100),
       },
     ])
 
@@ -752,7 +807,7 @@ describe('queriesObserver', () => {
       suspense: true,
     }
 
-    queryClient.setQueryData(key, 'data')
+    setQueryData(queryClient, key, 'data')
 
     const observer = new QueriesObserver<Array<unknown>>(queryClient, [query], {
       combine,
@@ -768,7 +823,7 @@ describe('queriesObserver', () => {
 
     const unsubscribe = observer.subscribe(() => undefined)
 
-    void queryClient.resetQueries({ queryKey: key })
+    void resetQueries(queryClient, { queryKey: key })
     expect(combine).toHaveBeenCalledTimes(1)
 
     unsubscribe()
@@ -788,7 +843,7 @@ describe('queriesObserver', () => {
       suspense: false,
     }
 
-    queryClient.setQueryData(key, 'data')
+    setQueryData(queryClient, key, 'data')
 
     const observer = new QueriesObserver<Array<unknown>>(queryClient, [query], {
       combine,
@@ -814,7 +869,7 @@ describe('queriesObserver', () => {
       { combine },
     )
 
-    void queryClient.resetQueries({ queryKey: key })
+    void resetQueries(queryClient, { queryKey: key })
     expect(combine).toHaveBeenCalledTimes(1)
 
     unsubscribe()
@@ -911,7 +966,7 @@ describe('queriesObserver', () => {
     expect(listener).toHaveBeenCalledTimes(1)
     expect(throwOnError).toHaveBeenCalledWith(
       new Error('error'),
-      queryClient.getQueryCache().find({ queryKey: key }),
+      findCachedQuery(getQueryCache(queryClient), { queryKey: key }),
     )
 
     unsubscribe()
@@ -945,7 +1000,7 @@ describe('queriesObserver', () => {
     expect(listener).not.toHaveBeenCalled()
     expect(throwOnError).toHaveBeenCalledWith(
       new Error('error'),
-      queryClient.getQueryCache().find({ queryKey: key }),
+      findCachedQuery(getQueryCache(queryClient), { queryKey: key }),
     )
 
     unsubscribe()
@@ -985,7 +1040,7 @@ describe('queriesObserver', () => {
       expect.objectContaining({ status: 'success', data: 'data' }),
     ])
 
-    void queryClient.refetchQueries({ queryKey: key })
+    void refetchQueries(queryClient, { queryKey: key })
     await vi.advanceTimersByTimeAsync(10)
     expect(listener).toHaveBeenCalledTimes(2)
     expect(listener).toHaveBeenLastCalledWith([
@@ -996,7 +1051,7 @@ describe('queriesObserver', () => {
       }),
     ])
 
-    void queryClient.refetchQueries({ queryKey: key })
+    void refetchQueries(queryClient, { queryKey: key })
     await vi.advanceTimersByTimeAsync(0)
     expect(observer.getCurrentResult()[0]).toMatchObject({
       status: 'error',
@@ -1125,7 +1180,7 @@ describe('queriesObserver', () => {
     const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
     const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
 
-    queryClient.setQueryData(key1, 'cached-1')
+    setQueryData(queryClient, key1, 'cached-1')
 
     const observer = new QueriesObserver<{
       keys: Array<string>
@@ -1353,11 +1408,11 @@ describe('queriesObserver', () => {
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(0)
     const oldQuery = new WeakRef(
-      queryClient.getQueryCache().find({ queryKey: oldKey })!,
+      findCachedQuery(getQueryCache(queryClient), { queryKey: oldKey })!,
     )
 
     observer.setQueries([{ queryKey: createKey(), queryFn: () => 2 }])
-    queryClient.removeQueries({ queryKey: oldKey })
+    removeQueries(queryClient, { queryKey: oldKey })
     // A WeakRef keeps its target alive until the current job ends.
     await vi.advanceTimersByTimeAsync(0)
     gc()

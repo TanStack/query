@@ -1,10 +1,15 @@
-import { dataTagSymbol } from '@tanstack/query-core'
+import { dataTagSymbol, select } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { reactive } from 'vue'
 import { defaultQueryFn } from '..'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
-import { QueryClient } from '../queryClient'
+import {
+  QueryClient,
+  getQueryData,
+  infiniteQuery,
+  setQueryData,
+} from '../queryClient'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 
@@ -41,9 +46,9 @@ describe('infiniteQueryOptions', () => {
       staleTime: 1000,
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      select: (data) => {
+      select: select((data) => {
         expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
-      },
+      }),
     })
   })
 
@@ -118,7 +123,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    const data = await new QueryClient().infiniteQuery({
+    const data = await infiniteQuery(new QueryClient(), {
       ...options,
       staleTime: 0,
       pages: 1,
@@ -133,10 +138,10 @@ describe('infiniteQueryOptions', () => {
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      select: (data) => data.pages,
+      select: select((data) => data.pages),
     })
 
-    const data = await new QueryClient().infiniteQuery({
+    const data = await infiniteQuery(new QueryClient(), {
       ...options,
       staleTime: 0,
       pages: 1,
@@ -174,7 +179,7 @@ describe('infiniteQueryOptions', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: key,
       queryFn: () => Promise.resolve('string'),
-      select: (data) => data.pages,
+      select: select((data) => data.pages),
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
@@ -192,7 +197,7 @@ describe('infiniteQueryOptions', () => {
     })
 
     const queryClient = new QueryClient()
-    const data = queryClient.getQueryData(tagged)
+    const data = getQueryData(queryClient, tagged)
 
     expectTypeOf(data).toEqualTypeOf<
       InfiniteData<string, unknown> | undefined
@@ -209,7 +214,7 @@ describe('infiniteQueryOptions', () => {
     })
 
     const queryClient = new QueryClient()
-    const data = queryClient.setQueryData(tagged, (prev) => {
+    const data = setQueryData(queryClient, tagged, (prev) => {
       expectTypeOf(prev).toEqualTypeOf<
         InfiniteData<string, unknown> | undefined
       >()

@@ -1,7 +1,7 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { onScopeDispose, reactive, ref } from 'vue'
-import { QueryClient } from '../queryClient'
+import { QueryClient, isMutating as queryIsMutating } from '../queryClient'
 import { useMutation } from '../useMutation'
 import { useIsMutating } from '../useMutationState'
 import { useQueryClient } from '../useQueryClient'
@@ -57,10 +57,10 @@ describe('useIsMutating', () => {
     mutation.mutateAsync('a')
     mutation2.mutateAsync('b')
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryClient.isMutating({ mutationKey: key })).toBe(2)
+    expect(queryIsMutating(queryClient, { mutationKey: key })).toBe(2)
     expect(isMutating.value).toBe(0)
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.isMutating({ mutationKey: key })).toBe(0)
+    expect(queryIsMutating(queryClient, { mutationKey: key })).toBe(0)
     expect(isMutating.value).toBe(0)
 
     onScopeDisposeMock.mockReset()

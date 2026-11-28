@@ -1,3 +1,4 @@
+import { clearQueryClient } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/svelte'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -15,7 +16,7 @@ describe('createQueries', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 

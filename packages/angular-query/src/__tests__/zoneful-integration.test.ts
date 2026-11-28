@@ -7,6 +7,12 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import {
+  findCachedQuery,
+  getQueryCache,
+  getQueryObserverCount,
+  setQueryData,
+} from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import {
   QueryClient,
@@ -52,7 +58,7 @@ describe('Zone.js notification integration', () => {
 
     expect(query.data()).toBeUndefined()
     TestBed.tick()
-    queryClient.setQueryData(key, 'updated')
+    setQueryData(queryClient, key, 'updated')
 
     expect(query.data()).toBe('updated')
   })
@@ -67,7 +73,7 @@ describe('Zone.js notification integration', () => {
 
     expect(queries()[0].data()).toBeUndefined()
     TestBed.tick()
-    queryClient.setQueryData(key, 'updated')
+    setQueryData(queryClient, key, 'updated')
 
     expect(queries()[0].data()).toBe('updated')
   })
@@ -86,7 +92,7 @@ describe('Zone.js notification integration', () => {
         mutationKey: ['zoneful-mutation'],
         mutationFn: async () => 'server',
         onMutate: () => {
-          queryClient.setQueryData(key, 'optimistic')
+          setQueryData(queryClient, key, 'optimistic')
           seenInOnMutate.push(query.data() as string | undefined)
         },
       })),
@@ -133,10 +139,11 @@ describe('Zone.js notification integration', () => {
     expect(queriedKeys).toStrictEqual(['new'])
     expect(query.data()).toBe('new')
     expect(
-      queryClient
-        .getQueryCache()
-        .find({ queryKey: ['zoneful-restoration', 'new'] })
-        ?.getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['zoneful-restoration', 'new'],
+        })!,
+      ),
     ).toBe(1)
   })
 
@@ -180,8 +187,8 @@ describe('Zone.js notification integration', () => {
     await fixture.whenStable()
     const zone = TestBed.inject(NgZone)
     const promise = zone.runOutsideAngular(() => {
-      queryClient.setQueryData(['outside-single'], 'single')
-      queryClient.setQueryData(['outside-multiple'], 'multiple')
+      setQueryData(queryClient, ['outside-single'], 'single')
+      setQueryData(queryClient, ['outside-multiple'], 'multiple')
       return fixture.componentInstance.mutation.mutateAsync()
     })
     await promise

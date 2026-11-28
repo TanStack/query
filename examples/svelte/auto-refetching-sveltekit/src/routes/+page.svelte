@@ -1,5 +1,10 @@
 <script lang="ts">
   import {
+    isFetching,
+    isPending,
+    isSuccess,
+    refetchInterval,
+    invalidateQueries,
     useQueryClient,
     createQuery,
     createMutation,
@@ -14,19 +19,19 @@
   const todos = createQuery(() => ({
     ...todosQueries.list(),
     // Refetch the data every second
-    refetchInterval: intervalMs,
+    refetchInterval: refetchInterval(intervalMs),
   }))
 
   const addMutation = createMutation(() => ({
     ...todosMutations.create(),
     onSuccess: () =>
-      client.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
+      invalidateQueries(client, { queryKey: todosQueries.list().queryKey }),
   }))
 
   const clearMutation = createMutation(() => ({
     ...todosMutations.deleteAll(),
     onSuccess: () =>
-      client.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
+      invalidateQueries(client, { queryKey: todosQueries.list().queryKey }),
   }))
 </script>
 
@@ -48,8 +53,8 @@
           margin-left:.5rem;
           width:.75rem;
           height:.75rem; 
-          background: {todos.isFetching ? 'green' : 'transparent'};
-          transition: {!todos.isFetching ? 'all .3s ease' : 'none'};
+          background: {isFetching(todos) ? 'green' : 'transparent'};
+          transition: {!isFetching(todos) ? 'all .3s ease' : 'none'};
           border-radius: 100%;
           transform: scale(1.5)"
     ></span>
@@ -68,14 +73,14 @@
   <input placeholder="enter something" bind:value />
 </form>
 
-{#if todos.isPending}
+{#if isPending(todos)}
   Loading...
 {/if}
 {#if todos.error}
   An error has occurred:
   {todos.error.message}
 {/if}
-{#if todos.isSuccess}
+{#if isSuccess(todos)}
   <ul>
     {#each todos.data.items as item (item)}
       <li>{item}</li>
@@ -87,7 +92,7 @@
 {/if}
 
 <pre
-  class={['updating-text', todos.isFetching && 'on']}
+  class={['updating-text', isFetching(todos) && 'on']}
   style="font-weight:700">Background Updating...</pre>
 
 <style>

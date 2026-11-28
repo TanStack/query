@@ -11,10 +11,12 @@ Dependent (or serial) queries depend on previous ones to finish before they can 
 
 ```tsx
 // Get the user
-const { data: user } = useQuery({
-  queryKey: ['user', email],
-  queryFn: getUserByEmail,
-})
+const { data: user } = useQuery(
+  queryOptions({
+    queryKey: ['user', email],
+    queryFn: getUserByEmail,
+  }),
+)
 
 const userId = user?.id
 
@@ -23,12 +25,14 @@ const {
   status,
   fetchStatus,
   data: projects,
-} = useQuery({
-  queryKey: ['projects', userId],
-  queryFn: getProjectsByUser,
-  // The query will not execute until the userId exists
-  enabled: !!userId,
-})
+} = useQuery(
+  queryOptions({
+    queryKey: ['projects', userId],
+    queryFn: getProjectsByUser,
+    // The query will not execute until the userId exists
+    enabled: !!userId,
+  }),
+)
 ```
 
 [//]: # 'Example'
@@ -37,7 +41,6 @@ The `projects` query will start in:
 
 ```tsx
 status: 'pending'
-isPending: true
 fetchStatus: 'idle'
 ```
 
@@ -45,7 +48,6 @@ As soon as the `user` is available, the `projects` query will be `enabled` and w
 
 ```tsx
 status: 'pending'
-isPending: true
 fetchStatus: 'fetching'
 ```
 
@@ -53,7 +55,6 @@ Once we have the projects, it will go to:
 
 ```tsx
 status: 'success'
-isPending: false
 fetchStatus: 'idle'
 ```
 
@@ -65,11 +66,13 @@ Dynamic parallel query - `useQueries` can depend on a previous query also, here'
 
 ```tsx
 // Get the users ids
-const { data: userIds } = useQuery({
-  queryKey: ['users'],
-  queryFn: getUsersData,
-  select: (users) => users.map((user) => user.id),
-})
+const { data: userIds } = useQuery(
+  queryOptions({
+    queryKey: ['users'],
+    queryFn: getUsersData,
+    select: select((users) => users.map((user) => user.id)),
+  }),
+)
 
 // Then get the users messages
 const usersMessages = useQueries({

@@ -1,3 +1,4 @@
+import { clearQueryClient, placeholderData } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent } from '@testing-library/preact'
 import { Suspense } from 'preact/compat'
@@ -7,7 +8,8 @@ import {
   QueryCache,
   QueryClient,
   skipToken,
-  useSuspenseInfiniteQuery,
+  suspenseInfiniteQueryOptions,
+  useQuery,
 } from '..'
 import { renderWithClient } from './utils'
 import type { InfiniteData, UseSuspenseInfiniteQueryResult } from '..'
@@ -22,7 +24,7 @@ describe('useSuspenseInfiniteQuery', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -35,12 +37,14 @@ describe('useSuspenseInfiniteQuery', () => {
 
     function Page() {
       const [ready, setReady] = useState(false)
-      const result = useSuspenseInfiniteQuery({
-        queryKey: key,
-        queryFn: ready ? queryFn : skipToken,
-        initialPageParam: 0,
-        getNextPageParam: () => undefined,
-      })
+      const result = useQuery(
+        suspenseInfiniteQueryOptions({
+          queryKey: key,
+          queryFn: ready ? queryFn : skipToken,
+          initialPageParam: 0,
+          getNextPageParam: () => undefined,
+        }),
+      )
 
       return (
         <>
@@ -83,13 +87,15 @@ describe('useSuspenseInfiniteQuery', () => {
       []
 
     function Page() {
-      const state = useSuspenseInfiniteQuery({
-        queryKey: key,
-        queryFn,
-        initialPageParam: 1,
-        getNextPageParam: () => undefined,
-        placeholderData: { pages: [0], pageParams: [1] },
-      })
+      const state = useQuery(
+        suspenseInfiniteQueryOptions({
+          queryKey: key,
+          queryFn,
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+          placeholderData: placeholderData({ pages: [0], pageParams: [1] }),
+        }),
+      )
 
       states.push(state)
       return <div>data: {state.data.pages.join(',')}</div>

@@ -1,10 +1,17 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
+import {
+  isError as queryIsError,
+  isFetching as queryIsFetching,
+  isLoading as queryIsLoading,
+  useQuery,
+} from '@tanstack/vue-query'
+import { computed } from 'vue'
 import { moviesQueries } from '../services/movies/queries'
 
-const { data, error, isError, isFetching, isLoading } = useQuery(
-  moviesQueries.list(),
-)
+const { state: queryState, data, error } = useQuery(moviesQueries.list())
+const isError = computed(() => queryIsError(queryState))
+const isFetching = computed(() => queryIsFetching(queryState))
+const isLoading = computed(() => queryIsLoading(queryState))
 </script>
 
 <template>

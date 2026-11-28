@@ -101,6 +101,40 @@ export const rule = createRule({
       }
     }
 
+    /**
+     * Checks a query client's options, key or filters argument.
+     * @param method - The client operation, including imported aliases resolved to their original name.
+     * @param options - The argument after the client for a standalone operation.
+     */
+    function checkClientArgument(method: string, options: TSESTree.Node): void {
+      if (
+        method === 'query' ||
+        method === 'infiniteQuery' ||
+        queryClientOptionMethods.includes(method)
+      ) {
+        reportInlineQueryOptions(options)
+        return
+      }
+
+      if (
+        queryClientQueryKeyMethods.includes(method) &&
+        isInlineArrayExpression(options)
+      ) {
+        context.report({
+          node: options,
+          messageId: 'preferQueryOptionsQueryKey',
+        })
+        return
+      }
+
+      if (
+        method === 'countFetchingQueries' ||
+        queryClientFilterMethods.includes(method)
+      ) {
+        reportInlineFilterQueryKey(options)
+      }
+    }
+
     return {
       CallExpression: (node) => {
         if (ASTUtils.isIdentifier(node.callee)) {
@@ -149,6 +183,8 @@ export const rule = createRule({
 
           if (filterHooks.includes(importedName)) {
             reportInlineFilterQueryKey(options)
+          } else if (node.arguments[1] && importedName !== 'isFetching') {
+            checkClientArgument(importedName, node.arguments[1])
           }
 
           return
@@ -169,25 +205,7 @@ export const rule = createRule({
           return
         }
 
-        if (queryClientOptionMethods.includes(method)) {
-          reportInlineQueryOptions(options)
-          return
-        }
-
-        if (
-          queryClientQueryKeyMethods.includes(method) &&
-          isInlineArrayExpression(options)
-        ) {
-          context.report({
-            node: options,
-            messageId: 'preferQueryOptionsQueryKey',
-          })
-          return
-        }
-
-        if (queryClientFilterMethods.includes(method)) {
-          reportInlineFilterQueryKey(options)
-        }
+        checkClientArgument(method, options)
       },
     }
   }),

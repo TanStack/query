@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { mountQueryClient, unmountQueryClient } from '@tanstack/query-core'
   import { onDestroy, onMount } from 'svelte'
   import { createQuery, setQueryClientContext } from '../../src/index.js'
   import type { QueryClient } from '@tanstack/query-core'
@@ -14,8 +15,8 @@
 
   setQueryClientContext(queryClient)
 
-  onMount(() => queryClient.mount())
-  onDestroy(() => queryClient.unmount())
+  onMount(() => mountQueryClient(queryClient))
+  onDestroy(() => unmountQueryClient(queryClient))
 
   const query1 = createQuery(options1)
   const query2 = createQuery(options2)

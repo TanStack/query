@@ -1,5 +1,11 @@
+import { select } from '@tanstack/query-core'
 import { describe, expectTypeOf, it } from 'vitest'
-import { injectInfiniteQuery, skipToken, toResource } from '..'
+import {
+  infiniteQueryOptions,
+  injectInfiniteQuery,
+  skipToken,
+  toResource,
+} from '..'
 import type { Signal } from '@angular/core'
 import type { InfiniteData } from '@tanstack/query-core'
 import type { CreateInfiniteQueryOptions, CreateInfiniteQueryResult } from '..'
@@ -145,16 +151,19 @@ describe('injectInfiniteQuery', () => {
   })
 
   it('should provide the correct types to the select function', () => {
-    const query = injectInfiniteQuery(() => ({
-      queryKey: ['infiniteQuery'],
-      queryFn: ({ pageParam }) => Promise.resolve('data on page ' + pageParam),
-      initialPageParam: 0,
-      getNextPageParam: () => 12,
-      select: (data) => {
-        expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
-        return data
-      },
-    }))
+    const query = injectInfiniteQuery(() =>
+      infiniteQueryOptions({
+        queryKey: ['infiniteQuery'],
+        queryFn: ({ pageParam }: { pageParam: number }) =>
+          Promise.resolve('data on page ' + pageParam),
+        initialPageParam: 0,
+        getNextPageParam: () => 12,
+        select: select((data) => {
+          expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+          return data
+        }),
+      }),
+    )
 
     expectTypeOf(query.data).toEqualTypeOf<
       Signal<undefined> | Signal<InfiniteData<string, number>>

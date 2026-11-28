@@ -1,21 +1,20 @@
-import { useQuery } from '@tanstack/react-query'
+import { isError, isFetching, isPending, useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { postsQueries } from '../services/posts/queries'
 
 export const PostList = () => {
   const [postCount, setPostCount] = useState(10)
-  const { data, error, isPending, isError, isFetching } = useQuery(
-    postsQueries.list(postCount),
-  )
+  const queryResult = useQuery(postsQueries.list(postCount))
+  const fetching = isFetching(queryResult)
 
-  if (isPending) return <div>Loading</div>
+  if (isPending(queryResult)) return <div>Loading</div>
 
-  if (isError) return <div>Error: {error.message}</div>
+  if (isError(queryResult)) return <div>Error: {queryResult.error.message}</div>
 
   return (
     <section>
       <ul>
-        {data.map((post, index) => (
+        {queryResult.data.map((post, index) => (
           <li key={post.id}>
             {index + 1}. {post.title}
           </li>
@@ -24,9 +23,9 @@ export const PostList = () => {
       {postCount <= 90 && (
         <button
           onClick={() => setPostCount(postCount + 10)}
-          disabled={isFetching}
+          disabled={fetching}
         >
-          {isFetching ? 'Loading...' : 'Show More'}
+          {fetching ? 'Loading...' : 'Show More'}
         </button>
       )}
       <style jsx>{`

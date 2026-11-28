@@ -2,6 +2,9 @@ import {
   QueryClient,
   QueryClientProvider,
   createInfiniteQueryController,
+  isFetching,
+  isFetchingNextPage,
+  isFetchingPreviousPage,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { worker } from './mocks'
@@ -27,37 +30,29 @@ class InfiniteQueryExample extends LitElement {
   }
 
   private renderProjects() {
-    const {
-      status,
-      data,
-      error,
-      isFetching,
-      isFetchingNextPage,
-      isFetchingPreviousPage,
-      hasNextPage,
-      hasPreviousPage,
-    } = this.projects()
+    const queryResult = this.projects()
 
-    if (status === 'pending') return html`<p>Loading...</p>`
-    if (status === 'error') return html`<span>Error: ${error.message}</span>`
+    if (queryResult.status === 'pending') return html`<p>Loading...</p>`
+    if (queryResult.status === 'error')
+      return html`<span>Error: ${queryResult.error.message}</span>`
 
     return html`
       <div>
         <button
           type="button"
           @click=${() => this.projects.fetchPreviousPage()}
-          ?disabled=${!hasPreviousPage || isFetchingPreviousPage}
+          ?disabled=${!queryResult.hasPreviousPage || isFetchingPreviousPage(queryResult)}
         >
           ${
-            isFetchingPreviousPage
+            isFetchingPreviousPage(queryResult)
               ? 'Loading more...'
-              : hasPreviousPage
+              : queryResult.hasPreviousPage
                 ? 'Load Older'
                 : 'Nothing more to load'
           }
         </button>
       </div>
-      ${data.pages.map((page) =>
+      ${queryResult.data.pages.map((page) =>
         page.data.map(
           (project) => html`
             <p
@@ -74,19 +69,19 @@ class InfiniteQueryExample extends LitElement {
         <button
           type="button"
           @click=${() => this.projects.fetchNextPage()}
-          ?disabled=${!hasNextPage || isFetchingNextPage}
+          ?disabled=${!queryResult.hasNextPage || isFetchingNextPage(queryResult)}
         >
           ${
-            isFetchingNextPage
+            isFetchingNextPage(queryResult)
               ? 'Loading more...'
-              : hasNextPage
+              : queryResult.hasNextPage
                 ? 'Load Newer'
                 : 'Nothing more to load'
           }
         </button>
       </div>
       <div>
-        ${isFetching && !isFetchingNextPage ? 'Background Updating...' : null}
+        ${isFetching(queryResult) && !isFetchingNextPage(queryResult) ? 'Background Updating...' : null}
       </div>
     `
   }

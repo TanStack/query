@@ -1,6 +1,10 @@
 import {
+  isFetching,
   keepPreviousData,
   noop,
+  placeholderData,
+  query,
+  queryOptions,
   useQuery,
   useQueryClient,
 } from '@tanstack/preact-query'
@@ -12,17 +16,19 @@ export default function App() {
   const queryClient = useQueryClient()
   const [page, setPage] = useState(0)
 
-  const { status, data, error, isFetching, isPlaceholderData } = useQuery({
-    ...projectsQueries.list(page),
-    placeholderData: keepPreviousData,
-  })
+  const queryResult = useQuery(
+    queryOptions({
+      ...projectsQueries.list(page),
+      placeholderData: placeholderData(keepPreviousData),
+    }),
+  )
 
   // Prefetch the next page!
   useEffect(() => {
-    if (!isPlaceholderData && data?.hasMore) {
-      queryClient.query(projectsQueries.list(page + 1)).catch(noop)
+    if (!queryResult.isPlaceholderData && queryResult.data?.hasMore) {
+      query(queryClient, projectsQueries.list(page + 1)).catch(noop)
     }
-  }, [data, isPlaceholderData, page, queryClient])
+  }, [queryResult.data, queryResult.isPlaceholderData, page, queryClient])
 
   return (
     <div>
@@ -34,15 +40,15 @@ export default function App() {
         instantaneously while they are also refetched invisibly in the
         background.
       </p>
-      {status === 'pending' ? (
+      {queryResult.status === 'pending' ? (
         <div>Loading...</div>
-      ) : status === 'error' ? (
-        <div>Error: {error.message}</div>
+      ) : queryResult.status === 'error' ? (
+        <div>Error: {queryResult.error.message}</div>
       ) : (
         // `data` will either resolve to the latest page's data
         // or if fetching a new page, the last successful page's data
         <div>
-          {data.projects.map((project) => (
+          {queryResult.data.projects.map((project) => (
             <p key={project.id}>{project.name}</p>
           ))}
         </div>
@@ -56,9 +62,9 @@ export default function App() {
       </button>{' '}
       <button
         onClick={() => {
-          setPage((old) => (data?.hasMore ? old + 1 : old))
+          setPage((old) => (queryResult.data?.hasMore ? old + 1 : old))
         }}
-        disabled={isPlaceholderData || !data?.hasMore}
+        disabled={queryResult.isPlaceholderData || !queryResult.data?.hasMore}
       >
         Next Page
       </button>
@@ -66,7 +72,7 @@ export default function App() {
         // Since the last page's data potentially sticks around between page requests,
         // we can use `isFetching` to show a background loading
         // indicator since our `status === 'pending'` state won't be triggered
-        isFetching ? <span> Loading...</span> : null
+        isFetching(queryResult) ? <span> Loading...</span> : null
       }{' '}
       <PreactQueryDevtools initialIsOpen />
     </div>

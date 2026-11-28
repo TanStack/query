@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { createQuery, noop, useQueryClient } from '@tanstack/svelte-query'
+  import {
+    query as queryQuery,
+    createQuery,
+    noop,
+    useQueryClient,
+  } from '@tanstack/svelte-query'
   import { resolve } from '$app/paths'
   import { charactersQueries } from './services/characters/queries'
   import type { Character } from './services/characters/types'
@@ -15,12 +20,10 @@
   }))
 
   const prefetch = () => {
-    queryClient
-      .query({
-        ...charactersQueries.detail(char.id),
-        staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-      })
-      .catch(noop)
+    queryQuery(queryClient, {
+      ...charactersQueries.detail(char.id),
+      staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+    }).catch(noop)
   }
 </script>
 

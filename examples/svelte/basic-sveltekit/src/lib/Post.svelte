@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+  import {
+    isPending,
+    isSuccess,
+    isFetching,
+    createQuery,
+  } from '@tanstack/svelte-query'
   import { resolve } from '$app/paths'
   import { postsQueries } from './services/posts/queries'
 
@@ -16,17 +21,17 @@
   <div>
     <a class="button" href={resolve('/')}> Back </a>
   </div>
-  {#if post.isPending}
+  {#if isPending(post)}
     <span>Loading...</span>
   {/if}
   {#if post.error}
     <span>Error: {post.error.message}</span>
   {/if}
-  {#if post.isSuccess}
+  {#if isSuccess(post)}
     <h1>{post.data.title}</h1>
     <div>
       <p>{post.data.body}</p>
     </div>
-    <div>{post.isFetching ? 'Background Updating...' : ' '}</div>
+    <div>{isFetching(post) ? 'Background Updating...' : ' '}</div>
   {/if}
 </div>

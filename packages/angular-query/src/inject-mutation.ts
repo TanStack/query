@@ -54,7 +54,7 @@ import type {
  *
  *   readonly addMutation = injectMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => this.#queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => this.#invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  * }
  * ```
@@ -71,10 +71,10 @@ import type {
  *   readonly addMutation = injectMutation(() => ({
  *     mutationFn: addTodo,
  *     onMutate: async (newTodo) => {
- *       await this.#queryClient.cancelQueries({ queryKey: ['todos'] })
- *       const previousTodos = this.#queryClient.getQueryData<Array<string>>(['todos'])
+ *       await this.#cancelQueries(queryClient, { queryKey: ['todos'] })
+ *       const previousTodos = this.#getQueryData<Array<string>>(['todos'])
  *
- *       this.#queryClient.setQueryData<Array<string>>(['todos'], (old) => [
+ *       this.#setQueryData<Array<string>>(['todos'], (old) => [
  *         ...(old ?? []),
  *         newTodo,
  *       ])
@@ -83,10 +83,10 @@ import type {
  *       return { previousTodos }
  *     },
  *     onError: (_err, _newTodo, onMutateResult) => {
- *       this.#queryClient.setQueryData(['todos'], onMutateResult?.previousTodos)
+ *       this.#setQueryData(queryClient, ['todos'], onMutateResult?.previousTodos)
  *     },
  *     onSettled: () => {
- *       this.#queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *       this.#invalidateQueries(queryClient, { queryKey: ['todos'] })
  *     },
  *   }))
  * }
@@ -106,7 +106,7 @@ import type {
  *
  *   readonly addMutation = injectMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => this.#queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => this.#invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  *
  *   async handleAddAll(todos: Array<string>) {
@@ -134,7 +134,7 @@ import type {
  *
  *   readonly addMutation = injectMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => this.#queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => this.#invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  *
  *   async handleAddAll(todos: Array<string>) {

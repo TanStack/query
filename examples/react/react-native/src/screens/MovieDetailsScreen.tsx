@@ -1,4 +1,12 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  getQueryData,
+  isError,
+  isPending,
+  placeholderData,
+  queryOptions,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import * as React from 'react'
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
@@ -25,24 +33,29 @@ export function MovieDetailsScreen({ route }: Props) {
   const { title } = route.params
   const queryClient = useQueryClient()
   const movieDetailQuery = moviesQueries.detail(title)
-  const { isPending, isError, error, data, refetch } = useQuery<
-    Movie | MovieDetails,
-    Error,
-    Movie | MovieDetails,
-    typeof movieDetailQuery.queryKey
-  >({
-    queryKey: movieDetailQuery.queryKey,
-    queryFn: movieDetailQuery.queryFn,
-    placeholderData: () =>
-      queryClient
-        .getQueryData(moviesQueries.list().queryKey)
-        ?.find((movie) => movie.title === title),
-  })
+  const queryResult = useQuery(
+    queryOptions<
+      Movie | MovieDetails,
+      Error,
+      Movie | MovieDetails,
+      typeof movieDetailQuery.queryKey
+    >({
+      queryKey: movieDetailQuery.queryKey,
+      queryFn: movieDetailQuery.queryFn,
+      placeholderData: placeholderData(() =>
+        getQueryData(queryClient, moviesQueries.list().queryKey)?.find(
+          (movie) => movie.title === title,
+        ),
+      ),
+    }),
+  )
+  const { refetch } = queryResult
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch)
 
-  if (isPending) return <LoadingIndicator />
-  if (isError) return <ErrorMessage message={error.message}></ErrorMessage>
+  if (isPending(queryResult)) return <LoadingIndicator />
+  if (isError(queryResult))
+    return <ErrorMessage message={queryResult.error.message}></ErrorMessage>
 
   return (
     <ScrollView
@@ -55,19 +68,19 @@ export function MovieDetailsScreen({ route }: Props) {
     >
       <View style={styles.titleRow}>
         <Text variant="titleLarge">
-          {data.title} ({data.year})
+          {queryResult.data.title} ({queryResult.data.year})
         </Text>
       </View>
-      {'info' in data ? (
+      {'info' in queryResult.data ? (
         <>
           <View style={styles.infoRow}>
-            <Text variant="bodyMedium">{data.info.plot}</Text>
+            <Text variant="bodyMedium">{queryResult.data.info.plot}</Text>
           </View>
           <View style={styles.actorsRow}>
             <Text variant="bodyMedium">
-              {data.info.actors.slice(0, -1).join(', ') +
+              {queryResult.data.info.actors.slice(0, -1).join(', ') +
                 ' or ' +
-                data.info.actors.slice(-1)}
+                queryResult.data.info.actors.slice(-1)}
             </Text>
           </View>
         </>

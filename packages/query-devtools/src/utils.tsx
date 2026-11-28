@@ -1,3 +1,4 @@
+import { getQueryObserverCount, isQueryStale } from '@tanstack/query-core'
 import { createSignal, onCleanup, onMount } from 'solid-js'
 import { serialize } from 'superjson'
 import { getNativeObjectType } from './nativeObjectType'
@@ -13,11 +14,11 @@ import type { DevtoolsPosition } from './contexts'
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
     ? 'fetching'
-    : !query.getObserversCount()
+    : !getQueryObserverCount(query)
       ? 'inactive'
       : query.state.fetchStatus === 'paused'
         ? 'paused'
-        : query.isStale()
+        : isQueryStale(query)
           ? 'stale'
           : 'fresh'
 }
@@ -124,9 +125,9 @@ type SortFn = (a: Query, b: Query) => number
 const getStatusRank = (q: Query) =>
   q.state.fetchStatus !== 'idle'
     ? 0
-    : !q.getObserversCount()
+    : !getQueryObserverCount(q)
       ? 3
-      : q.isStale()
+      : isQueryStale(q)
         ? 2
         : 1
 

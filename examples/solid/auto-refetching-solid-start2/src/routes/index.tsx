@@ -1,4 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/solid-query'
+import {
+  invalidateQueries,
+  isFetching,
+  refetchInterval,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/solid-query'
 import { ErrorBoundary, For, Suspense, createSignal } from 'solid-js'
 import { todosMutations, todosQueries } from '~/services/todos/queries'
 
@@ -10,20 +17,20 @@ export default function Example() {
   const todosQuery = useQuery(() => ({
     ...todosQueries.list(),
     // Refetch the data every second
-    refetchInterval: intervalMs(),
+    refetchInterval: refetchInterval(intervalMs()),
     throwOnError: true,
   }))
 
   const addMutation = useMutation(() => ({
     ...todosMutations.create(),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
+      invalidateQueries(queryClient, { queryKey: todosQueries.all() }),
   }))
 
   const clearMutation = useMutation(() => ({
     ...todosMutations.deleteAll(),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
+      invalidateQueries(queryClient, { queryKey: todosQueries.all() }),
   }))
 
   return (
@@ -50,8 +57,8 @@ export default function Example() {
                 'margin-left': '.5rem',
                 width: '10px',
                 height: '10px',
-                background: todosQuery.isFetching ? 'green' : 'transparent',
-                transition: !todosQuery.isFetching ? 'all .3s ease' : 'none',
+                background: isFetching(todosQuery) ? 'green' : 'transparent',
+                transition: !isFetching(todosQuery) ? 'all .3s ease' : 'none',
                 'border-radius': '100%',
                 transform: 'scale(2)',
               }}

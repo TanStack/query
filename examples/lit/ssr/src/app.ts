@@ -1,4 +1,9 @@
-import { createQueryController } from '@tanstack/lit-query'
+import {
+  createQueryController,
+  isError,
+  isFetching,
+  isPending,
+} from '@tanstack/lit-query'
 import { LitElement, css, html } from 'lit'
 import { dataQueries } from './services/data/queries.js'
 import type { QueryClient, QueryResultAccessor } from '@tanstack/lit-query'
@@ -110,7 +115,7 @@ export class SsrApp extends LitElement {
 
     const query = this.dataQuery()
 
-    if (query.isPending) {
+    if (isPending(query)) {
       return html`
         <article data-testid="content">
           <h1>Lit Query SSR</h1>
@@ -119,7 +124,7 @@ export class SsrApp extends LitElement {
       `
     }
 
-    if (query.isError) {
+    if (isError(query)) {
       return html`
         <article data-testid="content">
           <h1>Lit Query SSR</h1>
@@ -132,7 +137,9 @@ export class SsrApp extends LitElement {
     return html`
       <article data-testid="content">
         <h1>Lit Query SSR</h1>
-        <p data-testid="status">${query.isFetching ? 'Refreshing' : 'Ready'}</p>
+        <p data-testid="status">
+          ${isFetching(query) ? 'Refreshing' : 'Ready'}
+        </p>
         <p data-testid="message">${query.data.message}</p>
         <p data-testid="request-count">
           Request count: ${query.data.requestCount}
@@ -140,7 +147,7 @@ export class SsrApp extends LitElement {
         <p data-testid="served-at">Served at: ${query.data.servedAt}</p>
         <button
           data-testid="refetch-button"
-          ?disabled=${query.isFetching}
+          ?disabled=${isFetching(query)}
           @click=${this.handleRefetch}
         >
           Refetch

@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "#adapter": [
+        "../../../.cache/query-bundle-base/packages/react-query/build/index.d.ts"
+      ],
+      "#book-list-hooks": ["./src/v6-book-list.ts"],
+      "#query-hooks": ["./src/v6-query.ts"],
+      "#feature-options": ["./src/v6-options.ts"],
+      "#polling-option": ["./src/numeric-interval.ts"],
+      "#screen": ["./src/screen-types.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["src/treeshakable-*.ts"]
+}

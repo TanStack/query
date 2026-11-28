@@ -1,4 +1,12 @@
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  isFetchNextPageError,
+  isFetchPreviousPageError,
+  isLoadingError,
+  isRefetchError,
+  infiniteQuery as queryInfiniteQuery,
+  select,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 import { createInfiniteQuery, infiniteQueryOptions } from '../../src/index.js'
@@ -19,7 +27,7 @@ describe('createInfiniteQuery', () => {
 
     it('should define type of param passed to queryFunctionContext with initialPageParam for infiniteQuery', () => {
       const queryClient = new QueryClient()
-      queryClient.infiniteQuery({
+      queryInfiniteQuery(queryClient, {
         queryKey: createKey(),
         queryFn: ({ pageParam }) => {
           expectTypeOf(pageParam).toEqualTypeOf<number>()
@@ -100,18 +108,20 @@ describe('createInfiniteQuery', () => {
     })
 
     it('should be able to transform data to arbitrary result', () => {
-      const infiniteQuery = createInfiniteQuery(() => ({
-        queryKey: createKey(),
-        queryFn: ({ pageParam }) => {
-          return pageParam * 5
-        },
-        initialPageParam: 1,
-        getNextPageParam: () => undefined,
-        select: (data) => {
-          expectTypeOf(data).toEqualTypeOf<InfiniteData<number, number>>()
-          return 'selected' as const
-        },
-      }))
+      const infiniteQuery = createInfiniteQuery(() =>
+        infiniteQueryOptions({
+          queryKey: createKey(),
+          queryFn: ({ pageParam }: { pageParam: number }) => {
+            return pageParam * 5
+          },
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+          select: select((data) => {
+            expectTypeOf(data).toEqualTypeOf<InfiniteData<number, number>>()
+            return 'selected' as const
+          }),
+        }),
+      )
 
       expectTypeOf(infiniteQuery.data).toEqualTypeOf<'selected' | undefined>()
     })
@@ -169,12 +179,12 @@ describe('createInfiniteQuery', () => {
         getNextPageParam: () => undefined,
       }))
 
-      expectTypeOf(infiniteQuery.isFetchNextPageError).toEqualTypeOf<boolean>()
+      expectTypeOf(isFetchNextPageError(infiniteQuery)).toEqualTypeOf<boolean>()
       expectTypeOf(
-        infiniteQuery.isFetchPreviousPageError,
+        isFetchPreviousPageError(infiniteQuery),
       ).toEqualTypeOf<boolean>()
-      expectTypeOf(infiniteQuery.isLoadingError).toEqualTypeOf<boolean>()
-      expectTypeOf(infiniteQuery.isRefetchError).toEqualTypeOf<boolean>()
+      expectTypeOf(isLoadingError(infiniteQuery)).toEqualTypeOf<boolean>()
+      expectTypeOf(isRefetchError(infiniteQuery)).toEqualTypeOf<boolean>()
     })
   })
 

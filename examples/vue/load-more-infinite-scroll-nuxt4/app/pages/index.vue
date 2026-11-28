@@ -1,25 +1,33 @@
 <script setup lang="ts">
-import { useInfiniteQuery } from '@tanstack/vue-query'
+import {
+  isFetching as queryIsFetching,
+  isFetchingNextPage as queryIsFetchingNextPage,
+  isFetchingPreviousPage as queryIsFetchingPreviousPage,
+  useInfiniteQuery,
+} from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import { useElementVisibility } from '@vueuse/core'
-import { useTemplateRef, watchEffect } from 'vue'
+import { computed, useTemplateRef, watchEffect } from 'vue'
 import { projectsQueries } from '../services/projects/queries'
 
 const loadMoreButton = useTemplateRef('loadMoreButton')
 const inView = useElementVisibility(loadMoreButton)
 
 const {
+  state: queryState,
   status,
   data,
   error,
-  isFetching,
-  isFetchingNextPage,
-  isFetchingPreviousPage,
   fetchNextPage,
   fetchPreviousPage,
   hasNextPage,
   hasPreviousPage,
 } = useInfiniteQuery(projectsQueries.infinite())
+const isFetching = computed(() => queryIsFetching(queryState))
+const isFetchingNextPage = computed(() => queryIsFetchingNextPage(queryState))
+const isFetchingPreviousPage = computed(() =>
+  queryIsFetchingPreviousPage(queryState),
+)
 
 watchEffect(() => {
   if (inView.value && hasNextPage.value && !isFetchingNextPage.value) {

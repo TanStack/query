@@ -25,13 +25,13 @@ import type {
  * @example
  * ```svelte
  * <script lang="ts">
- *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+ *   import { createMutation, invalidateQueries, useQueryClient } from '@tanstack/svelte-query'
  *
  *   const queryClient = useQueryClient()
  *
  *   const addMutation = createMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  * </script>
  *
@@ -49,13 +49,13 @@ import type {
  * Rendering the mutation's own state, rather than just firing it off:
  * ```svelte
  * <script lang="ts">
- *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+ *   import { createMutation, invalidateQueries, useQueryClient } from '@tanstack/svelte-query'
  *
  *   const queryClient = useQueryClient()
  *
  *   const addMutation = createMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  * </script>
  *
@@ -72,17 +72,17 @@ import type {
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```svelte
  * <script lang="ts">
- *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+ *   import { cancelQueries, createMutation, invalidateQueries, setQueryData, useQueryClient } from '@tanstack/svelte-query'
  *
  *   const queryClient = useQueryClient()
  *
  *   const addMutation = createMutation(() => ({
  *     mutationFn: addTodo,
  *     onMutate: async (newTodo: string) => {
- *       await queryClient.cancelQueries({ queryKey: ['todos'] })
- *       const previousTodos = queryClient.getQueryData<Array<string>>(['todos'])
+ *       await cancelQueries(queryClient, { queryKey: ['todos'] })
+ *       const previousTodos = getQueryData<Array<string>>(['todos'])
  *
- *       queryClient.setQueryData<Array<string>>(['todos'], (old) => [
+ *       setQueryData<Array<string>>(['todos'], (old) => [
  *         ...(old ?? []),
  *         newTodo,
  *       ])
@@ -91,10 +91,10 @@ import type {
  *       return { previousTodos }
  *     },
  *     onError: (_err, _newTodo, onMutateResult) => {
- *       queryClient.setQueryData(['todos'], onMutateResult?.previousTodos)
+ *       setQueryData(queryClient, ['todos'], onMutateResult?.previousTodos)
  *     },
  *     onSettled: () => {
- *       queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *       invalidateQueries(queryClient, { queryKey: ['todos'] })
  *     },
  *   }))
  * </script>
@@ -106,13 +106,13 @@ import type {
  * promise per call instead, so you can wait for all of them when they succeed:
  * ```svelte
  * <script lang="ts">
- *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+ *   import { createMutation, invalidateQueries, useQueryClient } from '@tanstack/svelte-query'
  *
  *   const queryClient = useQueryClient()
  *
  *   const addMutation = createMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  *
  *   async function handleAddAll(todos: Array<string>) {
@@ -134,13 +134,13 @@ import type {
  * `Promise.allSettled`:
  * ```svelte
  * <script lang="ts">
- *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+ *   import { createMutation, invalidateQueries, useQueryClient } from '@tanstack/svelte-query'
  *
  *   const queryClient = useQueryClient()
  *
  *   const addMutation = createMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  *
  *   async function handleAddAll(todos: Array<string>) {

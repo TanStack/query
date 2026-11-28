@@ -5,6 +5,7 @@ import { setTimeout as sleep } from 'node:timers/promises'
 import { fileURLToPath } from 'node:url'
 import { render } from '@lit-labs/ssr'
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js'
+import { query } from '@tanstack/lit-query'
 import { QueryClient, dehydrate } from '@tanstack/lit-query'
 import { html } from 'lit'
 import {
@@ -185,7 +186,7 @@ async function renderPage(res) {
   const queryClient = createBrowserQueryClient()
   resetSsrQueryControllerCreationCount(queryClient)
   const dataQueryOptions = dataQueries.detail(SSR_PUBLIC_ORIGIN)
-  await queryClient.query(dataQueryOptions).catch((error) => {
+  await query(queryClient, dataQueryOptions).catch((error) => {
     throw new Error(
       'SSR prefetch did not complete successfully. Refusing to render loading HTML.',
       { cause: error },

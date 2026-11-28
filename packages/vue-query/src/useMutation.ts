@@ -1,4 +1,8 @@
-import { MutationObserver, shouldThrowError } from '@tanstack/query-core'
+import {
+  MutationObserver,
+  defaultMutationOptions,
+  shouldThrowError,
+} from '@tanstack/query-core'
 import {
   computed,
   getCurrentScope,
@@ -97,13 +101,13 @@ export type UseMutationReturnType<
  * @example
  * ```vue
  * <script setup lang="ts">
- * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ * import { invalidateQueries, useMutation, useQueryClient } from '@tanstack/vue-query'
  *
  * const queryClient = useQueryClient()
  *
  * const addMutation = useMutation({
  *   mutationFn: addTodo,
- *   onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  * })
  *
  * function onAdd() {
@@ -121,13 +125,13 @@ export type UseMutationReturnType<
  * Rendering the mutation's own state, rather than just firing it off:
  * ```vue
  * <script setup lang="ts">
- * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ * import { invalidateQueries, useMutation, useQueryClient } from '@tanstack/vue-query'
  *
  * const queryClient = useQueryClient()
  *
  * const addMutation = useMutation({
  *   mutationFn: addTodo,
- *   onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  * })
  * </script>
  *
@@ -143,17 +147,17 @@ export type UseMutationReturnType<
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```vue
  * <script setup lang="ts">
- * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ * import { cancelQueries, invalidateQueries, setQueryData, useMutation, useQueryClient } from '@tanstack/vue-query'
  *
  * const queryClient = useQueryClient()
  *
  * const addMutation = useMutation({
  *   mutationFn: addTodo,
  *   onMutate: async (newTodo: string) => {
- *     await queryClient.cancelQueries({ queryKey: ['todos'] })
- *     const previousTodos = queryClient.getQueryData<Array<string>>(['todos'])
+ *     await cancelQueries(queryClient, { queryKey: ['todos'] })
+ *     const previousTodos = getQueryData<Array<string>>(['todos'])
  *
- *     queryClient.setQueryData<Array<string>>(['todos'], (old) => [
+ *     setQueryData<Array<string>>(['todos'], (old) => [
  *       ...(old ?? []),
  *       newTodo,
  *     ])
@@ -162,10 +166,10 @@ export type UseMutationReturnType<
  *     return { previousTodos }
  *   },
  *   onError: (_err, _newTodo, onMutateResult) => {
- *     queryClient.setQueryData(['todos'], onMutateResult?.previousTodos)
+ *     setQueryData(queryClient, ['todos'], onMutateResult?.previousTodos)
  *   },
  *   onSettled: () => {
- *     queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *     invalidateQueries(queryClient, { queryKey: ['todos'] })
  *   },
  * })
  * </script>
@@ -179,13 +183,13 @@ export type UseMutationReturnType<
  * promise per call instead, so you can wait for all of them when they succeed:
  * ```vue
  * <script setup lang="ts">
- * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ * import { invalidateQueries, useMutation, useQueryClient } from '@tanstack/vue-query'
  *
  * const queryClient = useQueryClient()
  *
  * const addMutation = useMutation({
  *   mutationFn: addTodo,
- *   onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  * })
  *
  * async function handleAddAll(todos: Array<string>) {
@@ -207,13 +211,13 @@ export type UseMutationReturnType<
  * `Promise.allSettled`:
  * ```vue
  * <script setup lang="ts">
- * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ * import { invalidateQueries, useMutation, useQueryClient } from '@tanstack/vue-query'
  *
  * const queryClient = useQueryClient()
  *
  * const addMutation = useMutation({
  *   mutationFn: addTodo,
- *   onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  * })
  *
  * async function handleAddAll(todos: Array<string>) {
@@ -254,7 +258,7 @@ export function useMutation<
   const client = queryClient || useQueryClient()
   const defaultedOptions = computed(() => {
     const resolvedOptions = typeof options === 'function' ? options() : options
-    return client.defaultMutationOptions(cloneDeepUnref(resolvedOptions))
+    return defaultMutationOptions(client, cloneDeepUnref(resolvedOptions))
   })
   const observer = new MutationObserver(client, defaultedOptions.value)
   const state = defaultedOptions.value.shallow

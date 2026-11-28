@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "#adapter": ["./node_modules/@tanstack/react-query"],
+      "#book-list-hooks": ["./src/treeshakable-book-list.ts"],
+      "#query-hooks": ["./src/treeshakable-query.ts"],
+      "#feature-options": ["./src/treeshakable-options.ts"],
+      "#polling-option": ["./src/treeshakable-interval.ts"],
+      "#screen": ["./src/screen-types.ts"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["src/v6-*.ts", "src/numeric-interval.ts"]
+}

@@ -1,4 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/preact-query'
+import {
+  invalidateQueries,
+  isFetching,
+  queryOptions,
+  refetchInterval,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { useState } from 'preact/hooks'
 import { todosMutations, todosQueries } from './services/todos/queries'
@@ -8,26 +16,29 @@ export default function App() {
   const [intervalMs, setIntervalMs] = useState(1000)
   const [value, setValue] = useState('')
 
-  const { status, data, error, isFetching } = useQuery({
-    ...todosQueries.list(),
-    // Refetch the data every second
-    refetchInterval: intervalMs,
-  })
+  const queryResult = useQuery(
+    queryOptions({
+      ...todosQueries.list(),
+      // Refetch the data every second
+      refetchInterval: refetchInterval(intervalMs),
+    }),
+  )
 
   const addMutation = useMutation({
     ...todosMutations.create(),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
+      invalidateQueries(queryClient, { queryKey: todosQueries.all() }),
   })
 
   const clearMutation = useMutation({
     ...todosMutations.deleteAll(),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
+      invalidateQueries(queryClient, { queryKey: todosQueries.all() }),
   })
 
-  if (status === 'pending') return <h1>Loading...</h1>
-  if (status === 'error') return <span>Error: {error.message}</span>
+  if (queryResult.status === 'pending') return <h1>Loading...</h1>
+  if (queryResult.status === 'error')
+    return <span>Error: {queryResult.error.message}</span>
 
   return (
     <div>
@@ -51,8 +62,8 @@ export default function App() {
             marginLeft: '.5rem',
             width: 10,
             height: 10,
-            background: isFetching ? 'green' : 'transparent',
-            transition: !isFetching ? 'all .3s ease' : 'none',
+            background: isFetching(queryResult) ? 'green' : 'transparent',
+            transition: !isFetching(queryResult) ? 'all .3s ease' : 'none',
             borderRadius: '100%',
             transform: 'scale(2)',
           }}
@@ -76,7 +87,7 @@ export default function App() {
         />
       </form>
       <ul>
-        {data.map((item) => (
+        {queryResult.data.map((item) => (
           <li key={item}>{item}</li>
         ))}
       </ul>

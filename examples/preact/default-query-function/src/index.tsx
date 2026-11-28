@@ -2,6 +2,9 @@ import {
   QueryClient,
   QueryClientProvider,
   defaultQueryFn,
+  getQueryData,
+  isFetching,
+  queryOptions,
   useQuery,
   useQueryClient,
 } from '@tanstack/preact-query'
@@ -62,23 +65,25 @@ function App() {
 function Posts({ setPostId }: { setPostId: (postId: number) => void }) {
   const queryClient = useQueryClient()
 
-  const { status, data, error, isFetching } = useQuery<Array<Post>>({
-    queryKey: ['/posts'],
-    queryFn: defaultQueryFn,
-  })
+  const queryResult = useQuery(
+    queryOptions<Array<Post>>({
+      queryKey: ['/posts'],
+      queryFn: defaultQueryFn,
+    }),
+  )
 
   return (
     <div>
       <h1>Posts</h1>
       <div>
-        {status === 'pending' ? (
+        {queryResult.status === 'pending' ? (
           'Loading...'
-        ) : status === 'error' ? (
-          <span>Error: {error.message}</span>
+        ) : queryResult.status === 'error' ? (
+          <span>Error: {queryResult.error.message}</span>
         ) : (
           <>
             <div>
-              {data.map((post) => (
+              {queryResult.data.map((post) => (
                 <p key={post.id}>
                   <a
                     onClick={() => setPostId(post.id)}
@@ -86,7 +91,7 @@ function Posts({ setPostId }: { setPostId: (postId: number) => void }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData([`/posts/${post.id}`])
+                      getQueryData(queryClient, [`/posts/${post.id}`])
                         ? {
                             fontWeight: 'bold',
                             color: 'green',
@@ -99,7 +104,9 @@ function Posts({ setPostId }: { setPostId: (postId: number) => void }) {
                 </p>
               ))}
             </div>
-            <div>{isFetching ? 'Background Updating...' : ' '}</div>
+            <div>
+              {isFetching(queryResult) ? 'Background Updating...' : ' '}
+            </div>
           </>
         )}
       </div>
@@ -114,11 +121,13 @@ function Post({
   postId: number
   setPostId: (postId: number) => void
 }) {
-  const { status, data, error, isFetching } = useQuery<Post>({
-    queryKey: [`/posts/${postId}`],
-    queryFn: defaultQueryFn,
-    enabled: !!postId,
-  })
+  const detailQuery = useQuery(
+    queryOptions<Post>({
+      queryKey: [`/posts/${postId}`],
+      queryFn: defaultQueryFn,
+      enabled: !!postId,
+    }),
+  )
 
   return (
     <div>
@@ -127,17 +136,17 @@ function Post({
           Back
         </a>
       </div>
-      {!postId || status === 'pending' ? (
+      {!postId || detailQuery.status === 'pending' ? (
         'Loading...'
-      ) : status === 'error' ? (
-        <span>Error: {error.message}</span>
+      ) : detailQuery.status === 'error' ? (
+        <span>Error: {detailQuery.error.message}</span>
       ) : (
         <>
-          <h1>{data.title}</h1>
+          <h1>{detailQuery.data.title}</h1>
           <div>
-            <p>{data.body}</p>
+            <p>{detailQuery.data.body}</p>
           </div>
-          <div>{isFetching ? 'Background Updating...' : ' '}</div>
+          <div>{isFetching(detailQuery) ? 'Background Updating...' : ' '}</div>
         </>
       )}
     </div>

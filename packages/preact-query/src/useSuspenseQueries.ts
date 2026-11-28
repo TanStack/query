@@ -8,9 +8,15 @@ import type {
   QueryClient,
   QueryFunction,
   QueryKey,
-  ThrowOnError,
+  Select,
+  placeholderData,
 } from '@tanstack/query-core'
-import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from './types'
+import type {
+  GroupThrowOnError,
+  TaggedQueryError,
+  UseSuspenseQueryOptions,
+  UseSuspenseQueryResult,
+} from './types'
 
 // `placeholderData` functions in useQueries never receive previous query data.
 type UseSuspenseQueryOptionsForUseSuspenseQueries<
@@ -22,7 +28,10 @@ type UseSuspenseQueryOptionsForUseSuspenseQueries<
   UseSuspenseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?: readonly [
+    typeof placeholderData,
+    TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>,
+  ]
 }
 
 // Avoid TS depth-limit error in case of large array literal
@@ -59,12 +68,12 @@ type GetUseSuspenseQueryOptions<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    select?: Select<any, infer TData>
+                    throwOnError?: GroupThrowOnError<infer TError>
                   }
                 ? UseSuspenseQueryOptionsForUseSuspenseQueries<
                     TQueryFnData,
-                    TError,
+                    TaggedQueryError<T, TError>,
                     TData,
                     TQueryKey
                   >
@@ -72,11 +81,11 @@ type GetUseSuspenseQueryOptions<T> =
                       queryFn?:
                         | QueryFunction<infer TQueryFnData, infer TQueryKey>
                         | SkipTokenForUseQueries
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
+                      throwOnError?: GroupThrowOnError<infer TError>
                     }
                   ? UseSuspenseQueryOptionsForUseSuspenseQueries<
                       TQueryFnData,
-                      TError,
+                      TaggedQueryError<T, TError>,
                       TQueryFnData,
                       TQueryKey
                     >
@@ -103,22 +112,28 @@ type GetUseSuspenseQueryResult<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    select?: Select<any, infer TData>
+                    throwOnError?: GroupThrowOnError<infer TError>
                   }
                 ? UseSuspenseQueryResult<
                     unknown extends TData ? TQueryFnData : TData,
-                    unknown extends TError ? DefaultError : TError
+                    TaggedQueryError<
+                      T,
+                      unknown extends TError ? DefaultError : TError
+                    >
                   >
                 : T extends {
                       queryFn?:
                         | QueryFunction<infer TQueryFnData, any>
                         | SkipTokenForUseQueries
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
+                      throwOnError?: GroupThrowOnError<infer TError>
                     }
                   ? UseSuspenseQueryResult<
                       TQueryFnData,
-                      unknown extends TError ? DefaultError : TError
+                      TaggedQueryError<
+                        T,
+                        unknown extends TError ? DefaultError : TError
+                      >
                     >
                   : // Fallback
                     UseSuspenseQueryResult
@@ -292,7 +307,7 @@ export type SuspenseQueriesResults<
  * }
  * ```
  * @example
- * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+ * Several different queries — use `useSuspenseQueries` instead of multiple `useQuery(suspenseQueryOptions(...))` calls, so
  * they fetch in parallel rather than suspending one after another:
  * ```tsx
  * import { Suspense } from 'preact/compat'
@@ -434,7 +449,7 @@ export function useSuspenseQueries<
 >(
   options: {
     /**
-     * An array with query option objects identical to `useSuspenseQuery`.
+     * An array with query option objects identical to `useQuery(suspenseQueryOptions(...))`.
      */
     queries:
       | readonly [...SuspenseQueriesOptions<T>]
@@ -534,7 +549,7 @@ export function useSuspenseQueries<
  * }
  * ```
  * @example
- * Several different queries — use `useSuspenseQueries` instead of multiple `useSuspenseQuery` calls, so
+ * Several different queries — use `useSuspenseQueries` instead of multiple `useQuery(suspenseQueryOptions(...))` calls, so
  * they fetch in parallel rather than suspending one after another:
  * ```tsx
  * import { Suspense } from 'preact/compat'
@@ -611,7 +626,7 @@ export function useSuspenseQueries<
 >(
   options: {
     /**
-     * An array with query option objects identical to `useSuspenseQuery`.
+     * An array with query option objects identical to `useQuery(suspenseQueryOptions(...))`.
      */
     queries: readonly [...SuspenseQueriesOptions<T>]
     /**

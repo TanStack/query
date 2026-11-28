@@ -5,12 +5,16 @@ import {
   inject,
   untracked,
 } from '@angular/core'
-import { QueriesObserver, QueryClient } from '@tanstack/query-core'
+import {
+  QueriesObserver,
+  QueryClient,
+  defaultQueryOptions,
+} from '@tanstack/query-core'
 import { injectIsRestoring } from './inject-is-restoring'
 import { injectExternalStore } from './utils/inject-external-store'
 import { injectPendingTasksLifecycle } from './utils/inject-pending-tasks-lifecycle'
 import { injectQueryZone } from './utils/inject-query-zone'
-import { queryResultFields } from './utils/result-fields'
+import { queryResultFields, queryStatusSignals } from './utils/result-fields'
 import { signalProxy } from './utils/signal-proxy'
 import type { Signal } from '@angular/core'
 import type {
@@ -133,7 +137,7 @@ import type {
  *       {
  *         ...postOptions(this.id()),
  *         // ❌ `data` is `unknown` here
- *         select: (data) => data.title,
+ *         select: select((data) => data.title),
  *       },
  *     ],
  *   }))
@@ -143,7 +147,7 @@ import type {
  *       queryOptions({
  *         ...postOptions(this.id()),
  *         // ✅ `data` is `Post`
- *         select: (data) => data.title,
+ *         select: select((data) => data.title),
  *       }),
  *     ],
  *   }))
@@ -168,7 +172,8 @@ export function injectQueries<
 
   const defaultedQueries = computed(() => {
     return optionsSignal().queries.map((opts) => {
-      const defaultedOptions = queryClient.defaultQueryOptions(
+      const defaultedOptions = defaultQueryOptions(
+        queryClient,
         opts as QueryObserverOptions,
       )
       defaultedOptions._optimisticResults = isRestoring()
@@ -184,7 +189,9 @@ export function injectQueries<
     observer: QueriesObserver<TCombinedResult>,
     results: Array<QueryObserverResult>,
   ) => {
-    const queries = observer.getQueries()
+    const queries = observer
+      .getObservers()
+      .map((item) => item.getCurrentQuery())
 
     return results.some((result, index) => {
       return (
@@ -270,9 +277,13 @@ export function injectQueries<
 
   const createResultProxy = (index: number) => {
     const resultAtIndexSignal = computed(() => resultSignal()[index]!)
-    return Object.assign(signalProxy(resultAtIndexSignal, queryResultFields), {
-      refetch: getRefetch(index),
-    })
+    return Object.assign(
+      signalProxy(resultAtIndexSignal, queryResultFields),
+      queryStatusSignals(resultAtIndexSignal),
+      {
+        refetch: getRefetch(index),
+      },
+    )
   }
 
   const resultProxies: Array<ReturnType<typeof createResultProxy>> = []

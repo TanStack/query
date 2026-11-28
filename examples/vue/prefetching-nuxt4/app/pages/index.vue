@@ -1,25 +1,31 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
+import {
+  isError as queryIsError,
+  isPending as queryIsPending,
+  useQuery,
+} from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import CharacterItem from '../components/CharacterItem.vue'
 import { charactersQueries } from '../services/characters/queries'
 
 const selectedChar = ref(1)
 
 const {
+  state: queryState,
   data: characters,
   error: charactersError,
-  isError: isCharactersError,
-  isPending: isCharactersPending,
 } = useQuery(charactersQueries.list())
+const isCharactersError = computed(() => queryIsError(queryState))
+const isCharactersPending = computed(() => queryIsPending(queryState))
 
 const {
+  state: detailState,
   data: character,
   error: characterError,
-  isError: isCharacterError,
-  isPending: isCharacterPending,
 } = useQuery(() => charactersQueries.detail(selectedChar.value))
+const isCharacterError = computed(() => queryIsError(detailState))
+const isCharacterPending = computed(() => queryIsPending(detailState))
 </script>
 
 <template>

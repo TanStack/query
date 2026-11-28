@@ -1,13 +1,14 @@
 'use client'
-import {
-  MutationObserver,
-  noop,
-  notifyManager,
-  shouldThrowError,
-} from '@tanstack/query-core'
+
+import { MutationObserver, noop, shouldThrowError } from '@tanstack/query-core'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
-import type { DefaultError, QueryClient } from '@tanstack/query-core'
+import { useStoreSnapshot } from './useStoreSnapshot'
+import type {
+  DefaultError,
+  MutateOptions,
+  QueryClient,
+} from '@tanstack/query-core'
 import type {
   UseMutateFunction,
   UseMutationOptions,
@@ -33,14 +34,14 @@ import type {
  * the mutation up elsewhere via its `mutationKey` (e.g. with `useMutationState`).
  * @example
  * ```tsx
- * import { useMutation, useQueryClient } from '@tanstack/react-query'
+ * import { useMutation, useQueryClient, invalidateQueries } from '@tanstack/react-query'
  *
  * function AddTodo() {
  *   const queryClient = useQueryClient()
  *
  *   const addMutation = useMutation({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   })
  *
  *   return (
@@ -59,14 +60,14 @@ import type {
  * @example
  * Rendering the mutation's own state, rather than just firing it off:
  * ```tsx
- * import { useMutation, useQueryClient } from '@tanstack/react-query'
+ * import { useMutation, useQueryClient, invalidateQueries } from '@tanstack/react-query'
  *
  * function AddTodo() {
  *   const queryClient = useQueryClient()
  *
  *   const addMutation = useMutation({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   })
  *
  *   return (
@@ -88,7 +89,7 @@ import type {
  * @example
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```tsx
- * import { useMutation, useQueryClient } from '@tanstack/react-query'
+ * import { useMutation, useQueryClient, cancelQueries, getQueryData, setQueryData, invalidateQueries } from '@tanstack/react-query'
  *
  * function AddTodo() {
  *   const queryClient = useQueryClient()
@@ -96,10 +97,10 @@ import type {
  *   const addMutation = useMutation({
  *     mutationFn: addTodo,
  *     onMutate: async (newTodo) => {
- *       await queryClient.cancelQueries({ queryKey: ['todos'] })
- *       const previousTodos = queryClient.getQueryData<Array<string>>(['todos'])
+ *       await cancelQueries(queryClient, { queryKey: ['todos'] })
+ *       const previousTodos = getQueryData(queryClient, ['todos'])
  *
- *       queryClient.setQueryData<Array<string>>(['todos'], (old) => [
+ *       setQueryData(queryClient, ['todos'], (old) => [
  *         ...(old ?? []),
  *         newTodo,
  *       ])
@@ -108,10 +109,10 @@ import type {
  *       return { previousTodos }
  *     },
  *     onError: (_err, _newTodo, onMutateResult) => {
- *       queryClient.setQueryData(['todos'], onMutateResult?.previousTodos)
+ *       setQueryData(queryClient, ['todos'], onMutateResult?.previousTodos)
  *     },
  *     onSettled: () => {
- *       queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *       invalidateQueries(queryClient, { queryKey: ['todos'] })
  *     },
  *   })
  *
@@ -124,14 +125,14 @@ import type {
  * Callbacks passed per call to `mutate` only fire for the last call — `mutateAsync` gives you a
  * promise per call instead, so you can wait for all of them when they succeed:
  * ```tsx
- * import { useMutation, useQueryClient } from '@tanstack/react-query'
+ * import { useMutation, useQueryClient, invalidateQueries } from '@tanstack/react-query'
  *
  * function AddTodos() {
  *   const queryClient = useQueryClient()
  *
  *   const addMutation = useMutation({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   })
  *
  *   async function handleAddAll(todos: Array<string>) {
@@ -154,14 +155,14 @@ import type {
  * did — rather than losing that information the moment the first one rejects — swap `Promise.all` for
  * `Promise.allSettled`:
  * ```tsx
- * import { useMutation, useQueryClient } from '@tanstack/react-query'
+ * import { useMutation, useQueryClient, invalidateQueries } from '@tanstack/react-query'
  *
  * function AddTodos() {
  *   const queryClient = useQueryClient()
  *
  *   const addMutation = useMutation({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   })
  *
  *   async function handleAddAll(todos: Array<string>) {
@@ -207,25 +208,16 @@ export function useMutation<
     observer.setOptions(options)
   }, [observer, options])
 
-  const result = React.useSyncExternalStore(
-    React.useCallback(
-      (onStoreChange) =>
-        observer.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [observer],
-    ),
-    () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
-  )
+  const result = useStoreSnapshot(observer, () => observer.getCurrentResult())
 
   const mutate = React.useCallback<
     UseMutateFunction<TData, TError, TVariables, TOnMutateResult>
   >(
     (
-      ...args: Parameters<
-        UseMutateFunction<TData, TError, TVariables, TOnMutateResult>
-      >
+      variables?: TVariables,
+      mutateOptions?: MutateOptions<TData, TError, TVariables, TOnMutateResult>,
     ) => {
-      observer.mutate(args[0] as TVariables, args[1]).catch(noop)
+      observer.mutate(variables as TVariables, mutateOptions).catch(noop)
     },
     [observer],
   )

@@ -1,6 +1,17 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { InfiniteQueryObserver, QueryClient } from '..'
+import {
+  InfiniteQueryObserver,
+  QueryClient,
+  clearQueryClient,
+  isLoading,
+  isLoadingError,
+  isPending,
+  isRefetchError,
+  isSuccess,
+  mountQueryClient,
+  select,
+} from '..'
 import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
@@ -22,7 +33,14 @@ import type {
   QueryObserverBaseResult,
   QueryObserverResult,
   QueryPersister,
+  Select,
+  isError,
+  isFetchNextPageError,
+  isFetchPreviousPageError,
+  isFetchingNextPage,
+  isFetchingPreviousPage,
 } from '..'
+import type { FlagFor, Guarded, GuardedProperties } from './helpers/result'
 
 class CustomError extends Error {
   override name = 'CustomError' as const
@@ -33,11 +51,11 @@ describe('infiniteQueryObserver', () => {
 
   beforeEach(() => {
     queryClient = new QueryClient()
-    queryClient.mount()
+    mountQueryClient(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   describe('InfiniteQueryObserverOptions', () => {
@@ -298,12 +316,12 @@ describe('infiniteQueryObserver', () => {
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
-          select: (data) => {
+          select: select((data) => {
             expectTypeOf(data).toEqualTypeOf<
               InfiniteData<{ value: string }, number>
             >()
             return data.pages
-          },
+          }),
         })
       })
 
@@ -313,7 +331,7 @@ describe('infiniteQueryObserver', () => {
           queryFn: () => Promise.resolve({ count: 1 }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
-          select: (data) => data.pages.length,
+          select: select((data) => data.pages.length),
         })
 
         expectTypeOf(observer.getCurrentResult().data).toEqualTypeOf<
@@ -391,10 +409,7 @@ describe('infiniteQueryObserver', () => {
           | 'fetchPreviousPage'
           | 'hasNextPage'
           | 'hasPreviousPage'
-          | 'isFetchNextPageError'
-          | 'isFetchPreviousPageError'
-          | 'isFetchingNextPage'
-          | 'isFetchingPreviousPage'
+          | 'fetchDirection'
         >()
       })
 
@@ -408,22 +423,92 @@ describe('infiniteQueryObserver', () => {
           TFilter
         >
 
+        expectTypeOf<Branch<{ status: 'pending' }>>().toEqualTypeOf<
+          Writable<Branch<{ status: 'pending' }>>
+        >()
         expectTypeOf<
-          Branch<{ status: 'pending'; isLoading: boolean }>
+          GuardedProperties<
+            typeof isLoading<
+              InfiniteQueryObserverResult<
+                InfiniteData<{ value: string }, number>,
+                CustomError
+              >
+            >
+          >
         >().toEqualTypeOf<
-          Writable<Branch<{ status: 'pending'; isLoading: boolean }>>
+          Writable<
+            GuardedProperties<
+              typeof isLoading<
+                InfiniteQueryObserverResult<
+                  InfiniteData<{ value: string }, number>,
+                  CustomError
+                >
+              >
+            >
+          >
         >()
-        expectTypeOf<Branch<{ isLoading: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isLoading: true }>>
+        expectTypeOf<
+          GuardedProperties<
+            typeof isLoadingError<
+              InfiniteQueryObserverResult<
+                InfiniteData<{ value: string }, number>,
+                CustomError
+              >
+            >
+          >
+        >().toEqualTypeOf<
+          Writable<
+            GuardedProperties<
+              typeof isLoadingError<
+                InfiniteQueryObserverResult<
+                  InfiniteData<{ value: string }, number>,
+                  CustomError
+                >
+              >
+            >
+          >
         >()
-        expectTypeOf<Branch<{ isLoadingError: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isLoadingError: true }>>
+        expectTypeOf<
+          GuardedProperties<
+            typeof isRefetchError<
+              InfiniteQueryObserverResult<
+                InfiniteData<{ value: string }, number>,
+                CustomError
+              >
+            >
+          >
+        >().toEqualTypeOf<
+          Writable<
+            GuardedProperties<
+              typeof isRefetchError<
+                InfiniteQueryObserverResult<
+                  InfiniteData<{ value: string }, number>,
+                  CustomError
+                >
+              >
+            >
+          >
         >()
-        expectTypeOf<Branch<{ isRefetchError: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isRefetchError: true }>>
-        >()
-        expectTypeOf<Branch<{ isSuccess: true }>>().toEqualTypeOf<
-          Writable<Branch<{ isSuccess: true }>>
+        expectTypeOf<
+          GuardedProperties<
+            typeof isSuccess<
+              InfiniteQueryObserverResult<
+                InfiniteData<{ value: string }, number>,
+                CustomError
+              >
+            >
+          >
+        >().toEqualTypeOf<
+          Writable<
+            GuardedProperties<
+              typeof isSuccess<
+                InfiniteQueryObserverResult<
+                  InfiniteData<{ value: string }, number>,
+                  CustomError
+                >
+              >
+            >
+          >
         >()
         expectTypeOf<Branch<{ isPlaceholderData: true }>>().toEqualTypeOf<
           Writable<Branch<{ isPlaceholderData: true }>>
@@ -478,10 +563,18 @@ describe('infiniteQueryObserver', () => {
       describe('isFetchNextPageError', () => {
         it('should be typed as a boolean', () => {
           expectTypeOf<
-            InfiniteQueryObserverBaseResult<
-              InfiniteData<{ value: string }, number>,
-              CustomError
-            >['isFetchNextPageError']
+            FlagFor<
+              InfiniteQueryObserverBaseResult<
+                InfiniteData<{ value: string }, number>,
+                CustomError
+              >,
+              typeof isFetchNextPageError<
+                InfiniteQueryObserverBaseResult<
+                  InfiniteData<{ value: string }, number>,
+                  CustomError
+                >
+              >
+            >
           >().toEqualTypeOf<boolean>()
         })
       })
@@ -489,10 +582,18 @@ describe('infiniteQueryObserver', () => {
       describe('isFetchPreviousPageError', () => {
         it('should be typed as a boolean', () => {
           expectTypeOf<
-            InfiniteQueryObserverBaseResult<
-              InfiniteData<{ value: string }, number>,
-              CustomError
-            >['isFetchPreviousPageError']
+            FlagFor<
+              InfiniteQueryObserverBaseResult<
+                InfiniteData<{ value: string }, number>,
+                CustomError
+              >,
+              typeof isFetchPreviousPageError<
+                InfiniteQueryObserverBaseResult<
+                  InfiniteData<{ value: string }, number>,
+                  CustomError
+                >
+              >
+            >
           >().toEqualTypeOf<boolean>()
         })
       })
@@ -500,10 +601,18 @@ describe('infiniteQueryObserver', () => {
       describe('isFetchingNextPage', () => {
         it('should be typed as a boolean', () => {
           expectTypeOf<
-            InfiniteQueryObserverBaseResult<
-              InfiniteData<{ value: string }, number>,
-              CustomError
-            >['isFetchingNextPage']
+            FlagFor<
+              InfiniteQueryObserverBaseResult<
+                InfiniteData<{ value: string }, number>,
+                CustomError
+              >,
+              typeof isFetchingNextPage<
+                InfiniteQueryObserverBaseResult<
+                  InfiniteData<{ value: string }, number>,
+                  CustomError
+                >
+              >
+            >
           >().toEqualTypeOf<boolean>()
         })
       })
@@ -511,10 +620,18 @@ describe('infiniteQueryObserver', () => {
       describe('isFetchingPreviousPage', () => {
         it('should be typed as a boolean', () => {
           expectTypeOf<
-            InfiniteQueryObserverBaseResult<
-              InfiniteData<{ value: string }, number>,
-              CustomError
-            >['isFetchingPreviousPage']
+            FlagFor<
+              InfiniteQueryObserverBaseResult<
+                InfiniteData<{ value: string }, number>,
+                CustomError
+              >,
+              typeof isFetchingPreviousPage<
+                InfiniteQueryObserverBaseResult<
+                  InfiniteData<{ value: string }, number>,
+                  CustomError
+                >
+              >
+            >
           >().toEqualTypeOf<boolean>()
         })
       })
@@ -602,10 +719,12 @@ describe('infiniteQueryObserver', () => {
       it('should be extractable from the result union by its status and isLoading', () => {
         type Pending = Extract<
           InfiniteQueryObserverResult<InfiniteData<{ value: string }, number>>,
-          { status: 'pending'; isLoading: boolean }
+          { status: 'pending' }
         >
 
-        expectTypeOf<Pending['isPending']>().toEqualTypeOf<true>()
+        expectTypeOf<
+          FlagFor<Pending, typeof isPending<Pending>>
+        >().toEqualTypeOf<true>()
       })
 
       it('should pin every flag along with its data and error types', () => {
@@ -618,16 +737,33 @@ describe('infiniteQueryObserver', () => {
 
         const result = observer.getCurrentResult()
 
-        if (result.isPending) {
+        if (isPending(result)) {
           expectTypeOf(result.data).toEqualTypeOf<undefined>()
           expectTypeOf(result.error).toEqualTypeOf<null>()
-          expectTypeOf(result.isError).toEqualTypeOf<false>()
-          expectTypeOf(result.isPending).toEqualTypeOf<true>()
-          expectTypeOf(result.isLoading).toEqualTypeOf<boolean>()
-          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-          expectTypeOf(result.isFetchNextPageError).toEqualTypeOf<false>()
-          expectTypeOf(result.isFetchPreviousPageError).toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPending<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoading<typeof result>>
+          >().toEqualTypeOf<boolean>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoadingError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetchError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isFetchNextPageError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<
+              typeof result,
+              typeof isFetchPreviousPageError<typeof result>
+            >
+          >().toEqualTypeOf<false>()
           expectTypeOf(result.status).toEqualTypeOf<'pending'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
@@ -642,12 +778,15 @@ describe('infiniteQueryObserver', () => {
 
     describe('InfiniteQueryObserverLoadingResult', () => {
       it('should be extractable from the result union by its isLoading literal', () => {
-        type Loading = Extract<
-          InfiniteQueryObserverResult<InfiniteData<{ value: string }, number>>,
-          { isLoading: true }
+        type Loading = Guarded<
+          typeof isLoading<
+            InfiniteQueryObserverResult<InfiniteData<{ value: string }, number>>
+          >
         >
 
-        expectTypeOf<Loading['isLoading']>().toEqualTypeOf<true>()
+        expectTypeOf<
+          FlagFor<Loading, typeof isLoading<Loading>>
+        >().toEqualTypeOf<true>()
       })
 
       it('should pin every flag along with its data and error types', () => {
@@ -660,17 +799,36 @@ describe('infiniteQueryObserver', () => {
 
         const result = observer.getCurrentResult()
 
-        if (result.isLoading) {
+        if (isLoading(result)) {
           expectTypeOf(result.data).toEqualTypeOf<undefined>()
           expectTypeOf(result.error).toEqualTypeOf<null>()
-          expectTypeOf(result.isError).toEqualTypeOf<false>()
-          expectTypeOf(result.isPending).toEqualTypeOf<true>()
-          expectTypeOf(result.isLoading).toEqualTypeOf<true>()
-          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-          expectTypeOf(result.isFetchNextPageError).toEqualTypeOf<false>()
-          expectTypeOf(result.isFetchPreviousPageError).toEqualTypeOf<false>()
-          expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPending<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoading<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoadingError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetchError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isFetchNextPageError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<
+              typeof result,
+              typeof isFetchPreviousPageError<typeof result>
+            >
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isSuccess<typeof result>>
+          >().toEqualTypeOf<false>()
           expectTypeOf(result.status).toEqualTypeOf<'pending'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
@@ -685,12 +843,15 @@ describe('infiniteQueryObserver', () => {
 
     describe('InfiniteQueryObserverLoadingErrorResult', () => {
       it('should be extractable from the result union by its isLoadingError literal', () => {
-        type LoadingError = Extract<
-          InfiniteQueryObserverResult<InfiniteData<{ value: string }, number>>,
-          { isLoadingError: true }
+        type LoadingError = Guarded<
+          typeof isLoadingError<
+            InfiniteQueryObserverResult<InfiniteData<{ value: string }, number>>
+          >
         >
 
-        expectTypeOf<LoadingError['isLoadingError']>().toEqualTypeOf<true>()
+        expectTypeOf<
+          FlagFor<LoadingError, typeof isLoadingError<LoadingError>>
+        >().toEqualTypeOf<true>()
       })
 
       it('should pin every flag along with its data and error types', () => {
@@ -703,17 +864,36 @@ describe('infiniteQueryObserver', () => {
 
         const result = observer.getCurrentResult()
 
-        if (result.isLoadingError) {
+        if (isLoadingError(result)) {
           expectTypeOf(result.data).toEqualTypeOf<undefined>()
           expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
-          expectTypeOf(result.isError).toEqualTypeOf<true>()
-          expectTypeOf(result.isPending).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoading).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoadingError).toEqualTypeOf<true>()
-          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-          expectTypeOf(result.isFetchNextPageError).toEqualTypeOf<false>()
-          expectTypeOf(result.isFetchPreviousPageError).toEqualTypeOf<false>()
-          expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isError<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPending<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoading<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoadingError<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetchError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isFetchNextPageError<typeof result>>
+          >().toEqualTypeOf<boolean>()
+          expectTypeOf<
+            FlagFor<
+              typeof result,
+              typeof isFetchPreviousPageError<typeof result>
+            >
+          >().toEqualTypeOf<boolean>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isSuccess<typeof result>>
+          >().toEqualTypeOf<false>()
           expectTypeOf(result.status).toEqualTypeOf<'error'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
@@ -728,26 +908,30 @@ describe('infiniteQueryObserver', () => {
 
     describe('InfiniteQueryObserverRefetchErrorResult', () => {
       it('should be extractable from the result union by its isRefetchError literal', () => {
-        type RefetchError = Extract<
-          InfiniteQueryObserverResult<InfiniteData<{ value: string }, number>>,
-          { isRefetchError: true }
+        type RefetchError = Guarded<
+          typeof isRefetchError<
+            InfiniteQueryObserverResult<InfiniteData<{ value: string }, number>>
+          >
         >
 
-        expectTypeOf<RefetchError['isRefetchError']>().toEqualTypeOf<true>()
+        expectTypeOf<
+          FlagFor<RefetchError, typeof isRefetchError<RefetchError>>
+        >().toEqualTypeOf<true>()
       })
 
-      it('should leave the page error flags unpinned', () => {
-        type RefetchError = Extract<
-          InfiniteQueryObserverResult<InfiniteData<{ value: string }, number>>,
-          { isRefetchError: true }
+      it('should expose the page error types during a full refetch', () => {
+        type RefetchError = Guarded<
+          typeof isRefetchError<
+            InfiniteQueryObserverResult<InfiniteData<{ value: string }, number>>
+          >
         >
 
         expectTypeOf<
-          RefetchError['isFetchNextPageError']
-        >().toEqualTypeOf<boolean>()
+          FlagFor<RefetchError, typeof isFetchNextPageError<RefetchError>>
+        >().toEqualTypeOf<false>()
         expectTypeOf<
-          RefetchError['isFetchPreviousPageError']
-        >().toEqualTypeOf<boolean>()
+          FlagFor<RefetchError, typeof isFetchPreviousPageError<RefetchError>>
+        >().toEqualTypeOf<false>()
       })
 
       it('should pin every flag along with its data and error types', () => {
@@ -760,17 +944,29 @@ describe('infiniteQueryObserver', () => {
 
         const result = observer.getCurrentResult()
 
-        if (result.isRefetchError) {
+        if (isRefetchError(result)) {
           expectTypeOf(result.data).toEqualTypeOf<
             InfiniteData<{ value: string }, unknown>
           >()
           expectTypeOf(result.error).toEqualTypeOf<DefaultError>()
-          expectTypeOf(result.isError).toEqualTypeOf<true>()
-          expectTypeOf(result.isPending).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoading).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-          expectTypeOf(result.isRefetchError).toEqualTypeOf<true>()
-          expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isError<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPending<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoading<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoadingError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetchError<typeof result>>
+          >().toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isSuccess<typeof result>>
+          >().toEqualTypeOf<false>()
           expectTypeOf(result.status).toEqualTypeOf<'error'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
         }
@@ -790,7 +986,9 @@ describe('infiniteQueryObserver', () => {
           { status: 'success'; isPlaceholderData: false }
         >
 
-        expectTypeOf<Success['isSuccess']>().toEqualTypeOf<true>()
+        expectTypeOf<
+          FlagFor<Success, typeof isSuccess<Success>>
+        >().toEqualTypeOf<true>()
       })
 
       it('should pin every flag along with its data and error types', () => {
@@ -803,19 +1001,38 @@ describe('infiniteQueryObserver', () => {
 
         const result = observer.getCurrentResult()
 
-        if (result.isSuccess) {
+        if (isSuccess(result)) {
           expectTypeOf(result.data).toEqualTypeOf<
             InfiniteData<{ value: string }, unknown>
           >()
           expectTypeOf(result.error).toEqualTypeOf<null>()
-          expectTypeOf(result.isError).toEqualTypeOf<false>()
-          expectTypeOf(result.isPending).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoading).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-          expectTypeOf(result.isFetchNextPageError).toEqualTypeOf<false>()
-          expectTypeOf(result.isFetchPreviousPageError).toEqualTypeOf<false>()
-          expectTypeOf(result.isSuccess).toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPending<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoading<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoadingError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetchError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isFetchNextPageError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<
+              typeof result,
+              typeof isFetchPreviousPageError<typeof result>
+            >
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isSuccess<typeof result>>
+          >().toEqualTypeOf<true>()
           expectTypeOf(result.status).toEqualTypeOf<'success'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<boolean>()
         }
@@ -853,14 +1070,33 @@ describe('infiniteQueryObserver', () => {
             InfiniteData<{ value: string }, unknown>
           >()
           expectTypeOf(result.error).toEqualTypeOf<null>()
-          expectTypeOf(result.isError).toEqualTypeOf<false>()
-          expectTypeOf(result.isPending).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoading).toEqualTypeOf<false>()
-          expectTypeOf(result.isLoadingError).toEqualTypeOf<false>()
-          expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-          expectTypeOf(result.isFetchNextPageError).toEqualTypeOf<false>()
-          expectTypeOf(result.isFetchPreviousPageError).toEqualTypeOf<false>()
-          expectTypeOf(result.isSuccess).toEqualTypeOf<true>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isPending<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoading<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isLoadingError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isRefetchError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isFetchNextPageError<typeof result>>
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<
+              typeof result,
+              typeof isFetchPreviousPageError<typeof result>
+            >
+          >().toEqualTypeOf<false>()
+          expectTypeOf<
+            FlagFor<typeof result, typeof isSuccess<typeof result>>
+          >().toEqualTypeOf<true>()
           expectTypeOf(result.status).toEqualTypeOf<'success'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<true>()
         }
@@ -951,12 +1187,12 @@ describe('infiniteQueryObserver', () => {
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        select: (data) => {
+        select: select((data) => {
           expectTypeOf(data).toEqualTypeOf<
             InfiniteData<{ value: string }, number>
           >()
           return data
-        },
+        }),
       })
 
       observer.setOptions({
@@ -1005,9 +1241,10 @@ describe('infiniteQueryObserver', () => {
       })
 
       expectTypeOf(observer.options.select).toEqualTypeOf<
-        | ((
-            data: InfiniteData<{ value: string }, number>,
-          ) => InfiniteData<{ value: string }, unknown>)
+        | Select<
+            InfiniteData<{ value: string }, number>,
+            InfiniteData<{ value: string }, unknown>
+          >
         | undefined
       >()
     })

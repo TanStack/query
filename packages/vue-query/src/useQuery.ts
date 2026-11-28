@@ -125,12 +125,12 @@ export function useQuery<
  * actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
  * ```vue
  * <script setup lang="ts">
- * import { useQuery } from '@tanstack/vue-query'
+ * import { select, useQuery } from '@tanstack/vue-query'
  *
  * const { data, isPending, isError, error } = useQuery({
  *   queryKey: ['posts'],
  *   queryFn: fetchPosts,
- *   select: (posts) => posts.length,
+ *   select: select((posts) => posts.length),
  * })
  * </script>
  *
@@ -170,7 +170,7 @@ export function useQuery<
  * fetched rather than from now:
  * ```vue
  * <script setup lang="ts">
- * import { useQuery, useQueryClient } from '@tanstack/vue-query'
+ * import { getQueryState, useQuery, useQueryClient } from '@tanstack/vue-query'
  *
  * const props = defineProps<{ postId: number }>()
  * const queryClient = useQueryClient()
@@ -183,7 +183,7 @@ export function useQuery<
  *       .getQueryData<Array<Post>>(['posts'])
  *       ?.find((post) => post.id === props.postId),
  *   initialDataUpdatedAt: () =>
- *     queryClient.getQueryState(['posts'])?.dataUpdatedAt,
+ *     getQueryState(queryClient, ['posts'])?.dataUpdatedAt,
  * })
  * </script>
  *

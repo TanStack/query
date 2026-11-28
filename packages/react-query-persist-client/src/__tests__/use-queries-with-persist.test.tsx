@@ -1,5 +1,5 @@
 import { sleep } from '@tanstack/query-test-utils'
-import { QueryClient, useQueries } from '@tanstack/react-query'
+import { QueryClient, isPending, useQueries } from '@tanstack/react-query'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { act, render } from '@testing-library/react'
 import * as React from 'react'
@@ -104,7 +104,7 @@ describe('useQueries with persist and memoized combine', () => {
         combine: React.useCallback(
           (results: Array<QueryObserverResult<number, Error>>) => ({
             data: results.map((r) => r.data),
-            isPending: results.some((r) => r.isPending),
+            isPending: results.some((r) => isPending(r)),
           }),
           [],
         ),

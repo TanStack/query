@@ -1,4 +1,8 @@
-import { QueriesObserver, replaceEqualDeep } from '@tanstack/query-core'
+import {
+  QueriesObserver,
+  defaultQueryOptions,
+  replaceEqualDeep,
+} from '@tanstack/query-core'
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
@@ -9,10 +13,12 @@ import type {
   OmitKeyof,
   QueriesObserverOptions,
   QueryClient,
+  QueryErrorBoundaryOption,
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
+  Select,
   ThrowOnError,
 } from '@tanstack/query-core'
 import type { ReactiveControllerHost } from 'lit'
@@ -62,8 +68,10 @@ type GetCreateQueriesInput<T> = T extends {
                   queryFn?:
                     | QueryFunction<infer TQueryFnData, infer TQueryKey>
                     | SkipTokenForCreateQueries
-                  select?: (data: any) => infer TData
-                  throwOnError?: ThrowOnError<any, infer TError, any, any>
+                  select?: Select<any, infer TData>
+                  throwOnError?:
+                    | ThrowOnError<any, infer TError, any, any>
+                    | QueryErrorBoundaryOption<any, infer TError, any, any>
                 }
               ? CreateQueriesInputForController<
                   TQueryFnData,
@@ -113,8 +121,10 @@ type GetCreateQueriesResult<T> = T extends {
                   queryFn?:
                     | QueryFunction<infer TQueryFnData, any>
                     | SkipTokenForCreateQueries
-                  select?: (data: any) => infer TData
-                  throwOnError?: ThrowOnError<any, infer TError, any, any>
+                  select?: Select<any, infer TData>
+                  throwOnError?:
+                    | ThrowOnError<any, infer TError, any, any>
+                    | QueryErrorBoundaryOption<any, infer TError, any, any>
                 }
               ? GetDefinedOrUndefinedCreateQueriesResult<
                   T,
@@ -230,21 +240,12 @@ function createPendingQueryObserverResult(): QueryObserverResult {
     errorUpdatedAt: 0,
     failureCount: 0,
     failureReason: null,
+    dataUpdateCount: 0,
     errorUpdateCount: 0,
-    isError: false,
-    isFetched: false,
     isFetchedAfterMount: false,
-    isFetching: false,
-    isLoading: false,
-    isLoadingError: false,
-    isPaused: false,
-    isPending: true,
     isPlaceholderData: false,
-    isRefetchError: false,
-    isRefetching: false,
     isStale: true,
     isEnabled: true,
-    isSuccess: false,
     fetchStatus: 'idle',
     status: 'pending',
     refetch: (() =>
@@ -272,7 +273,7 @@ function createPlaceholderQueryObserverResult(
     return createPendingQueryObserverResult()
   }
 
-  const data = query.select ? query.select(initialData) : initialData
+  const data = query.select ? query.select()[1](initialData) : initialData
   const initialDataUpdatedAt =
     typeof query.initialDataUpdatedAt === 'function'
       ? query.initialDataUpdatedAt()
@@ -282,9 +283,6 @@ function createPlaceholderQueryObserverResult(
     ...createPendingQueryObserverResult(),
     data,
     dataUpdatedAt: initialDataUpdatedAt ?? Date.now(),
-    isPending: false,
-    isLoading: false,
-    isSuccess: true,
     status: 'success',
   } as QueryObserverResult
 }
@@ -311,7 +309,8 @@ function resolveQueriesOptions<TCombinedResult>(
 
   return {
     queries: resolvedQueries.map((query) => {
-      const defaulted = client.defaultQueryOptions(
+      const defaulted = defaultQueryOptions(
+        client,
         query as QueryObserverOptions,
       )
       ;(defaulted as { _optimisticResults?: 'optimistic' })._optimisticResults =

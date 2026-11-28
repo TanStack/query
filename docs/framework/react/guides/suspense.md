@@ -3,11 +3,7 @@ id: suspense
 title: Suspense
 ---
 
-React Query can also be used with React's Suspense for Data Fetching APIs. For this, we have dedicated hooks:
-
-- [useSuspenseQuery](../reference/functions/useSuspenseQuery.md)
-- [useSuspenseInfiniteQuery](../reference/functions/useSuspenseInfiniteQuery.md)
-- [useSuspenseQueries](../reference/functions/useSuspenseQueries.md)
+Choose `suspenseQueryOptions` or `suspenseInfiniteQueryOptions` for a single `useQuery` reader. A variable-length group can suspend together with [useSuspenseQueries](../reference/functions/useSuspenseQueries.md).
 
 [//]: # 'Info'
 
@@ -19,29 +15,35 @@ If you want mutations to propagate errors to the nearest error boundary (similar
 Enabling suspense mode for a query:
 
 ```tsx
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { suspenseQueryOptions, useQuery } from '@tanstack/react-query'
 
-const { data } = useSuspenseQuery({ queryKey, queryFn })
+const { data } = useQuery(suspenseQueryOptions({ queryKey, queryFn }))
 ```
 
 When `queryFn` cannot be `skipToken`, TypeScript gives `data` the type `TData`. Suspense and error boundaries handle loading and initial fetch errors.
 
-To skip a query in `useSuspenseQuery` or `useSuspenseInfiniteQuery`, pass `skipToken` as its `queryFn`. A skipped Query can still read cached data. It does not fetch automatically or suspend. If `queryFn` can be `skipToken`, check `data` before using it because the cache can be empty.
+To skip a query in `suspenseQueryOptions` or `suspenseInfiniteQueryOptions`, pass `skipToken` as its `queryFn`. A skipped Query can still read cached data. It does not fetch automatically or suspend. If `queryFn` can be `skipToken`, check `data` before using it because the cache can be empty.
 
 ```tsx
-import { skipToken, useSuspenseQuery } from '@tanstack/react-query'
+import {
+  skipToken,
+  suspenseQueryOptions,
+  useQuery,
+} from '@tanstack/react-query'
 
-const { data } = useSuspenseQuery({
-  queryKey: ['post', postId],
-  queryFn: postId === undefined ? skipToken : () => fetchPost(postId),
-})
+const { data } = useQuery(
+  suspenseQueryOptions({
+    queryKey: ['post', postId],
+    queryFn: postId === undefined ? skipToken : () => fetchPost(postId),
+  }),
+)
 ```
 
 For dependent Queries in the same component, each Query that suspends completes before the next hook runs.
 
 `placeholderData` is supported. When it returns defined data, the Query renders that data in `success` state and fetches the full data in the background without showing the Suspense fallback. This is useful when a detail Query can show preview data from a cached list Query.
 
-You can also use `placeholderData: keepPreviousData` to keep data from the previous QueryKey. If keeping the currently rendered screen is your only goal, prefer wrapping updates that change the QueryKey in [startTransition](https://react.dev/reference/react/Suspense#preventing-unwanted-fallbacks) or using `useDeferredValue`. These React APIs keep the complete current screen in place and do not require placeholder data.
+You can also use `placeholderData: placeholderData(keepPreviousData)` to keep data from the previous QueryKey. If keeping the currently rendered screen is your only goal, prefer wrapping updates that change the QueryKey in [startTransition](https://react.dev/reference/react/Suspense#preventing-unwanted-fallbacks) or using `useDeferredValue`. These React APIs keep the complete current screen in place and do not require placeholder data.
 
 ### throwOnError default
 
@@ -54,12 +56,16 @@ throwOnError: (error, query) => typeof query.state.data === 'undefined'
 Since you can't change `throwOnError` (because it would allow for `data` to become potentially `undefined`), you have to throw errors manually if you want all errors to be handled by Error Boundaries:
 
 ```tsx
-import { useSuspenseQuery } from '@tanstack/react-query'
+import {
+  isFetching,
+  suspenseQueryOptions,
+  useQuery,
+} from '@tanstack/react-query'
 
-const { data, error, isFetching } = useSuspenseQuery({ queryKey, queryFn })
+const result = useQuery(suspenseQueryOptions({ queryKey, queryFn }))
 
-if (error && !isFetching) {
-  throw error
+if (result.error && !isFetching(result)) {
+  throw result.error
 }
 
 // continue rendering data
@@ -136,7 +142,7 @@ Out of the box, React Query in `suspense` mode works really well as a **Fetch-on
 
 ## Suspense on the Server with streaming
 
-If you are using `NextJs`, you can use our **experimental** integration for Suspense on the Server: `@tanstack/react-query-next-experimental`. This package will allow you to fetch data on the server (in a client component) by just calling `useSuspenseQuery` in your component. Results will then be streamed from the server to the client as SuspenseBoundaries resolve.
+If you are using `NextJs`, you can use our **experimental** integration for Suspense on the Server: `@tanstack/react-query-next-experimental`. This package will allow you to fetch data on the server (in a client component) by just calling `useQuery(suspenseQueryOptions(options))` in your component. Results will then be streamed from the server to the client as SuspenseBoundaries resolve.
 
 To achieve this, wrap your app in the `ReactQueryStreamedHydration` component:
 

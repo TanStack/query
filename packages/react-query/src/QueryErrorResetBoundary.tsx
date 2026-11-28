@@ -67,7 +67,8 @@ function createValue(): QueryErrorResetBoundaryValue {
   }
 }
 
-const QueryErrorResetBoundaryContext = React.createContext(createValue())
+/** Shares the reset state used by error-boundary readers. */
+export const QueryErrorResetBoundaryContext = React.createContext(createValue())
 
 // HOOK
 
@@ -160,7 +161,7 @@ export interface QueryErrorResetBoundaryProps {
 export const QueryErrorResetBoundary = ({
   children,
 }: QueryErrorResetBoundaryProps) => {
-  const [value] = React.useState(() => createValue())
+  const [value] = React.useState(createValue)
   return (
     <QueryErrorResetBoundaryContext.Provider value={value}>
       {typeof children === 'function' ? children(value) : children}

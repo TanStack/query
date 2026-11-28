@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+  import {
+    invalidateQueries,
+    createMutation,
+    useQueryClient,
+  } from '@tanstack/svelte-query'
   import { todosMutations, todosQueries } from '$lib/services/todos/queries'
 
   const queryClient = useQueryClient()
@@ -9,7 +13,7 @@
   const addMutation = createMutation(() => ({
     ...todosMutations.create(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
+      invalidateQueries(queryClient, { queryKey: todosQueries.lists() })
     },
   }))
 </script>

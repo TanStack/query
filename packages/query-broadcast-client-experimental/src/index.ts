@@ -1,3 +1,4 @@
+import { getQueryCache } from '@tanstack/query-core'
 import { BroadcastChannel } from 'broadcast-channel'
 import type { QueryClient, QueryKey } from '@tanstack/query-core'
 import type { BroadcastChannelOptions } from 'broadcast-channel'
@@ -89,7 +90,7 @@ export function broadcastQueryClient({
     ...options,
   })
 
-  const queryCache = queryClient.getQueryCache()
+  const queryCache = getQueryCache(queryClient)
 
   const safePost = (message: BroadcastMessage): void => {
     channel.postMessage(message).catch((error: unknown) => {

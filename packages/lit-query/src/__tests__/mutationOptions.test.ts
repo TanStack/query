@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, clearQueryClient, isMutating } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -22,7 +22,7 @@ describe('mutationOptions', () => {
 
   afterEach(() => {
     container.remove()
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -198,12 +198,12 @@ describe('mutationOptions', () => {
     const host = new Host()
     container.append(host)
 
-    expect(queryClient.isMutating(mutationOpts)).toBe(0)
+    expect(isMutating(queryClient, mutationOpts)).toBe(0)
 
     host.mutation1.mutate()
-    expect(queryClient.isMutating(mutationOpts)).toBe(1)
+    expect(isMutating(queryClient, mutationOpts)).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.isMutating(mutationOpts)).toBe(0)
+    expect(isMutating(queryClient, mutationOpts)).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (without mutationKey in mutationOptions)', async () => {
@@ -223,12 +223,12 @@ describe('mutationOptions', () => {
     const host = new Host()
     container.append(host)
 
-    expect(queryClient.isMutating()).toBe(0)
+    expect(isMutating(queryClient)).toBe(0)
 
     host.mutation1.mutate()
-    expect(queryClient.isMutating()).toBe(1)
+    expect(isMutating(queryClient)).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.isMutating()).toBe(0)
+    expect(isMutating(queryClient)).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating', async () => {
@@ -257,13 +257,13 @@ describe('mutationOptions', () => {
     const host = new Host()
     container.append(host)
 
-    expect(queryClient.isMutating()).toBe(0)
+    expect(isMutating(queryClient)).toBe(0)
 
     host.mutation1.mutate()
     host.mutation2.mutate()
-    expect(queryClient.isMutating()).toBe(2)
+    expect(isMutating(queryClient)).toBe(2)
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.isMutating()).toBe(0)
+    expect(isMutating(queryClient)).toBe(0)
   })
 
   it('should return the number of fetching mutations when used with queryClient.isMutating (filter mutationOpts1.mutationKey)', async () => {
@@ -293,17 +293,17 @@ describe('mutationOptions', () => {
     container.append(host)
 
     expect(
-      queryClient.isMutating({ mutationKey: mutationOpts1.mutationKey }),
+      isMutating(queryClient, { mutationKey: mutationOpts1.mutationKey }),
     ).toBe(0)
 
     host.mutation1.mutate()
     host.mutation2.mutate()
     expect(
-      queryClient.isMutating({ mutationKey: mutationOpts1.mutationKey }),
+      isMutating(queryClient, { mutationKey: mutationOpts1.mutationKey }),
     ).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
     expect(
-      queryClient.isMutating({ mutationKey: mutationOpts1.mutationKey }),
+      isMutating(queryClient, { mutationKey: mutationOpts1.mutationKey }),
     ).toBe(0)
   })
 

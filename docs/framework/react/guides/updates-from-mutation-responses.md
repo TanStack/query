@@ -3,7 +3,7 @@ id: updates-from-mutation-responses
 title: Updates from Mutation Responses
 ---
 
-When dealing with mutations that **update** objects on the server, it's common for the new object to be automatically returned in the response of the mutation. Instead of refetching any queries for that item and wasting a network call for data we already have, we can take advantage of the object returned by the mutation function and update the existing query with the new data immediately using the [Query Client's `setQueryData`](../reference/classes/QueryClient.md#setquerydata) method:
+When dealing with mutations that **update** objects on the server, it's common for the new object to be automatically returned in the response of the mutation. Instead of refetching any queries for that item and wasting a network call for data we already have, we can take advantage of the object returned by the mutation function and update the existing query with the new data immediately using the [`setQueryData`](./migrating-to-v6.md#client-operations-across-frameworks) method:
 
 [//]: # 'Example'
 
@@ -13,7 +13,7 @@ const queryClient = useQueryClient()
 const mutation = useMutation({
   mutationFn: editTodo,
   onSuccess: (data) => {
-    queryClient.setQueryData(['todo', { id: 5 }], data)
+    setQueryData(queryClient, ['todo', { id: 5 }], data)
   },
 })
 
@@ -24,10 +24,12 @@ mutation.mutate({
 
 // The query below will be updated with the response from the
 // successful mutation
-const { status, data, error } = useQuery({
-  queryKey: ['todo', { id: 5 }],
-  queryFn: fetchTodoById,
-})
+const { status, data, error } = useQuery(
+  queryOptions({
+    queryKey: ['todo', { id: 5 }],
+    queryFn: fetchTodoById,
+  }),
+)
 ```
 
 [//]: # 'Example'
@@ -45,7 +47,7 @@ const useMutateTodo = () => {
     mutationFn: editTodo,
     // Notice the second argument is the variables object that the `mutate` function receives
     onSuccess: (data, variables) => {
-      queryClient.setQueryData(['todo', { id: variables.id }], data)
+      setQueryData(queryClient, ['todo', { id: variables.id }], data)
     },
   })
 }
@@ -60,7 +62,7 @@ Updates via `setQueryData` must be performed in an _immutable_ way. **DO NOT** a
 [//]: # 'Example3'
 
 ```tsx
-queryClient.setQueryData(['posts', { id }], (oldData) => {
+setQueryData(queryClient, ['posts', { id }], (oldData) => {
   if (oldData) {
     // ❌ do not try this
     oldData.title = 'my new post title'
@@ -68,7 +70,8 @@ queryClient.setQueryData(['posts', { id }], (oldData) => {
   return oldData
 })
 
-queryClient.setQueryData(
+setQueryData(
+  queryClient,
   ['posts', { id }],
   // ✅ this is the way
   (oldData) =>

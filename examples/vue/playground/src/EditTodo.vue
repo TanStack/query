@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import {
+  invalidateQueries,
+  isFetching as queryIsFetching,
+  setQueryData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/vue-query'
 import { computed, ref } from 'vue'
 import { todosMutations, todosQueries } from './services/todos/queries'
 import type { Todo } from './services/todos/types'
@@ -9,9 +16,14 @@ const emit = defineEmits<{ setEditingIndex: [editingIndex: number | null] }>()
 
 const queryClient = useQueryClient()
 
-const { status, data, isFetching, failureCount, refetch } = useQuery(() =>
-  todosQueries.detail(props.editingIndex),
-)
+const {
+  state: queryState,
+  status,
+  data,
+  failureCount,
+  refetch,
+} = useQuery(() => todosQueries.detail(props.editingIndex))
+const isFetching = computed(() => queryIsFetching(queryState))
 
 const draft = ref<Partial<Omit<Todo, 'id'>>>({})
 
@@ -23,8 +35,9 @@ const {
   ...todosMutations.update(),
   onSuccess: (todo) => {
     // Update `todos` and the individual todo queries when this mutation succeeds
-    queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
-    queryClient.setQueryData(
+    invalidateQueries(queryClient, { queryKey: todosQueries.lists() })
+    setQueryData(
+      queryClient,
       todosQueries.detail(props.editingIndex).queryKey,
       todo,
     )

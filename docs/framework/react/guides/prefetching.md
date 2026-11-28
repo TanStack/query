@@ -45,16 +45,14 @@ This is how you use `query` to prefetch:
 [//]: # 'ExamplePrefetchQuery'
 
 ```tsx
-import { noop } from '@tanstack/react-query'
+import { noop, query } from '@tanstack/react-query'
 
 const prefetchTodos = async () => {
-  await queryClient
-    .query({
-      queryKey: ['todos'],
-      queryFn: fetchTodos,
-      // Swallow errors here, because usually they will fetch again in `useQuery`
-    })
-    .catch(noop)
+  await query(queryClient, {
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+    // Swallow errors here, because usually they will fetch again in `useQuery`
+  }).catch(noop)
 }
 ```
 
@@ -65,18 +63,16 @@ Pass `getNextPageParam` when you prefetch an infinite query. On an empty cache, 
 [//]: # 'ExamplePrefetchInfiniteQuery'
 
 ```tsx
-import { noop } from '@tanstack/react-query'
+import { noop, infiniteQuery } from '@tanstack/react-query'
 
 const prefetchProjects = async () => {
-  await queryClient
-    .infiniteQuery({
-      queryKey: ['projects'],
-      queryFn: fetchProjects,
-      initialPageParam: 0,
-      getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-      pages: 3, // prefetch the first 3 pages
-    })
-    .catch(noop)
+  await infiniteQuery(queryClient, {
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    pages: 3, // prefetch the first 3 pages
+  }).catch(noop)
 }
 ```
 
@@ -86,7 +82,7 @@ Next, let's look at how you can use these and other ways to prefetch in differen
 
 ## Prefetch in event handlers
 
-A straightforward form of prefetching is doing it when the user interacts with something. In this example we'll use `queryClient.query` to start a prefetch on `onMouseEnter` or `onFocus`.
+A straightforward form of prefetching is doing it when the user interacts with something. In this example we'll use `query` to start a prefetch on `onMouseEnter` or `onFocus`.
 
 [//]: # 'ExampleEventHandler'
 
@@ -95,7 +91,7 @@ function ShowDetailsButton() {
   const queryClient = useQueryClient()
 
   const prefetch = () => {
-    void queryClient.query({
+    void query(queryClient, {
       queryKey: ['details'],
       queryFn: getDetailsData,
       // Prefetch only fires when data is older than the staleTime,
@@ -122,29 +118,29 @@ Prefetching during the component lifecycle is useful when we know some child or 
 
 ```tsx
 function Article({ id }) {
-  const { data: articleData, isPending } = useQuery({
+  const queryResult = useQuery(queryOptions({
     queryKey: ['article', id],
     queryFn: getArticleById,
-  })
+  }))
 
-  if (isPending) {
+  if (isPending(queryResult)) {
     return 'Loading article...'
   }
 
   return (
     <>
-      <ArticleHeader articleData={articleData} />
-      <ArticleBody articleData={articleData} />
+      <ArticleHeader articleData={queryResult.data} />
+      <ArticleBody articleData={queryResult.data} />
       <Comments id={id} />
     </>
   )
 }
 
 function Comments({ id }) {
-  const { data, isPending } = useQuery({
+  const queryResult2 = useQuery(queryOptions({
     queryKey: ['article-comments', id],
     queryFn: getArticleCommentsById,
-  })
+  }))
 
   ...
 }
@@ -167,36 +163,36 @@ In that case, we can instead prefetch the query in the parent. The simplest way 
 
 ```tsx
 function Article({ id }) {
-  const { data: articleData, isPending } = useQuery({
+  const queryResult = useQuery(queryOptions({
     queryKey: ['article', id],
     queryFn: getArticleById,
-  })
+  }))
 
   // Prefetch
-  useQuery({
+  useQuery(queryOptions({
     queryKey: ['article-comments', id],
     queryFn: getArticleCommentsById,
     notifyOnChangeProps: 'none',
-  })
+  }))
 
-  if (isPending) {
+  if (isPending(queryResult)) {
     return 'Loading article...'
   }
 
   return (
     <>
-      <ArticleHeader articleData={articleData} />
-      <ArticleBody articleData={articleData} />
+      <ArticleHeader articleData={queryResult.data} />
+      <ArticleBody articleData={queryResult.data} />
       <Comments id={id} />
     </>
   )
 }
 
 function Comments({ id }) {
-  const { data, isPending } = useQuery({
+  const queryResult2 = useQuery(queryOptions({
     queryKey: ['article-comments', id],
     queryFn: getArticleCommentsById,
-  })
+  }))
 
   ...
 }
@@ -215,7 +211,7 @@ This starts fetching `'article-comments'` immediately and flattens the waterfall
 
 If you want to prefetch together with Suspense, you will have to do things a bit differently. You can't use `useSuspenseQueries` to prefetch, since the prefetch would block the component from rendering. You also can not use `useQuery` for the prefetch, because that wouldn't start the prefetch until after suspenseful query had resolved. For this scenario, you can use the [`usePrefetchQuery`](../reference/functions/usePrefetchQuery.md) or the [`usePrefetchInfiniteQuery`](../reference/functions/usePrefetchInfiniteQuery.md) hooks available in the library.
 
-You can now use `useSuspenseQuery` in the component that actually needs the data. You _might_ want to wrap this later component in its own `<Suspense>` boundary so the "secondary" query we are prefetching does not block rendering of the "primary" data.
+You can now pass `suspenseQueryOptions` to `useQuery` in the component that needs the data. You _might_ want to wrap this later component in its own `<Suspense>` boundary so the "secondary" query we are prefetching does not block rendering of the "primary" data.
 
 ```tsx
 function ArticleLayout({ id }) {
@@ -232,46 +228,44 @@ function ArticleLayout({ id }) {
 }
 
 function Article({ id }) {
-  const { data: articleData, isPending } = useSuspenseQuery({
+  const queryResult = useQuery(suspenseQueryOptions({
     queryKey: ['article', id],
     queryFn: getArticleById,
-  })
+  }))
 
   ...
 }
 ```
 
-Another way is to prefetch inside the query function. This makes sense if you know that every time an article is fetched it's very likely comments will also be needed. For this, we'll use `queryClient.query`:
+Another way is to prefetch inside the query function. This makes sense if you know that every time an article is fetched it's very likely comments will also be needed. For this, we'll use `query`:
 
 ```tsx
 const queryClient = useQueryClient()
-const { data: articleData, isPending } = useQuery({
-  queryKey: ['article', id],
-  queryFn: (...args) => {
-    void queryClient
-      .query({
+const queryResult = useQuery(
+  queryOptions({
+    queryKey: ['article', id],
+    queryFn: (...args) => {
+      void query(queryClient, {
         queryKey: ['article-comments', id],
         queryFn: getArticleCommentsById,
-      })
-      .catch(noop)
+      }).catch(noop)
 
-    return getArticleById(...args)
-  },
-})
+      return getArticleById(...args)
+    },
+  }),
+)
 ```
 
-Prefetching in an effect also works, but note that if you are using `useSuspenseQuery` in the same component, this effect won't run until _after_ the query finishes which might not be what you want.
+Prefetching in an effect also works, but note that if you are using `suspenseQueryOptions` in the same component, this effect won't run until _after_ the query finishes which might not be what you want.
 
 ```tsx
 const queryClient = useQueryClient()
 
 useEffect(() => {
-  void queryClient
-    .query({
-      queryKey: ['article-comments', id],
-      queryFn: getArticleCommentsById,
-    })
-    .catch(noop)
+  void query(queryClient, {
+    queryKey: ['article-comments', id],
+    queryFn: getArticleCommentsById,
+  }).catch(noop)
 }, [queryClient, id])
 ```
 
@@ -298,18 +292,18 @@ Sometimes we want to prefetch conditionally, based on the result of another fetc
 const GraphFeedItem = React.lazy(() => import('./GraphFeedItem'))
 
 function Feed() {
-  const { data, isPending } = useQuery({
+  const queryResult = useQuery(queryOptions({
     queryKey: ['feed'],
     queryFn: getFeed,
-  })
+  }))
 
-  if (isPending) {
+  if (isPending(queryResult)) {
     return 'Loading feed...'
   }
 
   return (
     <>
-      {data.map((feedItem) => {
+      {queryResult.data.map((feedItem) => {
         if (feedItem.type === 'GRAPH') {
           return <GraphFeedItem key={feedItem.id} feedItem={feedItem} />
         }
@@ -322,10 +316,10 @@ function Feed() {
 
 // GraphFeedItem.tsx
 function GraphFeedItem({ feedItem }) {
-  const { data, isPending } = useQuery({
+  const queryResult2 = useQuery(queryOptions({
     queryKey: ['graph', feedItem.id],
     queryFn: getGraphDataById,
-  })
+  }))
 
   ...
 }
@@ -348,14 +342,14 @@ If we can not restructure our API so `getFeed()` also returns the `getGraphDataB
 ```tsx
 function Feed() {
   const queryClient = useQueryClient()
-  const { data, isPending } = useQuery({
+  const queryResult = useQuery(queryOptions({
     queryKey: ['feed'],
     queryFn: async (...args) => {
       const feed = await getFeed(...args)
 
       for (const feedItem of feed) {
         if (feedItem.type === 'GRAPH') {
-          void queryClient.query({
+          void query(queryClient, {
             queryKey: ['graph', feedItem.id],
             queryFn: getGraphDataById,
           }).catch(noop)
@@ -364,7 +358,7 @@ function Feed() {
 
       return feed
     }
-  })
+  }))
 
   ...
 }
@@ -408,8 +402,8 @@ const articleRoute = new Route({
   path: 'article',
   beforeLoad: () => {
     return {
-      articleQueryOptions: { queryKey: ['article'], queryFn: fetchArticle },
-      commentsQueryOptions: { queryKey: ['comments'], queryFn: fetchComments },
+      articleQueryOptions: queryOptions({ queryKey: ['article'], queryFn: fetchArticle }),
+      commentsQueryOptions: queryOptions({ queryKey: ['comments'], queryFn: fetchComments }),
     }
   },
   loader: async ({
@@ -417,12 +411,12 @@ const articleRoute = new Route({
     routeContext: { articleQueryOptions, commentsQueryOptions },
   }) => {
     // Fetch comments asap, but don't block or throw errors
-    void queryClient.query(commentsQueryOptions).catch(noop)
+    void query(queryClient, commentsQueryOptions).catch(noop)
 
     // Don't render the route at all until article has been fetched
     // As this is critical data we want the error component to trigger
     // as soon as possible if something goes wrong
-    await queryClient.query({
+    await query(queryClient, {
       ...articleQueryOptions,
       // If we have the article loaded already, we don't want to block on
       // an extra prefetch; fallback on the default useQuery behavior to
@@ -449,12 +443,12 @@ Integration with other routers is also possible, see the [contacts-react-router]
 
 ## Manually Priming a Query
 
-If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../reference/classes/QueryClient.md#setquerydata) to directly add or update a query's cached result by key.
+If you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [`setQueryData` operation](./migrating-to-v6.md#client-operations-across-frameworks) to directly add or update a query's cached result by key.
 
 [//]: # 'ExampleManualPriming'
 
 ```tsx
-queryClient.setQueryData(['todos'], todos)
+setQueryData(queryClient, ['todos'], todos)
 ```
 
 [//]: # 'ExampleManualPriming'

@@ -1,6 +1,14 @@
 import { runInNewContext } from 'node:vm'
 import { fireEvent, render, within } from '@solidjs/testing-library'
-import { QueryClient, onlineManager } from '@tanstack/query-core'
+import {
+  QueryClient,
+  clearQueryClient,
+  findCachedQuery,
+  getQueryCache,
+  getQueryData,
+  onlineManager,
+  setQueryData,
+} from '@tanstack/query-core'
 import { createSignal } from 'solid-js'
 import { clearDelegatedEvents, delegateEvents } from 'solid-js/web'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -16,7 +24,7 @@ describe('Explorer', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -366,13 +374,15 @@ describe('Explorer', () => {
 
     it('highlights the full editable input and edits original index 150 without changing manual pages', () => {
       const value = Array.from({ length: 200 }, (_, index) => `value-${index}`)
-      queryClient.setQueryData(['data'], value)
+      setQueryData(queryClient, ['data'], value)
       const rendered = renderSearchable({
         label: 'Data',
         value,
         defaultExpanded: ['Data'],
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
       fireEvent.click(rendered.getByText('[0...99]'))
       searchData(rendered, 'VALUE-150')
@@ -383,7 +393,7 @@ describe('Explorer', () => {
       fireEvent.change(input, { target: { value: 'edited' } })
       const expected = [...value]
       expected[150] = 'edited'
-      expect(queryClient.getQueryData(['data'])).toStrictEqual(expected)
+      expect(getQueryData(queryClient, ['data'])).toStrictEqual(expected)
       fireEvent.click(rendered.getByText('Clear'))
       expect(rendered.getByDisplayValue('value-0')).toBeVisible()
       expect(rendered.queryByText('150:')).not.toBeInTheDocument()
@@ -393,18 +403,20 @@ describe('Explorer', () => {
 
     it('keeps property paths distinct when labels contain separators', () => {
       const value = { 'a.b': { name: 'needle' }, a: { b: { name: 'needle' } } }
-      queryClient.setQueryData(['data'], value)
+      setQueryData(queryClient, ['data'], value)
       const rendered = renderSearchable({
         label: 'Data',
         value,
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
       searchData(rendered, 'needle')
       const fields = rendered.getAllByLabelText('name:')
       expect(fields).toHaveLength(2)
       fireEvent.change(fields[0]!, { target: { value: 'edited' } })
-      expect(queryClient.getQueryData(['data'])).toStrictEqual({
+      expect(getQueryData(queryClient, ['data'])).toStrictEqual({
         'a.b': { name: 'edited' },
         a: { b: { name: 'needle' } },
       })
@@ -574,7 +586,7 @@ describe('Explorer', () => {
       ({ expression, label, values }) => {
         const initial: unknown = runInNewContext(expression)
         const [value, setValue] = createSignal<unknown>(initial)
-        queryClient.setQueryData(['data'], initial)
+        setQueryData(queryClient, ['data'], initial)
         const rendered = renderSearchable({
           label: 'Data',
           get value() {
@@ -582,7 +594,9 @@ describe('Explorer', () => {
           },
           defaultExpanded: ['Data'],
           editable: true,
-          activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+          activeQuery: findCachedQuery(getQueryCache(queryClient), {
+            queryKey: ['data'],
+          }),
         })
         searchData(rendered, 'needle')
         expect(rendered.getByLabelText(label)).toHaveAttribute(
@@ -592,19 +606,19 @@ describe('Explorer', () => {
         fireEvent.change(rendered.getByLabelText(label), {
           target: { value: 'edited' },
         })
-        expect(values(queryClient.getQueryData(['data']))).toStrictEqual([
+        expect(values(getQueryData(queryClient, ['data']))).toStrictEqual([
           'edited',
           'kept',
         ])
-        setValue(queryClient.getQueryData(['data']))
+        setValue(getQueryData(queryClient, ['data']))
         expect(rendered.getByLabelText(label)).not.toHaveAttribute(
           'data-search-match',
         )
-        queryClient.setQueryData(['data'], initial)
+        setQueryData(queryClient, ['data'], initial)
         setValue(initial)
         const row = rendered.getByLabelText(label).closest('div')!
         fireEvent.click(within(row).getByLabelText('Delete item'))
-        expect(values(queryClient.getQueryData(['data']))).toStrictEqual([
+        expect(values(getQueryData(queryClient, ['data']))).toStrictEqual([
           'kept',
         ])
       },
@@ -614,7 +628,7 @@ describe('Explorer', () => {
       const initial: unknown = runInNewContext(
         "({ nested: new Map([['entry', 'needle'], ['other', 'kept']]), sibling: 'kept', get unread() { throw new Error('Do not read') } })",
       )
-      queryClient.setQueryData(['data'], initial)
+      setQueryData(queryClient, ['data'], initial)
       const [value, setValue] = createSignal<unknown>({})
       const rendered = renderSearchable({
         label: 'Data',
@@ -622,26 +636,28 @@ describe('Explorer', () => {
           return value()
         },
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
       searchData(rendered, 'needle')
       setValue(initial)
       fireEvent.change(rendered.getByLabelText('entry:'), {
         target: { value: 'edited' },
       })
-      const edited = queryClient.getQueryData<{
+      const edited = getQueryData<{
         nested: unknown
         sibling: string
-      }>(['data'])
+      }>(queryClient, ['data'])
       expect(Map.prototype.get.call(edited?.nested, 'entry')).toBe('edited')
       expect(edited?.sibling).toBe('kept')
-      queryClient.setQueryData(['data'], initial)
+      setQueryData(queryClient, ['data'], initial)
       const row = rendered.getByLabelText('entry:').closest('div')!
       fireEvent.click(within(row).getByLabelText('Delete item'))
-      const deleted = queryClient.getQueryData<{
+      const deleted = getQueryData<{
         nested: unknown
         sibling: string
-      }>(['data'])
+      }>(queryClient, ['data'])
       expect(Map.prototype.has.call(deleted?.nested, 'entry')).toBe(false)
       expect(Map.prototype.get.call(deleted?.nested, 'other')).toBe('kept')
       expect(deleted?.sibling).toBe('kept')
@@ -683,12 +699,14 @@ describe('Explorer', () => {
       },
     ])('shows $kind fields as read-only', ({ create }) => {
       const value = create()
-      queryClient.setQueryData(['data'], value)
+      setQueryData(queryClient, ['data'], value)
       const rendered = renderSearchable({
         label: 'Data',
         value,
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
       searchData(rendered, 'needle')
       expect(rendered.queryAllByRole('textbox')).toHaveLength(0)
@@ -700,7 +718,7 @@ describe('Explorer', () => {
         rendered.queryByRole('button', { name: 'Toggle value' }),
       ).not.toBeInTheDocument()
       expect(highlightedText()).toContain('needle')
-      expect(queryClient.getQueryData(['data'])).toBe(value)
+      expect(getQueryData(queryClient, ['data'])).toBe(value)
     })
 
     it('edits Map values through original non-string keys during search', () => {
@@ -710,12 +728,14 @@ describe('Explorer', () => {
         [1, 'number needle'],
         ['1', 'string needle'],
       ])
-      queryClient.setQueryData(['data'], value)
+      setQueryData(queryClient, ['data'], value)
       const rendered = renderSearchable({
         label: 'Data',
         value,
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
       searchData(rendered, 'needle')
       fireEvent.change(rendered.getByLabelText('name:'), {
@@ -724,7 +744,7 @@ describe('Explorer', () => {
       fireEvent.change(rendered.getByDisplayValue('number needle'), {
         target: { value: 'updated number' },
       })
-      expect(queryClient.getQueryData(['data'])).toStrictEqual(
+      expect(getQueryData(queryClient, ['data'])).toStrictEqual(
         new Map<unknown, unknown>([
           [key, { name: 'edited' }],
           [1, 'updated number'],
@@ -924,13 +944,15 @@ describe('Explorer', () => {
         .fn<Clipboard['writeText']>()
         .mockResolvedValue(undefined)
       vi.stubGlobal('navigator', { clipboard: { writeText } })
-      queryClient.setQueryData(['data'], { name: 'Anna' })
+      setQueryData(queryClient, ['data'], { name: 'Anna' })
 
       const rendered = renderExplorer({
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
 
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
@@ -949,13 +971,15 @@ describe('Explorer', () => {
       const consoleErrorMock = vi
         .spyOn(console, 'error')
         .mockImplementation(() => {})
-      queryClient.setQueryData(['data'], { name: 'Anna' })
+      setQueryData(queryClient, ['data'], { name: 'Anna' })
 
       const rendered = renderExplorer({
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
 
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
@@ -974,13 +998,15 @@ describe('Explorer', () => {
         .fn<Clipboard['writeText']>()
         .mockResolvedValue(undefined)
       vi.stubGlobal('navigator', { clipboard: { writeText } })
-      queryClient.setQueryData(['data'], { name: 'Anna' })
+      setQueryData(queryClient, ['data'], { name: 'Anna' })
 
       const rendered = renderExplorer({
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
 
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
@@ -1000,13 +1026,15 @@ describe('Explorer', () => {
         .mockRejectedValue(new Error('denied'))
       vi.stubGlobal('navigator', { clipboard: { writeText } })
       vi.spyOn(console, 'error').mockImplementation(() => {})
-      queryClient.setQueryData(['data'], { name: 'Anna' })
+      setQueryData(queryClient, ['data'], { name: 'Anna' })
 
       const rendered = renderExplorer({
         label: 'data',
         value: { name: 'Anna' },
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
 
       fireEvent.click(rendered.getByLabelText('Copy object to clipboard'))
@@ -1021,60 +1049,68 @@ describe('Explorer', () => {
     })
 
     it('should clear array items via "setQueryData" when the clear-array button is clicked', () => {
-      queryClient.setQueryData(['data'], ['a', 'b', 'c'])
+      setQueryData(queryClient, ['data'], ['a', 'b', 'c'])
 
       const rendered = renderExplorer({
         label: 'list',
         value: ['a', 'b', 'c'],
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
 
       fireEvent.click(rendered.getByLabelText('Remove all items'))
-      expect(queryClient.getQueryData(['data'])).toStrictEqual([])
+      expect(getQueryData(queryClient, ['data'])).toStrictEqual([])
     })
 
     it('should delete the entry at the current "dataPath" when the delete button is clicked', () => {
-      queryClient.setQueryData(['data'], ['a', 'b', 'c'])
+      setQueryData(queryClient, ['data'], ['a', 'b', 'c'])
 
       const rendered = renderExplorer({
         label: 'list',
         value: ['a', 'b', 'c'],
         editable: true,
         itemsDeletable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
         dataPath: ['1'],
       })
 
       fireEvent.click(rendered.getByLabelText('Delete item'))
-      expect(queryClient.getQueryData(['data'])).toStrictEqual(['a', 'c'])
+      expect(getQueryData(queryClient, ['data'])).toStrictEqual(['a', 'c'])
     })
 
     it('should toggle a boolean value via "setQueryData" when the toggle button is clicked', () => {
-      queryClient.setQueryData(['data'], { flag: true })
+      setQueryData(queryClient, ['data'], { flag: true })
 
       const rendered = renderExplorer({
         label: 'flag',
         value: true,
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
         dataPath: ['flag'],
       })
 
       fireEvent.click(rendered.getByLabelText('Toggle value'))
-      expect(queryClient.getQueryData(['data'])).toStrictEqual({ flag: false })
+      expect(getQueryData(queryClient, ['data'])).toStrictEqual({ flag: false })
     })
 
     it.each([true, false])(
       'should expose "aria-pressed" on the toggle button when the value is %s',
       (value) => {
-        queryClient.setQueryData(['data'], { flag: value })
+        setQueryData(queryClient, ['data'], { flag: value })
 
         const rendered = renderExplorer({
           label: 'flag',
           value,
           editable: true,
-          activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+          activeQuery: findCachedQuery(getQueryCache(queryClient), {
+            queryKey: ['data'],
+          }),
           dataPath: ['flag'],
         })
 
@@ -1086,13 +1122,15 @@ describe('Explorer', () => {
     )
 
     it('should not render action buttons when "editable" is false', () => {
-      queryClient.setQueryData(['data'], ['a'])
+      setQueryData(queryClient, ['data'], ['a'])
 
       const rendered = renderExplorer({
         label: 'list',
         value: ['a'],
         editable: false,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
 
       expect(
@@ -1104,13 +1142,15 @@ describe('Explorer', () => {
     })
 
     it('should not render "ClearArrayButton" when value is not an array', () => {
-      queryClient.setQueryData(['data'], { name: 'Anna' })
+      setQueryData(queryClient, ['data'], { name: 'Anna' })
 
       const rendered = renderExplorer({
         label: 'user',
         value: { name: 'Anna' },
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
 
       expect(
@@ -1178,14 +1218,16 @@ describe('Explorer', () => {
         { length: 200 },
         (_, i) => [i],
       )
-      queryClient.setQueryData(['data'], value)
+      setQueryData(queryClient, ['data'], value)
 
       const rendered = renderExplorer({
         label: 'Data',
         value,
         defaultExpanded: ['Data'],
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
 
       fireEvent.click(rendered.getByText('[0...99]'))
@@ -1197,13 +1239,15 @@ describe('Explorer', () => {
 
   describe('inline edit', () => {
     it('should write the new string value via "setQueryData" when a text input is changed', () => {
-      queryClient.setQueryData(['data'], { name: 'Anna' })
+      setQueryData(queryClient, ['data'], { name: 'Anna' })
 
       const rendered = renderExplorer({
         label: 'name',
         value: 'Anna',
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
         dataPath: ['name'],
       })
 
@@ -1211,17 +1255,19 @@ describe('Explorer', () => {
       expect(input).toHaveAttribute('type', 'text')
 
       fireEvent.change(input, { target: { value: 'Bob' } })
-      expect(queryClient.getQueryData(['data'])).toStrictEqual({ name: 'Bob' })
+      expect(getQueryData(queryClient, ['data'])).toStrictEqual({ name: 'Bob' })
     })
 
     it('should write the new number value via "setQueryData" when a number input is changed', () => {
-      queryClient.setQueryData(['data'], { count: 1 })
+      setQueryData(queryClient, ['data'], { count: 1 })
 
       const rendered = renderExplorer({
         label: 'count',
         value: 1,
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
         dataPath: ['count'],
       })
 
@@ -1231,17 +1277,19 @@ describe('Explorer', () => {
       fireEvent.change(input, {
         target: { value: '42', valueAsNumber: 42 },
       })
-      expect(queryClient.getQueryData(['data'])).toStrictEqual({ count: 42 })
+      expect(getQueryData(queryClient, ['data'])).toStrictEqual({ count: 42 })
     })
 
     it('should render "ToggleValueButton" inline for a boolean primitive row', () => {
-      queryClient.setQueryData(['data'], { flag: false })
+      setQueryData(queryClient, ['data'], { flag: false })
 
       const rendered = renderExplorer({
         label: 'flag',
         value: false,
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
         dataPath: ['flag'],
       })
 
@@ -1249,14 +1297,16 @@ describe('Explorer', () => {
     })
 
     it('should render "DeleteItemButton" inline when a primitive row has "itemsDeletable"', () => {
-      queryClient.setQueryData(['data'], { name: 'Anna' })
+      setQueryData(queryClient, ['data'], { name: 'Anna' })
 
       const rendered = renderExplorer({
         label: 'name',
         value: 'Anna',
         editable: true,
         itemsDeletable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
         dataPath: ['name'],
       })
 
@@ -1265,30 +1315,34 @@ describe('Explorer', () => {
 
     it('should delete fields from the active query when their inline delete buttons are clicked', () => {
       const value = { name: 'Anna', age: 30 }
-      queryClient.setQueryData(['data'], value)
+      setQueryData(queryClient, ['data'], value)
 
       const rendered = renderExplorer({
         label: 'Data',
         value,
         defaultExpanded: ['Data'],
         editable: true,
-        activeQuery: queryClient.getQueryCache().find({ queryKey: ['data'] }),
+        activeQuery: findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['data'],
+        }),
       })
 
       const ageRow = rendered.getByText('age:').parentElement!
       fireEvent.click(within(ageRow).getByLabelText('Delete item'))
-      expect(queryClient.getQueryData(['data'])).toStrictEqual({ name: 'Anna' })
+      expect(getQueryData(queryClient, ['data'])).toStrictEqual({
+        name: 'Anna',
+      })
 
       const nameRow = rendered.getByText('name:').parentElement!
       fireEvent.click(within(nameRow).getByLabelText('Delete item'))
-      expect(queryClient.getQueryData(['data'])).toStrictEqual({})
+      expect(getQueryData(queryClient, ['data'])).toStrictEqual({})
     })
   })
 
   describe('theme', () => {
     it('should render without throwing under the "light" theme', () => {
       const value = { items: ['a'], flag: true }
-      queryClient.setQueryData(['data'], value)
+      setQueryData(queryClient, ['data'], value)
 
       expect(() =>
         renderExplorer(
@@ -1297,9 +1351,9 @@ describe('Explorer', () => {
             value,
             defaultExpanded: ['Data'],
             editable: true,
-            activeQuery: queryClient
-              .getQueryCache()
-              .find({ queryKey: ['data'] }),
+            activeQuery: findCachedQuery(getQueryCache(queryClient), {
+              queryKey: ['data'],
+            }),
           },
           { theme: 'light' },
         ),
@@ -1313,7 +1367,7 @@ describe('Explorer', () => {
       document.body.appendChild(host)
       const shadowRoot = host.attachShadow({ mode: 'open' })
       const value = { items: ['a'], flag: true }
-      queryClient.setQueryData(['data'], value)
+      setQueryData(queryClient, ['data'], value)
 
       try {
         expect(() =>
@@ -1333,9 +1387,9 @@ describe('Explorer', () => {
                   value={value}
                   defaultExpanded={['Data']}
                   editable={true}
-                  activeQuery={queryClient
-                    .getQueryCache()
-                    .find({ queryKey: ['data'] })}
+                  activeQuery={findCachedQuery(getQueryCache(queryClient), {
+                    queryKey: ['data'],
+                  })}
                 />
               </ThemeContext.Provider>
             </QueryDevtoolsContext.Provider>

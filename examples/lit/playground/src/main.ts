@@ -1,4 +1,9 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/lit-query'
+import {
+  QueryClient,
+  QueryClientProvider,
+  invalidateQueries,
+  setDefaultOptions,
+} from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { keyed } from 'lit/directives/keyed.js'
 import { styleMap } from 'lit/directives/style-map.js'
@@ -47,7 +52,7 @@ class PlaygroundApp extends LitElement {
     serverConfig.queryTimeMax = this.localFetchTimeMax
 
     if (changedProperties.has('staleTime') || changedProperties.has('gcTime')) {
-      queryClient.setDefaultOptions({
+      setDefaultOptions(queryClient, {
         queries: {
           staleTime: this.staleTime,
           gcTime: this.gcTime,
@@ -151,7 +156,7 @@ class PlaygroundApp extends LitElement {
           <div>
             <button
               type="button"
-              @click=${() => queryClient.invalidateQueries()}
+              @click=${() => invalidateQueries(queryClient)}
             >
               Force Refetch All
             </button>

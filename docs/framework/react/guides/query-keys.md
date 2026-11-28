@@ -16,10 +16,10 @@ The simplest form of a key is an array with constants values. This format is use
 
 ```tsx
 // A list of todos
-useQuery({ queryKey: ['todos'], ... })
+useQuery(queryOptions({ queryKey: ['todos'], ... }))
 
 // Something else, whatever!
-useQuery({ queryKey: ['something', 'special'], ... })
+useQuery(queryOptions({ queryKey: ['something', 'special'], ... }))
 ```
 
 [//]: # 'Example'
@@ -37,13 +37,13 @@ When a query needs more information to uniquely describe its data, you can use a
 
 ```tsx
 // An individual todo
-useQuery({ queryKey: ['todo', 5], ... })
+useQuery(queryOptions({ queryKey: ['todo', 5], ... }))
 
 // An individual todo in a "preview" format
-useQuery({ queryKey: ['todo', 5, { preview: true }], ...})
+useQuery(queryOptions({ queryKey: ['todo', 5, { preview: true }], ...}))
 
 // A list of todos that are "done"
-useQuery({ queryKey: ['todos', { type: 'done' }], ... })
+useQuery(queryOptions({ queryKey: ['todos', { type: 'done' }], ... }))
 ```
 
 [//]: # 'Example2'
@@ -55,9 +55,9 @@ This means that no matter the order of keys in objects, all of the following que
 [//]: # 'Example3'
 
 ```tsx
-useQuery({ queryKey: ['todos', { status, page }], ... })
-useQuery({ queryKey: ['todos', { page, status }], ...})
-useQuery({ queryKey: ['todos', { page, status, other: undefined }], ... })
+useQuery(queryOptions({ queryKey: ['todos', { status, page }], ... }))
+useQuery(queryOptions({ queryKey: ['todos', { page, status }], ...}))
+useQuery(queryOptions({ queryKey: ['todos', { page, status, other: undefined }], ... }))
 ```
 
 [//]: # 'Example3'
@@ -67,9 +67,9 @@ The following query keys, however, are not equal. Array item order matters!
 [//]: # 'Example4'
 
 ```tsx
-useQuery({ queryKey: ['todos', status, page], ... })
-useQuery({ queryKey: ['todos', page, status], ...})
-useQuery({ queryKey: ['todos', undefined, page, status], ...})
+useQuery(queryOptions({ queryKey: ['todos', status, page], ... }))
+useQuery(queryOptions({ queryKey: ['todos', page, status], ...}))
+useQuery(queryOptions({ queryKey: ['todos', undefined, page, status], ...}))
 ```
 
 [//]: # 'Example4'
@@ -82,10 +82,12 @@ Since query keys uniquely describe the data they are fetching, they should inclu
 
 ```tsx
 function Todos({ todoId }) {
-  const result = useQuery({
-    queryKey: ['todos', todoId],
-    queryFn: () => fetchTodoById(todoId),
-  })
+  const result = useQuery(
+    queryOptions({
+      queryKey: ['todos', todoId],
+      queryFn: () => fetchTodoById(todoId),
+    }),
+  )
 }
 ```
 

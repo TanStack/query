@@ -3,16 +3,20 @@ id: polling
 title: Polling
 ---
 
-`refetchInterval` makes a query refetch on a timer. Set it to a number in milliseconds and the query runs every N ms while there's at least one active observer:
+`refetchInterval` makes a query refetch on a timer. Import the `refetchInterval` helper and pass the delay in milliseconds and the query runs every N ms while there's at least one active observer:
 
 [//]: # 'Example1'
 
 ```tsx
-useQuery({
-  queryKey: ['prices'],
-  queryFn: fetchPrices,
-  refetchInterval: 5 * 1000, // every 5 seconds
-})
+import { queryOptions, refetchInterval, useQuery } from '@tanstack/react-query'
+
+useQuery(
+  queryOptions({
+    queryKey: ['prices'],
+    queryFn: fetchPrices,
+    refetchInterval: refetchInterval(5 * 1000), // every 5 seconds
+  }),
+)
 ```
 
 [//]: # 'Example1'
@@ -26,15 +30,19 @@ Pass a function instead of a number to compute the interval from the current que
 [//]: # 'Example2'
 
 ```tsx
-useQuery({
-  queryKey: ['job', jobId],
-  queryFn: () => fetchJobStatus(jobId),
-  refetchInterval: (query) => {
-    // Stop polling once the job finishes
-    if (query.state.data?.status === 'complete') return false
-    return 2 * 1000
-  },
-})
+import { queryOptions, refetchInterval, useQuery } from '@tanstack/react-query'
+
+useQuery(
+  queryOptions({
+    queryKey: ['job', jobId],
+    queryFn: () => fetchJobStatus(jobId),
+    refetchInterval: refetchInterval((query) => {
+      // Stop polling once the job finishes
+      if (query.state.data?.status === 'complete') return false
+      return 2 * 1000
+    }),
+  }),
+)
 ```
 
 [//]: # 'Example2'
@@ -48,12 +56,16 @@ By default, polling pauses when the browser tab loses focus. For dashboards or a
 [//]: # 'Example3'
 
 ```tsx
-useQuery({
-  queryKey: ['portfolio'],
-  queryFn: fetchPortfolio,
-  refetchInterval: 30 * 1000,
-  refetchIntervalInBackground: true,
-})
+import { queryOptions, refetchInterval, useQuery } from '@tanstack/react-query'
+
+useQuery(
+  queryOptions({
+    queryKey: ['portfolio'],
+    queryFn: fetchPortfolio,
+    refetchInterval: refetchInterval(30 * 1000),
+    refetchIntervalInBackground: true,
+  }),
+)
 ```
 
 [//]: # 'Example3'
@@ -65,14 +77,18 @@ Pass a function to `refetchInterval` and close over component state to control w
 [//]: # 'Example4'
 
 ```tsx
-useQuery({
-  queryKey: ['prices', tokenAddress],
-  queryFn: () => fetchPrice(tokenAddress),
-  refetchInterval: () => {
-    if (!tokenAddress || isPaused) return false
-    return 15 * 1000
-  },
-})
+import { queryOptions, refetchInterval, useQuery } from '@tanstack/react-query'
+
+useQuery(
+  queryOptions({
+    queryKey: ['prices', tokenAddress],
+    queryFn: () => fetchPrice(tokenAddress),
+    refetchInterval: refetchInterval(() => {
+      if (!tokenAddress || isPaused) return false
+      return 15 * 1000
+    }),
+  }),
+)
 ```
 
 [//]: # 'Example4'
@@ -84,12 +100,16 @@ TanStack Query detects connectivity by listening to the browser's `online` and `
 [//]: # 'Example5'
 
 ```tsx
-useQuery({
-  queryKey: ['chainStatus'],
-  queryFn: fetchChainStatus,
-  refetchInterval: 10 * 1000,
-  networkMode: 'always',
-})
+import { queryOptions, refetchInterval, useQuery } from '@tanstack/react-query'
+
+useQuery(
+  queryOptions({
+    queryKey: ['chainStatus'],
+    queryFn: fetchChainStatus,
+    refetchInterval: refetchInterval(10 * 1000),
+    networkMode: 'always',
+  }),
+)
 ```
 
 [//]: # 'Example5'
@@ -98,7 +118,7 @@ For more on network modes, see [Network Mode](./network-mode.md).
 
 ## Note on deduplication
 
-Each `QueryObserver` (each component using `useQuery` with `refetchInterval`) runs its own timer. Two components subscribed to the same key with `refetchInterval: 5 * 1000` each fire their timer every 5 seconds. What gets deduplicated is concurrent in-flight fetches: if two timers fire at the same time, only one network request goes out. The timers are observer-level; the deduplication is query-level.
+Each `QueryObserver` (each component using `useQuery` with `refetchInterval`) runs its own timer. Two components subscribed to the same key with `refetchInterval: refetchInterval(5 * 1000)` each fire their timer every 5 seconds. What gets deduplicated is concurrent in-flight fetches: if two timers fire at the same time, only one network request goes out. The timers are observer-level; the deduplication is query-level.
 
 [//]: # 'ReRenders'
 

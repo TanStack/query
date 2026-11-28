@@ -1,6 +1,9 @@
 import {
   createMutationController,
   createQueryController,
+  invalidateQueries,
+  isFetching,
+  setQueryData,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { todosMutations, todosQueries } from './services/todos/queries'
@@ -23,8 +26,12 @@ class EditTodo extends LitElement {
     ...todosMutations.update(),
     onSuccess: (todo, _variables, _onMutateResult, { client }) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      client.invalidateQueries({ queryKey: todosQueries.lists() })
-      client.setQueryData(todosQueries.detail(this.editingIndex).queryKey, todo)
+      invalidateQueries(client, { queryKey: todosQueries.lists() })
+      setQueryData(
+        client,
+        todosQueries.detail(this.editingIndex).queryKey,
+        todo,
+      )
       this.draft = {}
     },
   })
@@ -40,20 +47,21 @@ class EditTodo extends LitElement {
   }
 
   render() {
-    const { status, data, isFetching, failureCount, refetch } = this.todo()
+    const queryResult = this.todo()
     const {
       status: saveStatus,
       error: saveError,
       mutate: save,
     } = this.saveMutation()
 
-    const disableEditSave = status === 'pending' || saveStatus === 'pending'
+    const disableEditSave =
+      queryResult.status === 'pending' || saveStatus === 'pending'
 
     return html`
       <div>
         <div>
           ${
-            data
+            queryResult.data
               ? html`
                   <button
                     type="button"
@@ -61,19 +69,22 @@ class EditTodo extends LitElement {
                   >
                     Back
                   </button>
-                  Editing Todo "${data.name}" (#${this.editingIndex})
+                  Editing Todo "${queryResult.data.name}"
+                  (#${this.editingIndex})
                 `
               : null
           }
         </div>
         ${
-          status === 'pending'
-            ? html`<span>Loading... (Attempt: ${failureCount + 1})</span>`
-            : status === 'error'
+          queryResult.status === 'pending'
+            ? html`<span
+                >Loading... (Attempt: ${queryResult.failureCount + 1})</span
+              >`
+            : queryResult.status === 'error'
               ? html`
                   <span>
                     Error!
-                    <button type="button" @click=${() => refetch()}>
+                    <button type="button" @click=${() => queryResult.refetch()}>
                       Retry
                     </button>
                   </span>
@@ -82,7 +93,7 @@ class EditTodo extends LitElement {
                   <label>
                     Name:
                     <input
-                      .value=${this.draft.name ?? data.name}
+                      .value=${this.draft.name ?? queryResult.data.name}
                       ?disabled=${disableEditSave}
                       @input=${(event: Event) =>
                         (this.draft = {
@@ -94,7 +105,7 @@ class EditTodo extends LitElement {
                   <label>
                     Notes:
                     <input
-                      .value=${this.draft.notes ?? data.notes}
+                      .value=${this.draft.notes ?? queryResult.data.notes}
                       ?disabled=${disableEditSave}
                       @input=${(event: Event) =>
                         (this.draft = {
@@ -108,7 +119,7 @@ class EditTodo extends LitElement {
                     <button
                       type="button"
                       ?disabled=${disableEditSave}
-                      @click=${() => save({ ...data, ...this.draft })}
+                      @click=${() => save({ ...queryResult.data, ...this.draft })}
                     >
                       Save
                     </button>
@@ -126,10 +137,10 @@ class EditTodo extends LitElement {
                   </div>
                   <div>
                     ${
-                      isFetching
+                      isFetching(queryResult)
                         ? html`<span>
                             Background Refreshing... (Attempt:
-                            ${failureCount + 1})
+                            ${queryResult.failureCount + 1})
                           </span>`
                         : html`<span>&nbsp;</span>`
                     }

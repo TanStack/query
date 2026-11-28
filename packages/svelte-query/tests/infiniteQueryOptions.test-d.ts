@@ -1,4 +1,9 @@
-import { QueryClient, skipToken } from '@tanstack/query-core'
+import {
+  QueryClient,
+  infiniteQuery,
+  select,
+  skipToken,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { createInfiniteQuery, infiniteQueryOptions } from '../src/index.js'
@@ -27,9 +32,9 @@ describe('infiniteQueryOptions', () => {
       staleTime: 1000,
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      select: (data) => {
+      select: select((data) => {
         expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
-      },
+      }),
     })
   })
 
@@ -74,7 +79,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number> | undefined>()
   })
@@ -85,10 +90,10 @@ describe('infiniteQueryOptions', () => {
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      select: (data) => data.pages,
+      select: select((data) => data.pages),
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
 
     expectTypeOf(data).toEqualTypeOf<Array<string> | undefined>()
   })
@@ -102,7 +107,7 @@ describe('infiniteQueryOptions', () => {
       enabled: false,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
 
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number> | undefined>()
   })
@@ -115,7 +120,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
 
     expectTypeOf(data).toEqualTypeOf<
       InfiniteData<unknown, number> | undefined

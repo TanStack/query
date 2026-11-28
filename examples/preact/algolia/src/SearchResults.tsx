@@ -1,4 +1,11 @@
-import { useInfiniteQuery } from '@tanstack/preact-query'
+import {
+  infiniteQueryOptions,
+  isFetching,
+  isFetchingNextPage,
+  isLoading,
+  select,
+  useQuery,
+} from '@tanstack/preact-query'
 import { productsQueries } from './services/products/queries'
 
 type Product = {
@@ -12,41 +19,37 @@ type SearchResultsProps = {
 }
 
 export default function SearchResults({ query = '' }: SearchResultsProps) {
-  const {
-    data: hits,
-    error,
-    isLoading,
-    isFetching,
-    status,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  } = useInfiniteQuery({
-    ...productsQueries.search<Product>({
-      indexName: 'bestbuy',
-      query,
-      hitsPerPage: 5,
+  const infiniteQueryResult = useQuery(
+    infiniteQueryOptions({
+      ...productsQueries.search<Product>({
+        indexName: 'bestbuy',
+        query,
+        hitsPerPage: 5,
+      }),
+      select: select((data) => data.pages.flatMap((page) => page.hits)),
+      staleTime: 30 * 1000, // 30s
+      gcTime: 15 * 60 * 1000, // 15m
     }),
-    select: (data) => data.pages.flatMap((page) => page.hits),
-    staleTime: 30 * 1000, // 30s
-    gcTime: 15 * 60 * 1000, // 15m
-  })
+  )
 
   if (!query) return null
 
-  if (isLoading) return <div className="loading">Loading...</div>
+  if (isLoading(infiniteQueryResult))
+    return <div className="loading">Loading...</div>
 
-  if (status === 'error') return <div>Error: {error.message}</div>
+  if (infiniteQueryResult.status === 'error')
+    return <div>Error: {infiniteQueryResult.error.message}</div>
 
   return (
     <div>
       <div className="search-status">
-        Status: {status} {isFetching && <span>fetching...</span>}
+        Status: {infiniteQueryResult.status}{' '}
+        {isFetching(infiniteQueryResult) && <span>fetching...</span>}
       </div>
       <div>
         <div className="search-result">
-          {hits && hits.length > 0 ? (
-            hits.map((product) => (
+          {infiniteQueryResult.data && infiniteQueryResult.data.length > 0 ? (
+            infiniteQueryResult.data.map((product) => (
               <li key={product.objectID} className="product">
                 <span className="product-name">{product.name}</span>
                 {product.shortDescription && (
@@ -65,17 +68,17 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
             <h3>No products found!</h3>
           )}
         </div>
-        {hasNextPage && (
+        {infiniteQueryResult.hasNextPage && (
           <button
             type="button"
             className="search-more"
-            onClick={() => fetchNextPage()}
-            disabled={isFetching}
+            onClick={() => infiniteQueryResult.fetchNextPage()}
+            disabled={isFetching(infiniteQueryResult)}
           >
             more
           </button>
         )}
-        {isFetchingNextPage && (
+        {isFetchingNextPage(infiniteQueryResult) && (
           <div className="search-status">Fetching next page...</div>
         )}
       </div>

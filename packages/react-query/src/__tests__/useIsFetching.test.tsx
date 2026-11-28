@@ -2,7 +2,13 @@ import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryCache, QueryClient, useIsFetching, useQuery } from '..'
+import {
+  QueryCache,
+  QueryClient,
+  queryOptions,
+  useIsFetching,
+  useQuery,
+} from '..'
 import { renderWithClient, setActTimeout } from './utils'
 import type { Query } from '..'
 
@@ -29,11 +35,13 @@ describe('useIsFetching', () => {
     function Query() {
       const [ready, setReady] = React.useState(false)
 
-      useQuery({
-        queryKey: key,
-        queryFn: () => sleep(50).then(() => 'test'),
-        enabled: ready,
-      })
+      useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(50).then(() => 'test'),
+          enabled: ready,
+        }),
+      )
 
       return <button onClick={() => setReady(true)}>setReady</button>
     }
@@ -75,19 +83,23 @@ describe('useIsFetching', () => {
     }
 
     function FirstQuery() {
-      useQuery({
-        queryKey: key1,
-        queryFn: () => sleep(100).then(() => 'data1'),
-      })
+      useQuery(
+        queryOptions({
+          queryKey: key1,
+          queryFn: () => sleep(100).then(() => 'data1'),
+        }),
+      )
 
       return null
     }
 
     function SecondQuery() {
-      useQuery({
-        queryKey: key2,
-        queryFn: () => sleep(100).then(() => 'data2'),
-      })
+      useQuery(
+        queryOptions({
+          queryKey: key2,
+          queryFn: () => sleep(100).then(() => 'data2'),
+        }),
+      )
 
       return null
     }
@@ -135,19 +147,23 @@ describe('useIsFetching', () => {
     const isFetchingArray: Array<number> = []
 
     function One() {
-      useQuery({
-        queryKey: key1,
-        queryFn: () => sleep(10).then(() => 'test1'),
-      })
+      useQuery(
+        queryOptions({
+          queryKey: key1,
+          queryFn: () => sleep(10).then(() => 'test1'),
+        }),
+      )
 
       return null
     }
 
     function Two() {
-      useQuery({
-        queryKey: key2,
-        queryFn: () => sleep(20).then(() => 'test2'),
-      })
+      useQuery(
+        queryOptions({
+          queryKey: key2,
+          queryFn: () => sleep(20).then(() => 'test2'),
+        }),
+      )
 
       return null
     }
@@ -191,10 +207,12 @@ describe('useIsFetching', () => {
     const key = createKey()
 
     function Page() {
-      useQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'test'),
-      })
+      useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'test'),
+        }),
+      )
 
       const isFetching = useIsFetching()
 
@@ -222,10 +240,10 @@ describe('useIsFetching', () => {
 
     function Page() {
       useQuery(
-        {
+        queryOptions({
           queryKey: key,
           queryFn: () => sleep(10).then(() => 'test'),
-        },
+        }),
         queryClient,
       )
 

@@ -3,6 +3,7 @@ import {
   QueryClientProvider,
   QueryErrorResetBoundary,
   noop,
+  query,
   useQueryClient,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -41,7 +42,7 @@ function Example() {
       <Button
         onClick={() => {
           if (!showProjects) {
-            queryClient.query(projectsQueries.list()).catch(noop)
+            query(queryClient, projectsQueries.list()).catch(noop)
           }
           setShowProjects((old) => !old)
         }}

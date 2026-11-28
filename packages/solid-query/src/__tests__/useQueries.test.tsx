@@ -1,4 +1,5 @@
 import { fireEvent, render } from '@solidjs/testing-library'
+import { clearQueryClient, getQueryState } from '@tanstack/query-core'
 import * as QueryCore from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { createRenderEffect, createSignal } from 'solid-js'
@@ -24,7 +25,7 @@ describe('useQueries', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -127,10 +128,10 @@ describe('useQueries', () => {
     expect(states).toStrictEqual(['pending'])
 
     fireEvent.click(rendered.getByText('unmount'))
-    expect(queryClient.getQueryState(key1)?.status).toBe('pending')
+    expect(getQueryState(queryClient, key1)?.status).toBe('pending')
 
     await vi.advanceTimersByTimeAsync(20)
-    expect(queryClient.getQueryState(key1)?.status).toBe('success')
+    expect(getQueryState(queryClient, key1)?.status).toBe('success')
     expect(states).toStrictEqual(['pending'])
   })
 

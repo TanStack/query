@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { MutationObserver, QueryClient } from '..'
+import {
+  MutationObserver,
+  QueryClient,
+  clearQueryClient,
+  mountQueryClient,
+} from '..'
 import type {
   DefaultError,
   MutateFunction,
@@ -31,11 +36,11 @@ describe('mutationObserver', () => {
 
   beforeEach(() => {
     queryClient = new QueryClient()
-    queryClient.mount()
+    mountQueryClient(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   describe('MutationObserver', () => {

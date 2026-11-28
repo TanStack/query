@@ -1,13 +1,20 @@
+import {
+  clearQueryClient,
+  findCachedQuery,
+  getQueryCache,
+  getQueryObserverCount,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act } from '@testing-library/react'
 import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
+  queryOptions,
+  suspenseQueryOptions,
   useQueries,
   useQuery,
   useSuspenseQueries,
-  useSuspenseQuery,
 } from '..'
 import { renderWithSuspense } from './utils'
 
@@ -19,11 +26,12 @@ type Options = {
 describe.each([
   {
     name: 'useQuery',
-    useTestQuery: (options: Options) => useQuery(options).data,
+    useTestQuery: (options: Options) => useQuery(queryOptions(options)).data,
   },
   {
     name: 'useSuspenseQuery',
-    useTestQuery: (options: Options) => useSuspenseQuery(options).data,
+    useTestQuery: (options: Options) =>
+      useQuery(suspenseQueryOptions(options)).data,
   },
   {
     name: 'useQueries',
@@ -44,7 +52,7 @@ describe.each([
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -93,16 +101,18 @@ describe.each([
     // staleTime elapse so that subscribing to the old key would refetch it.
     await act(() => vi.advanceTimersByTimeAsync(1100))
     expect(
-      queryClient
-        .getQueryCache()
-        .find({ queryKey: [...key, 'a'] })!
-        .getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(queryClient), {
+          queryKey: [...key, 'a'],
+        })!,
+      ),
     ).toBe(0)
     expect(
-      queryClient
-        .getQueryCache()
-        .find({ queryKey: [...key, 'b'] })!
-        .getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(queryClient), {
+          queryKey: [...key, 'b'],
+        })!,
+      ),
     ).toBe(0)
 
     await act(() => rendered.rerender(<App mode="visible" filter="b" />))
@@ -112,10 +122,11 @@ describe.each([
     expect(fetched).toContain('b')
     expect(fetched.filter((filter) => filter === 'a')).toStrictEqual(['a'])
     expect(
-      queryClient
-        .getQueryCache()
-        .find({ queryKey: [...key, 'b'] })!
-        .getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(queryClient), {
+          queryKey: [...key, 'b'],
+        })!,
+      ),
     ).toBe(1)
   })
 })

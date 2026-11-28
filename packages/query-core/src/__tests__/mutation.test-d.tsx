@@ -3,6 +3,7 @@ import { Mutation } from '../mutation'
 import { QueryClient } from '../queryClient'
 import type { Action, MutationState } from '../mutation'
 import type { MutationObserver } from '../mutationObserver'
+import type { serialScope } from '../serialScope'
 import type {
   DefaultError,
   MutateFunction,
@@ -490,7 +491,7 @@ describe('mutation', () => {
     describe('scope', () => {
       it('should be an optional scope carrying a string id', () => {
         expectTypeOf<Options['scope']>().toEqualTypeOf<
-          { id: string } | undefined
+          ReturnType<typeof serialScope> | undefined
         >()
       })
     })

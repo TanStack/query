@@ -1,6 +1,30 @@
 import { fireEvent, render } from '@solidjs/testing-library'
+import * as queryPredicates from '@tanstack/query-core'
+import {
+  cancelQueries,
+  clearQueryClient,
+  findCachedQuery,
+  getQueryCache,
+  getQueryObserverCount,
+  getQueryState,
+  invalidateQueries,
+  isFetching,
+  isLoadingError,
+  isPaused,
+  isPending,
+  isRefetching,
+  placeholderData,
+  query as queryQuery,
+  refetchInterval,
+  refetchQueries,
+  resetQueries,
+  select,
+  setQueryData,
+  setQueryDefaults,
+} from '@tanstack/query-core'
 import {
   createKey,
+  createQueryResultSnapshot,
   mockVisibilityState,
   sleep,
 } from '@tanstack/query-test-utils'
@@ -23,6 +47,7 @@ import {
   defaultQueryFn,
   keepPreviousData,
   noop,
+  queryOptions,
   skipToken,
   useQuery,
 } from '..'
@@ -36,6 +61,8 @@ import type { JSX } from 'solid-js'
 import type { Mock } from 'vitest'
 import type { DefinedUseQueryResult, QueryFunction, UseQueryResult } from '..'
 
+const snapshot = createQueryResultSnapshot(queryPredicates)
+
 describe('useQuery', () => {
   let queryCache: QueryCache
   let queryClient: QueryClient
@@ -47,7 +74,7 @@ describe('useQuery', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -91,10 +118,10 @@ describe('useQuery', () => {
 
       return (
         <Switch fallback={<span>{state.data}</span>}>
-          <Match when={state.isPending}>
+          <Match when={isPending(state)}>
             <span>pending</span>
           </Match>
-          <Match when={state.isLoadingError}>
+          <Match when={isLoadingError(state)}>
             <span>{state.error!.message}</span>
           </Match>
         </Switch>
@@ -108,7 +135,7 @@ describe('useQuery', () => {
 
     expect(states).toHaveLength(2)
 
-    expect(states[0]).toStrictEqual({
+    expect(snapshot(states[0])).toStrictEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -135,7 +162,7 @@ describe('useQuery', () => {
       fetchStatus: 'fetching',
     })
 
-    expect(states[1]).toStrictEqual({
+    expect(snapshot(states[1])).toStrictEqual({
       data: 'test',
       dataUpdatedAt: expect.any(Number),
       error: null,
@@ -195,7 +222,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(21)
     expect(rendered.getByText('Status: error')).toBeInTheDocument()
 
-    expect(states[0]).toStrictEqual({
+    expect(snapshot(states[0])).toStrictEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -222,7 +249,7 @@ describe('useQuery', () => {
       fetchStatus: 'fetching',
     })
 
-    expect(states[1]).toStrictEqual({
+    expect(snapshot(states[1])).toStrictEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -249,7 +276,7 @@ describe('useQuery', () => {
       fetchStatus: 'fetching',
     })
 
-    expect(states[2]).toStrictEqual({
+    expect(snapshot(states[2])).toStrictEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: new Error('rejected'),
@@ -281,12 +308,10 @@ describe('useQuery', () => {
     const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'prefetched'),
-      })
-      .catch(noop)
+    void queryQuery(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'prefetched'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -305,12 +330,12 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
 
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: 'prefetched',
       isFetched: true,
       isFetchedAfterMount: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 'data',
       isFetched: true,
       isFetchedAfterMount: true,
@@ -425,7 +450,7 @@ describe('useQuery', () => {
     const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
-    queryClient.setQueryDefaults(key, {
+    setQueryDefaults(queryClient, key, {
       queryFn: () => sleep(10).then(() => 'data'),
     })
 
@@ -497,25 +522,25 @@ describe('useQuery', () => {
 
     expect(states).toHaveLength(4)
     // First load
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       isPending: true,
       isSuccess: false,
       isFetching: true,
     })
     // First success
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       isPending: false,
       isSuccess: true,
       isFetching: false,
     })
     // Switch, goes to fetching
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       isPending: false,
       isSuccess: true,
       isFetching: true,
     })
     // Second success
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       isPending: false,
       isSuccess: true,
       isFetching: false,
@@ -550,7 +575,7 @@ describe('useQuery', () => {
     const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
-    queryClient.setQueryData(key, 'prefetched')
+    setQueryData(queryClient, key, 'prefetched')
 
     function Page() {
       const state = useQuery(() => ({
@@ -576,11 +601,13 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
-      const state = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ name: 'test' })),
-        select: (data) => data.name,
-      }))
+      const state = useQuery(() =>
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ name: 'test' })),
+          select: select((data) => data.name),
+        }),
+      )
       createRenderEffect(() => {
         states.push({ ...state })
       })
@@ -600,11 +627,13 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
-      const state = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ name: 'test' })),
-        select: (data) => data.name,
-      }))
+      const state = useQuery(() =>
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ name: 'test' })),
+          select: select((data) => data.name),
+        }),
+      )
       createRenderEffect(() => {
         states.push({ ...state })
       })
@@ -624,11 +653,13 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
-      const state = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ name: 'test' })),
-        select: (data) => data.name,
-      }))
+      const state = useQuery(() =>
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ name: 'test' })),
+          select: select((data) => data.name),
+        }),
+      )
       createRenderEffect(() => {
         states.push({ ...state })
       })
@@ -649,13 +680,15 @@ describe('useQuery', () => {
     const error = new Error('Select Error')
 
     function Page() {
-      const state = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ name: 'test' })),
-        select: () => {
-          throw error
-        },
-      }))
+      const state = useQuery(() =>
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ name: 'test' })),
+          select: select(() => {
+            throw error
+          }),
+        }),
+      )
       createRenderEffect(() => {
         if (state.status === 'pending')
           states.push({ status: 'pending', data: undefined })
@@ -884,7 +917,7 @@ describe('useQuery', () => {
     const key = createKey()
     const results: Array<UseQueryResult<string>> = []
 
-    queryClient.setQueryData(key, 'set')
+    setQueryData(queryClient, key, 'set')
 
     function Page() {
       const result = useQuery(() => ({
@@ -900,8 +933,10 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <div>isFetching: {result.isFetching}</div>
-          <button onClick={() => queryClient.refetchQueries({ queryKey: key })}>
+          <div>isFetching: {isFetching(result)}</div>
+          <button
+            onClick={() => refetchQueries(queryClient, { queryKey: key })}
+          >
             refetch
           </button>
           data: {result.data}
@@ -920,9 +955,18 @@ describe('useQuery', () => {
 
     expect(results).toHaveLength(3)
 
-    expect(results[0]).toMatchObject({ data: 'set', isFetching: false })
-    expect(results[1]).toMatchObject({ data: 'set', isFetching: true })
-    expect(results[2]).toMatchObject({ data: 'fetched', isFetching: false })
+    expect(snapshot(results[0])).toMatchObject({
+      data: 'set',
+      isFetching: false,
+    })
+    expect(snapshot(results[1])).toMatchObject({
+      data: 'set',
+      isFetching: true,
+    })
+    expect(snapshot(results[2])).toMatchObject({
+      data: 'fetched',
+      isFetching: false,
+    })
   })
 
   it('should update query stale state and refetch when invalidated with invalidateQueries', async () => {
@@ -948,7 +992,7 @@ describe('useQuery', () => {
       return (
         <div>
           <button
-            onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+            onClick={() => invalidateQueries(queryClient, { queryKey: key })}
           >
             invalidate
           </button>
@@ -968,28 +1012,28 @@ describe('useQuery', () => {
 
     expect(states).toHaveLength(4)
 
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       isFetching: true,
       isRefetching: false,
       isSuccess: false,
       isStale: true,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 1,
       isFetching: false,
       isRefetching: false,
       isSuccess: true,
       isStale: false,
     })
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: 1,
       isFetching: true,
       isRefetching: true,
       isSuccess: true,
       isStale: true,
     })
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: 2,
       isFetching: false,
       isRefetching: false,
@@ -1020,7 +1064,7 @@ describe('useQuery', () => {
 
       createEffect(() => {
         setActTimeout(() => {
-          queryClient.refetchQueries({ queryKey: key })
+          refetchQueries(queryClient, { queryKey: key })
         }, 20)
       })
 
@@ -1031,7 +1075,7 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(30)
     expect(states).toHaveLength(1)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       isFetching: false,
       isSuccess: false,
@@ -1061,7 +1105,7 @@ describe('useQuery', () => {
 
       createEffect(() => {
         setActTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: key })
+          invalidateQueries(queryClient, { queryKey: key })
         }, 20)
       })
 
@@ -1072,7 +1116,7 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(30)
     expect(states).toHaveLength(1)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       isFetching: false,
       isSuccess: false,
@@ -1112,18 +1156,18 @@ describe('useQuery', () => {
     expect(states).toHaveLength(3)
 
     // Fetch query
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       isFetching: true,
       isSuccess: false,
     })
     // Fetched query
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
     })
     // Switch to disabled query
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       isFetching: false,
       isSuccess: false,
     })
@@ -1139,7 +1183,7 @@ describe('useQuery', () => {
       const state = useQuery(() => ({
         queryKey: [key, count()],
         queryFn: () => sleep(10).then(() => count()),
-        placeholderData: keepPreviousData,
+        placeholderData: placeholderData(keepPreviousData),
       }))
 
       createRenderEffect(() => {
@@ -1161,28 +1205,28 @@ describe('useQuery', () => {
     expect(states).toHaveLength(4)
 
     // Initial
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       isFetching: true,
       isSuccess: false,
       isPlaceholderData: false,
     })
     // Fetched
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
       isPlaceholderData: false,
     })
     // Set state
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: 0,
       isFetching: true,
       isSuccess: true,
       isPlaceholderData: true,
     })
     // New data
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
@@ -1201,7 +1245,7 @@ describe('useQuery', () => {
         queryKey: [key, count()],
         queryFn: () => sleep(10).then(() => count()),
         initialData: 99,
-        placeholderData: keepPreviousData,
+        placeholderData: placeholderData(keepPreviousData),
       }))
 
       createRenderEffect(() => {
@@ -1212,7 +1256,7 @@ describe('useQuery', () => {
         <div>
           <h1>
             data: {state.data}, count: {count()}, isFetching:{' '}
-            {String(state.isFetching)}
+            {String(isFetching(state))}
           </h1>
           <button onClick={() => setCount(1)}>inc</button>
         </div>
@@ -1235,28 +1279,28 @@ describe('useQuery', () => {
     expect(states).toHaveLength(4)
 
     // Initial
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: 99,
       isFetching: true,
       isSuccess: true,
       isPlaceholderData: false,
     })
     // Fetched
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
       isPlaceholderData: false,
     })
     // Set state
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: 99,
       isFetching: true,
       isSuccess: true,
       isPlaceholderData: false,
     })
     // New data
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
@@ -1268,7 +1312,7 @@ describe('useQuery', () => {
     const key = createKey()
     const states: Array<UseQueryResult<number>> = []
 
-    queryClient.setQueryData([key, 10], 10)
+    setQueryData(queryClient, [key, 10], 10)
 
     function Page() {
       const [count, setCount] = createSignal(10)
@@ -1277,7 +1321,7 @@ describe('useQuery', () => {
         queryKey: [key, count()],
         queryFn: () => sleep(10).then(() => count()),
         enabled: false,
-        placeholderData: keepPreviousData,
+        placeholderData: placeholderData(keepPreviousData),
         notifyOnChangeProps: 'all',
       }))
 
@@ -1307,28 +1351,28 @@ describe('useQuery', () => {
     expect(states).toHaveLength(4)
 
     // Disabled query
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: 10,
       isFetching: false,
       isSuccess: true,
       isPlaceholderData: false,
     })
     // Set state
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 10,
       isFetching: false,
       isSuccess: true,
       isPlaceholderData: true,
     })
     // Refetch
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: 10,
       isFetching: true,
       isSuccess: true,
       isPlaceholderData: true,
     })
     // Refetch done
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: 12,
       isFetching: false,
       isSuccess: true,
@@ -1404,12 +1448,10 @@ describe('useQuery', () => {
     const states1: Array<UseQueryResult<string>> = []
     const states2: Array<UseQueryResult<string>> = []
 
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'prefetch'),
-      })
-      .catch(noop)
+    void queryQuery(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'prefetch'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(20)
 
     function FirstComponent() {
@@ -1569,7 +1611,9 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, () => <Page />)
 
-    expect(queryCache.find({ queryKey: key })!.options.retryDelay).toBe(20)
+    expect(
+      findCachedQuery(queryCache, { queryKey: key })!.options.retryDelay,
+    ).toBe(20)
   })
 
   it('should batch re-renders', async () => {
@@ -1606,7 +1650,7 @@ describe('useQuery', () => {
       }))
       createEffect(() => {
         setActTimeout(() => {
-          queryClient.setQueryData(key, 'new')
+          setQueryData(queryClient, key, 'new')
           // Update with same state to make react discard the next render
           setNewState('state')
         }, 10)
@@ -1736,8 +1780,11 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
-    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+    expect(snapshot(states[0])).toMatchObject({
+      data: undefined,
+      isFetching: true,
+    })
+    expect(snapshot(states[1])).toMatchObject({ data: 0, isFetching: false })
   })
 
   it('should not refetch stale query on focus when `refetchOnWindowFocus` is set to a function that returns `false`', async () => {
@@ -1764,8 +1811,11 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
-    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+    expect(snapshot(states[0])).toMatchObject({
+      data: undefined,
+      isFetching: true,
+    })
+    expect(snapshot(states[1])).toMatchObject({ data: 0, isFetching: false })
   })
 
   it('should not refetch fresh query on focus when `refetchOnWindowFocus` is set to `true`', async () => {
@@ -1792,8 +1842,11 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
-    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+    expect(snapshot(states[0])).toMatchObject({
+      data: undefined,
+      isFetching: true,
+    })
+    expect(snapshot(states[1])).toMatchObject({ data: 0, isFetching: false })
   })
 
   it('should refetch fresh query on focus when `refetchOnWindowFocus` is set to `always`', async () => {
@@ -1821,10 +1874,13 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(4)
-    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
-    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
-    expect(states[2]).toMatchObject({ data: 0, isFetching: true })
-    expect(states[3]).toMatchObject({ data: 1, isFetching: false })
+    expect(snapshot(states[0])).toMatchObject({
+      data: undefined,
+      isFetching: true,
+    })
+    expect(snapshot(states[1])).toMatchObject({ data: 0, isFetching: false })
+    expect(snapshot(states[2])).toMatchObject({ data: 0, isFetching: true })
+    expect(snapshot(states[3])).toMatchObject({ data: 1, isFetching: false })
   })
 
   it('should calculate focus behavior for refetchOnWindowFocus depending on function', async () => {
@@ -1852,8 +1908,11 @@ describe('useQuery', () => {
     expect(rendered.getByText('data: 0')).toBeInTheDocument()
 
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
-    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+    expect(snapshot(states[0])).toMatchObject({
+      data: undefined,
+      isFetching: true,
+    })
+    expect(snapshot(states[1])).toMatchObject({ data: 0, isFetching: false })
 
     window.dispatchEvent(new Event('visibilitychange'))
 
@@ -1863,8 +1922,8 @@ describe('useQuery', () => {
     // refetch should happen
     expect(states).toHaveLength(4)
 
-    expect(states[2]).toMatchObject({ data: 0, isFetching: true })
-    expect(states[3]).toMatchObject({ data: 1, isFetching: false })
+    expect(snapshot(states[2])).toMatchObject({ data: 0, isFetching: true })
+    expect(snapshot(states[3])).toMatchObject({ data: 1, isFetching: false })
 
     window.dispatchEvent(new Event('visibilitychange'))
 
@@ -1878,12 +1937,10 @@ describe('useQuery', () => {
     const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'prefetched'),
-      })
-      .catch(noop)
+    void queryQuery(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'prefetched'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -1903,12 +1960,12 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: 'prefetched',
       isStale: false,
       isFetching: true,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 'data',
       isStale: false,
       isFetching: false,
@@ -1919,12 +1976,10 @@ describe('useQuery', () => {
     const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'prefetched'),
-      })
-      .catch(noop)
+    void queryQuery(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'prefetched'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -1944,12 +1999,12 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: 'prefetched',
       isStale: true,
       isFetching: true,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 'data',
       isStale: true,
       isFetching: false,
@@ -2307,7 +2362,7 @@ describe('useQuery', () => {
       return (
         <div>
           <button onClick={toggle}>{show() ? 'hide' : 'show'}</button>
-          <button onClick={() => queryClient.cancelQueries({ queryKey: key })}>
+          <button onClick={() => cancelQueries(queryClient, { queryKey: key })}>
             cancel
           </button>
           {show() && <Page />}
@@ -2347,12 +2402,10 @@ describe('useQuery', () => {
     const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'prefetched'),
-      })
-      .catch(noop)
+    void queryQuery(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'prefetched'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -2368,7 +2421,7 @@ describe('useQuery', () => {
       return (
         <div>
           <div>data: {state.data ?? 'null'}</div>
-          <div>isFetching: {state.isFetching}</div>
+          <div>isFetching: {isFetching(state)}</div>
           <div>isStale: {state.isStale}</div>
         </div>
       )
@@ -2381,17 +2434,17 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(60)
     expect(states).toHaveLength(3)
 
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: 'prefetched',
       isStale: false,
       isFetching: true,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 'data',
       isStale: false,
       isFetching: false,
     })
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: 'data',
       isStale: true,
       isFetching: false,
@@ -2419,12 +2472,12 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
 
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: 'initial',
       isStale: true,
       isFetching: true,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 'data',
       isStale: true,
       isFetching: false,
@@ -2453,8 +2506,14 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({ data: 'initial', isError: false })
-    expect(states[1]).toMatchObject({ data: 'initial', isError: true })
+    expect(snapshot(states[0])).toMatchObject({
+      data: 'initial',
+      isError: false,
+    })
+    expect(snapshot(states[1])).toMatchObject({
+      data: 'initial',
+      isError: true,
+    })
   })
 
   it('should not fetch if initial data is set with a stale time', async () => {
@@ -2478,12 +2537,12 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(60)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: 'initial',
       isStale: false,
       isFetching: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 'initial',
       isStale: true,
       isFetching: false,
@@ -2514,17 +2573,17 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(70)
     expect(states).toHaveLength(3)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: 'initial',
       isStale: true,
       isFetching: true,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 'data',
       isStale: false,
       isFetching: false,
     })
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: 'data',
       isStale: true,
       isFetching: false,
@@ -2553,12 +2612,12 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: 'initial',
       isStale: true,
       isFetching: true,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 'data',
       isStale: false,
       isFetching: false,
@@ -2813,7 +2872,7 @@ describe('useQuery', () => {
     const key = createKey()
     const states: Array<UseQueryResult<string>> = []
 
-    queryClient.setQueryData(key, 'prefetched')
+    setQueryData(queryClient, key, 'prefetched')
 
     function Page() {
       const state = useQuery(() => ({
@@ -2830,7 +2889,7 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states).toMatchObject([
+    expect(snapshot(states)).toMatchObject([
       {
         data: 'prefetched',
         isFetching: true,
@@ -2852,7 +2911,7 @@ describe('useQuery', () => {
     const visibilityMock = mockVisibilityState('hidden')
 
     // set data in cache to check if the hook query fn is actually called
-    queryClient.setQueryData(key, 'prefetched')
+    setQueryData(queryClient, key, 'prefetched')
 
     function Page() {
       const state = useQuery(() => ({
@@ -2864,7 +2923,7 @@ describe('useQuery', () => {
       })
       return (
         <div>
-          {state.data}, {state.isStale}, {state.isFetching}
+          {state.data}, {state.isStale}, {isFetching(state)}
         </div>
       )
     }
@@ -2881,7 +2940,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(4)
 
-    expect(states).toMatchObject([
+    expect(snapshot(states)).toMatchObject([
       {
         data: 'prefetched',
         isFetching: true,
@@ -2916,13 +2975,11 @@ describe('useQuery', () => {
     const prefetchQueryFn = vi.fn<(...args: Array<unknown>) => string>()
     prefetchQueryFn.mockReturnValue('not yet...')
 
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: prefetchQueryFn,
-        staleTime: 10,
-      })
-      .catch(noop)
+    void queryQuery(queryClient, {
+      queryKey: key,
+      queryFn: prefetchQueryFn,
+      staleTime: 10,
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -2953,13 +3010,11 @@ describe('useQuery', () => {
       () => sleep(10).then(() => 'not yet...'),
     )
 
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: prefetchQueryFn,
-        staleTime: 1000,
-      })
-      .catch(noop)
+    void queryQuery(queryClient, {
+      queryKey: key,
+      queryFn: prefetchQueryFn,
+      staleTime: 1000,
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     function Page() {
@@ -3043,12 +3098,10 @@ describe('useQuery', () => {
 
       createEffect(() => {
         async function prefetch() {
-          await queryClient
-            .query({
-              queryKey: key,
-              queryFn: () => Promise.resolve('prefetched data'),
-            })
-            .catch(noop)
+          await queryQuery(queryClient, {
+            queryKey: key,
+            queryFn: () => Promise.resolve('prefetched data'),
+          }).catch(noop)
           setPrefetched(true)
         }
         prefetch()
@@ -3137,7 +3190,7 @@ describe('useQuery', () => {
         <div>
           <button
             onClick={() => {
-              queryClient.invalidateQueries()
+              invalidateQueries(queryClient)
               setShowComp(!showComp())
             }}
           >
@@ -3165,11 +3218,11 @@ describe('useQuery', () => {
     fireEvent.click(rendered.getByText('toggle'))
     expect(rendered.getByText('not showing')).toBeInTheDocument()
 
-    const entry = queryClient.getQueryCache().find({
+    const entry = findCachedQuery(getQueryCache(queryClient), {
       queryKey: [key],
     })!
 
-    expect(entry.getObserversCount()).toBe(0)
+    expect(getQueryObserverCount(entry)).toBe(0)
   })
 
   // See https://github.com/TanStack/query/issues/7711
@@ -3198,7 +3251,7 @@ describe('useQuery', () => {
           <button
             onClick={() => {
               queueMicrotask(() => setShowComp(!showComp()))
-              queryClient.invalidateQueries()
+              invalidateQueries(queryClient)
             }}
           >
             toggle
@@ -3227,11 +3280,11 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(rendered.getByText('not showing')).toBeInTheDocument()
 
-    const entry = queryClient.getQueryCache().find({
+    const entry = findCachedQuery(getQueryCache(queryClient), {
       queryKey: [key],
     })!
 
-    expect(entry.getObserversCount()).toBe(0)
+    expect(getQueryObserverCount(entry)).toBe(0)
   })
 
   it('should mark query as fetching, when using initialData', async () => {
@@ -3259,8 +3312,14 @@ describe('useQuery', () => {
     expect(rendered.getByText('data: serverData')).toBeInTheDocument()
 
     expect(results).toHaveLength(2)
-    expect(results[0]).toMatchObject({ data: 'initialData', isFetching: true })
-    expect(results[1]).toMatchObject({ data: 'serverData', isFetching: false })
+    expect(snapshot(results[0])).toMatchObject({
+      data: 'initialData',
+      isFetching: true,
+    })
+    expect(snapshot(results[1])).toMatchObject({
+      data: 'serverData',
+      isFetching: false,
+    })
   })
 
   it('should initialize state properly, when initialData is falsy', async () => {
@@ -3285,8 +3344,8 @@ describe('useQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(results).toHaveLength(2)
-    expect(results[0]).toMatchObject({ data: 0, isFetching: true })
-    expect(results[1]).toMatchObject({ data: 1, isFetching: false })
+    expect(snapshot(results[0])).toMatchObject({ data: 0, isFetching: true })
+    expect(snapshot(results[1])).toMatchObject({ data: 1, isFetching: false })
   })
 
   // // See https://github.com/tannerlinsley/react-query/issues/214
@@ -3345,7 +3404,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, () => <Page />)
 
     expect(queryFn).not.toHaveBeenCalled()
-    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(findCachedQuery(queryCache, { queryKey: key })).toBeDefined()
     expect(rendered.getByText('fetchStatus: idle')).toBeInTheDocument()
   })
 
@@ -3445,7 +3504,7 @@ describe('useQuery', () => {
       return (
         <div>
           <div>status {result.status}</div>
-          <div>isFetching {result.isFetching ? 'true' : 'false'}</div>
+          <div>isFetching {isFetching(result) ? 'true' : 'false'}</div>
           <button onClick={() => result.refetch()}>refetch</button>
         </div>
       )
@@ -3476,7 +3535,7 @@ describe('useQuery', () => {
       const state = useQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => count++),
-        refetchInterval: int(),
+        refetchInterval: refetchInterval(int()),
       }))
 
       createEffect(() => {
@@ -3510,7 +3569,10 @@ describe('useQuery', () => {
       const state = useQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => count++),
-        refetchInterval: ({ state: { data = 0 } }) => (data < 2 ? 10 : false),
+        refetchInterval: refetchInterval(
+          ({ state: { data = 0 } }: { state: { data?: number } }) =>
+            data < 2 ? 10 : false,
+        ),
       }))
 
       createRenderEffect(() => {
@@ -3522,7 +3584,7 @@ describe('useQuery', () => {
           <h1>count: {state.data}</h1>
           <h2>status: {state.status}</h2>
           <h2>data: {state.data}</h2>
-          <h2>refetch: {state.isRefetching}</h2>
+          <h2>refetch: {isRefetching(state)}</h2>
         </div>
       )
     }
@@ -3543,7 +3605,7 @@ describe('useQuery', () => {
 
     expect(states).toHaveLength(6)
 
-    expect(states).toMatchObject([
+    expect(snapshot(states)).toMatchObject([
       {
         status: 'pending',
         isFetching: true,
@@ -3585,7 +3647,7 @@ describe('useQuery', () => {
       const state = useQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => 1),
-        refetchInterval: 0,
+        refetchInterval: refetchInterval(0),
       }))
 
       createRenderEffect(() => {
@@ -3604,7 +3666,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(100)
     expect(states).toHaveLength(2)
 
-    expect(states).toMatchObject([
+    expect(snapshot(states)).toMatchObject([
       {
         status: 'pending',
         isFetching: true,
@@ -3696,7 +3758,7 @@ describe('useQuery', () => {
       const state = useQuery(() => ({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 'data'),
-        placeholderData: 'placeholder',
+        placeholderData: placeholderData('placeholder'),
       }))
 
       createRenderEffect(() => {
@@ -3716,7 +3778,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: data')).toBeInTheDocument()
 
-    expect(states).toMatchObject([
+    expect(snapshot(states)).toMatchObject([
       {
         isSuccess: true,
         isPlaceholderData: true,
@@ -3741,7 +3803,7 @@ describe('useQuery', () => {
       const state = useQuery(() => ({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 'data'),
-        placeholderData: 'placeholder',
+        placeholderData: placeholderData('placeholder'),
         enabled: count() === 0,
       }))
 
@@ -3766,7 +3828,9 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: data')).toBeInTheDocument()
 
-    expect(states).toMatchObject([
+    expect(
+      states.map(({ state, count }) => ({ state: snapshot(state), count })),
+    ).toMatchObject([
       {
         state: {
           isSuccess: true,
@@ -3803,8 +3867,8 @@ describe('useQuery', () => {
       const state = useQuery(() => ({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 1),
-        placeholderData: 23,
-        select: (data) => String(data * 2),
+        placeholderData: placeholderData(23),
+        select: select((data: number) => String(data * 2)),
       }))
 
       createRenderEffect(() => {
@@ -3824,7 +3888,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: 2')).toBeInTheDocument()
 
-    expect(states).toMatchObject([
+    expect(snapshot(states)).toMatchObject([
       {
         isSuccess: true,
         isPlaceholderData: true,
@@ -3848,11 +3912,14 @@ describe('useQuery', () => {
       const state = useQuery(() => ({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 1),
-        placeholderData: () => {
-          placeholderFunctionRunCount++
-          return 23
-        },
-        select: (data) => String(data * 2),
+        placeholderData: [
+          placeholderData,
+          () => {
+            placeholderFunctionRunCount++
+            return 23
+          },
+        ],
+        select: select((data: number) => String(data * 2)),
       }))
 
       createRenderEffect(() => {
@@ -3872,7 +3939,7 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: 2')).toBeInTheDocument()
 
-    expect(states).toMatchObject([
+    expect(snapshot(states)).toMatchObject([
       {
         isSuccess: true,
         isPlaceholderData: true,
@@ -3908,9 +3975,9 @@ describe('useQuery', () => {
         queryFn: () => sleep(10).then(() => 0),
         get select() {
           const currentCount = count()
-          return (data: number) => `selected ${data + currentCount}`
+          return select((data: number) => `selected ${data + currentCount}`)
         },
-        placeholderData: 99,
+        placeholderData: placeholderData(99),
       }))
 
       return (
@@ -3948,7 +4015,7 @@ describe('useQuery', () => {
       const state = useQuery(() => ({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => [1, 2]),
-        select: (res) => res.map((x) => x + 1),
+        select: select((res: Array<number>) => res.map((x) => x + 1)),
       }))
 
       createEffect(() => {
@@ -3994,7 +4061,7 @@ describe('useQuery', () => {
       const state = useQuery(() => ({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => [1, 2]),
-        select: (res) => res.map((x) => x + 1),
+        select: select((res: Array<number>) => res.map((x) => x + 1)),
         reconcile(oldData, newData) {
           return reconcile(newData)(oldData)
         },
@@ -4113,25 +4180,33 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(15)
     expect(states).toHaveLength(4)
 
-    expect(queryCache.find({ queryKey: [key, 0] })?.state).toMatchObject({
+    expect(
+      findCachedQuery(queryCache, { queryKey: [key, 0] })?.state,
+    ).toMatchObject({
       data: 'data 0',
       status: 'success',
       dataUpdateCount: 1,
     })
 
-    expect(queryCache.find({ queryKey: [key, 1] })?.state).toMatchObject({
+    expect(
+      findCachedQuery(queryCache, { queryKey: [key, 1] })?.state,
+    ).toMatchObject({
       data: undefined,
       status: 'pending',
       fetchStatus: 'idle',
     })
 
-    expect(queryCache.find({ queryKey: [key, 2] })?.state).toMatchObject({
+    expect(
+      findCachedQuery(queryCache, { queryKey: [key, 2] })?.state,
+    ).toMatchObject({
       data: 'data 2',
       status: 'success',
       dataUpdateCount: 1,
     })
 
-    expect(queryCache.find({ queryKey: [key, 3] })?.state).toMatchObject({
+    expect(
+      findCachedQuery(queryCache, { queryKey: [key, 3] })?.state,
+    ).toMatchObject({
       data: undefined,
       status: 'pending',
       fetchStatus: 'idle',
@@ -4203,11 +4278,11 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <button onClick={() => queryClient.resetQueries({ queryKey: key })}>
+          <button onClick={() => resetQueries(queryClient, { queryKey: key })}>
             reset
           </button>
           <div>data: {state.data ?? 'null'}</div>
-          <div>isFetching: {state.isFetching}</div>
+          <div>isFetching: {isFetching(state)}</div>
         </div>
       )
     }
@@ -4224,26 +4299,26 @@ describe('useQuery', () => {
     expect(count).toBe(2)
     expect(states).toHaveLength(4)
 
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       isPending: true,
       isFetching: true,
       isSuccess: false,
       isStale: true,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: 1,
       isPending: false,
       isFetching: false,
       isSuccess: true,
       isStale: false,
     })
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       isPending: true,
       isFetching: true,
       isSuccess: false,
       isStale: true,
     })
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: 2,
       isPending: false,
       isFetching: false,
@@ -4277,7 +4352,7 @@ describe('useQuery', () => {
       return (
         <div>
           <button onClick={() => state.refetch()}>refetch</button>
-          <button onClick={() => queryClient.resetQueries({ queryKey: key })}>
+          <button onClick={() => resetQueries(queryClient, { queryKey: key })}>
             reset
           </button>
           <div>data: {state.data ?? 'null'}</div>
@@ -4301,26 +4376,26 @@ describe('useQuery', () => {
 
     expect(count).toBe(1)
 
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       isPending: true,
       isFetching: false,
       isSuccess: false,
       isStale: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       isPending: true,
       isFetching: true,
       isSuccess: false,
       isStale: false,
     })
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: 1,
       isPending: false,
       isFetching: false,
       isSuccess: true,
       isStale: false,
     })
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       isPending: true,
       isFetching: false,
       isSuccess: false,
@@ -4375,7 +4450,7 @@ describe('useQuery', () => {
 
       return (
         <Switch fallback={<div>rendered</div>}>
-          <Match when={state.isPending}>
+          <Match when={isPending(state)}>
             <div>status: pending</div>
           </Match>
           <Match when={state.error instanceof Error}>
@@ -4436,7 +4511,7 @@ describe('useQuery', () => {
 
       return (
         <Switch fallback={<div>rendered</div>}>
-          <Match when={state.isPending}>
+          <Match when={isPending(state)}>
             <div>status: pending</div>
           </Match>
           <Match when={state.error instanceof Error}>
@@ -4491,7 +4566,7 @@ describe('useQuery', () => {
       }))
       return (
         <Switch fallback={<div>rendered</div>}>
-          <Match when={state.isFetching}>
+          <Match when={isFetching(state)}>
             <div>status: fetching</div>
           </Match>
           <Match when={state.error instanceof Error}>
@@ -4563,7 +4638,7 @@ describe('useQuery', () => {
 
       return (
         <Switch fallback={<div>data: {state.data}</div>}>
-          <Match when={state.isPending}>
+          <Match when={isPending(state)}>
             <div>status: pending</div>
           </Match>
           <Match when={state.error instanceof Error}>
@@ -4632,7 +4707,7 @@ describe('useQuery', () => {
         return (
           <div>
             <div>
-              status: {state.status}, isPaused: {String(state.isPaused)}
+              status: {state.status}, isPaused: {String(isPaused(state))}
             </div>
             <div>data: {state.data}</div>
           </div>
@@ -4683,7 +4758,7 @@ describe('useQuery', () => {
             <div>failureReason: {state.failureReason ?? 'null'}</div>
             <div>data: {state.data}</div>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => invalidateQueries(queryClient, { queryKey: key })}
             >
               invalidate
             </button>
@@ -4753,7 +4828,7 @@ describe('useQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => invalidateQueries(queryClient, { queryKey: key })}
             >
               invalidate
             </button>
@@ -4805,7 +4880,7 @@ describe('useQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => invalidateQueries(queryClient, { queryKey: key })}
             >
               invalidate
             </button>
@@ -4852,7 +4927,7 @@ describe('useQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => invalidateQueries(queryClient, { queryKey: key })}
             >
               invalidate
             </button>
@@ -4900,7 +4975,7 @@ describe('useQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => invalidateQueries(queryClient, { queryKey: key })}
             >
               invalidate
             </button>
@@ -5060,7 +5135,7 @@ describe('useQuery', () => {
       window.dispatchEvent(new Event('online'))
 
       await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)).toMatchObject({
+      expect(getQueryState(queryClient, key)).toMatchObject({
         fetchStatus: 'idle',
         status: 'pending',
       })
@@ -5072,7 +5147,7 @@ describe('useQuery', () => {
       const key = createKey()
       let count = 0
 
-      queryClient.setQueryData(key, 'initial')
+      setQueryData(queryClient, key, 'initial')
 
       function Component() {
         const state = useQuery(() => ({
@@ -5116,10 +5191,10 @@ describe('useQuery', () => {
       fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
       onlineMock.mockReturnValue(true)
-      queryClient.getQueryCache().onOnline()
+      getQueryCache(queryClient).onOnline()
 
       await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)).toMatchObject({
+      expect(getQueryState(queryClient, key)).toMatchObject({
         fetchStatus: 'idle',
         status: 'success',
       })
@@ -5145,7 +5220,7 @@ describe('useQuery', () => {
         return (
           <div>
             <button
-              onClick={() => queryClient.cancelQueries({ queryKey: key })}
+              onClick={() => cancelQueries(queryClient, { queryKey: key })}
             >
               cancel
             </button>
@@ -5212,7 +5287,7 @@ describe('useQuery', () => {
             {show() && <Component />}
             <button onClick={() => setShow(false)}>hide</button>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => invalidateQueries(queryClient, { queryKey: key })}
             >
               invalidate
             </button>
@@ -5237,10 +5312,10 @@ describe('useQuery', () => {
       fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
       onlineMock.mockReturnValue(true)
-      queryClient.getQueryCache().onOnline()
+      getQueryCache(queryClient).onOnline()
 
       await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)).toMatchObject({
+      expect(getQueryState(queryClient, key)).toMatchObject({
         fetchStatus: 'idle',
         status: 'success',
       })
@@ -5270,7 +5345,7 @@ describe('useQuery', () => {
         return (
           <div>
             <div>
-              status: {state.status}, isPaused: {String(state.isPaused)}
+              status: {state.status}, isPaused: {String(isPaused(state))}
             </div>
             <div>data: {state.data}</div>
           </div>
@@ -5308,7 +5383,7 @@ describe('useQuery', () => {
         return (
           <div>
             <div>
-              status: {state.status}, isPaused: {String(state.isPaused)}
+              status: {state.status}, isPaused: {String(isPaused(state))}
             </div>
             <div>
               error: {state.error instanceof Error && state.error.message}
@@ -5420,7 +5495,7 @@ describe('useQuery', () => {
       return <></>
     }
 
-    void queryClient.query({ queryKey: key, queryFn }).catch(noop)
+    void queryQuery(queryClient, { queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     renderWithClient(queryClient, () => <Page />)
@@ -5447,7 +5522,7 @@ describe('useQuery', () => {
           <div>dataUpdatedAt: {state.dataUpdatedAt}</div>
           <button
             onClick={() => {
-              queryClient.setQueryData(key, 'newData', {
+              setQueryData(queryClient, key, 'newData', {
                 updatedAt: 100,
               })
             }}
@@ -5598,7 +5673,8 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('status: success')).toBeInTheDocument()
     expect(
-      queryClient1.getQueryCache().find({ queryKey: key })?.state.data,
+      findCachedQuery(getQueryCache(queryClient1), { queryKey: key })?.state
+        .data,
     ).toBe('data')
     expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -5606,10 +5682,11 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('status: success')).toBeInTheDocument()
     expect(
-      queryClient2.getQueryCache().find({ queryKey: key })?.state.data,
+      findCachedQuery(getQueryCache(queryClient2), { queryKey: key })?.state
+        .data,
     ).toBe('data')
     expect(
-      queryClient1.getQueryCache().find({ queryKey: key })?.state
+      findCachedQuery(getQueryCache(queryClient1), { queryKey: key })?.state
         .dataUpdateCount,
     ).toBe(1)
     expect(queryFn).toHaveBeenCalledTimes(2)

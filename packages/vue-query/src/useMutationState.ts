@@ -1,3 +1,4 @@
+import { getMutationCache } from '@tanstack/query-core'
 import {
   computed,
   getCurrentScope,
@@ -225,7 +226,7 @@ export function useMutationState<
       select: newOptions.select,
     }
   })
-  const mutationCache = (queryClient || useQueryClient()).getMutationCache()
+  const mutationCache = getMutationCache(queryClient || useQueryClient())
   const state = shallowRef(getResult(mutationCache, resolvedOptions.value))
   const unsubscribe = mutationCache.subscribe(() => {
     state.value = getResult(mutationCache, resolvedOptions.value)

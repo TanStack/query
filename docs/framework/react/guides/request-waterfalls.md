@@ -75,10 +75,12 @@ When a single component first fetches one query, and then another, that's a requ
 
 ```tsx
 // Get the user
-const { data: user } = useQuery({
-  queryKey: ['user', email],
-  queryFn: getUserByEmail,
-})
+const { data: user } = useQuery(
+  queryOptions({
+    queryKey: ['user', email],
+    queryFn: getUserByEmail,
+  }),
+)
 
 const userId = user?.id
 
@@ -87,12 +89,14 @@ const {
   status,
   fetchStatus,
   data: projects,
-} = useQuery({
-  queryKey: ['projects', userId],
-  queryFn: getProjectsByUser,
-  // The query will not execute until the userId exists
-  enabled: !!userId,
-})
+} = useQuery(
+  queryOptions({
+    queryKey: ['projects', userId],
+    queryFn: getProjectsByUser,
+    // The query will not execute until the userId exists
+    enabled: !!userId,
+  }),
+)
 ```
 
 [//]: # 'DependentExample'
@@ -111,9 +115,9 @@ Another example of serial queries is when you use React Query with Suspense:
 ```tsx
 function App () {
   // The following queries will execute in serial, causing separate roundtrips to the server:
-  const usersQuery = useSuspenseQuery({ queryKey: ['users'], queryFn: fetchUsers })
-  const teamsQuery = useSuspenseQuery({ queryKey: ['teams'], queryFn: fetchTeams })
-  const projectsQuery = useSuspenseQuery({ queryKey: ['projects'], queryFn: fetchProjects })
+  const usersQuery = useQuery(suspenseQueryOptions({ queryKey: ['users'], queryFn: fetchUsers }))
+  const teamsQuery = useQuery(suspenseQueryOptions({ queryKey: ['teams'], queryFn: fetchTeams }))
+  const projectsQuery = useQuery(suspenseQueryOptions({ queryKey: ['projects'], queryFn: fetchProjects }))
 
   // Note that since the queries above suspend rendering, no data
   // gets rendered until all of the queries finished
@@ -141,7 +145,7 @@ const [usersQuery, teamsQuery, projectsQuery] = useSuspenseQueries({
 
 [//]: # 'NestedIntro'
 
-Nested Component Waterfalls is when both a parent and a child component contains queries, and the parent does not render the child until its query is done. This can happen both with `useQuery` and `useSuspenseQuery`.
+Nested Component Waterfalls is when both a parent and a child component contains queries, and the parent does not render the child until its query is done. This can happen in regular and Suspense queries.
 
 [//]: # 'NestedIntro'
 
@@ -153,19 +157,19 @@ Let's first look at an example where the child is **not** dependent on the paren
 
 ```tsx
 function Article({ id }) {
-  const { data: articleData, isPending } = useQuery({
+  const queryResult = useQuery(queryOptions({
     queryKey: ['article', id],
     queryFn: getArticleById,
-  })
+  }))
 
-  if (isPending) {
+  if (isPending(queryResult)) {
     return 'Loading article...'
   }
 
   return (
     <>
-      <ArticleHeader articleData={articleData} />
-      <ArticleBody articleData={articleData} />
+      <ArticleHeader articleData={queryResult.data} />
+      <ArticleBody articleData={queryResult.data} />
       <Comments id={id} />
     </>
   )
@@ -173,10 +177,10 @@ function Article({ id }) {
 }
 
 function Comments({ id }) {
-  const { data, isPending } = useQuery({
+  const queryResult2 = useQuery(queryOptions({
     queryKey: ['article-comments', id],
     queryFn: getArticleCommentsById,
-  })
+  }))
 
   ...
 }
@@ -190,28 +194,32 @@ Note that while `<Comments>` takes a prop `id` from the parent, that id is alrea
 
 ```tsx
 function Article({ id }) {
-  const { data: articleData, isPending: articlePending } = useQuery({
-    queryKey: ['article', id],
-    queryFn: getArticleById,
-  })
+  const queryResult = useQuery(
+    queryOptions({
+      queryKey: ['article', id],
+      queryFn: getArticleById,
+    }),
+  )
 
-  const { data: commentsData, isPending: commentsPending } = useQuery({
-    queryKey: ['article-comments', id],
-    queryFn: getArticleCommentsById,
-  })
+  const queryResult2 = useQuery(
+    queryOptions({
+      queryKey: ['article-comments', id],
+      queryFn: getArticleCommentsById,
+    }),
+  )
 
-  if (articlePending) {
+  if (isPending(queryResult)) {
     return 'Loading article...'
   }
 
   return (
     <>
-      <ArticleHeader articleData={articleData} />
-      <ArticleBody articleData={articleData} />
-      {commentsPending ? (
+      <ArticleHeader articleData={queryResult.data} />
+      <ArticleBody articleData={queryResult.data} />
+      {isPending(queryResult2) ? (
         'Loading comments...'
       ) : (
-        <Comments commentsData={commentsData} />
+        <Comments commentsData={queryResult2.data} />
       )}
     </>
   )
@@ -233,18 +241,18 @@ Next, let's look at a _Dependent Nested Component Waterfall_.
 
 ```tsx
 function Feed() {
-  const { data, isPending } = useQuery({
+  const queryResult = useQuery(queryOptions({
     queryKey: ['feed'],
     queryFn: getFeed,
-  })
+  }))
 
-  if (isPending) {
+  if (isPending(queryResult)) {
     return 'Loading feed...'
   }
 
   return (
     <>
-      {data.map((feedItem) => {
+      {queryResult.data.map((feedItem) => {
         if (feedItem.type === 'GRAPH') {
           return <GraphFeedItem key={feedItem.id} feedItem={feedItem} />
         }
@@ -256,10 +264,10 @@ function Feed() {
 }
 
 function GraphFeedItem({ feedItem }) {
-  const { data, isPending } = useQuery({
+  const queryResult2 = useQuery(queryOptions({
     queryKey: ['graph', feedItem.id],
     queryFn: getGraphDataById,
-  })
+  }))
 
   ...
 }
@@ -296,18 +304,18 @@ Consider this a slightly modified version of the Feed example.
 const GraphFeedItem = React.lazy(() => import('./GraphFeedItem'))
 
 function Feed() {
-  const { data, isPending } = useQuery({
+  const queryResult = useQuery(queryOptions({
     queryKey: ['feed'],
     queryFn: getFeed,
-  })
+  }))
 
-  if (isPending) {
+  if (isPending(queryResult)) {
     return 'Loading feed...'
   }
 
   return (
     <>
-      {data.map((feedItem) => {
+      {queryResult.data.map((feedItem) => {
         if (feedItem.type === 'GRAPH') {
           return <GraphFeedItem key={feedItem.id} feedItem={feedItem} />
         }
@@ -320,10 +328,10 @@ function Feed() {
 
 // GraphFeedItem.tsx
 function GraphFeedItem({ feedItem }) {
-  const { data, isPending } = useQuery({
+  const queryResult2 = useQuery(queryOptions({
     queryKey: ['graph', feedItem.id],
     queryFn: getGraphDataById,
-  })
+  }))
 
   ...
 }

@@ -1,6 +1,8 @@
 import {
   QueryClient,
   QueryClientProvider,
+  isFetching,
+  isPending,
   useQuery,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtoolsPanel } from '@tanstack/preact-query-devtools'
@@ -25,11 +27,12 @@ export default function App() {
 }
 
 function Example() {
-  const { isPending, error, data, isFetching } = useQuery(reposQueries.detail())
+  const queryResult = useQuery(reposQueries.detail())
 
-  if (isPending) return 'Loading...'
+  if (isPending(queryResult)) return 'Loading...'
 
-  if (error) return `An error has occurred: ${error.message}`
+  if (queryResult.error)
+    return `An error has occurred: ${queryResult.error.message}`
 
   return (
     <div
@@ -37,12 +40,12 @@ function Example() {
         paddingBottom: 20,
       }}
     >
-      <h1>{data.full_name}</h1>
-      <p>{data.description}</p>
-      <strong>👀 {data.subscribers_count}</strong>{' '}
-      <strong>✨ {data.stargazers_count}</strong>{' '}
-      <strong>🍴 {data.forks_count}</strong>
-      <div>{isFetching ? 'Updating...' : ''}</div>
+      <h1>{queryResult.data.full_name}</h1>
+      <p>{queryResult.data.description}</p>
+      <strong>👀 {queryResult.data.subscribers_count}</strong>{' '}
+      <strong>✨ {queryResult.data.stargazers_count}</strong>{' '}
+      <strong>🍴 {queryResult.data.forks_count}</strong>
+      <div>{isFetching(queryResult) ? 'Updating...' : ''}</div>
     </div>
   )
 }

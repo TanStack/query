@@ -1,5 +1,5 @@
 import { useDebouncedCallback } from '@tanstack/react-pacer/debouncer'
-import { useIsFetching, useSuspenseQuery } from '@tanstack/react-query'
+import { query, useIsFetching, useQuery } from '@tanstack/react-query'
 import {
   Link,
   NavLink,
@@ -17,13 +17,16 @@ export const loader =
   async ({ request }: LoaderFunctionArgs) => {
     const url = new URL(request.url)
     const q = url.searchParams.get('q') ?? ''
-    await queryClient.query({ ...contactsQueries.list(q), staleTime: 'static' })
+    await query(queryClient, {
+      ...contactsQueries.list(q),
+      staleTime: 'static',
+    })
     return { q }
   }
 
 export default function Root() {
   const { q } = useLoaderData<ReturnType<typeof loader>>()
-  const { data: contacts } = useSuspenseQuery(contactsQueries.list(q))
+  const { data: contacts } = useQuery(contactsQueries.list(q))
   const searching = useIsFetching({ queryKey: contactsQueries.lists() }) > 0
   const navigation = useNavigation()
   const submit = useSubmit()

@@ -20,31 +20,33 @@ When `enabled` is `false`:
 
 ```tsx
 function Todos() {
-  const { isLoading, isError, data, error, refetch, isFetching } = useQuery({
-    queryKey: ['todos'],
-    queryFn: fetchTodoList,
-    enabled: false,
-  })
+  const queryResult = useQuery(
+    queryOptions({
+      queryKey: ['todos'],
+      queryFn: fetchTodoList,
+      enabled: false,
+    }),
+  )
 
   return (
     <div>
-      <button onClick={() => refetch()}>Fetch Todos</button>
+      <button onClick={() => queryResult.refetch()}>Fetch Todos</button>
 
-      {data ? (
+      {queryResult.data ? (
         <ul>
-          {data.map((todo) => (
+          {queryResult.data.map((todo) => (
             <li key={todo.id}>{todo.title}</li>
           ))}
         </ul>
-      ) : isError ? (
-        <span>Error: {error.message}</span>
-      ) : isLoading ? (
+      ) : isError(queryResult) ? (
+        <span>Error: {queryResult.error.message}</span>
+      ) : isLoading(queryResult) ? (
         <span>Loading...</span>
       ) : (
         <span>Not ready ...</span>
       )}
 
-      <div>{isFetching ? 'Fetching...' : null}</div>
+      <div>{isFetching(queryResult) ? 'Fetching...' : null}</div>
     </div>
   )
 }
@@ -64,12 +66,14 @@ The enabled option can not only be used to permanently disable a query, but also
 function Todos() {
   const [filter, setFilter] = React.useState('')
 
-  const { data } = useQuery({
-    queryKey: ['todos', filter],
-    queryFn: () => fetchTodos(filter),
-    // ⬇️ disabled as long as the filter is empty
-    enabled: !!filter,
-  })
+  const { data } = useQuery(
+    queryOptions({
+      queryKey: ['todos', filter],
+      queryFn: () => fetchTodos(filter),
+      // ⬇️ disabled as long as the filter is empty
+      enabled: !!filter,
+    }),
+  )
 
   return (
     <div>
@@ -87,9 +91,9 @@ function Todos() {
 
 Lazy queries will be in `status: 'pending'` right from the start because `pending` means that there is no data yet. This is technically true, however, since we are not currently fetching any data (as the query is not _enabled_), it also means you likely cannot use this flag to show a loading spinner.
 
-If you are using disabled or lazy queries, you can use the `isLoading` flag instead. It's a derived flag that is computed from:
+If you are using disabled or lazy queries, you can call `isLoading(result)`. It returns the same value as
 
-`isPending && isFetching`
+`isPending(result) && isFetching(result)`.
 
 so it will only be true if the query is currently fetching for the first time.
 
@@ -102,16 +106,18 @@ If you are using TypeScript, you can use the `skipToken` to disable a query. Thi
 [//]: # 'Example3'
 
 ```tsx
-import { skipToken, useQuery } from '@tanstack/react-query'
+import { skipToken, useQuery, queryOptions } from '@tanstack/react-query'
 
 function Todos() {
   const [filter, setFilter] = React.useState<string | undefined>()
 
-  const { data } = useQuery({
-    queryKey: ['todos', filter],
-    // ⬇️ disabled as long as the filter is undefined or empty
-    queryFn: filter ? () => fetchTodos(filter) : skipToken,
-  })
+  const { data } = useQuery(
+    queryOptions({
+      queryKey: ['todos', filter],
+      // ⬇️ disabled as long as the filter is undefined or empty
+      queryFn: filter ? () => fetchTodos(filter) : skipToken,
+    }),
+  )
 
   return (
     <div>
