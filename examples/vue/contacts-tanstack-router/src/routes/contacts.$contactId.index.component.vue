@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import {
+  select,
+  invalidateQueries,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/vue-query'
 import { Link, useNavigate, useParams, useSearch } from '@tanstack/vue-router'
 import FavoriteButton from '../FavoriteButton.vue'
 import {
@@ -26,7 +32,7 @@ const { mutate: destroy } = useMutation({
   ...contactsMutations.delete(),
   onSuccess: async () => {
     await navigate({ to: '/', search: { q: q.value } })
-    await queryClient.invalidateQueries({ queryKey: contactsQueries.all() })
+    await invalidateQueries(queryClient, { queryKey: contactsQueries.all() })
   },
 })
 

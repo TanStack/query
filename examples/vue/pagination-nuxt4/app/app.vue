@@ -1,26 +1,36 @@
 <script setup lang="ts">
 import {
+  isFetching as queryIsFetching,
+  placeholderData,
+  query,
   keepPreviousData,
   noop,
   useQuery,
   useQueryClient,
 } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
-import { ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { projectsQueries } from './services/projects/queries'
 
 const queryClient = useQueryClient()
 const page = ref(0)
 
-const { status, data, error, isFetching, isPlaceholderData } = useQuery(() => ({
+const {
+  state: queryState,
+  status,
+  data,
+  error,
+  isPlaceholderData,
+} = useQuery(() => ({
   ...projectsQueries.list(page.value),
-  placeholderData: keepPreviousData,
+  placeholderData: placeholderData(keepPreviousData),
 }))
+const isFetching = computed(() => queryIsFetching(queryState))
 
 // Prefetch the next page!
 watchEffect(() => {
   if (!isPlaceholderData.value && data.value?.hasMore) {
-    queryClient.query(projectsQueries.list(page.value + 1)).catch(noop)
+    query(queryClient, projectsQueries.list(page.value + 1)).catch(noop)
   }
 })
 </script>

@@ -1,3 +1,4 @@
+import { isQueryActive, isQueryStale } from './queryPredicates'
 import { timeoutManager } from './timeoutManager'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
@@ -27,7 +28,7 @@ type TuplePrefixes<T extends ReadonlyArray<unknown>> = T extends readonly []
   : TuplePrefixes<DropLast<T>> | T
 
 /**
- * Filters used to select queries, for example in `queryClient.getQueriesData` or `queryClient.invalidateQueries`.
+ * Filters used to select queries, for example in `getQueriesData` or `invalidateQueries`.
  * All provided filters must match; filters that are left unspecified are ignored.
  */
 export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
@@ -59,7 +60,7 @@ export interface QueryFilters<TQueryKey extends QueryKey = QueryKey> {
 }
 
 /**
- * Filters used to select mutations, for example in `mutationCache.findAll` or `queryClient.isMutating`.
+ * Filters used to select mutations, for example in `mutationCache.findAll` or `isMutating`.
  * All provided filters must match; filters that are left unspecified are ignored.
  */
 export interface MutationFilters<
@@ -94,10 +95,10 @@ export interface MutationFilters<
  * function that computes it from the previous data. See {@link functionalUpdate}.
  * @example
  * ```ts
- * queryClient.setQueryData(['posts'], newPosts)
+ * setQueryData(queryClient, ['posts'], newPosts)
  *
  * // Or, using an updater function that receives the current data:
- * queryClient.setQueryData(['posts'], (oldPosts) =>
+ * setQueryData(queryClient, ['posts'], (oldPosts) =>
  *   oldPosts ? [...oldPosts, newPost] : oldPosts,
  * )
  * ```
@@ -193,7 +194,7 @@ export function resolveQueryValue<
  * @returns `true` if the query matches every specified filter.
  * @example
  * ```ts
- * const queryCache = queryClient.getQueryCache()
+ * const queryCache = getQueryCache(queryClient)
  *
  * const matchingQueries = queryCache
  *   .getAll()
@@ -227,7 +228,7 @@ export function matchQuery(
   }
 
   if (type !== 'all') {
-    const isActive = query.isActive()
+    const isActive = isQueryActive(query)
     if (type === 'active' && !isActive) {
       return false
     }
@@ -236,7 +237,7 @@ export function matchQuery(
     }
   }
 
-  if (typeof stale === 'boolean' && query.isStale() !== stale) {
+  if (typeof stale === 'boolean' && isQueryStale(query) !== stale) {
     return false
   }
 
@@ -261,7 +262,7 @@ export function matchQuery(
  * @returns `true` if the mutation matches every specified filter.
  * @example
  * ```ts
- * const mutationCache = queryClient.getMutationCache()
+ * const mutationCache = getMutationCache(queryClient)
  *
  * const matchingMutations = mutationCache
  *   .getAll()
@@ -595,7 +596,7 @@ export function sleep(timeout: number): Promise<void> {
  */
 export function replaceData<
   TData,
-  TOptions extends QueryOptions<any, any, any, any>,
+  TOptions extends Pick<QueryOptions, 'structuralSharing' | 'queryHash'>,
 >(prevData: TData | undefined, data: TData, options: TOptions): TData {
   if (typeof options.structuralSharing === 'function') {
     return options.structuralSharing(prevData, data) as TData
@@ -620,7 +621,7 @@ export function replaceData<
 
 /**
  * Intended to be passed as a query's `placeholderData` option, for example
- * `placeholderData: keepPreviousData`. Instead of resetting the query's data to `undefined` while a new
+ * `placeholderData: placeholderData(keepPreviousData)`. Instead of resetting the query's data to `undefined` while a new
  * query key is fetching, it keeps displaying the previously fetched data until the new data arrives.
  * @param previousData - The data of the previous query key, passed by the observer.
  * @returns The previous data, unchanged.
@@ -629,7 +630,7 @@ export function replaceData<
  * new QueryObserver(queryClient, {
  *   queryKey: ['posts', page],
  *   queryFn: () => fetchPosts(page),
- *   placeholderData: keepPreviousData,
+ *   placeholderData: placeholderData(keepPreviousData),
  * })
  * ```
  */
@@ -743,28 +744,25 @@ export function ensureQueryFn<
  * additional context such as the query or mutation) and its result is returned, allowing the throwing
  * behavior to be decided per error. Otherwise, `throwOnError` itself is coerced to a boolean (`undefined`
  * resolves to `false`).
- * @param throwOnError - The `throwOnError` option: a boolean, a function that decides per error, or
- * `undefined`.
+ * @param throwOnError - The `throwOnError` option: a boolean, a predicate, a query error-boundary tuple containing either rule, or `undefined`.
  * @param params - The arguments passed to `throwOnError` if it is a function.
  * @returns Whether the error should be thrown.
  * @example
  * ```ts
- * const throwOnError =
- *   query.state.error && typeof options.throwOnError === 'function'
- *     ? shouldThrowError(options.throwOnError, [query.state.error, query])
- *     : options.throwOnError
+ * const shouldThrow = query.state.error !== null &&
+ *   shouldThrowError(options.throwOnError, [query.state.error, query])
  * ```
  */
 export function shouldThrowError<T extends (...args: Array<any>) => boolean>(
-  throwOnError: boolean | T | undefined,
+  throwOnError:
+    | boolean
+    | T
+    | readonly [policy: object, rule: true | T]
+    | undefined,
   params: Parameters<T>,
 ): boolean {
-  // Allow throwOnError function to override throwing behavior on a per-error basis
-  if (typeof throwOnError === 'function') {
-    return throwOnError(...params)
-  }
-
-  return !!throwOnError
+  const rule = typeof throwOnError === 'object' ? throwOnError[1] : throwOnError
+  return typeof rule === 'function' ? rule(...params) : !!rule
 }
 
 export const fetchSignal = Symbol()

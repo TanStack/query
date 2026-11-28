@@ -183,7 +183,7 @@ export function useQuery<
  *       .getQueryData<Array<Post>>(['posts'])
  *       ?.find((post) => post.id === props.postId),
  *   initialDataUpdatedAt: () =>
- *     queryClient.getQueryState(['posts'])?.dataUpdatedAt,
+ *     getQueryState(queryClient, ['posts'])?.dataUpdatedAt,
  * })
  * </script>
  *

@@ -1,6 +1,13 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { QueriesObserver, QueryClient, defaultQueryFn } from '..'
+import {
+  QueriesObserver,
+  QueryClient,
+  clearQueryClient,
+  defaultQueryFn,
+  mountQueryClient,
+} from '..'
+import { optionalSelect } from './helpers/projection'
 import type { Query, QueryObserver, QueryObserverResult } from '..'
 import type { QueriesObserverOptions } from '../queriesObserver'
 import type { ObserverOptionsInput } from '../queryObserver'
@@ -10,11 +17,11 @@ describe('queriesObserver', () => {
 
   beforeEach(() => {
     queryClient = new QueryClient()
-    queryClient.mount()
+    mountQueryClient(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   describe('QueriesObserver', () => {
@@ -25,7 +32,6 @@ describe('queriesObserver', () => {
         | 'destroy'
         | 'setQueries'
         | 'getCurrentResult'
-        | 'getQueries'
         | 'getObservers'
         | 'createResultReader'
       >()
@@ -95,7 +101,9 @@ describe('queriesObserver', () => {
     it('should reject an option it does not declare', () => {
       new QueriesObserver(queryClient, [], {
         // @ts-expect-error combine is the only option
-        select: (results: Array<QueryObserverResult>) => results,
+        select: optionalSelect(
+          (results: Array<QueryObserverResult>) => results,
+        ),
       })
 
       expectTypeOf<
@@ -185,11 +193,13 @@ describe('queriesObserver', () => {
     })
   })
 
-  describe('getQueries', () => {
+  describe('observed queries', () => {
     it('should return the observed queries', () => {
       const observer = new QueriesObserver(queryClient, [])
 
-      expectTypeOf(observer.getQueries()).toEqualTypeOf<Array<Query>>()
+      expectTypeOf(
+        observer.getObservers().map((item) => item.getCurrentQuery()),
+      ).toEqualTypeOf<Array<Query>>()
     })
   })
 

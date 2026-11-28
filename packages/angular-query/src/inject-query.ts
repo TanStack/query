@@ -2,7 +2,7 @@ import { assertInInjectionContext, untracked } from '@angular/core'
 import { QueryObserver } from '@tanstack/query-core'
 import { injectBaseQuery } from './inject-base-query'
 import { injectQueryZone } from './utils/inject-query-zone'
-import { queryResultFields } from './utils/result-fields'
+import { queryResultFields, queryStatusSignals } from './utils/result-fields'
 import { signalProxy } from './utils/signal-proxy'
 import type {
   DefaultError,
@@ -29,7 +29,7 @@ import type {
  * include `undefined`). At runtime, `data` is still `undefined` if `select` throws on its first call.
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  * @see {@link queryOptions} to share these options between `injectQuery` and imperative APIs like
- * `queryClient.query`.
+ * `query`.
  * @example
  * ```angular-ts
  * @Component({
@@ -81,7 +81,7 @@ export function injectQuery<
  * `isPending`/`isSuccess`/`isError` are type-guard methods for convenience.
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/queries
  * @see {@link queryOptions} to share these options between `injectQuery` and imperative APIs like
- * `queryClient.query`.
+ * `query`.
  * @example
  * ```angular-ts
  * @Component({
@@ -182,8 +182,12 @@ export function injectQuery(
   }
   const outsideZone = injectQueryZone()
   const [resultSignal, getObserver] = injectBaseQuery(optionsFn, QueryObserver)
-  return Object.assign(signalProxy(resultSignal, queryResultFields), {
-    refetch: (options?: RefetchOptions) =>
-      outsideZone(() => untracked(() => getObserver().refetch(options))),
-  }) as unknown as DefinedCreateQueryResult | CreateQueryResult
+  return Object.assign(
+    signalProxy(resultSignal, queryResultFields),
+    queryStatusSignals(resultSignal),
+    {
+      refetch: (options?: RefetchOptions) =>
+        outsideZone(() => untracked(() => getObserver().refetch(options))),
+    },
+  ) as unknown as DefinedCreateQueryResult | CreateQueryResult
 }

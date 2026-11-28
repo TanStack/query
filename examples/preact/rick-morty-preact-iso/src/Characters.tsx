@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/preact-query'
+import { queryOptions, useQuery } from '@tanstack/preact-query'
 import { charactersQueries } from './services/characters/queries'
 
 export default function Characters() {
-  const { status, data } = useQuery(charactersQueries.list())
+  const { status, data } = useQuery(queryOptions(charactersQueries.list()))
 
   if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>

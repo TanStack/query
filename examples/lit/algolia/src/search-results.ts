@@ -1,4 +1,4 @@
-import { createInfiniteQueryController } from '@tanstack/lit-query'
+import { createInfiniteQueryController, select } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { productsQueries } from './services/products/queries'
 
@@ -21,7 +21,7 @@ class SearchResults extends LitElement {
       query: this.query,
       hitsPerPage: 5,
     }),
-    select: (data) => data.pages.flatMap((page) => page.hits),
+    select: [select, (data) => data.pages.flatMap((page) => page.hits)],
     staleTime: 30 * 1000, // 30s
     gcTime: 15 * 60 * 1000, // 15m
   }))

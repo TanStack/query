@@ -1,4 +1,11 @@
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  isFetchNextPageError,
+  isFetchPreviousPageError,
+  isLoadingError,
+  isRefetchError,
+  select,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { describe, expectTypeOf, it } from 'vitest'
@@ -60,10 +67,13 @@ describe('select', () => {
         },
         initialPageParam: 1,
         getNextPageParam: () => undefined,
-        select: (data) => {
-          expectTypeOf(data).toEqualTypeOf<InfiniteData<number, number>>()
-          return 'selected' as const
-        },
+        select: [
+          select,
+          (data) => {
+            expectTypeOf(data).toEqualTypeOf<InfiniteData<number, number>>()
+            return 'selected' as const
+          },
+        ],
       },
       new QueryClient(),
     )
@@ -131,17 +141,12 @@ describe('error booleans', () => {
       },
       new QueryClient(),
     )
-    const {
-      isFetchNextPageError,
-      isFetchPreviousPageError,
-      isLoadingError,
-      isRefetchError,
-    } = infiniteQuery()
+    const result = infiniteQuery()
 
-    expectTypeOf(isFetchNextPageError).toEqualTypeOf<boolean>()
-    expectTypeOf(isFetchPreviousPageError).toEqualTypeOf<boolean>()
-    expectTypeOf(isLoadingError).toEqualTypeOf<boolean>()
-    expectTypeOf(isRefetchError).toEqualTypeOf<boolean>()
+    expectTypeOf(isFetchNextPageError(result)).toEqualTypeOf<boolean>()
+    expectTypeOf(isFetchPreviousPageError(result)).toEqualTypeOf<boolean>()
+    expectTypeOf(isLoadingError(result)).toEqualTypeOf<boolean>()
+    expectTypeOf(isRefetchError(result)).toEqualTypeOf<boolean>()
   })
 })
 

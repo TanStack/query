@@ -1,5 +1,9 @@
 import { render } from '@solidjs/testing-library'
-import { QueryClient, onlineManager } from '@tanstack/query-core'
+import {
+  QueryClient,
+  clearQueryClient,
+  onlineManager,
+} from '@tanstack/query-core'
 import { createEffect, createSignal } from 'solid-js'
 import { describe, expect, it } from 'vitest'
 import { QueryDevtoolsContext, useQueryDevtoolsContext } from '../../contexts'
@@ -38,7 +42,7 @@ describe('QueryDevtoolsContext', () => {
     setClient(nextClient)
     expect(observed).toStrictEqual([initialClient, nextClient])
 
-    initialClient.clear()
-    nextClient.clear()
+    clearQueryClient(initialClient)
+    clearQueryClient(nextClient)
   })
 })

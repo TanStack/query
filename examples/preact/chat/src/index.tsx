@@ -1,6 +1,7 @@
 import {
   QueryClient,
   QueryClientProvider,
+  queryOptions,
   useQuery,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
@@ -26,7 +27,7 @@ function ChatMessage({ id, question }: { id: string; question: string }) {
     error,
     data = [],
     isFetching,
-  } = useQuery(messagesQueries.detail(id, question))
+  } = useQuery(queryOptions(messagesQueries.detail(id, question)))
 
   if (error) return `An error has occurred: ${error.message}`
 

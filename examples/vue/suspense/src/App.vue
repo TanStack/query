@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { noop, useQueryClient } from '@tanstack/vue-query'
+import { query, noop, useQueryClient } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import { defineAsyncComponent, onErrorCaptured, provide, ref } from 'vue'
 import BaseButton from './components/BaseButton.vue'
@@ -29,7 +29,7 @@ onErrorCaptured((err) => {
 
 const toggleProjects = () => {
   if (!showProjects.value) {
-    queryClient.query(projectsQueries.list()).catch(noop)
+    query(queryClient, projectsQueries.list()).catch(noop)
   }
   showProjects.value = !showProjects.value
   isPending.value = false

@@ -1,3 +1,9 @@
+import {
+  isLoadingError,
+  isPending,
+  isSuccess,
+  select,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { defaultQueryFn } from '..'
@@ -9,64 +15,80 @@ describe('useQuery', () => {
   const key = createKey()
 
   it('should default to unknown when using the default query function', () => {
-    const withDefault = useQuery({ queryKey: key, queryFn: defaultQueryFn })
+    const withDefault = useQuery(
+      queryOptions({ queryKey: key, queryFn: defaultQueryFn }),
+    )
     expectTypeOf(withDefault.data).toEqualTypeOf<unknown>()
     expectTypeOf(withDefault.error).toEqualTypeOf<Error | null>()
   })
 
   it('should infer the result type from the query function', () => {
-    const fromQueryFn = useQuery({ queryKey: key, queryFn: () => 'test' })
+    const fromQueryFn = useQuery(
+      queryOptions({ queryKey: key, queryFn: () => 'test' }),
+    )
     expectTypeOf(fromQueryFn.data).toEqualTypeOf<string | undefined>()
     expectTypeOf(fromQueryFn.error).toEqualTypeOf<Error | null>()
     expectTypeOf(fromQueryFn).not.toHaveProperty('promise')
   })
 
   it('should be possible to specify the result type', () => {
-    const withResult = useQuery<string>({
-      queryKey: key,
-      queryFn: () => 'test',
-    })
+    const withResult = useQuery(
+      queryOptions<string>({
+        queryKey: key,
+        queryFn: () => 'test',
+      }),
+    )
     expectTypeOf(withResult.data).toEqualTypeOf<string | undefined>()
     expectTypeOf(withResult.error).toEqualTypeOf<Error | null>()
   })
 
   it('should be possible to specify the error type', () => {
-    const withError = useQuery<string, Error>({
-      queryKey: key,
-      queryFn: () => 'test',
-    })
+    const withError = useQuery(
+      queryOptions<string, Error>({
+        queryKey: key,
+        queryFn: () => 'test',
+      }),
+    )
     expectTypeOf(withError.data).toEqualTypeOf<string | undefined>()
     expectTypeOf(withError.error).toEqualTypeOf<Error | null>()
   })
 
   it('should provide the result type in the configuration', () => {
-    const result = useQuery({
-      queryKey: [key],
-      queryFn: () => Promise.resolve(true),
-    })
+    const result = useQuery(
+      queryOptions({
+        queryKey: [key],
+        queryFn: () => Promise.resolve(true),
+      }),
+    )
     expectTypeOf(result.data).toEqualTypeOf<boolean | undefined>()
   })
 
   it('should be possible to specify a union type as result type', () => {
-    const unionTypeSync = useQuery({
-      queryKey: key,
-      queryFn: () => (Math.random() > 0.5 ? ('a' as const) : ('b' as const)),
-    })
+    const unionTypeSync = useQuery(
+      queryOptions({
+        queryKey: key,
+        queryFn: () => (Math.random() > 0.5 ? ('a' as const) : ('b' as const)),
+      }),
+    )
     expectTypeOf(unionTypeSync.data).toEqualTypeOf<'a' | 'b' | undefined>()
-    const unionTypeAsync = useQuery<'a' | 'b'>({
-      queryKey: key,
-      queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
-    })
+    const unionTypeAsync = useQuery(
+      queryOptions<'a' | 'b'>({
+        queryKey: key,
+        queryFn: () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
+      }),
+    )
     expectTypeOf(unionTypeAsync.data).toEqualTypeOf<'a' | 'b' | undefined>()
   })
 
   it('should error when the query function result does not match with the specified type', () => {
     assertType(
-      useQuery<number>({
-        queryKey: key,
-        // @ts-expect-error
-        queryFn: () => 'test',
-      }),
+      useQuery(
+        queryOptions<number>({
+          queryKey: key,
+          // @ts-expect-error
+          queryFn: () => 'test',
+        }),
+      ),
     )
   })
 
@@ -75,10 +97,12 @@ describe('useQuery', () => {
       return Promise.resolve({} as T)
     }
 
-    const fromGenericQueryFn = useQuery({
-      queryKey: key,
-      queryFn: () => queryFn(),
-    })
+    const fromGenericQueryFn = useQuery(
+      queryOptions({
+        queryKey: key,
+        queryFn: () => queryFn(),
+      }),
+    )
     expectTypeOf(fromGenericQueryFn.data).toEqualTypeOf<string | undefined>()
     expectTypeOf(fromGenericQueryFn.error).toEqualTypeOf<Error | null>()
   })
@@ -93,27 +117,33 @@ describe('useQuery', () => {
       return Promise.resolve(n + 42)
     }
 
-    useQuery({
-      queryKey: ['my-data', 100],
-      queryFn: getMyDataArrayKey,
-    })
+    useQuery(
+      queryOptions({
+        queryKey: ['my-data', 100],
+        queryFn: getMyDataArrayKey,
+      }),
+    )
 
     const getMyDataStringKey: QueryFunction<MyData, ['1']> = (context) => {
       expectTypeOf(context.queryKey).toEqualTypeOf<['1']>()
       return Promise.resolve(Number(context.queryKey[0]) + 42)
     }
 
-    useQuery({
-      queryKey: ['1'],
-      queryFn: getMyDataStringKey,
-    })
+    useQuery(
+      queryOptions({
+        queryKey: ['1'],
+        queryFn: getMyDataStringKey,
+      }),
+    )
   })
 
   it('should handle query functions that return Promise<any>', () => {
-    const result = useQuery({
-      queryKey: key,
-      queryFn: () => fetch('return Promise<any>').then((resp) => resp.json()),
-    })
+    const result = useQuery(
+      queryOptions({
+        queryKey: key,
+        queryFn: () => fetch('return Promise<any>').then((resp) => resp.json()),
+      }),
+    )
     expectTypeOf(result.data).toEqualTypeOf<any>()
   })
 
@@ -135,11 +165,13 @@ describe('useQuery', () => {
         'queryKey' | 'queryFn' | 'initialData'
       >,
     ) =>
-      useQuery({
-        queryKey: qk,
-        queryFn: () => fetcher(qk[1], 'token'),
-        ...options,
-      })
+      useQuery(
+        queryOptions({
+          queryKey: qk,
+          queryFn: () => fetcher(qk[1], 'token'),
+          ...options,
+        }),
+      )
     const testQuery = useWrappedQuery([''], () => Promise.resolve('1'))
     expectTypeOf(testQuery.data).toEqualTypeOf<string | undefined>()
   })
@@ -157,7 +189,7 @@ describe('useQuery', () => {
         UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
         'queryKey' | 'queryFn' | 'initialData'
       >,
-    ) => useQuery({ queryKey: qk, queryFn: fetcher, ...options })
+    ) => useQuery(queryOptions({ queryKey: qk, queryFn: fetcher, ...options }))
     const testFuncStyle = useWrappedFuncStyleQuery([''], () =>
       Promise.resolve(true),
     )
@@ -165,18 +197,20 @@ describe('useQuery', () => {
   })
 
   it('should return the correct states for a successful query', () => {
-    const state = useQuery<string, Error>({
-      queryKey: key,
-      queryFn: () => Promise.resolve('test'),
-    })
+    const state = useQuery(
+      queryOptions<string, Error>({
+        queryKey: key,
+        queryFn: () => Promise.resolve('test'),
+      }),
+    )
 
-    if (state.isPending) {
+    if (isPending(state)) {
       expectTypeOf(state.data).toEqualTypeOf<undefined>()
       expectTypeOf(state.error).toEqualTypeOf<null>()
       return <span>pending</span>
     }
 
-    if (state.isLoadingError) {
+    if (isLoadingError(state)) {
       expectTypeOf(state.data).toEqualTypeOf<undefined>()
       expectTypeOf(state.error).toEqualTypeOf<Error>()
       return <span>{state.error.message}</span>
@@ -190,11 +224,13 @@ describe('useQuery', () => {
   describe('initialData', () => {
     describe('Config object overload', () => {
       it('should always define TData when initialData is provided as an object', () => {
-        const { data } = useQuery({
-          queryKey: createKey(),
-          queryFn: () => ({ wow: true }),
-          initialData: { wow: true },
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: createKey(),
+            queryFn: () => ({ wow: true }),
+            initialData: { wow: true },
+          }),
+        )
 
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
@@ -211,7 +247,7 @@ describe('useQuery', () => {
             wow: true,
           },
         })
-        const { data } = useQuery(options)
+        const { data } = useQuery(queryOptions(options))
 
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
@@ -222,79 +258,91 @@ describe('useQuery', () => {
           queryFn: () => Promise.resolve(1),
         })
 
-        const query = useQuery({
-          ...options,
-          select: (data) => data > 1,
-        })
+        const query = useQuery(
+          queryOptions({
+            ...options,
+            select: [select, (data) => data > 1],
+          }),
+        )
 
         expectTypeOf(query.data).toEqualTypeOf<boolean | undefined>()
       })
 
       it('should always define TData when initialData is provided as a function which ALWAYS returns the data', () => {
-        const { data } = useQuery({
-          queryKey: createKey(),
-          queryFn: () => {
-            return {
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: createKey(),
+            queryFn: () => {
+              return {
+                wow: true,
+              }
+            },
+            initialData: () => ({
               wow: true,
-            }
-          },
-          initialData: () => ({
-            wow: true,
+            }),
           }),
-        })
+        )
 
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })
 
       it('should have undefined in the TData union when initialData is NOT provided', () => {
-        const { data } = useQuery({
-          queryKey: createKey(),
-          queryFn: () => {
-            return {
-              wow: true,
-            }
-          },
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: createKey(),
+            queryFn: () => {
+              return {
+                wow: true,
+              }
+            },
+          }),
+        )
 
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
 
       it('should have undefined in the TData union when initialData is provided as a function which can return undefined', () => {
-        const { data } = useQuery({
-          queryKey: createKey(),
-          queryFn: () => {
-            return {
-              wow: true,
-            }
-          },
-          initialData: () => undefined as { wow: boolean } | undefined,
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: createKey(),
+            queryFn: () => {
+              return {
+                wow: true,
+              }
+            },
+            initialData: () => undefined as { wow: boolean } | undefined,
+          }),
+        )
 
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean } | undefined>()
       })
 
       it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
-        const { data, isSuccess } = useQuery({
-          queryKey: createKey(),
-          queryFn: () => {
-            return {
-              wow: true,
-            }
-          },
-          initialData: () => undefined as { wow: boolean } | undefined,
-        })
+        const result = useQuery(
+          queryOptions({
+            queryKey: createKey(),
+            queryFn: () => {
+              return {
+                wow: true,
+              }
+            },
+            initialData: () => undefined as { wow: boolean } | undefined,
+          }),
+        )
 
-        if (isSuccess) {
-          expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        if (isSuccess(result)) {
+          expectTypeOf(result.data).toEqualTypeOf<{ wow: boolean }>()
         }
       })
 
       it('should not have undefined in data when initialData is provided', () => {
-        const { data } = useQuery({
-          queryKey: createKey(),
-          queryFn: defaultQueryFn,
-          initialData: 42,
-        })
+        const { data } = useQuery(
+          queryOptions({
+            queryKey: createKey(),
+            queryFn: defaultQueryFn,
+            initialData: 42,
+          }),
+        )
 
         expectTypeOf(data).toEqualTypeOf<number>()
       })
@@ -305,10 +353,12 @@ describe('useQuery', () => {
         | { type: 'first'; first: string }
         | { type: 'second'; second: string }
 
-      const query = useQuery({
-        queryKey: createKey(),
-        queryFn: (): Result => ({ type: 'first', first: 'a' }),
-      })
+      const query = useQuery(
+        queryOptions({
+          queryKey: createKey(),
+          queryFn: (): Result => ({ type: 'first', first: 'a' }),
+        }),
+      )
 
       const second = query.data?.type === 'first' ? undefined : query.data
 
@@ -324,11 +374,13 @@ describe('useQuery', () => {
         const useCustomQuery = (
           options?: OmitKeyof<UseQueryOptions<Data>, 'queryKey' | 'queryFn'>,
         ) => {
-          return useQuery({
-            ...options,
-            queryKey: createKey(),
-            queryFn: () => Promise.resolve('data'),
-          })
+          return useQuery(
+            queryOptions({
+              ...options,
+              queryKey: createKey(),
+              queryFn: () => Promise.resolve('data'),
+            }),
+          )
         }
 
         const { data } = useCustomQuery()
@@ -340,15 +392,17 @@ describe('useQuery', () => {
     describe('structuralSharing', () => {
       it('should be able to use structuralSharing with unknown types', () => {
         // https://github.com/TanStack/query/issues/6525#issuecomment-1938411343
-        useQuery({
-          queryKey: createKey(),
-          queryFn: () => 5,
-          structuralSharing: (oldData, newData) => {
-            expectTypeOf(oldData).toBeUnknown()
-            expectTypeOf(newData).toBeUnknown()
-            return newData
-          },
-        })
+        useQuery(
+          queryOptions({
+            queryKey: createKey(),
+            queryFn: () => 5,
+            structuralSharing: (oldData, newData) => {
+              expectTypeOf(oldData).toBeUnknown()
+              expectTypeOf(newData).toBeUnknown()
+              return newData
+            },
+          }),
+        )
       })
     })
   })

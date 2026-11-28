@@ -7,7 +7,7 @@ ref: docs/framework/react/guides/query-options.md
 [//]: # 'Example1'
 
 ```ts
-import { noop, queryOptions } from '@tanstack/angular-query'
+import { noop, query, queryOptions, setQueryData } from '@tanstack/angular-query'
 
 @Injectable({
   providedIn: 'root',
@@ -38,20 +38,22 @@ queries = inject(QueriesService)
 
 postQuery = injectQuery(() => this.queries.post(this.postId()))
 
-void queryClient.query(this.queries.post(23)).catch(noop)
-queryClient.setQueryData(this.queries.post(42).queryKey, newPost)
+void query(queryClient, this.queries.post(23)).catch(noop)
+setQueryData(queryClient, this.queries.post(42).queryKey, newPost)
 ```
 
 [//]: # 'Example1'
 [//]: # 'Example2'
 
 ```ts
+import { select } from '@tanstack/angular-query'
+
 // Type inference still works, so postQuery.data will be the return type of select instead of queryFn
 queries = inject(QueriesService)
 
 postQuery = injectQuery(() => ({
   ...this.queries.post(1),
-  select: (data) => data.title,
+  select: select((data) => data.title),
 }))
 ```
 

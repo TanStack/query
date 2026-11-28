@@ -10,6 +10,7 @@ import type {
   MutationMeta,
   MutationOptions,
 } from '../types'
+import type { serialScope } from './helpers/scope'
 
 class CustomError extends Error {
   override name = 'CustomError' as const
@@ -490,7 +491,7 @@ describe('mutation', () => {
     describe('scope', () => {
       it('should be an optional scope carrying a string id', () => {
         expectTypeOf<Options['scope']>().toEqualTypeOf<
-          { id: string } | undefined
+          ReturnType<typeof serialScope> | undefined
         >()
       })
     })

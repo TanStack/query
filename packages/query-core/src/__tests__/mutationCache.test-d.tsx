@@ -1,5 +1,11 @@
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { MutationCache, QueryClient } from '..'
+import {
+  MutationCache,
+  QueryClient,
+  clearQueryClient,
+  getMutationCache,
+  mountQueryClient,
+} from '..'
 import { Mutation } from '../mutation'
 import type {
   DefaultError,
@@ -21,12 +27,12 @@ describe('mutationCache', () => {
 
   beforeEach(() => {
     queryClient = new QueryClient()
-    queryClient.mount()
-    mutationCache = queryClient.getMutationCache()
+    mountQueryClient(queryClient)
+    mutationCache = getMutationCache(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   describe('MutationCache', () => {

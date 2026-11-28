@@ -15,6 +15,8 @@ If you're looking for a fully functioning example, please have a look at our [si
 
 ```tsx
 import {
+  invalidateQueries,
+  queryOptions,
   useQuery,
   useMutation,
   useQueryClient,
@@ -41,14 +43,14 @@ function Todos() {
   const queryClient = useQueryClient()
 
   // Queries
-  const query = useQuery({ queryKey: ['todos'], queryFn: getTodos })
+  const query = useQuery(queryOptions({ queryKey: ['todos'], queryFn: getTodos }))
 
   // Mutations
   const mutation = useMutation({
     mutationFn: postTodo,
     onSuccess: () => {
       // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
+      return invalidateQueries(queryClient, { queryKey: ['todos'] })
     },
   })
 

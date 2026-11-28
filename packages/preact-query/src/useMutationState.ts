@@ -1,4 +1,8 @@
-import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
+import {
+  getMutationCache,
+  notifyManager,
+  replaceEqualDeep,
+} from '@tanstack/query-core'
 import { useCallback, useState } from 'preact/hooks'
 import { useQueryClient } from './QueryClientProvider'
 import { useSyncExternalStore } from './utils'
@@ -187,7 +191,7 @@ export function useMutationState<
   options: MutationStateOptions<TResult, TMutation> = {},
   queryClient?: QueryClient,
 ): Array<TResult> {
-  const mutationCache = useQueryClient(queryClient).getMutationCache()
+  const mutationCache = getMutationCache(useQueryClient(queryClient))
   const [createSnapshot] = useState(() =>
     createSnapshotFactory<TResult, TMutation>(),
   )

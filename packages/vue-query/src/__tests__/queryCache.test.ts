@@ -1,23 +1,23 @@
-import { QueryCache as QueryCacheOrigin } from '@tanstack/query-core'
+import * as core from '@tanstack/query-core'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
-import { QueryCache } from '../queryCache'
+import { QueryCache, findCachedQueries, findCachedQuery } from '../queryCache'
 
 describe('QueryCache', () => {
   beforeEach(() => {
-    vi.spyOn(QueryCacheOrigin.prototype, 'find')
-    vi.spyOn(QueryCacheOrigin.prototype, 'findAll')
+    vi.spyOn(core, 'findCachedQuery')
+    vi.spyOn(core, 'findCachedQueries')
   })
 
   describe('find', () => {
     it('should properly unwrap parameters', () => {
       const queryCache = new QueryCache()
 
-      queryCache.find({
+      findCachedQuery(queryCache, {
         queryKey: ['foo', ref('bar')],
       })
 
-      expect(QueryCacheOrigin.prototype.find).toHaveBeenCalledWith({
+      expect(core.findCachedQuery).toHaveBeenCalledWith(queryCache, {
         queryKey: ['foo', 'bar'],
       })
     })
@@ -27,11 +27,11 @@ describe('QueryCache', () => {
     it('should properly unwrap two parameters', () => {
       const queryCache = new QueryCache()
 
-      queryCache.findAll({
+      findCachedQueries(queryCache, {
         queryKey: ['foo', ref('bar')],
       })
 
-      expect(QueryCacheOrigin.prototype.findAll).toHaveBeenCalledWith({
+      expect(core.findCachedQueries).toHaveBeenCalledWith(queryCache, {
         queryKey: ['foo', 'bar'],
       })
     })
@@ -39,9 +39,9 @@ describe('QueryCache', () => {
     it('should default to empty filters', () => {
       const queryCache = new QueryCache()
 
-      queryCache.findAll()
+      findCachedQueries(queryCache)
 
-      expect(QueryCacheOrigin.prototype.findAll).toHaveBeenCalledWith({})
+      expect(core.findCachedQueries).toHaveBeenCalledWith(queryCache, {})
     })
   })
 })

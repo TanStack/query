@@ -1,5 +1,9 @@
 'use client'
-import { notifyManager } from '@tanstack/query-core'
+import {
+  countFetchingQueries,
+  getQueryCache,
+  notifyManager,
+} from '@tanstack/query-core'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
@@ -42,7 +46,7 @@ export function useIsFetching(
   queryClient?: QueryClient,
 ): number {
   const client = useQueryClient(queryClient)
-  const queryCache = client.getQueryCache()
+  const queryCache = getQueryCache(client)
 
   return React.useSyncExternalStore(
     React.useCallback(
@@ -50,7 +54,7 @@ export function useIsFetching(
         queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
       [queryCache],
     ),
-    () => client.isFetching(filters),
-    () => client.isFetching(filters),
+    () => countFetchingQueries(client, filters),
+    () => countFetchingQueries(client, filters),
   )
 }

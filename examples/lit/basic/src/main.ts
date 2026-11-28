@@ -3,6 +3,10 @@ import {
   QueryClientProvider,
   createMutationController,
   createQueryController,
+  invalidateQueries,
+  isError,
+  resetQueries,
+  setQueryData,
   useIsFetching,
   useIsMutating,
 } from '@tanstack/lit-query'
@@ -55,7 +59,8 @@ class TanstackLitQueryDemo extends LitElement {
   private readonly createTodoMutation = createMutationController(this, {
     ...todosMutations.create(),
     onSuccess: (createdTodo) => {
-      demoQueryClient.setQueryData<TodosResponse>(
+      setQueryData<TodosResponse>(
+        demoQueryClient,
         todosQueries.list().queryKey,
         (existing) => {
           if (!existing) {
@@ -104,7 +109,7 @@ class TanstackLitQueryDemo extends LitElement {
   }
 
   private async invalidateTodos(): Promise<void> {
-    await demoQueryClient.invalidateQueries({ queryKey: todosQueries.all() })
+    await invalidateQueries(demoQueryClient, { queryKey: todosQueries.all() })
   }
 
   private seedCacheOnlyTodo(): void {
@@ -115,7 +120,8 @@ class TanstackLitQueryDemo extends LitElement {
       title: `Seeded cache todo ${this.cacheSeedCount}`,
     }
 
-    demoQueryClient.setQueryData<TodosResponse>(
+    setQueryData<TodosResponse>(
+      demoQueryClient,
       todosQueries.list().queryKey,
       (existing) => {
         if (!existing) {
@@ -148,7 +154,7 @@ class TanstackLitQueryDemo extends LitElement {
     this.cacheSeedCount = 0
     this.nextTodoTitle = 'Add mutation assertion'
 
-    await demoQueryClient.resetQueries({ queryKey: todosQueries.all() })
+    await resetQueries(demoQueryClient, { queryKey: todosQueries.all() })
     this.createTodoMutation.reset()
   }
 
@@ -230,7 +236,7 @@ class TanstackLitQueryDemo extends LitElement {
         </section>
 
         ${
-          query.isError
+          isError(query)
             ? html`<div data-testid="query-error">${query.error.message}</div>`
             : null
         }

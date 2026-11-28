@@ -1,4 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/preact-query'
+import {
+  invalidateQueries,
+  queryOptions,
+  refetchInterval,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { useState } from 'preact/hooks'
 import { todosMutations, todosQueries } from './services/todos/queries'
@@ -8,22 +15,24 @@ export default function App() {
   const [intervalMs, setIntervalMs] = useState(1000)
   const [value, setValue] = useState('')
 
-  const { status, data, error, isFetching } = useQuery({
-    ...todosQueries.list(),
-    // Refetch the data every second
-    refetchInterval: intervalMs,
-  })
+  const { status, data, error, isFetching } = useQuery(
+    queryOptions({
+      ...todosQueries.list(),
+      // Refetch the data every second
+      refetchInterval: refetchInterval(intervalMs),
+    }),
+  )
 
   const addMutation = useMutation({
     ...todosMutations.create(),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
+      invalidateQueries(queryClient, { queryKey: todosQueries.all() }),
   })
 
   const clearMutation = useMutation({
     ...todosMutations.deleteAll(),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
+      invalidateQueries(queryClient, { queryKey: todosQueries.all() }),
   })
 
   if (status === 'pending') return <h1>Loading...</h1>

@@ -10,6 +10,7 @@ import {
   provideServerRendering,
   renderApplication,
 } from '@angular/platform-server'
+import { clearQueryClient } from '@tanstack/query-core'
 import { afterEach, describe, expect, it } from 'vitest'
 import {
   QueryClient,
@@ -128,7 +129,7 @@ async function render(component: Type<unknown>) {
   } finally {
     clearTimeout(deadline)
     if (app && !app.destroyed) app.destroy()
-    client.clear()
+    clearQueryClient(client)
   }
 }
 

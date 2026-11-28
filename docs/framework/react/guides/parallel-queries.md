@@ -7,16 +7,16 @@ title: Parallel Queries
 
 ## Manual Parallel Queries
 
-When the number of parallel queries does not change, there is **no extra effort** to use parallel queries. Just use any number of TanStack Query's `useQuery` and `useInfiniteQuery` hooks side-by-side!
+When the number of parallel queries does not change, there is **no extra effort** to use parallel queries. Call `useQuery` once for each regular or infinite descriptor.
 
 [//]: # 'Example'
 
 ```tsx
 function App () {
   // The following queries will execute in parallel
-  const usersQuery = useQuery({ queryKey: ['users'], queryFn: fetchUsers })
-  const teamsQuery = useQuery({ queryKey: ['teams'], queryFn: fetchTeams })
-  const projectsQuery = useQuery({ queryKey: ['projects'], queryFn: fetchProjects })
+  const usersQuery = useQuery(queryOptions({ queryKey: ['users'], queryFn: fetchUsers }))
+  const teamsQuery = useQuery(queryOptions({ queryKey: ['teams'], queryFn: fetchTeams }))
+  const projectsQuery = useQuery(queryOptions({ queryKey: ['projects'], queryFn: fetchProjects }))
   ...
 }
 ```
@@ -24,7 +24,7 @@ function App () {
 [//]: # 'Example'
 [//]: # 'Info'
 
-> When using React Query in suspense mode, this pattern of parallelism does not work, since the first query would throw a promise internally and would suspend the component before the other queries run. To get around this, you'll either need to use the `useSuspenseQueries` hook (which is suggested) or orchestrate your own parallelism with separate components for each `useSuspenseQuery` instance.
+> When using React Query in suspense mode, this pattern of parallelism does not work, since the first query would throw a promise internally and would suspend the component before the other queries run. To get around this, you'll either need to use the `useSuspenseQueries` hook (which is suggested) or orchestrate your own parallelism with separate components for each `suspenseQueryOptions` instance.
 
 [//]: # 'Info'
 

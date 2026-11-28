@@ -1,3 +1,13 @@
+import {
+  clearQueryClient,
+  findCachedQuery,
+  getQueryCache,
+  isFetching,
+  isLoading as isLoadingOption,
+  isPending as isPendingOption,
+  refetchQueries,
+  setQueryData,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
@@ -10,6 +20,7 @@ import {
   defaultQueryFn,
   useQueries,
 } from '..'
+import { optionalSelect } from './helpers/projection'
 import { renderWithClient } from './utils'
 import type { QueryObserverResult, UseQueryResult } from '..'
 
@@ -24,13 +35,13 @@ describe('useQueries', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
   it('reads cache updates on an unrelated render while unsubscribed', async () => {
     const key = createKey()
-    queryClient.setQueryData(key, 'first')
+    setQueryData(queryClient, key, 'first')
     const combine = (results: Array<QueryObserverResult>) =>
       results[0]!.data as string
     function Page() {
@@ -47,7 +58,7 @@ describe('useQueries', () => {
       )
     }
     const rendered = renderWithClient(queryClient, <Page />)
-    queryClient.setQueryData(key, 'second')
+    setQueryData(queryClient, key, 'second')
     fireEvent.click(rendered.getByRole('button'))
     await vi.advanceTimersByTimeAsync(1)
     expect(rendered.getByText('1: second')).toBeInTheDocument()
@@ -55,7 +66,7 @@ describe('useQueries', () => {
 
   it('runs a data effect once when changing a memoized selection with combine', async () => {
     const key = createKey()
-    queryClient.setQueryData(key, [1, 2, 3])
+    setQueryData(queryClient, key, [1, 2, 3])
     const effect = vi.fn<(data: Array<number>) => void>()
     const combine = (results: Array<QueryObserverResult>) =>
       results[0]!.data as Array<number>
@@ -70,7 +81,7 @@ describe('useQueries', () => {
           {
             queryKey: key,
             queryFn: () => Promise.resolve([1, 2, 3]),
-            select,
+            select: optionalSelect(select),
             staleTime: Infinity,
             structuralSharing: false,
           },
@@ -96,14 +107,14 @@ describe('useQueries', () => {
     'reads updates between render and commit when subscribed is %s',
     async (subscribed) => {
       const keys = [createKey(), createKey()]
-      queryClient.setQueryData(keys[0]!, 'first')
-      queryClient.setQueryData(keys[1]!, 'second')
+      setQueryData(queryClient, keys[0]!, 'first')
+      setQueryData(queryClient, keys[1]!, 'second')
       const combine = (results: Array<QueryObserverResult>) =>
         results[0]!.data as string
       function Page() {
         const [index, setIndex] = React.useState(0)
         React.useLayoutEffect(() => {
-          queryClient.setQueryData(keys[index]!, 'updated ' + index)
+          setQueryData(queryClient, keys[index]!, 'updated ' + index)
         }, [index])
         const data = useQueries({
           queries: [
@@ -141,10 +152,10 @@ describe('useQueries', () => {
             {
               queryKey,
               queryFn,
-              select: (value: string) => {
+              select: optionalSelect((value: string) => {
                 if (throws) throw new Error(value + ' with a select error')
                 return new Set([value])
-              },
+              }),
             },
           ],
         })
@@ -221,7 +232,7 @@ describe('useQueries', () => {
 
       return (
         <div>
-          <span>isFetching: {String(query.isFetching)}</span>
+          <span>isFetching: {String(isFetching(query))}</span>
           <span>fetchStatus: {query.fetchStatus}</span>
         </div>
       )
@@ -231,7 +242,7 @@ describe('useQueries', () => {
 
     expect(queryFn).not.toHaveBeenCalled()
     expect(
-      queryClient.getQueryCache().find({ queryKey: key })!.observers,
+      findCachedQuery(getQueryCache(queryClient), { queryKey: key })!.observers,
     ).toHaveLength(0)
     rendered.getByText('isFetching: false')
     rendered.getByText('fetchStatus: idle')
@@ -784,7 +795,7 @@ describe('useQueries', () => {
           return {
             // .some aborts early, so `isLoading` might not be accessed (and thus tracked) on all observers
             // leading to missing re-renders
-            isLoading: results.some((result) => result.isLoading),
+            isLoading: results.some((result) => isLoadingOption(result)),
           }
         },
       })
@@ -901,7 +912,7 @@ describe('useQueries', () => {
     // both pending, one pending, both resolved
     expect(spy).toHaveBeenCalledTimes(3)
 
-    client.refetchQueries()
+    refetchQueries(client)
 
     await vi.advanceTimersByTimeAsync(21)
     // no increase because result hasn't changed
@@ -914,7 +925,7 @@ describe('useQueries', () => {
 
     value = 1
 
-    client.refetchQueries()
+    refetchQueries(client)
 
     await vi.advanceTimersByTimeAsync(21)
     expect(
@@ -1073,7 +1084,7 @@ describe('useQueries', () => {
             },
           ],
           combine: (results) => {
-            const isPending = results.some((res) => res.isPending)
+            const isPending = results.some((res) => isPendingOption(res))
 
             return isPending ? 'pending' : 'foo'
           },
@@ -1126,7 +1137,7 @@ describe('useQueries', () => {
             },
           ],
           combine: (results) => {
-            if (results.find((r) => r.isPending)) {
+            if (results.find((r) => isPendingOption(r))) {
               return 'pending'
             }
             return results.map((r) => r.data).join(', ')
@@ -1140,7 +1151,7 @@ describe('useQueries', () => {
           <div>data: {data}</div>
           <button
             onClick={() => {
-              client.setQueryData([key1], 'first result updated')
+              setQueryData(client, [key1], 'first result updated')
             }}
           >
             update

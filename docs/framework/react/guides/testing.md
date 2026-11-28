@@ -23,7 +23,9 @@ Once installed, a simple test can be written. Given the following custom hook:
 
 ```tsx
 export function useCustomHook() {
-  return useQuery({ queryKey: ['customHook'], queryFn: () => 'Hello' })
+  return useQuery(
+    queryOptions({ queryKey: ['customHook'], queryFn: () => 'Hello' }),
+  )
 }
 ```
 
@@ -41,7 +43,7 @@ const wrapper = ({ children }) => (
 
 const { result } = renderHook(() => useCustomHook(), { wrapper })
 
-await waitFor(() => expect(result.current.isSuccess).toBe(true))
+await waitFor(() => expect(isSuccess(result.current)).toBe(true))
 
 expect(result.current.data).toEqual('Hello')
 ```
@@ -86,10 +88,12 @@ Given the following custom hook:
 
 ```tsx
 function useFetchData() {
-  return useQuery({
-    queryKey: ['fetchData'],
-    queryFn: () => request('/api/data'),
-  })
+  return useQuery(
+    queryOptions({
+      queryKey: ['fetchData'],
+      queryFn: () => request('/api/data'),
+    }),
+  )
 }
 ```
 
@@ -107,7 +111,7 @@ const expectation = nock('http://example.com').get('/api/data').reply(200, {
 
 const { result } = renderHook(() => useFetchData(), { wrapper })
 
-await waitFor(() => expect(result.current.isSuccess).toBe(true))
+await waitFor(() => expect(isSuccess(result.current)).toBe(true))
 
 expect(result.current.data).toEqual({ answer: 42 })
 ```
@@ -154,7 +158,7 @@ const { result } = renderHook(() => useInfiniteQueryCustomHook(), {
   wrapper,
 })
 
-await waitFor(() => expect(result.current.isSuccess).toBe(true))
+await waitFor(() => expect(isSuccess(result.current)).toBe(true))
 
 expect(result.current.data.pages).toStrictEqual([generateMockedResponse(1)])
 

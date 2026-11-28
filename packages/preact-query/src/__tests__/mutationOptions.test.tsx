@@ -1,4 +1,7 @@
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  isMutating as queryIsMutating,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent } from '@testing-library/preact'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -224,7 +227,7 @@ describe('mutationOptions', () => {
     })
 
     function Mutation() {
-      const isMutating = queryClient.isMutating(mutationOpts)
+      const isMutating = queryIsMutating(queryClient, mutationOpts)
       const { mutate } = useMutation(mutationOpts)
 
       isMutatingArray.push(isMutating)
@@ -255,7 +258,7 @@ describe('mutationOptions', () => {
     })
 
     function Mutation() {
-      const isMutating = queryClient.isMutating()
+      const isMutating = queryIsMutating(queryClient)
       const { mutate } = useMutation(mutationOpts)
 
       isMutatingArray.push(isMutating)
@@ -291,7 +294,7 @@ describe('mutationOptions', () => {
     })
 
     function Mutation() {
-      const isMutating = queryClient.isMutating()
+      const isMutating = queryIsMutating(queryClient)
       const { mutate: mutate1 } = useMutation(mutationOpts1)
       const { mutate: mutate2 } = useMutation(mutationOpts2)
 
@@ -329,7 +332,7 @@ describe('mutationOptions', () => {
     })
 
     function Mutation() {
-      const isMutating = queryClient.isMutating({
+      const isMutating = queryIsMutating(queryClient, {
         mutationKey: mutationOpts1.mutationKey,
       })
       const { mutate: mutate1 } = useMutation(mutationOpts1)

@@ -1,4 +1,4 @@
-import { replaceEqualDeep } from '@tanstack/query-core'
+import { getMutationCache, replaceEqualDeep } from '@tanstack/query-core'
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { BaseController } from './controllers/BaseController.js'
 import type {
@@ -114,7 +114,7 @@ class MutationStateController<TResult> extends BaseController<Array<TResult>> {
       return
     }
 
-    this.unsubscribe = this.queryClient.getMutationCache().subscribe(() => {
+    this.unsubscribe = getMutationCache(this.queryClient).subscribe(() => {
       this.setMutationState(this.computeState())
     })
   }
@@ -140,7 +140,7 @@ class MutationStateController<TResult> extends BaseController<Array<TResult>> {
       : undefined
 
     const select = this.options.select
-    const mutations = this.queryClient.getMutationCache().findAll(filters)
+    const mutations = getMutationCache(this.queryClient).findAll(filters)
 
     return mutations.map((mutation) => {
       if (select) {

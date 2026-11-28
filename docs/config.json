@@ -386,6 +386,10 @@
             {
               "label": "Migrating to v5",
               "to": "framework/react/guides/migrating-to-v5"
+            },
+            {
+              "label": "Migrating to v6",
+              "to": "framework/react/guides/migrating-to-v6"
             }
           ]
         },

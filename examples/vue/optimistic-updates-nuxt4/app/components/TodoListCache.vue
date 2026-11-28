@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import {
+  cancelQueries,
+  getQueryData,
+  setQueryData,
+  invalidateQueries,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/vue-query'
 import { ref } from 'vue'
 import { todosMutations, todosQueries } from '../services/todos/queries'
 import type { Todo } from '../services/todos/types'
@@ -20,11 +28,12 @@ const { mutate, isPending } = useMutation<Todo, Error, string, MutationContext>(
     ...todosMutations.create(),
     onMutate: async (text) => {
       lastError.value = null
-      await queryClient.cancelQueries({
+      await cancelQueries(queryClient, {
         queryKey: todosQueries.list().queryKey,
       })
 
-      const previousTodos = queryClient.getQueryData(
+      const previousTodos = getQueryData(
+        queryClient,
         todosQueries.list().queryKey,
       )
 
@@ -35,7 +44,7 @@ const { mutate, isPending } = useMutation<Todo, Error, string, MutationContext>(
         createdAt: Date.now(),
       }
 
-      queryClient.setQueryData(todosQueries.list().queryKey, (old = []) => [
+      setQueryData(queryClient, todosQueries.list().queryKey, (old = []) => [
         ...old,
         optimisticTodo,
       ])
@@ -45,18 +54,21 @@ const { mutate, isPending } = useMutation<Todo, Error, string, MutationContext>(
     onError: (_err, _text, context) => {
       lastError.value = _err.message
       if (context?.previousTodos !== undefined) {
-        queryClient.setQueryData(
+        setQueryData(
+          queryClient,
           todosQueries.list().queryKey,
           context.previousTodos,
         )
       } else if (context?.optimisticId) {
-        queryClient.setQueryData(todosQueries.list().queryKey, (old = []) =>
+        setQueryData(queryClient, todosQueries.list().queryKey, (old = []) =>
           old.filter((todo) => todo.id !== context.optimisticId),
         )
       }
     },
     onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
+      invalidateQueries(queryClient, {
+        queryKey: todosQueries.list().queryKey,
+      }),
   },
 )
 

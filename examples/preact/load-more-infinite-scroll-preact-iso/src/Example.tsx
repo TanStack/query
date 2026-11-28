@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/preact-query'
+import { useQuery, infiniteQueryOptions } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { Fragment } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
@@ -19,7 +19,7 @@ export default function Example() {
     fetchPreviousPage,
     hasNextPage,
     hasPreviousPage,
-  } = useInfiniteQuery(projectsQueries.infinite())
+  } = useQuery(infiniteQueryOptions(projectsQueries.infinite()))
 
   useEffect(() => {
     if (!ref.current) return

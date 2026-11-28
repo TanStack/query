@@ -1,6 +1,6 @@
 import { sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createNotifyManager } from '../notifyManager'
+import { createNotifyManager, setBatchNotifyFunction } from '../notifyManager'
 
 describe('notifyManager', () => {
   beforeEach(() => {
@@ -82,7 +82,7 @@ describe('notifyManager', () => {
     const callbackSpy1 = vi.fn<() => void>()
     const callbackSpy2 = vi.fn<() => void>()
 
-    notifyManagerTest.setBatchNotifyFunction(batchNotifySpy)
+    setBatchNotifyFunction(notifyManagerTest, batchNotifySpy)
 
     notifyManagerTest.batch(() => {
       notifyManagerTest.schedule(callbackSpy1)

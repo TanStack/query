@@ -1,4 +1,4 @@
-import { QueryClient, useQueries } from '@tanstack/preact-query'
+import { QueryClient, isPending, useQueries } from '@tanstack/preact-query'
 import { PersistQueryClientProvider } from '@tanstack/preact-query-persist-client'
 import { sleep } from '@tanstack/query-test-utils'
 import { act, render } from '@testing-library/preact'
@@ -105,7 +105,7 @@ describe('useQueries with persist and memoized combine (preact)', () => {
         combine: useCallback(
           (results: Array<QueryObserverResult<number, Error>>) => ({
             data: results.map((result) => result.data),
-            isPending: results.some((result) => result.isPending),
+            isPending: results.some((result) => isPending(result)),
           }),
           [],
         ),

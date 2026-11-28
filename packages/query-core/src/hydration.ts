@@ -1,4 +1,11 @@
+import { createInfiniteFetch } from './infiniteQueryBehavior'
 import { Mutation } from './mutation'
+import {
+  getDefaultOptions,
+  getQueryCache,
+  mutationCacheKey,
+} from './queryClient'
+import { serialScope } from './serialScope'
 import { noop } from './utils'
 import type { MutationState } from './mutation'
 import type { Query, QueryState } from './query'
@@ -14,34 +21,25 @@ import type {
   QueryOptions,
 } from './types'
 
+interface DehydratedMutation {
+  mutationKey?: MutationKey
+  state: MutationState
+  meta?: MutationMeta
+  scope?: MutationScope
+}
+
+interface DehydratedQuery {
+  queryHash: string
+  queryKey: QueryKey
+  state: QueryState
+  dehydratedAt: number
+  promise?: Promise<unknown>
+  meta?: QueryMeta
+  queryType?: 'infinite'
+}
+
 // TYPES
 type TransformerFn = (data: any) => any
-
-/**
- * Reads the value of a promise synchronously if it has already resolved, e.g. a thenable that
- * resolves within its `then` call.
- * @param promise - The promise to read.
- * @returns An object with the resolved `data`, or `undefined` if the promise hasn't resolved
- * synchronously (or resolved with `undefined`).
- */
-function tryResolveSync(promise: PromiseLike<unknown>) {
-  let data: unknown
-
-  const thenResult = promise.then((result) => {
-    data = result
-    return result
-  }, noop) as Promise<unknown> | undefined
-
-  // .catch can be unavailable on certain kinds of thenable's
-  // oxlint-disable-next-line typescript/no-unnecessary-condition
-  thenResult?.catch?.(noop)
-
-  if (data !== undefined) {
-    return { data }
-  }
-
-  return undefined
-}
 
 /**
  * Options for `dehydrate`, controlling which queries/mutations are included in the resulting `DehydratedState` and
@@ -78,37 +76,29 @@ export interface HydrateOptions {
   }
 }
 
-interface DehydratedMutation {
-  mutationKey?: MutationKey
-  state: MutationState
-  meta?: MutationMeta
-  scope?: MutationScope
-}
-
-interface DehydratedQuery {
-  queryHash: string
-  queryKey: QueryKey
-  state: QueryState
-  dehydratedAt: number
-  promise?: Promise<unknown>
-  meta?: QueryMeta
-  queryType?: 'infinite'
-}
-
 /**
- * A serializable snapshot of a `QueryClient`'s cache, as produced by `dehydrate` and consumed by `hydrate`. Typically
- * transported from server to client (e.g. embedded in server-rendered markup) to seed the client's cache with data
- * that has already been fetched, avoiding a redundant fetch on the client.
+ * Reads the value of a promise synchronously if it has already resolved, e.g. a thenable that
+ * resolves within its `then` call.
+ * @param promise - The promise to read.
+ * @returns An object with the resolved `data`, or `undefined` if the promise hasn't resolved
+ * synchronously (or resolved with `undefined`).
  */
-export interface DehydratedState {
-  /**
-   * The dehydrated mutations, by default only the paused ones.
-   */
-  mutations: Array<DehydratedMutation>
-  /**
-   * The dehydrated queries, by default only the successful ones.
-   */
-  queries: Array<DehydratedQuery>
+function tryResolveSync(promise: PromiseLike<unknown>) {
+  let data: unknown
+
+  const thenResult = promise.then((result) => {
+    data = result
+    return result
+  }, noop) as Partial<Promise<unknown>> | undefined
+
+  // A synchronous thenable may return an object without a catch method.
+  thenResult?.catch?.(noop)
+
+  if (data !== undefined) {
+    return { data }
+  }
+
+  return undefined
 }
 
 // FUNCTIONS
@@ -122,7 +112,7 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
   return {
     mutationKey: mutation.options.mutationKey,
     state: mutation.state,
-    ...(mutation.options.scope && { scope: mutation.options.scope }),
+    ...(mutation.options.scope && { scope: { id: mutation.options.scope.id } }),
     ...(mutation.meta && { meta: mutation.meta }),
   }
 }
@@ -145,7 +135,7 @@ function dehydratePromise(
   const promise = query.promise?.then(serializeData).catch((error) => {
     if (shouldRedactErrors?.(error) === false) {
       // Reject original error if it should not be redacted
-      return Promise.reject(error)
+      throw error
     }
     // If not in production, log original error before rejecting redacted error
     if (process.env.NODE_ENV !== 'production') {
@@ -153,7 +143,7 @@ function dehydratePromise(
         `A query that was dehydrated as pending ended up rejecting. [${query.queryHash}]: ${error}; The error will be redacted in production builds`,
       )
     }
-    return Promise.reject(new Error('redacted'))
+    throw new Error('redacted')
   })
 
   // Avoid unhandled promise rejections
@@ -235,7 +225,7 @@ export function defaultShouldDehydrateQuery(query: Query) {
  * ```ts
  * const queryClient = new QueryClient()
  *
- * await queryClient.query({
+ * await query(queryClient, {
  *   queryKey: ['posts'],
  *   queryFn: getPosts,
  * })
@@ -249,30 +239,29 @@ export function dehydrate(
 ): DehydratedState {
   const filterMutation =
     options.shouldDehydrateMutation ??
-    client.getDefaultOptions().dehydrate?.shouldDehydrateMutation ??
+    getDefaultOptions(client).dehydrate?.shouldDehydrateMutation ??
     defaultShouldDehydrateMutation
 
-  const mutations = client
-    .getMutationCache()
-    .getAll()
-    .flatMap((mutation) =>
-      filterMutation(mutation) ? [dehydrateMutation(mutation)] : [],
-    )
+  const mutations =
+    client[mutationCacheKey]
+      ?.getAll()
+      .flatMap((mutation) =>
+        filterMutation(mutation) ? [dehydrateMutation(mutation)] : [],
+      ) ?? []
 
   const filterQuery =
     options.shouldDehydrateQuery ??
-    client.getDefaultOptions().dehydrate?.shouldDehydrateQuery ??
+    getDefaultOptions(client).dehydrate?.shouldDehydrateQuery ??
     defaultShouldDehydrateQuery
 
   const shouldRedactErrors =
     options.shouldRedactErrors ??
-    client.getDefaultOptions().dehydrate?.shouldRedactErrors
+    getDefaultOptions(client).dehydrate?.shouldRedactErrors
 
   const serializeData =
-    options.serializeData ?? client.getDefaultOptions().dehydrate?.serializeData
+    options.serializeData ?? getDefaultOptions(client).dehydrate?.serializeData
 
-  const queries = client
-    .getQueryCache()
+  const queries = getQueryCache(client)
     .getAll()
     .flatMap((query) =>
       filterQuery(query)
@@ -309,24 +298,41 @@ export function hydrate(
   dehydratedState: Partial<DehydratedState>,
   options?: HydrateOptions,
 ): void {
-  const queryCache = client.getQueryCache()
-  const deserializeData =
-    options?.defaultOptions?.deserializeData ??
-    client.getDefaultOptions().hydrate?.deserializeData
-
-  dehydratedState.mutations?.forEach(({ state, ...mutationOptions }) => {
+  dehydratedState.mutations?.forEach(({ state, scope, ...mutationOptions }) => {
     Mutation.build(
       client,
       {
-        ...client.getDefaultOptions().hydrate?.mutations,
+        ...getDefaultOptions(client).hydrate?.mutations,
         ...options?.defaultOptions?.mutations,
         ...mutationOptions,
+        ...(scope && { scope: serialScope(scope.id) }),
       },
       state,
     )
   })
 
-  dehydratedState.queries?.forEach(
+  if (dehydratedState.queries)
+    hydrateQueries(client, dehydratedState.queries, options)
+}
+
+/**
+ * Restores just the queries accepted by a React hydration boundary.
+ * @internal
+ * @param client - The client receiving the entries.
+ * @param queries - The serialized query entries.
+ * @param options - Query restoration settings.
+ */
+export function hydrateQueries(
+  client: QueryClient,
+  queries: Array<DehydratedQuery>,
+  options?: HydrateOptions,
+): void {
+  const queryCache = getQueryCache(client)
+  const deserializeData =
+    options?.defaultOptions?.deserializeData ??
+    getDefaultOptions(client).hydrate?.deserializeData
+
+  queries.forEach(
     ({
       queryKey,
       state,
@@ -345,6 +351,9 @@ export function hydrate(
             ? deserializeData(rawData)
             : rawData
 
+      const resolvedState = state.status === 'pending' && data !== undefined
+        ? { status: 'success' as const, dataUpdatedAt: dehydratedAt }
+        : undefined
       let query = queryCache.get(queryHash)
       const existingQueryIsPending = query?.state.status === 'pending'
       const existingQueryIsFetching = query?.state.fetchStatus === 'fetching'
@@ -367,15 +376,8 @@ export function hydrate(
             //
             // Since you can opt into dehydrating failed queries, and those can have data from
             // previous successful fetches, we make sure we only do this for pending queries.
-            ...(state.status === 'pending' &&
-              data !== undefined && {
-                status: 'success' as const,
-                dataUpdatedAt: dehydratedAt,
-                // Preserve existing fetchStatus if the existing query is actively fetching.
-                ...(!existingQueryIsFetching && {
-                  fetchStatus: 'idle' as const,
-                }),
-              }),
+            ...resolvedState,
+            ...(resolvedState && !existingQueryIsFetching && { fetchStatus: 'idle' as const }),
           })
         }
       } else {
@@ -383,12 +385,15 @@ export function hydrate(
         query = queryCache.build(
           client,
           {
-            ...client.getDefaultOptions().hydrate?.queries,
+            ...getDefaultOptions(client).hydrate?.queries,
             ...options?.defaultOptions?.queries,
             queryKey,
             queryHash,
             meta,
-            _type: queryType,
+            ...(queryType === 'infinite' && {
+              _type: queryType,
+              _prepareInfiniteFetch: createInfiniteFetch,
+            }),
           },
           // Reset fetch status to idle to avoid
           // query being stuck in fetching state upon hydration
@@ -398,14 +403,7 @@ export function hydrate(
             fetchStatus: 'idle',
             // Like above, if the query was pending at the moment of dehydration but has data,
             // we can assume it should be hydrated as successful.
-            status:
-              state.status === 'pending' && data !== undefined
-                ? 'success'
-                : state.status,
-            ...(state.status === 'pending' &&
-              data !== undefined && {
-                dataUpdatedAt: dehydratedAt,
-              }),
+            ...resolvedState,
           },
         )
       }
@@ -433,4 +431,20 @@ export function hydrate(
       }
     },
   )
+}
+
+/**
+ * A serializable snapshot of a `QueryClient`'s cache, as produced by `dehydrate` and consumed by `hydrate`. Typically
+ * transported from server to client (e.g. embedded in server-rendered markup) to seed the client's cache with data
+ * that has already been fetched, avoiding a redundant fetch on the client.
+ */
+export interface DehydratedState {
+  /**
+   * The dehydrated mutations, by default only the paused ones.
+   */
+  mutations: Array<DehydratedMutation>
+  /**
+   * The dehydrated queries, by default only the successful ones.
+   */
+  queries: Array<DehydratedQuery>
 }

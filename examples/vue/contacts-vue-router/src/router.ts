@@ -1,4 +1,4 @@
-import { noop } from '@tanstack/vue-query'
+import { query, noop } from '@tanstack/vue-query'
 import { createRouter, createWebHistory } from 'vue-router'
 import { queryClient } from './queryClient'
 import ContactView from './routes/ContactView.vue'
@@ -30,12 +30,14 @@ router.beforeResolve(async (to) => {
     typeof to.params.contactId === 'string' ? to.params.contactId : undefined
 
   await Promise.all([
-    queryClient
-      .query({ ...contactsQueries.list(q), staleTime: 'static' })
-      .catch(noop),
+    query(queryClient, {
+      ...contactsQueries.list(q),
+      staleTime: 'static',
+    }).catch(noop),
     contactId &&
-      queryClient
-        .query({ ...contactsQueries.detail(contactId), staleTime: 'static' })
-        .catch(noop),
+      query(queryClient, {
+        ...contactsQueries.detail(contactId),
+        staleTime: 'static',
+      }).catch(noop),
   ])
 })

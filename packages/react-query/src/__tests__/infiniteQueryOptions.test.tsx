@@ -4,7 +4,7 @@ import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import type { UseInfiniteQueryOptions } from '../types'
 
 describe('infiniteQueryOptions', () => {
-  it('should return the object received as a parameter without any modification.', () => {
+  it('should create a new descriptor and preserve the supplied options', () => {
     const object: UseInfiniteQueryOptions = {
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
@@ -12,6 +12,8 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: null,
     }
 
-    expect(infiniteQueryOptions(object)).toBe(object)
+    const result = infiniteQueryOptions(object)
+    expect(result).not.toBe(object)
+    expect(result).toMatchObject(object)
   })
 })

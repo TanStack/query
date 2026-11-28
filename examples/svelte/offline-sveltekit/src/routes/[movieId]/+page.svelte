@@ -1,5 +1,12 @@
 <script lang="ts">
-  import { createMutation, createQuery } from '@tanstack/svelte-query'
+  import {
+    cancelQueries,
+    getQueryData,
+    setQueryData,
+    invalidateQueries,
+    createMutation,
+    createQuery,
+  } from '@tanstack/svelte-query'
   import { resolve } from '$app/paths'
   import { queryClient } from '$lib/queryClient'
   import { moviesMutations, moviesQueries } from '$lib/services/movies/queries'
@@ -15,16 +22,17 @@
     ...moviesMutations.update(),
     mutationKey: moviesQueries.detail(data.movieId).queryKey,
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({
+      await cancelQueries(queryClient, {
         queryKey: moviesQueries.detail(data.movieId).queryKey,
       })
       const { queryKey } = moviesQueries.detail(data.movieId)
-      const previousData = queryClient.getQueryData(queryKey)
+      const previousData = getQueryData(queryClient, queryKey)
 
       // remove local state so that server state is taken instead
       commentDraft = undefined
 
-      queryClient.setQueryData(
+      setQueryData(
+        queryClient,
         queryKey,
         (old) =>
           old && {
@@ -39,13 +47,14 @@
       return { previousData }
     },
     onError: (_, __, onMutateResult) => {
-      queryClient.setQueryData(
+      setQueryData(
+        queryClient,
         moviesQueries.detail(data.movieId).queryKey,
         onMutateResult?.previousData,
       )
     },
     onSettled: () => {
-      queryClient.invalidateQueries({
+      invalidateQueries(queryClient, {
         queryKey: moviesQueries.detail(data.movieId).queryKey,
       })
     },

@@ -1,6 +1,10 @@
 import {
+  cancelQueries,
   createMutationController,
   createQueryController,
+  getQueryData,
+  invalidateQueries,
+  setQueryData,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { moviesMutations, moviesQueries } from './services/movies/queries'
@@ -22,16 +26,17 @@ class MovieDetailView extends LitElement {
     ...moviesMutations.update(),
     mutationKey: moviesQueries.detail(this.movieId).queryKey,
     onMutate: async (variables, { client }) => {
-      await client.cancelQueries({
+      await cancelQueries(client, {
         queryKey: moviesQueries.detail(this.movieId).queryKey,
       })
       const { queryKey } = moviesQueries.detail(this.movieId)
-      const previousData = client.getQueryData(queryKey)
+      const previousData = getQueryData(client, queryKey)
 
       // remove local state so that server state is taken instead
       this.commentDraft = undefined
 
-      client.setQueryData(
+      setQueryData(
+        client,
         queryKey,
         (old) =>
           old && {
@@ -46,13 +51,14 @@ class MovieDetailView extends LitElement {
       return { previousData }
     },
     onError: (_, __, onMutateResult, { client }) => {
-      client.setQueryData(
+      setQueryData(
+        client,
         moviesQueries.detail(this.movieId).queryKey,
         onMutateResult?.previousData,
       )
     },
     onSettled: (_, __, ___, ____, { client }) => {
-      client.invalidateQueries({
+      invalidateQueries(client, {
         queryKey: moviesQueries.detail(this.movieId).queryKey,
       })
     },

@@ -1,4 +1,5 @@
 import { assertType, describe, expectTypeOf, it } from 'vitest'
+import { getQueryData, getQueryState, invalidateQueries } from '..'
 import { QueryClient } from '../queryClient'
 import {
   addConsumeAwareSignal,
@@ -62,10 +63,10 @@ describe('QueryFilters', () => {
 
     const queryClient = new QueryClient()
 
-    const data = queryClient.getQueryData(filters.queryKey!)
+    const data = getQueryData(queryClient, filters.queryKey!)
     expectTypeOf(data).toEqualTypeOf<TData | undefined>()
 
-    const error = queryClient.getQueryState(filters.queryKey!)?.error
+    const error = getQueryState(queryClient, filters.queryKey!)?.error
     expectTypeOf(error).toEqualTypeOf<TError | null | undefined>()
   })
 
@@ -79,10 +80,10 @@ describe('QueryFilters', () => {
     }
 
     const queryClient = new QueryClient()
-    const data = queryClient.getQueryData(a.queryKey!)
+    const data = getQueryData(queryClient, a.queryKey!)
     expectTypeOf(data).toEqualTypeOf<unknown>()
 
-    const error = queryClient.getQueryState(a.queryKey!)?.error
+    const error = getQueryState(queryClient, a.queryKey!)?.error
     expectTypeOf(error).toEqualTypeOf<Error | null | undefined>()
   })
 
@@ -125,9 +126,10 @@ describe('QueryFilters', () => {
 
     const queryKey: Key = ['foo', 'bar'] as any as Key
 
-    expectTypeOf(new QueryClient().invalidateQueries).toBeCallableWith({
+    const result = invalidateQueries(new QueryClient(), {
       queryKey,
     })
+    expectTypeOf(result).toEqualTypeOf<Promise<void>>()
   })
 
   it('should error on invalid query keys', () => {
@@ -810,7 +812,12 @@ describe('shouldThrowError', () => {
 
     expectTypeOf(shouldThrowError<ThrowOnError>)
       .parameter(0)
-      .toEqualTypeOf<boolean | ThrowOnError | undefined>()
+      .toEqualTypeOf<
+        | boolean
+        | ThrowOnError
+        | readonly [object, true | ThrowOnError]
+        | undefined
+      >()
 
     expectTypeOf(
       shouldThrowError<ThrowOnError>(true, [new CustomError()]),

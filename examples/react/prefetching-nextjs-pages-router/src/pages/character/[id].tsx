@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { isFetching, useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React from 'react'
@@ -12,9 +12,11 @@ export default function CharacterPage() {
     /^\d+$/.test(router.query.id) &&
     id > 0
 
-  const { status, data, error, isFetching } = useQuery(
+  const queryResult = useQuery(
     charactersQueries.detail(isValidId ? id : undefined),
   )
+  const { status, data, error } = queryResult
+  const fetching = isFetching(queryResult)
 
   return (
     <div style={{ textAlign: 'center' }}>
@@ -33,7 +35,7 @@ export default function CharacterPage() {
             <p>gender: {data.gender}</p>
             <p>origin: {data.origin.name}</p>
           </div>
-          <div>{isFetching ? 'Background Updating...' : ' '}</div>
+          <div>{fetching ? 'Background Updating...' : ' '}</div>
         </>
       )}
       <br />

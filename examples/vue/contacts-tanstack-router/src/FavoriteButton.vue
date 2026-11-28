@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import {
+  invalidateQueries,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/vue-query'
 import { computed } from 'vue'
 import { contactsMutations, contactsQueries } from './services/contacts/queries'
 import type { Contact } from './services/contacts/types'
@@ -11,7 +15,7 @@ const queryClient = useQueryClient()
 const { mutate, variables, isPending } = useMutation({
   ...contactsMutations.update(),
   onSettled: () =>
-    queryClient.invalidateQueries({ queryKey: contactsQueries.all() }),
+    invalidateQueries(queryClient, { queryKey: contactsQueries.all() }),
 })
 
 const favorite = computed(() =>

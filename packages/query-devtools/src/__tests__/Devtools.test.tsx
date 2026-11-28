@@ -5,10 +5,16 @@ import {
   QueryCache,
   QueryClient,
   QueryObserver,
+  clearQueryClient,
   dehydrate,
+  query as executeQuery,
+  getQueryCache,
+  getQueryData,
+  getQueryState,
   hydrate,
   noop,
   onlineManager,
+  setQueryData,
 } from '@tanstack/query-core'
 import { createSignal } from 'solid-js'
 import { afterEach, assert, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -98,7 +104,7 @@ describe('Devtools', () => {
   afterEach(() => {
     cleanup()
     Object.keys(storage).forEach((key) => delete storage[key])
-    queryClient.clear()
+    clearQueryClient(queryClient)
     onlineManager.setOnline(true)
     document.documentElement.style.fontSize = previousRootFontSize
     vi.useRealTimers()
@@ -155,7 +161,7 @@ describe('Devtools', () => {
 
   it('should render only visible queries from a large cache', () => {
     for (let index = 0; index < 2000; index++) {
-      queryClient.setQueryData(['large-cache', index], index)
+      setQueryData(queryClient, ['large-cache', index], index)
     }
 
     const rendered = renderDevtools({ initialIsOpen: true })
@@ -179,7 +185,8 @@ describe('Devtools', () => {
 
     function seedQueries(count = 1000) {
       for (let index = 0; index < count; index++) {
-        queryClient.setQueryData(
+        setQueryData(
+          queryClient,
           [`query-${String(index).padStart(4, '0')}`],
           `data-${index}`,
         )
@@ -200,7 +207,7 @@ describe('Devtools', () => {
       ).not.toBeInTheDocument()
       expect(rendered.getByLabelText('Query key ["query-0999"]')).toBeVisible()
 
-      queryClient.setQueryData(['query-0000'], 'updated-selected-data')
+      setQueryData(queryClient, ['query-0000'], 'updated-selected-data')
       expect(rendered.getByDisplayValue('updated-selected-data')).toBeVisible()
       viewport.scrollTo({ top: 0 })
       expect(rendered.getByLabelText('Query key ["query-0000"]')).toBeVisible()
@@ -225,7 +232,7 @@ describe('Devtools', () => {
       viewport.scrollTo({ top: viewport.scrollHeight })
       fireEvent.click(rendered.getByLabelText('Clear query cache'))
       expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
-      queryClient.setQueryData(['after-clear'], 'restored')
+      setQueryData(queryClient, ['after-clear'], 'restored')
       viewport.scrollTo({ top: viewport.scrollTop })
       expect(rendered.getByLabelText('Query key ["after-clear"]')).toBeVisible()
     })
@@ -403,8 +410,8 @@ describe('Devtools', () => {
 
       it('should keep cache notifications and cleanup independent for the same query key', () => {
         const secondClient = new QueryClient()
-        queryClient.setQueryData(['shared-key'], 'first-data')
-        secondClient.setQueryData(['shared-key'], 'second-data')
+        setQueryData(queryClient, ['shared-key'], 'first-data')
+        setQueryData(secondClient, ['shared-key'], 'second-data')
         const firstRender = mount()
         const secondRender = mount(secondClient)
         const first = within(firstRender.container)
@@ -412,7 +419,7 @@ describe('Devtools', () => {
         fireEvent.click(first.getByLabelText('Query key ["shared-key"]'))
         fireEvent.click(second.getByLabelText('Query key ["shared-key"]'))
 
-        secondClient.setQueryData(['shared-key'], 'updated-second')
+        setQueryData(secondClient, ['shared-key'], 'updated-second')
         expect(first.getByDisplayValue('first-data')).toBeInTheDocument()
         expect(
           first.queryByDisplayValue('updated-second'),
@@ -420,9 +427,9 @@ describe('Devtools', () => {
         expect(second.getByDisplayValue('updated-second')).toBeInTheDocument()
 
         secondRender.unmount()
-        queryClient.setQueryData(['shared-key'], 'updated-first')
+        setQueryData(queryClient, ['shared-key'], 'updated-first')
         expect(first.getByDisplayValue('updated-first')).toBeInTheDocument()
-        secondClient.clear()
+        clearQueryClient(secondClient)
       })
 
       it('should keep mutation selection, notifications, and cleanup independent', async () => {
@@ -457,7 +464,7 @@ describe('Devtools', () => {
         await firstMutation.execute({})
         await vi.advanceTimersByTimeAsync(0)
         expect(first.getByText('Mutation Details')).toBeInTheDocument()
-        secondClient.clear()
+        clearQueryClient(secondClient)
       })
 
       it('should keep offline indicators independent for different online managers', () => {
@@ -507,8 +514,8 @@ describe('Devtools', () => {
 
       it('should switch cache subscriptions when the client changes', () => {
         const secondClient = new QueryClient()
-        queryClient.setQueryData(['switch-key'], 'old-client')
-        secondClient.setQueryData(['switch-key'], 'new-client')
+        setQueryData(queryClient, ['switch-key'], 'old-client')
+        setQueryData(secondClient, ['switch-key'], 'new-client')
         const [client, setClient] = createSignal(queryClient)
         const Component =
           mode === 'full' ? DevtoolsComponent : DevtoolsPanelComponent
@@ -526,12 +533,12 @@ describe('Devtools', () => {
         expect(panel.getByDisplayValue('old-client')).toBeInTheDocument()
         setClient(secondClient)
         expect(panel.getByDisplayValue('new-client')).toBeInTheDocument()
-        secondClient.setQueryData(['switch-key'], 'new-update')
+        setQueryData(secondClient, ['switch-key'], 'new-update')
         expect(panel.getByDisplayValue('new-update')).toBeInTheDocument()
-        queryClient.setQueryData(['switch-key'], 'old-update')
+        setQueryData(queryClient, ['switch-key'], 'old-update')
         expect(panel.getByDisplayValue('new-update')).toBeInTheDocument()
         rendered.unmount()
-        secondClient.clear()
+        clearQueryClient(secondClient)
       })
 
       it('should switch mutation cache subscriptions when the client changes', async () => {
@@ -559,7 +566,7 @@ describe('Devtools', () => {
         await vi.advanceTimersByTimeAsync(0)
         expect(panel.getAllByLabelText(/Mutation submitted at/)).toHaveLength(1)
         rendered.unmount()
-        secondClient.clear()
+        clearQueryClient(secondClient)
       })
 
       it('should drop queued mutation cache updates from the previous client', async () => {
@@ -588,7 +595,7 @@ describe('Devtools', () => {
         await vi.advanceTimersByTimeAsync(0)
         expect(panel.getByLabelText('Pending: 0')).toBeInTheDocument()
         rendered.unmount()
-        secondClient.clear()
+        clearQueryClient(secondClient)
       })
 
       it('should toggle the supplied online manager when the offline button is clicked', () => {
@@ -607,8 +614,8 @@ describe('Devtools', () => {
 
       it('should keep query selection independent between clients', () => {
         const secondClient = new QueryClient()
-        queryClient.setQueryData(['isolation-a'], 'a')
-        secondClient.setQueryData(['isolation-b'], 'b')
+        setQueryData(queryClient, ['isolation-a'], 'a')
+        setQueryData(secondClient, ['isolation-b'], 'b')
         const first = within(mount().container)
         const secondRender = mount(secondClient)
         const second = within(secondRender.container)
@@ -621,7 +628,7 @@ describe('Devtools', () => {
         expect(second.getByText('Query Details')).toBeInTheDocument()
         expect(first.getByText('Query Details')).toBeInTheDocument()
         secondRender.unmount()
-        secondClient.clear()
+        clearQueryClient(secondClient)
       })
     },
   )
@@ -728,8 +735,8 @@ describe('Devtools', () => {
 
   describe('query list', () => {
     it('should render a row for each query in the cache', () => {
-      queryClient.setQueryData(['posts'], [{ id: 1 }])
-      queryClient.setQueryData(['users', 'me'], { id: 'u1' })
+      setQueryData(queryClient, ['posts'], [{ id: 1 }])
+      setQueryData(queryClient, ['users', 'me'], { id: 'u1' })
       const rendered = renderDevtools({ initialIsOpen: true })
 
       expect(
@@ -747,14 +754,14 @@ describe('Devtools', () => {
         rendered.queryByLabelText(/Query key \["new"\]/),
       ).not.toBeInTheDocument()
 
-      queryClient.setQueryData(['new'], 'hello')
+      setQueryData(queryClient, ['new'], 'hello')
 
       expect(rendered.getByLabelText(/Query key \["new"\]/)).toBeInTheDocument()
     })
 
     it('should filter queries by "queryHash"', () => {
-      queryClient.setQueryData(['posts'], [])
-      queryClient.setQueryData(['users'], [])
+      setQueryData(queryClient, ['posts'], [])
+      setQueryData(queryClient, ['users'], [])
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.input(rendered.getByLabelText('Filter queries by query key'), {
@@ -810,9 +817,9 @@ describe('Devtools', () => {
     })
 
     it('should filter queries by data keys and values in the "data" scope', () => {
-      queryClient.setQueryData(['posts'], [{ id: 1, author: 'Alice' }])
-      queryClient.setQueryData(['users'], { alice: { role: 'admin' } })
-      queryClient.setQueryData(['alice-settings'], { theme: 'dark' })
+      setQueryData(queryClient, ['posts'], [{ id: 1, author: 'Alice' }])
+      setQueryData(queryClient, ['users'], { alice: { role: 'admin' } })
+      setQueryData(queryClient, ['alice-settings'], { theme: 'dark' })
       const rendered = renderDevtools(
         { initialIsOpen: true },
         { 'TanstackQueryDevtools.filterScope': 'data' },
@@ -832,9 +839,9 @@ describe('Devtools', () => {
     })
 
     it('should match either the key or the data in the "all" scope', () => {
-      queryClient.setQueryData(['posts'], { author: 'alice' })
-      queryClient.setQueryData(['alice-settings'], { theme: 'dark' })
-      queryClient.setQueryData(['users'], { name: 'bob' })
+      setQueryData(queryClient, ['posts'], { author: 'alice' })
+      setQueryData(queryClient, ['alice-settings'], { theme: 'dark' })
+      setQueryData(queryClient, ['users'], { name: 'bob' })
       const rendered = renderDevtools(
         { initialIsOpen: true },
         { 'TanstackQueryDevtools.filterScope': 'all' },
@@ -854,8 +861,8 @@ describe('Devtools', () => {
     })
 
     it('should update data filter results when query data changes', async () => {
-      queryClient.setQueryData(['posts'], { status: 'draft' })
-      queryClient.setQueryData(['users'], { status: 'active' })
+      setQueryData(queryClient, ['posts'], { status: 'draft' })
+      setQueryData(queryClient, ['users'], { status: 'active' })
       const rendered = renderDevtools(
         { initialIsOpen: true },
         { 'TanstackQueryDevtools.filterScope': 'data' },
@@ -866,18 +873,18 @@ describe('Devtools', () => {
       })
       expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
 
-      queryClient.setQueryData(['posts'], { status: 'published' })
+      setQueryData(queryClient, ['posts'], { status: 'published' })
       await vi.advanceTimersByTimeAsync(0)
       expect(rendered.getByLabelText('Query key ["posts"]')).toBeInTheDocument()
 
-      queryClient.setQueryData(['posts'], { status: 'archived' })
+      setQueryData(queryClient, ['posts'], { status: 'archived' })
       await vi.advanceTimersByTimeAsync(0)
       expect(rendered.queryAllByLabelText(/^Query key /)).toHaveLength(0)
     })
 
     it('should keep the previous results until a slow data search for the latest filter is ready', async () => {
       for (let index = 0; index < 6; index++) {
-        queryClient.setQueryData(['item', index], {
+        setQueryData(queryClient, ['item', index], {
           name: index % 2 ? 'needle' : 'hay',
         })
       }
@@ -908,8 +915,8 @@ describe('Devtools', () => {
     })
 
     it('should clear all queries when the clear cache button is clicked', () => {
-      queryClient.setQueryData(['posts'], [])
-      queryClient.setQueryData(['users'], [])
+      setQueryData(queryClient, ['posts'], [])
+      setQueryData(queryClient, ['users'], [])
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText('Clear query cache'))
@@ -946,7 +953,7 @@ describe('Devtools', () => {
           queryKey: { hashFn: () => 'custom-posts-hash' },
         }),
       })
-      queryClient.query({
+      executeQuery(queryClient, {
         queryKey: ['posts'],
         queryFn: () => [{ id: 1 }],
       })
@@ -1008,7 +1015,7 @@ describe('Devtools', () => {
 
   describe('disabled and static queries', () => {
     it('should mark a disabled query in the row label', () => {
-      const observer = queryClient.getQueryCache().build(queryClient, {
+      const observer = getQueryCache(queryClient).build(queryClient, {
         queryKey: ['disabled-q'],
         queryFn: () => 'x',
       })
@@ -1023,7 +1030,7 @@ describe('Devtools', () => {
     })
 
     it('should render a "static" indicator for a query with "staleTime: \'static\'"', () => {
-      const query = queryClient.getQueryCache().build(queryClient, {
+      const query = getQueryCache(queryClient).build(queryClient, {
         queryKey: ['static-q'],
         queryFn: () => 'x',
       })
@@ -1042,7 +1049,7 @@ describe('Devtools', () => {
 
     it('should render a query row when an object query key is mutated in place', () => {
       const filters = { page: 1 }
-      queryClient.setQueryData(['mutable-key', filters], 'x')
+      setQueryData(queryClient, ['mutable-key', filters], 'x')
       filters.page = 2
 
       const rendered = renderDevtools({ initialIsOpen: true })
@@ -1155,7 +1162,7 @@ describe('Devtools', () => {
       // secondBreakpoint = 796; pick a width comfortably below it so the
       // PiP panel evaluates its narrow (`flex-direction: column`) branch.
       const { pipDocument } = stubPipWindow({ innerWidth: 500 })
-      queryClient.setQueryData(['narrow-pip-query'], { hello: 'world' })
+      setQueryData(queryClient, ['narrow-pip-query'], { hello: 'world' })
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(
@@ -1201,7 +1208,7 @@ describe('Devtools', () => {
 
       expect(rendered.getByLabelText('Inactive: 0')).toBeInTheDocument()
 
-      queryClient.setQueryData(['posts'], [{ id: 1 }])
+      setQueryData(queryClient, ['posts'], [{ id: 1 }])
 
       expect(rendered.getByLabelText('Inactive: 1')).toBeInTheDocument()
     })
@@ -1286,10 +1293,10 @@ describe('Devtools', () => {
 
   describe('Data Explorer search', () => {
     it('searches only query Data and resets search when the selection changes', () => {
-      queryClient.setQueryData(['search-first'], {
+      setQueryData(queryClient, ['search-first'], {
         nested: { name: 'first needle' },
       })
-      queryClient.setQueryData(['search-second'], {
+      setQueryData(queryClient, ['search-second'], {
         nested: { name: 'second' },
       })
       const rendered = renderDevtools({ initialIsOpen: true })
@@ -1308,7 +1315,7 @@ describe('Devtools', () => {
         'data-search-match',
         'true',
       )
-      queryClient.setQueryData(['search-first'], {
+      setQueryData(queryClient, ['search-first'], {
         nested: { name: 'updated needle' },
       })
       expect(data.getByLabelText('name:')).toHaveValue('updated needle')
@@ -1366,8 +1373,8 @@ describe('Devtools', () => {
     it.each(['key', 'data', 'all'] as const)(
       'should initialize the query Data search from the %s scope',
       (scope) => {
-        queryClient.setQueryData(['needle-first'], { name: 'first needle' })
-        queryClient.setQueryData(['needle-second'], { name: 'second needle' })
+        setQueryData(queryClient, ['needle-first'], { name: 'first needle' })
+        setQueryData(queryClient, ['needle-second'], { name: 'second needle' })
         const rendered = renderDevtools(
           { initialIsOpen: true },
           { 'TanstackQueryDevtools.filterScope': scope },
@@ -1439,7 +1446,7 @@ describe('Devtools', () => {
 
   describe('query details', () => {
     it('should open the query details panel when a query row is clicked', () => {
-      queryClient.setQueryData(['posts'], [{ id: 1 }])
+      setQueryData(queryClient, ['posts'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["posts"\]/))
@@ -1447,7 +1454,7 @@ describe('Devtools', () => {
     })
 
     it('should close the query details panel when the same row is clicked again', () => {
-      queryClient.setQueryData(['details-toggle'], [{ id: 1 }])
+      setQueryData(queryClient, ['details-toggle'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["details-toggle"\]/))
@@ -1458,7 +1465,7 @@ describe('Devtools', () => {
 
   describe('query actions', () => {
     it('should remove the query when the "Remove" button is clicked', () => {
-      queryClient.setQueryData(['action-remove'], [{ id: 1 }])
+      setQueryData(queryClient, ['action-remove'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["action-remove"\]/))
@@ -1469,16 +1476,16 @@ describe('Devtools', () => {
     })
 
     it('should reset the query when the "Reset" button is clicked', () => {
-      queryClient.setQueryData(['action-reset'], [{ id: 1 }])
+      setQueryData(queryClient, ['action-reset'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["action-reset"\]/))
       fireEvent.click(rendered.getByText('Reset'))
-      expect(queryClient.getQueryData(['action-reset'])).toBeUndefined()
+      expect(getQueryData(queryClient, ['action-reset'])).toBeUndefined()
     })
 
     it('should invalidate the query when the "Invalidate" button is clicked', () => {
-      queryClient.setQueryData(['action-invalidate'], [{ id: 1 }])
+      setQueryData(queryClient, ['action-invalidate'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(
@@ -1486,12 +1493,12 @@ describe('Devtools', () => {
       )
       fireEvent.click(rendered.getByText('Invalidate'))
       expect(
-        queryClient.getQueryState(['action-invalidate'])?.isInvalidated,
+        getQueryState(queryClient, ['action-invalidate'])?.isInvalidated,
       ).toBe(true)
     })
 
     it('should dispatch a "REFETCH" event when "Refetch" is clicked', () => {
-      queryClient.setQueryData(['action-refetch'], [{ id: 1 }])
+      setQueryData(queryClient, ['action-refetch'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
       const listener = vi.fn<EventListener>()
@@ -1513,16 +1520,16 @@ describe('Devtools', () => {
     })
 
     it('should set the query status to "error" when "Trigger Error" is clicked', () => {
-      queryClient.setQueryData(['action-error'], [{ id: 1 }])
+      setQueryData(queryClient, ['action-error'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["action-error"\]/))
       fireEvent.click(rendered.getByText('Trigger Error'))
-      expect(queryClient.getQueryState(['action-error'])?.status).toBe('error')
+      expect(getQueryState(queryClient, ['action-error'])?.status).toBe('error')
     })
 
     it('should restore the query status when "Restore Error" is clicked after "Trigger Error"', () => {
-      queryClient.setQueryData(['action-restore-error'], [{ id: 1 }])
+      setQueryData(queryClient, ['action-restore-error'], [{ id: 1 }])
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(
@@ -1530,7 +1537,7 @@ describe('Devtools', () => {
       )
       fireEvent.click(rendered.getByText('Trigger Error'))
       fireEvent.click(rendered.getByText('Restore Error'))
-      expect(queryClient.getQueryState(['action-restore-error'])?.status).toBe(
+      expect(getQueryState(queryClient, ['action-restore-error'])?.status).toBe(
         'pending',
       )
     })
@@ -1539,12 +1546,10 @@ describe('Devtools', () => {
       const queryFn = vi.fn<() => Promise<string>>(() =>
         Promise.resolve('original'),
       )
-      void queryClient
-        .query({
-          queryKey: ['action-restore-loading'],
-          queryFn,
-        })
-        .catch(noop)
+      void executeQuery(queryClient, {
+        queryKey: ['action-restore-loading'],
+        queryFn,
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(0)
       expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -1558,7 +1563,7 @@ describe('Devtools', () => {
       // and stashes the original options in `fetchMeta.__previousQueryOptions`.
       fireEvent.click(rendered.getByText('Trigger Loading'))
       expect(
-        queryClient.getQueryState(['action-restore-loading'])?.status,
+        getQueryState(queryClient, ['action-restore-loading'])?.status,
       ).toBe('pending')
 
       // Second click runs `restoreQueryAfterLoadingOrError`, which cancels the
@@ -1566,7 +1571,7 @@ describe('Devtools', () => {
       fireEvent.click(rendered.getByText('Restore Loading'))
       await vi.advanceTimersByTimeAsync(0)
       expect(queryFn).toHaveBeenCalledTimes(2)
-      expect(queryClient.getQueryData(['action-restore-loading'])).toBe(
+      expect(getQueryData(queryClient, ['action-restore-loading'])).toBe(
         'original',
       )
     })
@@ -1739,7 +1744,7 @@ describe('Devtools', () => {
 
   describe('data edit', () => {
     it('should switch to data editor when "Bulk Edit Data" is clicked', () => {
-      queryClient.setQueryData(['edit-data'], { name: 'a' })
+      setQueryData(queryClient, ['edit-data'], { name: 'a' })
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["edit-data"\]/))
@@ -1750,7 +1755,7 @@ describe('Devtools', () => {
     })
 
     it('should save the edited data when the form is submitted', () => {
-      queryClient.setQueryData(['edit-save'], { name: 'a' })
+      setQueryData(queryClient, ['edit-save'], { name: 'a' })
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["edit-save"\]/))
@@ -1761,13 +1766,13 @@ describe('Devtools', () => {
         target: { value: JSON.stringify({ name: 'b' }) },
       })
       fireEvent.submit(textarea.closest('form')!)
-      expect(queryClient.getQueryData(['edit-save'])).toStrictEqual({
+      expect(getQueryData(queryClient, ['edit-save'])).toStrictEqual({
         name: 'b',
       })
     })
 
     it('should set an error state when the edited data is invalid JSON', () => {
-      queryClient.setQueryData(['edit-invalid'], { name: 'a' })
+      setQueryData(queryClient, ['edit-invalid'], { name: 'a' })
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["edit-invalid"\]/))
@@ -1780,7 +1785,7 @@ describe('Devtools', () => {
     })
 
     it('should clear the error state when the textarea is focused after a submit failure', () => {
-      queryClient.setQueryData(['edit-refocus'], { name: 'a' })
+      setQueryData(queryClient, ['edit-refocus'], { name: 'a' })
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["edit-refocus"\]/))
@@ -1796,7 +1801,7 @@ describe('Devtools', () => {
     })
 
     it('should return to the data view when the editor "Cancel" button is clicked', () => {
-      queryClient.setQueryData(['edit-cancel'], { name: 'a' })
+      setQueryData(queryClient, ['edit-cancel'], { name: 'a' })
       const rendered = renderDevtools({ initialIsOpen: true })
 
       fireEvent.click(rendered.getByLabelText(/Query key \["edit-cancel"\]/))
@@ -1815,7 +1820,7 @@ describe('Devtools', () => {
 
   describe('error type select', () => {
     it('should render the error type select when "errorTypes" is provided', () => {
-      queryClient.setQueryData(['error-select'], [{ id: 1 }])
+      setQueryData(queryClient, ['error-select'], [{ id: 1 }])
       const rendered = renderDevtools({
         initialIsOpen: true,
         errorTypes: [
@@ -1833,7 +1838,7 @@ describe('Devtools', () => {
     })
 
     it('should trigger error when an error type is selected', () => {
-      queryClient.setQueryData(['error-select-trigger'], [{ id: 1 }])
+      setQueryData(queryClient, ['error-select-trigger'], [{ id: 1 }])
       const rendered = renderDevtools({
         initialIsOpen: true,
         errorTypes: [
@@ -1849,7 +1854,7 @@ describe('Devtools', () => {
       )
       const select = rendered.getByLabelText('Select error type to trigger')
       fireEvent.change(select, { target: { value: 'NetworkError' } })
-      expect(queryClient.getQueryState(['error-select-trigger'])?.status).toBe(
+      expect(getQueryState(queryClient, ['error-select-trigger'])?.status).toBe(
         'error',
       )
     })
@@ -1886,8 +1891,8 @@ describe('Devtools', () => {
         enabled: false,
       })
       const unsubscribe = disabled.subscribe(() => {})
-      queryClient.setQueryData(['hide-test-disabled'], 'x')
-      queryClient.setQueryData(['hide-test-active'], 'y')
+      setQueryData(queryClient, ['hide-test-disabled'], 'x')
+      setQueryData(queryClient, ['hide-test-active'], 'y')
 
       try {
         const rendered = renderDevtools(
@@ -1913,8 +1918,8 @@ describe('Devtools', () => {
         enabled: false,
       })
       const unsubscribe = disabled.subscribe(() => {})
-      queryClient.setQueryData(['hide-prop-disabled'], 'x')
-      queryClient.setQueryData(['hide-prop-active'], 'y')
+      setQueryData(queryClient, ['hide-prop-disabled'], 'x')
+      setQueryData(queryClient, ['hide-prop-active'], 'y')
 
       try {
         const rendered = renderDevtools({
@@ -1940,7 +1945,7 @@ describe('Devtools', () => {
         enabled: false,
       })
       const unsubscribe = disabled.subscribe(() => {})
-      queryClient.setQueryData(['hide-override-disabled'], 'x')
+      setQueryData(queryClient, ['hide-override-disabled'], 'x')
 
       try {
         const rendered = renderDevtools(
@@ -2468,7 +2473,7 @@ describe('Devtools', () => {
     })
 
     it('should close the query details panel when dragging shrinks the panel below the minimum height', () => {
-      queryClient.setQueryData(['shrink-below-min-height'], [{ id: 1 }])
+      setQueryData(queryClient, ['shrink-below-min-height'], [{ id: 1 }])
       const rendered = renderDevtools({
         position: 'bottom',
         initialIsOpen: true,

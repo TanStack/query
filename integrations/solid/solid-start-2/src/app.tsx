@@ -1,4 +1,7 @@
 import {
+  isPending,
+  isError,
+  isSuccess,
   QueryClient,
   QueryClientProvider,
   useQuery,
@@ -17,9 +20,9 @@ const Example = () => {
 
   return (
     <Switch>
-      <Match when={query.isPending}>Loading...</Match>
-      <Match when={query.isError}>An error has occurred!</Match>
-      <Match when={query.isSuccess}>{query.data}</Match>
+      <Match when={isPending(query)}>Loading...</Match>
+      <Match when={isError(query)}>An error has occurred!</Match>
+      <Match when={isSuccess(query)}>{query.data}</Match>
     </Switch>
   )
 }

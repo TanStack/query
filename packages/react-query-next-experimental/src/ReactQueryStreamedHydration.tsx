@@ -4,6 +4,7 @@ import {
   defaultShouldDehydrateQuery,
   dehydrate,
   environmentManager,
+  getQueryCache,
   hydrate,
   useQueryClient,
 } from '@tanstack/react-query'
@@ -47,7 +48,7 @@ export function ReactQueryStreamedHydration(props: {
   // <server only>
   if (environmentManager.isServer()) {
     // Do we need to care about unsubscribing? I don't think so to be honest
-    queryClient.getQueryCache().subscribe((event) => {
+    getQueryCache(queryClient).subscribe((event) => {
       switch (event.type) {
         case 'added':
         case 'updated':

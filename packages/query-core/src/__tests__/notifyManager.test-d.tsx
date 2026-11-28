@@ -3,6 +3,7 @@ import {
   createNotifyManager,
   defaultScheduler,
   notifyManager,
+  setBatchNotifyFunction,
 } from '../notifyManager'
 
 describe('notifyManager', () => {
@@ -21,13 +22,10 @@ describe('notifyManager', () => {
   })
 
   it('should only expose its documented members', () => {
-    expectTypeOf<keyof ReturnType<typeof createNotifyManager>>().toEqualTypeOf<
-      | 'batch'
-      | 'batchCalls'
-      | 'schedule'
-      | 'setNotifyFunction'
-      | 'setBatchNotifyFunction'
-      | 'setScheduler'
+    expectTypeOf<
+      Extract<keyof ReturnType<typeof createNotifyManager>, string>
+    >().toEqualTypeOf<
+      'batch' | 'batchCalls' | 'schedule' | 'setNotifyFunction' | 'setScheduler'
     >()
   })
 
@@ -163,19 +161,16 @@ describe('notifyManager', () => {
 
   describe('setBatchNotifyFunction', () => {
     it('should only accept a function taking a callback', () => {
-      const localNotifyManager = createNotifyManager()
-
-      expectTypeOf(
-        localNotifyManager.setBatchNotifyFunction,
-      ).parameters.toEqualTypeOf<[fn: (callback: () => void) => void]>()
+      expectTypeOf(setBatchNotifyFunction).parameters.toEqualTypeOf<
+        [
+          manager: ReturnType<typeof createNotifyManager>,
+          batch: (callback: () => void) => void,
+        ]
+      >()
     })
 
     it('should return void', () => {
-      const localNotifyManager = createNotifyManager()
-
-      expectTypeOf(
-        localNotifyManager.setBatchNotifyFunction,
-      ).returns.toEqualTypeOf<void>()
+      expectTypeOf(setBatchNotifyFunction).returns.toEqualTypeOf<void>()
     })
   })
 

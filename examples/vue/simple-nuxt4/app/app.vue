@@ -1,11 +1,21 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
+import {
+  isFetching as queryIsFetching,
+  isPending as queryIsPending,
+  useQuery,
+} from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
+import { computed } from 'vue'
 import { reposQueries } from './services/repos/queries'
 
-const { data, error, isFetching, isPending, suspense } = useQuery(
-  reposQueries.detail(),
-)
+const {
+  state: queryState,
+  data,
+  error,
+  suspense,
+} = useQuery(reposQueries.detail())
+const isFetching = computed(() => queryIsFetching(queryState))
+const isPending = computed(() => queryIsPending(queryState))
 
 await suspense()
 </script>

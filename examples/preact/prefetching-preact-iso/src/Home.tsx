@@ -1,4 +1,12 @@
-import { noop, useQuery, useQueryClient } from '@tanstack/preact-query'
+import {
+  queryOptions,
+  query,
+  isPending,
+  isError,
+  noop,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { useState } from 'preact/hooks'
 import { charactersQueries } from './services/characters/queries'
@@ -13,18 +21,18 @@ function CharacterItem({
 }) {
   const queryClient = useQueryClient()
 
-  const { data } = useQuery({
-    ...charactersQueries.detail(char.id),
-    enabled: false,
-  })
+  const { data } = useQuery(
+    queryOptions({
+      ...charactersQueries.detail(char.id),
+      enabled: false,
+    }),
+  )
 
   const prefetch = () => {
-    queryClient
-      .query({
-        ...charactersQueries.detail(char.id),
-        staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-      })
-      .catch(noop)
+    query(queryClient, {
+      ...charactersQueries.detail(char.id),
+      staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+    }).catch(noop)
   }
 
   return (
@@ -46,9 +54,11 @@ function CharacterItem({
 export default function Home() {
   const [selectedChar, setSelectedChar] = useState(1)
 
-  const charactersQuery = useQuery(charactersQueries.list())
+  const charactersQuery = useQuery(queryOptions(charactersQueries.list()))
 
-  const characterQuery = useQuery(charactersQueries.detail(selectedChar))
+  const characterQuery = useQuery(
+    queryOptions(charactersQueries.detail(selectedChar)),
+  )
 
   return (
     <div className="App">
@@ -59,9 +69,9 @@ export default function Home() {
         details page will render it without a loading state.
       </p>
       <h2>Characters</h2>
-      {charactersQuery.isPending ? (
+      {isPending(charactersQuery) ? (
         'Loading...'
-      ) : charactersQuery.isError ? (
+      ) : isError(charactersQuery) ? (
         <span>Error: {charactersQuery.error.message}</span>
       ) : (
         <>
@@ -76,9 +86,9 @@ export default function Home() {
           </ul>
 
           <h3>Selected Character</h3>
-          {characterQuery.isPending ? (
+          {isPending(characterQuery) ? (
             'Loading...'
-          ) : characterQuery.isError ? (
+          ) : isError(characterQuery) ? (
             <span>Error: {characterQuery.error.message}</span>
           ) : (
             <>

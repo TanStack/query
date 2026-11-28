@@ -1,4 +1,7 @@
 import {
+  queryOptions,
+  placeholderData,
+  query,
   keepPreviousData,
   noop,
   useQuery,
@@ -12,15 +15,17 @@ export default function App() {
   const queryClient = useQueryClient()
   const [page, setPage] = useState(0)
 
-  const { status, data, error, isFetching, isPlaceholderData } = useQuery({
-    ...projectsQueries.list(page),
-    placeholderData: keepPreviousData,
-  })
+  const { status, data, error, isFetching, isPlaceholderData } = useQuery(
+    queryOptions({
+      ...projectsQueries.list(page),
+      placeholderData: placeholderData(keepPreviousData),
+    }),
+  )
 
   // Prefetch the next page!
   useEffect(() => {
     if (!isPlaceholderData && data?.hasMore) {
-      queryClient.query(projectsQueries.list(page + 1)).catch(noop)
+      query(queryClient, projectsQueries.list(page + 1)).catch(noop)
     }
   }, [data, isPlaceholderData, page, queryClient])
 

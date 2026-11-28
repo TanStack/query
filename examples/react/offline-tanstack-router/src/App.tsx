@@ -2,6 +2,9 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 import {
   MutationCache,
   QueryClient,
+  invalidateQueries,
+  resumePausedMutations,
+  setMutationDefaults,
   useIsRestoring,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
@@ -32,7 +35,7 @@ const queryClient = new QueryClient({
 })
 
 // we need a default mutation function so that paused mutations can resume after a page reload
-queryClient.setMutationDefaults(moviesQueries.all(), {
+setMutationDefaults(queryClient, moviesQueries.all(), {
   ...moviesMutations.update(),
   onSuccess: (data) => {
     toast.success(data.message)
@@ -59,8 +62,8 @@ export default function App() {
       persistOptions={{ persister }}
       onSuccess={() => {
         // resume mutations after initial restore from localStorage was successful
-        queryClient.resumePausedMutations().then(() => {
-          queryClient.invalidateQueries()
+        resumePausedMutations(queryClient).then(() => {
+          invalidateQueries(queryClient)
         })
       }}
     >

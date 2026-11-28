@@ -1,4 +1,10 @@
-import { noop, useQuery, useQueryClient } from '@tanstack/solid-query'
+import {
+  isFetching,
+  query,
+  noop,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/solid-query'
 import { For, Show } from 'solid-js'
 import { projectsQueries } from '../services/projects/queries'
 import Button from './Button'
@@ -17,7 +23,7 @@ export default function Projects(props: {
     <div>
       <h1>
         TanStack Repositories{' '}
-        <Show when={projectsQuery.isFetching}>
+        <Show when={isFetching(projectsQuery)}>
           <Spinner />
         </Show>
       </h1>
@@ -27,9 +33,10 @@ export default function Projects(props: {
             <Button
               onClick={() => {
                 // Prefetch the project query
-                queryClient
-                  .query(projectsQueries.detail(project.full_name))
-                  .catch(noop)
+                query(
+                  queryClient,
+                  projectsQueries.detail(project.full_name),
+                ).catch(noop)
                 props.setActiveProject(project.full_name)
               }}
             >

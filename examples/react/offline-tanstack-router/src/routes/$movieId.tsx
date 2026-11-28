@@ -1,5 +1,14 @@
 import {
+  cancelQueries,
+  getQueryData,
+  invalidateQueries,
+  isError,
+  isFetching,
+  isLoading,
+  isPaused,
   onlineManager,
+  query,
+  setQueryData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -10,11 +19,11 @@ import { moviesMutations, moviesQueries } from '../services/movies/queries'
 
 export const Route = createFileRoute('/$movieId')({
   loader: ({ context: { queryClient, isRestoring }, params: { movieId } }) =>
-    queryClient.getQueryData(moviesQueries.detail(movieId).queryKey) ??
+    getQueryData(queryClient, moviesQueries.detail(movieId).queryKey) ??
     // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
     // we just let the Detail component handle it
     (onlineManager.isOnline() && !isRestoring
-      ? queryClient.query(moviesQueries.detail(movieId))
+      ? query(queryClient, moviesQueries.detail(movieId))
       : undefined),
   component: Detail,
 })
@@ -30,16 +39,17 @@ function Detail() {
     ...moviesMutations.update(),
     mutationKey: moviesQueries.detail(movieId).queryKey,
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({
+      await cancelQueries(queryClient, {
         queryKey: moviesQueries.detail(movieId).queryKey,
       })
       const { queryKey } = moviesQueries.detail(movieId)
-      const previousData = queryClient.getQueryData(queryKey)
+      const previousData = getQueryData(queryClient, queryKey)
 
       // remove local state so that server state is taken instead
       setCommentDraft(undefined)
 
-      queryClient.setQueryData(
+      setQueryData(
+        queryClient,
         queryKey,
         (old) =>
           old && {
@@ -54,13 +64,14 @@ function Detail() {
       return { previousData }
     },
     onError: (_, __, onMutateResult) => {
-      queryClient.setQueryData(
+      setQueryData(
+        queryClient,
         moviesQueries.detail(movieId).queryKey,
         onMutateResult?.previousData,
       )
     },
     onSettled: () => {
-      queryClient.invalidateQueries({
+      invalidateQueries(queryClient, {
         queryKey: moviesQueries.detail(movieId).queryKey,
       })
     },
@@ -68,7 +79,7 @@ function Detail() {
 
   const comment = commentDraft ?? movieQuery.data?.movie.comment
 
-  if (movieQuery.isLoading) {
+  if (isLoading(movieQuery)) {
     return 'Loading...'
   }
 
@@ -113,7 +124,7 @@ function Detail() {
         <div>
           Updated at: {new Date(movieQuery.data.ts).toLocaleTimeString()}
         </div>
-        <div>{movieQuery.isFetching && 'fetching...'}</div>
+        <div>{isFetching(movieQuery) && 'fetching...'}</div>
         <div>
           {updateMovie.isPaused
             ? 'mutation paused - offline'
@@ -123,7 +134,7 @@ function Detail() {
     )
   }
 
-  if (movieQuery.isError) {
+  if (isError(movieQuery)) {
     return (
       <div>
         <Link to="/">Back</Link>
@@ -133,7 +144,7 @@ function Detail() {
     )
   }
 
-  if (movieQuery.isPaused) {
+  if (isPaused(movieQuery)) {
     return "We're offline and have no data to show :("
   }
 

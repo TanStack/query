@@ -1,7 +1,15 @@
-import { noop } from '@tanstack/query-core'
+import { getMutationCache, noop } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isReactive, isReadonly, onScopeDispose, reactive, ref } from 'vue'
+import {
+  cancelQueries,
+  getQueryData,
+  getQueryState,
+  invalidateQueries,
+  isMutating,
+  setQueryData,
+} from '../queryClient'
 import { useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
 import type { MutationFunctionContext } from '@tanstack/query-core'
@@ -119,7 +127,7 @@ describe('useMutation', () => {
     const key1 = createKey()
     const key2 = createKey()
     const queryClient = useQueryClient()
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const options = reactive({
       mutationKey: key1,
       mutationFn: (params: string) => sleep(10).then(() => params),
@@ -148,7 +156,7 @@ describe('useMutation', () => {
       },
     ])
     const queryClient = useQueryClient()
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const options = reactive({
       mutationKey,
       mutationFn: (params: string) => sleep(10).then(() => params),
@@ -183,7 +191,7 @@ describe('useMutation', () => {
     const mutationKeyRef = ref<Array<string>>(key1)
     const mutationFn = ref((params: string) => sleep(0).then(() => params))
     const queryClient = useQueryClient()
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     const mutation = useMutation({ mutationKey: mutationKeyRef, mutationFn })
 
     mutationKeyRef.value = key2
@@ -564,10 +572,10 @@ describe('useMutation', () => {
 
     mutation.mutate('a')
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryClient.isMutating({ mutationKey: key })).toBe(1)
+    expect(isMutating(queryClient, { mutationKey: key })).toBe(1)
     expect(mutation.status.value).toBe('idle')
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.isMutating({ mutationKey: key })).toBe(0)
+    expect(isMutating(queryClient, { mutationKey: key })).toBe(0)
     expect(mutation.status.value).toBe('idle')
   })
 
@@ -658,16 +666,16 @@ describe('useMutation', () => {
     it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
       const key = createKey()
       const queryClient = useQueryClient()
-      queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+      setQueryData<Array<string>>(queryClient, key, ['Todo 1'])
 
       const mutation = useMutation({
         mutationFn: () =>
           sleep(10).then(() => Promise.reject(new Error('Some error'))),
         onMutate: async (newTodo: string) => {
-          await queryClient.cancelQueries({ queryKey: key })
-          const previousTodos = queryClient.getQueryData<Array<string>>(key)
+          await cancelQueries(queryClient, { queryKey: key })
+          const previousTodos = getQueryData<Array<string>>(queryClient, key)
 
-          queryClient.setQueryData<Array<string>>(key, (old) => [
+          setQueryData<Array<string>>(queryClient, key, (old) => [
             ...(old ?? []),
             newTodo,
           ])
@@ -675,7 +683,7 @@ describe('useMutation', () => {
           return { previousTodos }
         },
         onError: (_err, _newTodo, onMutateResult) => {
-          queryClient.setQueryData(key, onMutateResult?.previousTodos)
+          setQueryData(queryClient, key, onMutateResult?.previousTodos)
         },
       })
 
@@ -684,24 +692,24 @@ describe('useMutation', () => {
       // onMutate runs synchronously up to its first await, so the optimistic
       // value is visible immediately, before the mutationFn settles.
       await vi.advanceTimersByTimeAsync(0)
-      expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
+      expect(getQueryData(queryClient, key)).toStrictEqual(['Todo 1', 'Todo 2'])
       await vi.advanceTimersByTimeAsync(10)
       expect(mutation).toMatchObject({ isError: { value: true } })
-      expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1'])
+      expect(getQueryData(queryClient, key)).toStrictEqual(['Todo 1'])
     })
 
     it('should keep the optimistic update in place when the mutation succeeds', async () => {
       const key = createKey()
       const queryClient = useQueryClient()
-      queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+      setQueryData<Array<string>>(queryClient, key, ['Todo 1'])
 
       const mutation = useMutation({
         mutationFn: (newTodo: string) => sleep(10).then(() => newTodo),
         onMutate: async (newTodo: string) => {
-          await queryClient.cancelQueries({ queryKey: key })
-          const previousTodos = queryClient.getQueryData<Array<string>>(key)
+          await cancelQueries(queryClient, { queryKey: key })
+          const previousTodos = getQueryData<Array<string>>(queryClient, key)
 
-          queryClient.setQueryData<Array<string>>(key, (old) => [
+          setQueryData<Array<string>>(queryClient, key, (old) => [
             ...(old ?? []),
             newTodo,
           ])
@@ -709,14 +717,14 @@ describe('useMutation', () => {
           return { previousTodos }
         },
         onError: (_err, _newTodo, onMutateResult) => {
-          queryClient.setQueryData(key, onMutateResult?.previousTodos)
+          setQueryData(queryClient, key, onMutateResult?.previousTodos)
         },
       })
 
       mutation.mutate('Todo 2')
       await vi.advanceTimersByTimeAsync(10)
       expect(mutation).toMatchObject({ isSuccess: { value: true } })
-      expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
+      expect(getQueryData(queryClient, key)).toStrictEqual(['Todo 1', 'Todo 2'])
     })
   })
 
@@ -801,11 +809,11 @@ describe('useMutation', () => {
   it('should give mutationFn the same QueryClient instance via context', async () => {
     const key = createKey()
     const queryClient = useQueryClient()
-    queryClient.setQueryData(key, 'tag-from-this-client')
+    setQueryData(queryClient, key, 'tag-from-this-client')
 
     const mutation = useMutation({
       mutationFn: (_text: string, context: MutationFunctionContext) =>
-        sleep(10).then(() => context.client.getQueryData(key)),
+        sleep(10).then(() => getQueryData(context.client, key)),
     })
 
     mutation.mutate('todo')
@@ -841,19 +849,19 @@ describe('useMutation', () => {
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
     const key = createKey()
     const queryClient = useQueryClient()
-    queryClient.setQueryData(key, 'data')
+    setQueryData(queryClient, key, 'data')
 
     const mutation = useMutation({
       mutationFn: () => sleep(10).then(() => 'mutated'),
       onSuccess: (_data, _variables, _onMutateResult, context) => {
-        context.client.invalidateQueries({ queryKey: key })
+        invalidateQueries(context.client, { queryKey: key })
       },
     })
 
-    expect(queryClient.getQueryState(key)?.isInvalidated).toBe(false)
+    expect(getQueryState(queryClient, key)?.isInvalidated).toBe(false)
 
     mutation.mutate()
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getQueryState(key)?.isInvalidated).toBe(true)
+    expect(getQueryState(queryClient, key)?.isInvalidated).toBe(true)
   })
 })

@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { useQueryClient } from '@tanstack/svelte-query'
+  import {
+    setDefaultOptions,
+    getDefaultOptions,
+    useQueryClient,
+  } from '@tanstack/svelte-query'
   import {
     staleTime,
     gcTime,
@@ -12,10 +16,10 @@
   const queryClient = useQueryClient()
 
   function applyQueryDefaults() {
-    queryClient.setDefaultOptions({
-      ...queryClient.getDefaultOptions(),
+    setDefaultOptions(queryClient, {
+      ...getDefaultOptions(queryClient),
       queries: {
-        ...queryClient.getDefaultOptions().queries,
+        ...getDefaultOptions(queryClient).queries,
         staleTime: staleTime.value,
         gcTime: gcTime.value,
       },

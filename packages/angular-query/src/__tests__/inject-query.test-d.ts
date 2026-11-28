@@ -1,4 +1,5 @@
 import { signal } from '@angular/core'
+import { select } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 import { injectQuery, queryOptions, skipToken, toResource } from '..'
@@ -41,10 +42,13 @@ describe('initialData', () => {
       const options = injectQuery(() => ({
         queryKey: ['key'],
         queryFn: () => '1',
-        select: (data) => {
-          expectTypeOf(data).toEqualTypeOf<string>()
-          return parseInt(data)
-        },
+        select: [
+          select,
+          (data) => {
+            expectTypeOf(data).toEqualTypeOf<string>()
+            return parseInt(data)
+          },
+        ],
       }))
       expectTypeOf(options.data).toEqualTypeOf<Signal<number | undefined>>()
     })
@@ -57,7 +61,7 @@ describe('initialData', () => {
 
       const query = injectQuery(() => ({
         ...options,
-        select: (data) => data > 1,
+        select: [select, (data) => data > 1],
       }))
 
       expectTypeOf(query.data).toEqualTypeOf<Signal<boolean | undefined>>()

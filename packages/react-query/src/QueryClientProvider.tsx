@@ -1,4 +1,5 @@
 'use client'
+import { mountQueryClient, unmountQueryClient } from '@tanstack/query-core'
 import * as React from 'react'
 import type { QueryClient } from '@tanstack/query-core'
 
@@ -49,7 +50,7 @@ export type QueryClientProviderProps = {
 
 /**
  * Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application. Also
- * calls `client.mount()`/`client.unmount()` as this component mounts/unmounts, which subscribes the client to
+ * calls `mountQueryClient(client)`/`unmountQueryClient(client)` as this component mounts/unmounts, which subscribes the client to
  * focus/online events (resuming any paused mutations and refetching as needed when the app regains focus or
  * comes back online).
  * @param props - The `client` to provide, and the `children` that get access to it.
@@ -70,9 +71,9 @@ export const QueryClientProvider = ({
   children,
 }: QueryClientProviderProps): React.JSX.Element => {
   React.useEffect(() => {
-    client.mount()
+    mountQueryClient(client)
     return () => {
-      client.unmount()
+      unmountQueryClient(client)
     }
   }, [client])
 

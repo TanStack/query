@@ -1,5 +1,13 @@
 import { Router } from '@lit-labs/router'
-import { QueryClientProvider, noop, onlineManager } from '@tanstack/lit-query'
+import {
+  QueryClientProvider,
+  getQueryData,
+  invalidateQueries,
+  noop,
+  onlineManager,
+  query,
+  resumePausedMutations,
+} from '@tanstack/lit-query'
 import { persistQueryClient } from '@tanstack/query-persist-client-core'
 import { LitElement, html } from 'lit'
 import { worker } from './mocks'
@@ -32,12 +40,12 @@ class OfflineApp extends LitElement {
       path: '/:movieId',
       enter: async ({ movieId = '' }) => {
         if (
-          !queryClient.getQueryData(moviesQueries.detail(movieId).queryKey) &&
+          !getQueryData(queryClient, moviesQueries.detail(movieId).queryKey) &&
           // do not load if we are offline because it returns a promise that is pending until we go online again
           // we just let the movie-detail-view element handle it
           onlineManager.isOnline()
         ) {
-          await queryClient.query(moviesQueries.detail(movieId)).catch(noop)
+          await query(queryClient, moviesQueries.detail(movieId)).catch(noop)
         }
         return true
       },
@@ -85,8 +93,8 @@ worker.start().then(async () => {
   const [, restorePromise] = persistQueryClient({ queryClient, persister })
   await restorePromise
   // resume mutations after initial restore from localStorage was successful
-  queryClient.resumePausedMutations().then(() => {
-    queryClient.invalidateQueries()
+  resumePausedMutations(queryClient).then(() => {
+    invalidateQueries(queryClient)
   })
   customElements.define('offline-app', OfflineApp)
 })

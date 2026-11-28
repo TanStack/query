@@ -4,8 +4,16 @@ import {
   InfiniteQueryObserver,
   QueryClient,
   QueryObserver,
+  clearQueryClient,
+  defaultQueryOptions,
+  findCachedQuery,
+  getQueryCache,
   onlineManager,
+  select as selectData,
+  setQueryData,
 } from '..'
+import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
+import { resultForComparison } from './helpers/result'
 import type { DefaultedInfiniteQueryObserverOptions, InfiniteData } from '..'
 
 describe('query observer result readers', () => {
@@ -17,7 +25,7 @@ describe('query observer result readers', () => {
   })
 
   afterEach(() => {
-    client.clear()
+    clearQueryClient(client)
     onlineManager.setOnline(true)
     vi.useRealTimers()
   })
@@ -25,17 +33,17 @@ describe('query observer result readers', () => {
   it('isolates interleaved readers from the subscribed query and its selection memo', () => {
     const keyA = createKey()
     const keyB = createKey()
-    client.setQueryData(keyA, { value: 1 })
-    client.setQueryData(keyB, { value: 2 })
+    setQueryData(client, keyA, { value: 1 })
+    setQueryData(client, keyB, { value: 2 })
     const select = vi.fn<(data: { value: number }) => { selected: number }>(
       (data: { value: number }) => ({
         selected: data.value,
       }),
     )
-    const options = client.defaultQueryOptions({
+    const options = defaultQueryOptions(client, {
       queryKey: keyA,
       enabled: false,
-      select,
+      select: optionalSelect(select),
     })
     const observer = new QueryObserver(client, options)
     const listener = vi.fn<() => void>()
@@ -44,14 +52,14 @@ describe('query observer result readers', () => {
     const query = observer.getCurrentQuery()
     const committedOptions = observer.options
     const cacheListener = vi.fn<() => void>()
-    const unsubscribeCache = client.getQueryCache().subscribe(cacheListener)
+    const unsubscribeCache = getQueryCache(client).subscribe(cacheListener)
     const readerA = observer.createResultReader(options)
     const readerB = observer.createResultReader(
-      client.defaultQueryOptions({
+      defaultQueryOptions(client, {
         ...options,
         queryKey: keyB,
         queryHash: undefined,
-        select: (data) => ({ selected: data.value * 10 }),
+        select: [selectData, (data) => ({ selected: data.value * 10 })],
       }),
     )
 
@@ -62,14 +70,14 @@ describe('query observer result readers', () => {
     expect(observer.options).toBe(committedOptions)
     expect(query.observers).toStrictEqual([observer])
     expect(
-      client.getQueryCache().find({ queryKey: keyB })!.observers,
+      findCachedQuery(getQueryCache(client), { queryKey: keyB })!.observers,
     ).toStrictEqual([])
     expect(listener).not.toHaveBeenCalled()
     expect(cacheListener).not.toHaveBeenCalled()
     observer.updateResult()
     expect(select).toHaveBeenCalledTimes(1)
 
-    client.setQueryData(keyA, { value: 3 })
+    setQueryData(client, keyA, { value: 3 })
     expect(readerA.getSnapshot().data).toStrictEqual({ selected: 3 })
     expect(readerB.getSnapshot().data).toStrictEqual({ selected: 20 })
     expect(observer.getCurrentResult().data).toStrictEqual({ selected: 3 })
@@ -82,9 +90,9 @@ describe('query observer result readers', () => {
     expect(query.observers).toStrictEqual([])
     expect(observer.getCurrentQuery().observers).toStrictEqual([observer])
     listener.mockClear()
-    client.setQueryData(keyA, { value: 4 })
+    setQueryData(client, keyA, { value: 4 })
     expect(listener).not.toHaveBeenCalled()
-    client.setQueryData(keyB, { value: 5 })
+    setQueryData(client, keyB, { value: 5 })
     expect(readerB.getSnapshot().data).toStrictEqual({ selected: 50 })
     expect(listener).toHaveBeenCalledTimes(1)
     unsubscribeCache()
@@ -95,7 +103,7 @@ describe('query observer result readers', () => {
     const queryFn = vi.fn<() => Promise<{ value: number }>>(() =>
       sleep(10).then(() => ({ value: 1 })),
     )
-    const options = client.defaultQueryOptions({
+    const options = defaultQueryOptions(client, {
       queryKey: createKey(),
       queryFn,
       _optimisticResults: 'optimistic',
@@ -128,7 +136,7 @@ describe('query observer result readers', () => {
   it('exposes retry failures, terminal errors, and recovery', async () => {
     const error = new Error('fetch failed')
     let attempts = 0
-    const options = client.defaultQueryOptions({
+    const options = defaultQueryOptions(client, {
       queryKey: createKey(),
       queryFn: async () => {
         await sleep(10)
@@ -173,11 +181,11 @@ describe('query observer result readers', () => {
   })
 
   it('keeps selector failures local and returns a stable error snapshot', async () => {
-    const options = client.defaultQueryOptions({
+    const options = defaultQueryOptions(client, {
       queryKey: createKey(),
       initialData: { value: 1 },
       enabled: false,
-      select: (data: { value: number }) => data.value,
+      select: optionalSelect((data: { value: number }) => data.value),
     })
     const observer = new QueryObserver(client, options)
     const current = observer.getCurrentResult()
@@ -185,7 +193,10 @@ describe('query observer result readers', () => {
     const select = vi.fn<() => never>(() => {
       throw error
     })
-    const reader = observer.createResultReader({ ...options, select })
+    const reader = observer.createResultReader({
+      ...options,
+      select: optionalSelect(select),
+    })
     const snapshot = reader.getSnapshot()
     await vi.advanceTimersByTimeAsync(10)
     expect(reader.getSnapshot()).toBe(snapshot)
@@ -198,16 +209,16 @@ describe('query observer result readers', () => {
 
   it('reuses a subscription selection made after the last snapshot read', () => {
     const key = createKey()
-    client.setQueryData(key, { value: 1 })
+    setQueryData(client, key, { value: 1 })
     const select = vi.fn<(data: { value: number }) => { selected: number }>(
       (data: { value: number }) => ({
         selected: data.value,
       }),
     )
-    const options = client.defaultQueryOptions({
+    const options = defaultQueryOptions(client, {
       queryKey: key,
       enabled: false,
-      select,
+      select: optionalSelect(select),
       structuralSharing: false,
     })
     const observer = new QueryObserver(client, options)
@@ -217,7 +228,7 @@ describe('query observer result readers', () => {
     expect(reader.getSnapshot().data).toStrictEqual({ selected: 1 })
 
     // The subscription selects the new data before the reader commits.
-    client.setQueryData(key, { value: 2 })
+    setQueryData(client, key, { value: 2 })
     const updated = observer.getCurrentResult()
     expect(updated.data).toStrictEqual({ selected: 2 })
     expect(select).toHaveBeenCalledTimes(2)
@@ -234,21 +245,21 @@ describe('query observer result readers', () => {
 
   it('rechecks data before commit and reuses the reader selection', () => {
     const key = createKey()
-    client.setQueryData(key, { value: 1 })
+    setQueryData(client, key, { value: 1 })
     const select = vi.fn<(data: { value: number }) => { selected: number }>(
       (data: { value: number }) => ({
         selected: data.value,
       }),
     )
-    const options = client.defaultQueryOptions({
+    const options = defaultQueryOptions(client, {
       queryKey: key,
       enabled: false,
-      select,
+      select: optionalSelect(select),
     })
     const observer = new QueryObserver(client, options)
     const reader = observer.createResultReader(options)
     expect(reader.getSnapshot().data).toStrictEqual({ selected: 1 })
-    client.setQueryData(key, { value: 2 })
+    setQueryData(client, key, { value: 2 })
     reader.commit()
     const snapshot = reader.getSnapshot()
     expect(snapshot.data).toStrictEqual({ selected: 2 })
@@ -257,11 +268,11 @@ describe('query observer result readers', () => {
   })
 
   it('caches placeholder selection failures across snapshot reads', async () => {
-    const options = client.defaultQueryOptions({
+    const options = defaultQueryOptions(client, {
       queryKey: createKey(),
       queryFn: () => ({ value: 1 }),
       enabled: false,
-      select: (data: { value: number }) => data.value,
+      select: optionalSelect((data: { value: number }) => data.value),
     })
     const observer = new QueryObserver(client, options)
     const placeholderData = vi.fn<() => { value: number }>(() => ({ value: 2 }))
@@ -270,8 +281,8 @@ describe('query observer result readers', () => {
     })
     const reader = observer.createResultReader({
       ...options,
-      placeholderData,
-      select,
+      placeholderData: optionalPlaceholderData(placeholderData),
+      select: optionalSelect(select),
     })
     const snapshot = reader.getSnapshot()
     await vi.advanceTimersByTimeAsync(10)
@@ -281,11 +292,13 @@ describe('query observer result readers', () => {
   })
 
   it('commits a new selector without selecting again or changing the data reference', () => {
-    const options = client.defaultQueryOptions({
+    const options = defaultQueryOptions(client, {
       queryKey: createKey(),
       initialData: { value: 1 },
       enabled: false,
-      select: (data: { value: number }) => ({ selected: data.value }),
+      select: optionalSelect((data: { value: number }) => ({
+        selected: data.value,
+      })),
     })
     const observer = new QueryObserver(client, options)
     const select = vi.fn<(data: { value: number }) => { selected: number }>(
@@ -295,7 +308,10 @@ describe('query observer result readers', () => {
     )
     const listener = vi.fn<() => void>()
     const unsubscribe = observer.subscribe(listener)
-    const reader = observer.createResultReader({ ...options, select })
+    const reader = observer.createResultReader({
+      ...options,
+      select: optionalSelect(select),
+    })
     const snapshot = reader.getSnapshot()
     reader.commit()
     expect(observer.getCurrentResult().data).toBe(snapshot.data)
@@ -306,7 +322,7 @@ describe('query observer result readers', () => {
   })
 
   it('keeps placeholder memoization and previous-query history local', () => {
-    const options = client.defaultQueryOptions({
+    const options = defaultQueryOptions(client, {
       queryKey: createKey(),
       initialData: { value: 1 },
       enabled: false,
@@ -317,13 +333,13 @@ describe('query observer result readers', () => {
       (data: { value: number } | undefined) => { value: number } | undefined
     >((data: { value: number } | undefined) => data)
     const reader = observer.createResultReader(
-      client.defaultQueryOptions({
+      defaultQueryOptions(client, {
         ...options,
         queryHash: undefined,
         initialData: undefined,
         queryKey: createKey(),
         enabled: false,
-        placeholderData,
+        placeholderData: optionalPlaceholderData(placeholderData),
       }),
     )
     const snapshot = reader.getSnapshot()
@@ -345,11 +361,11 @@ describe('query observer result readers', () => {
     const placeholderData = vi.fn<() => { value: number }>(() => ({
       value: ++value,
     }))
-    const options = client.defaultQueryOptions<{ value: number }>({
+    const options = defaultQueryOptions<{ value: number }>(client, {
       queryKey: createKey(),
       queryFn: () => ({ value: 0 }),
       enabled: false,
-      placeholderData,
+      placeholderData: optionalPlaceholderData(placeholderData),
     })
     const observer = new QueryObserver(client, options)
     expect(
@@ -372,7 +388,7 @@ describe('query observer result readers', () => {
 
   it('resolves offline and restoring states without changing the observer', () => {
     onlineManager.setOnline(false)
-    const options = client.defaultQueryOptions({
+    const options = defaultQueryOptions(client, {
       queryKey: createKey(),
       queryFn: () => 'data',
     })
@@ -386,11 +402,11 @@ describe('query observer result readers', () => {
       ...options,
       _optimisticResults: 'isRestoring',
     })
-    expect(paused.getSnapshot()).toMatchObject({
+    expect(resultForComparison(paused.getSnapshot())).toMatchObject({
       fetchStatus: 'paused',
       isPaused: true,
     })
-    expect(restoring.getSnapshot()).toMatchObject({
+    expect(resultForComparison(restoring.getSnapshot())).toMatchObject({
       fetchStatus: 'idle',
       isPaused: false,
     })
@@ -424,13 +440,13 @@ describe('query observer result readers', () => {
     const loaded = reader.getSnapshot()
     expect(loaded.hasNextPage).toBe(true)
     const promise = loaded.fetchNextPage()
-    expect(reader.getSnapshot()).toMatchObject({
+    expect(resultForComparison(reader.getSnapshot())).toMatchObject({
       isFetchingNextPage: true,
       isRefetching: false,
     })
     await vi.advanceTimersByTimeAsync(10)
     await promise
-    expect(reader.getSnapshot()).toMatchObject({
+    expect(resultForComparison(reader.getSnapshot())).toMatchObject({
       data: { pages: [1, 2], pageParams: [1, 2] },
       isFetchingNextPage: false,
     })

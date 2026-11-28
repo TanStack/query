@@ -1,9 +1,22 @@
+import {
+  clearQueryClient,
+  findCachedQuery,
+  getQueryCache,
+  setQueryData,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { startTransition, useDeferredValue } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, keepPreviousData, useQuery, useSuspenseQuery } from '..'
+import {
+  QueryClient,
+  keepPreviousData,
+  queryOptions,
+  suspenseQueryOptions,
+  useQuery,
+} from '..'
+import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 import { renderWithClient, renderWithSuspense } from './utils'
 
 describe('react transitions', () => {
@@ -15,26 +28,28 @@ describe('react transitions', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
   it('keeps the committed observer result when a render for another key suspends', async () => {
     const key = createKey()
-    queryClient.setQueryData([key, 1], { value: 1 })
-    queryClient.setQueryData([key, 2], { value: 2 })
+    setQueryData(queryClient, [key, 1], { value: 1 })
+    setQueryData(queryClient, [key, 2], { value: 2 })
     const pending = new Promise<void>(() => {})
     const renderB = vi.fn<(data: { selected: number } | undefined) => void>()
     const select = (data: { value: number }) => ({ selected: data.value })
 
     function Page() {
       const [id, setId] = React.useState(1)
-      const { data } = useQuery({
-        queryKey: [key, id],
-        queryFn: () => Promise.resolve({ value: id }),
-        staleTime: Infinity,
-        select,
-      })
+      const { data } = useQuery(
+        queryOptions({
+          queryKey: [key, id],
+          queryFn: () => Promise.resolve({ value: id }),
+          staleTime: Infinity,
+          select: optionalSelect(select),
+        }),
+      )
       if (id === 2) {
         renderB(data)
         throw pending
@@ -55,7 +70,9 @@ describe('react transitions', () => {
         <Page />
       </React.Suspense>,
     )
-    const queryA = queryClient.getQueryCache().find({ queryKey: [key, 1] })!
+    const queryA = findCachedQuery(getQueryCache(queryClient), {
+      queryKey: [key, 1],
+    })!
     const observer = queryA.observers[0]!
     const committed = observer.getCurrentResult()
     await act(() =>
@@ -67,13 +84,14 @@ describe('react transitions', () => {
     rendered.getByText('data: 1')
 
     await act(async () => {
-      queryClient.setQueryData([key, 1], { value: 3 })
+      setQueryData(queryClient, [key, 1], { value: 3 })
       await vi.advanceTimersByTimeAsync(0)
     })
     rendered.getByText('data: 3')
     expect(observer.getCurrentResult().data).toStrictEqual({ selected: 3 })
     expect(
-      queryClient.getQueryCache().find({ queryKey: [key, 2] })!.observers,
+      findCachedQuery(getQueryCache(queryClient), { queryKey: [key, 2] })!
+        .observers,
     ).toStrictEqual([])
   })
 
@@ -83,10 +101,12 @@ describe('react transitions', () => {
     function Page() {
       const [count, setCount] = React.useState(0)
       const deferredCount = useDeferredValue(count)
-      const query = useSuspenseQuery({
-        queryKey: [key, deferredCount],
-        queryFn: () => sleep(10).then(() => 'test' + deferredCount),
-      })
+      const query = useQuery(
+        suspenseQueryOptions({
+          queryKey: [key, deferredCount],
+          queryFn: () => sleep(10).then(() => 'test' + deferredCount),
+        }),
+      )
 
       return (
         <div>
@@ -116,10 +136,12 @@ describe('react transitions', () => {
 
     function Page() {
       const [count, setCount] = React.useState(0)
-      const query = useSuspenseQuery({
-        queryKey: [key, count],
-        queryFn: () => sleep(10).then(() => 'test' + count),
-      })
+      const query = useQuery(
+        suspenseQueryOptions({
+          queryKey: [key, count],
+          queryFn: () => sleep(10).then(() => 'test' + count),
+        }),
+      )
 
       return (
         <div>
@@ -164,12 +186,15 @@ describe('react transitions', () => {
         const deferredCount = useDeferredValue(count)
         const queryCount =
           transition === 'useDeferredValue' ? deferredCount : count
-        const query = useSuspenseQuery({
-          queryKey: [key, queryCount],
-          queryFn: () => queryFn(queryCount),
-          placeholderData:
-            placeholderMode === 'static' ? 'placeholder' : keepPreviousData,
-        })
+        const query = useQuery(
+          suspenseQueryOptions({
+            queryKey: [key, queryCount],
+            queryFn: () => queryFn(queryCount),
+            placeholderData: optionalPlaceholderData(
+              placeholderMode === 'static' ? 'placeholder' : keepPreviousData,
+            ),
+          }),
+        )
 
         return (
           <div>
@@ -239,20 +264,25 @@ describe('react transitions', () => {
       )
 
       function PlaceholderQuery({ count }: { count: number }) {
-        const query = useSuspenseQuery({
-          queryKey: [...key, 'placeholder', count],
-          queryFn: () => placeholderQueryFn(count),
-          placeholderData:
-            placeholderMode === 'static' ? 'placeholder' : keepPreviousData,
-        })
+        const query = useQuery(
+          suspenseQueryOptions({
+            queryKey: [...key, 'placeholder', count],
+            queryFn: () => placeholderQueryFn(count),
+            placeholderData: optionalPlaceholderData(
+              placeholderMode === 'static' ? 'placeholder' : keepPreviousData,
+            ),
+          }),
+        )
         return <div>{query.data}</div>
       }
 
       function SuspenseQuery({ count }: { count: number }) {
-        const query = useSuspenseQuery({
-          queryKey: [...key, 'suspense', count],
-          queryFn: () => suspenseQueryFn(count),
-        })
+        const query = useQuery(
+          suspenseQueryOptions({
+            queryKey: [...key, 'suspense', count],
+            queryFn: () => suspenseQueryFn(count),
+          }),
+        )
         return <div>{query.data}</div>
       }
 
@@ -316,20 +346,24 @@ describe('react transitions', () => {
       (count: number) => sleep(10).then(() => `suspense-query-${count}`),
     )
 
-    queryClient.setQueryData([...key, 'placeholder', 0], 'placeholder-query-0')
-    queryClient.setQueryData([...key, 'suspense', 0], 'suspense-query-0')
+    setQueryData(queryClient, [...key, 'placeholder', 0], 'placeholder-query-0')
+    setQueryData(queryClient, [...key, 'suspense', 0], 'suspense-query-0')
 
     function Page({ hide }: { hide: () => void }) {
       const [count, setCount] = React.useState(0)
-      const placeholderQuery = useSuspenseQuery({
-        queryKey: [...key, 'placeholder', count],
-        queryFn: () => placeholderQueryFn(count),
-        placeholderData: keepPreviousData,
-      })
-      const suspenseQuery = useSuspenseQuery({
-        queryKey: [...key, 'suspense', count],
-        queryFn: () => suspenseQueryFn(count),
-      })
+      const placeholderQuery = useQuery(
+        suspenseQueryOptions({
+          queryKey: [...key, 'placeholder', count],
+          queryFn: () => placeholderQueryFn(count),
+          placeholderData: optionalPlaceholderData(keepPreviousData),
+        }),
+      )
+      const suspenseQuery = useQuery(
+        suspenseQueryOptions({
+          queryKey: [...key, 'suspense', count],
+          queryFn: () => suspenseQueryFn(count),
+        }),
+      )
 
       return (
         <>

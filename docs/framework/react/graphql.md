@@ -14,7 +14,7 @@ Because React Query's fetching mechanisms are agnostically built on Promises, yo
 React Query, used in combination with `graphql-request^5` and [GraphQL Code Generator](https://graphql-code-generator.com/) provides full-typed GraphQL operations:
 
 ```tsx
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, queryOptions } from '@tanstack/react-query'
 import request from 'graphql-request'
 import { graphql } from './gql/gql'
 
@@ -33,16 +33,18 @@ const allFilmsWithVariablesQueryDocument = graphql(/* GraphQL */ `
 
 function App() {
   // `data` is fully typed!
-  const { data } = useQuery({
-    queryKey: ['films'],
-    queryFn: async () =>
-      request(
-        'https://swapi-graphql.netlify.app/.netlify/functions/index',
-        allFilmsWithVariablesQueryDocument,
-        // variables are type-checked too!
-        { first: 10 },
-      ),
-  })
+  const { data } = useQuery(
+    queryOptions({
+      queryKey: ['films'],
+      queryFn: async () =>
+        request(
+          'https://swapi-graphql.netlify.app/.netlify/functions/index',
+          allFilmsWithVariablesQueryDocument,
+          // variables are type-checked too!
+          { first: 10 },
+        ),
+    }),
+  )
   // ...
 }
 ```

@@ -1,4 +1,11 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useQuery,
+  useQueryClient,
+  queryOptions,
+  select,
+  invalidateQueries,
+  getQueryData,
+} from '@tanstack/react-query'
 import { todoOptions, todosOptions } from './queries'
 
 // ✅ passes: consuming imported queryOptions result directly
@@ -9,28 +16,33 @@ export function Todos() {
 
 // ✅ passes: spreading imported queryOptions result with additional options
 export function Todo({ id }: { id: string }) {
-  const query = useQuery({
-    ...todoOptions(id),
-    select: (data) => data.title,
-  })
+  const query = useQuery(
+    queryOptions({
+      ...todoOptions(id),
+      select: [select, (data) => data.title],
+    }),
+  )
   return query.data
 }
 
 // ✅ passes: referencing queryKey from imported queryOptions result
 export function invalidateTodos() {
   const queryClient = useQueryClient()
-  queryClient.invalidateQueries({ queryKey: todosOptions.queryKey })
+  invalidateQueries(queryClient, { queryKey: todosOptions.queryKey })
 }
 
 // ❌ fails: inline queryKey + queryFn should use queryOptions()
 export function TodosBad() {
+  // Raw options are rejected by the hook's public types as well as the rule.
+  /* eslint-disable @tanstack/query/prefer-query-options -- Demonstrates the inline options diagnostic. */
   const query = useQuery(
-    // eslint-disable-next-line @tanstack/query/prefer-query-options -- Prefer using queryOptions() or infiniteQueryOptions() to co-locate queryKey and queryFn.
+    // @ts-expect-error -- a queryOptions descriptor is required
     {
       queryKey: ['todos'],
       queryFn: () => fetch('/api/todos').then((r) => r.json()),
     },
   )
+  /* eslint-enable @tanstack/query/prefer-query-options */
   return query.data
 }
 
@@ -38,12 +50,12 @@ export function TodosBad() {
 export function InvalidateTodosBad() {
   const queryClient = useQueryClient()
   // eslint-disable-next-line @tanstack/query/prefer-query-options -- Prefer referencing a queryKey from a queryOptions() result instead of typing it manually.
-  queryClient.invalidateQueries({ queryKey: ['todos'] })
+  invalidateQueries(queryClient, { queryKey: ['todos'] })
 }
 
 // ❌ fails: inline queryKey as direct parameter
 export function GetTodosDataBad() {
   const queryClient = useQueryClient()
   // eslint-disable-next-line @tanstack/query/prefer-query-options -- Prefer referencing a queryKey from a queryOptions() result instead of typing it manually.
-  return queryClient.getQueryData(['todos'])
+  return getQueryData(queryClient, ['todos'])
 }

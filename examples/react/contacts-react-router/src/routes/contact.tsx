@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { invalidateQueries, query, useQuery } from '@tanstack/react-query'
 import { Form, Link, useFetcher, useLoaderData } from 'react-router'
 import { contactsAPI } from '../services/contacts/api'
 import { contactsQueries } from '../services/contacts/queries'
@@ -12,7 +12,7 @@ export const loader =
     if (!params.contactId) {
       throw new Error('No contact ID provided')
     }
-    await queryClient.query({
+    await query(queryClient, {
       ...contactsQueries.detail(params.contactId),
       staleTime: 'static',
     })
@@ -29,13 +29,13 @@ export const action =
     await contactsAPI.updateContact(params.contactId, {
       favorite: formData.get('favorite') === 'true',
     })
-    await queryClient.invalidateQueries({ queryKey: contactsQueries.all() })
+    await invalidateQueries(queryClient, { queryKey: contactsQueries.all() })
     return null
   }
 
 export default function Contact() {
   const { contactId } = useLoaderData<ReturnType<typeof loader>>()
-  const { data: contact } = useSuspenseQuery(contactsQueries.detail(contactId))
+  const { data: contact } = useQuery(contactsQueries.detail(contactId))
 
   return (
     <div id="contact">

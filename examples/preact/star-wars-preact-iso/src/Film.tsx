@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/preact-query'
+import { queryOptions, useQuery } from '@tanstack/preact-query'
 import { useRoute } from 'preact-iso'
 import { charactersQueries } from './services/characters/queries'
 import { filmsQueries } from './services/films/queries'
@@ -6,7 +6,7 @@ import { filmsQueries } from './services/films/queries'
 export default function Film() {
   const { filmId } = useRoute().params
 
-  const { data, status } = useQuery(filmsQueries.detail(filmId))
+  const { data, status } = useQuery(queryOptions(filmsQueries.detail(filmId)))
 
   if (!filmId) {
     return <p>Invalid film ID</p>
@@ -32,7 +32,9 @@ export default function Film() {
 }
 
 function Character({ characterId }: { characterId: string }) {
-  const { data, status } = useQuery(charactersQueries.detail(characterId))
+  const { data, status } = useQuery(
+    queryOptions(charactersQueries.detail(characterId)),
+  )
 
   if (status !== 'success') {
     return null

@@ -1,6 +1,8 @@
 import {
   createMutationController,
   createQueryController,
+  invalidateQueries,
+  setQueryData,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { todosMutations, todosQueries } from './services/todos/queries'
@@ -23,8 +25,12 @@ class EditTodo extends LitElement {
     ...todosMutations.update(),
     onSuccess: (todo, _variables, _onMutateResult, { client }) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      client.invalidateQueries({ queryKey: todosQueries.lists() })
-      client.setQueryData(todosQueries.detail(this.editingIndex).queryKey, todo)
+      invalidateQueries(client, { queryKey: todosQueries.lists() })
+      setQueryData(
+        client,
+        todosQueries.detail(this.editingIndex).queryKey,
+        todo,
+      )
       this.draft = {}
     },
   })

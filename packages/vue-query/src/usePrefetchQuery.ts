@@ -1,5 +1,6 @@
 import { noop } from '@tanstack/query-core'
 import { getCurrentScope, unref, watchEffect } from 'vue'
+import { getQueryState, query } from './queryClient'
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref } from './utils'
 import type {
@@ -13,7 +14,7 @@ import type { QueryClient } from './queryClient'
 import type { MaybeRefDeep, MaybeRefOrGetter } from './types'
 
 /**
- * The options accepted by `usePrefetchQuery` — everything you can pass to `queryClient.query`, except that
+ * The options accepted by `usePrefetchQuery` — everything you can pass to `query`, except that
  * `queryFn` can't be `skipToken`.
  */
 export type UsePrefetchQueryOptions<
@@ -58,7 +59,7 @@ function isGetter<T>(value: MaybeRefOrGetter<T>): value is () => T {
 /**
  * `usePrefetchQuery` does not return anything — it fires a prefetch as a reactive side effect, useful for
  * kicking off a fetch ahead of the component that will actually render the data with `useQuery`. You can pass
- * everything to `usePrefetchQuery` that you can pass to `queryClient.query`, though `queryKey` is always
+ * everything to `usePrefetchQuery` that you can pass to `query`, though `queryKey` is always
  * required, and `queryFn` is required. Pass `defaultQueryFn` to use the client defaults.
  *
  * The prefetch is skipped if the query already has any cached state — including a `pending`/`error` state left
@@ -68,7 +69,7 @@ function isGetter<T>(value: MaybeRefOrGetter<T>): value is () => T {
  * Fire this during render, before a suspense boundary that wraps a component using `useQuery`'s `suspense()`
  * — see the {@link https://tanstack.com/query/latest/docs/framework/vue/guides/suspense | Suspense guide}.
  * @param options - A `ref`, plain value, or reactive getter resolving to the {@link UsePrefetchQueryOptions} to
- * use — everything you can pass to `queryClient.query`.
+ * use — everything you can pass to `query`.
  * @param queryClient - Use this to use a custom `QueryClient`. Otherwise, the one provided by `VueQueryPlugin`
  * will be used.
  * @example
@@ -129,8 +130,8 @@ export function usePrefetchQuery<
       TQueryKey
     > = cloneDeepUnref(resolvedOptions)
 
-    if (!client.getQueryState(clonedOptions.queryKey)) {
-      void client.query(clonedOptions).catch(noop)
+    if (!getQueryState(client, clonedOptions.queryKey)) {
+      void query(client, clonedOptions).catch(noop)
     }
   })
 }

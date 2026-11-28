@@ -1,4 +1,9 @@
-import { useInfiniteQuery } from '@tanstack/solid-query'
+import {
+  isLoading,
+  isFetching,
+  isFetchingNextPage,
+  useInfiniteQuery,
+} from '@tanstack/solid-query'
 import { For, Match, Show, Switch } from 'solid-js'
 import { productsQueries } from './services/products/queries'
 
@@ -28,7 +33,7 @@ export default function SearchResults(props: SearchResultsProps) {
   return (
     <Show when={props.query}>
       <Switch>
-        <Match when={query.isLoading}>
+        <Match when={isLoading(query)}>
           <div class="loading">Loading...</div>
         </Match>
         <Match when={query.status === 'error'}>
@@ -38,7 +43,7 @@ export default function SearchResults(props: SearchResultsProps) {
           <div>
             <div class="search-status">
               Status: {query.status}{' '}
-              <Show when={query.isFetching}>
+              <Show when={isFetching(query)}>
                 <span>fetching...</span>
               </Show>
             </div>
@@ -70,12 +75,12 @@ export default function SearchResults(props: SearchResultsProps) {
                   type="button"
                   class="search-more"
                   onClick={() => query.fetchNextPage()}
-                  disabled={query.isFetching}
+                  disabled={isFetching(query)}
                 >
                   more
                 </button>
               </Show>
-              <Show when={query.isFetchingNextPage}>
+              <Show when={isFetchingNextPage(query)}>
                 <div class="search-status">Fetching next page...</div>
               </Show>
             </div>

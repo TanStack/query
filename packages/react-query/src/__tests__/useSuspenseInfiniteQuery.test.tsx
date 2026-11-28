@@ -1,3 +1,4 @@
+import { clearQueryClient } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
@@ -7,8 +8,11 @@ import {
   QueryClient,
   keepPreviousData,
   skipToken,
-  useSuspenseInfiniteQuery,
+  suspenseInfiniteQueryOptions,
+  useQuery,
 } from '..'
+import { optionalPlaceholderData } from './helpers/projection'
+import { resultForComparison } from './helpers/result'
 import { renderWithSuspense } from './utils'
 import type { InfiniteData, UseSuspenseInfiniteQueryResult } from '..'
 
@@ -23,7 +27,7 @@ describe('useSuspenseInfiniteQuery', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -35,12 +39,14 @@ describe('useSuspenseInfiniteQuery', () => {
 
     function Page() {
       const [ready, setReady] = React.useState(false)
-      const result = useSuspenseInfiniteQuery({
-        queryKey: key,
-        queryFn: ready ? queryFn : skipToken,
-        initialPageParam: 0,
-        getNextPageParam: () => undefined,
-      })
+      const result = useQuery(
+        suspenseInfiniteQueryOptions({
+          queryKey: key,
+          queryFn: ready ? queryFn : skipToken,
+          initialPageParam: 0,
+          getNextPageParam: () => undefined,
+        }),
+      )
 
       return (
         <>
@@ -75,13 +81,15 @@ describe('useSuspenseInfiniteQuery', () => {
 
     function Page() {
       const [multiplier, setMultiplier] = React.useState(1)
-      const state = useSuspenseInfiniteQuery({
-        queryKey: [`${key}_${multiplier}`],
-        queryFn: ({ pageParam }) =>
-          sleep(10).then(() => pageParam * multiplier),
-        initialPageParam: 1,
-        getNextPageParam: (lastPage) => lastPage + 1,
-      })
+      const state = useQuery(
+        suspenseInfiniteQueryOptions({
+          queryKey: [`${key}_${multiplier}`],
+          queryFn: ({ pageParam }) =>
+            sleep(10).then(() => pageParam * multiplier),
+          initialPageParam: 1,
+          getNextPageParam: (lastPage) => lastPage + 1,
+        }),
+      )
 
       states.push(state)
 
@@ -126,13 +134,18 @@ describe('useSuspenseInfiniteQuery', () => {
       []
 
     function Page() {
-      const state = useSuspenseInfiniteQuery({
-        queryKey: key,
-        queryFn,
-        initialPageParam: 1,
-        getNextPageParam: () => undefined,
-        placeholderData: { pages: [0], pageParams: [1] },
-      })
+      const state = useQuery(
+        suspenseInfiniteQueryOptions({
+          queryKey: key,
+          queryFn,
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+          placeholderData: optionalPlaceholderData({
+            pages: [0],
+            pageParams: [1],
+          }),
+        }),
+      )
 
       states.push(state)
       return <div>data: {state.data.pages.join(',')}</div>
@@ -157,7 +170,7 @@ describe('useSuspenseInfiniteQuery', () => {
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          placeholderData: keepPreviousData,
+          placeholderData: optionalPlaceholderData(keepPreviousData),
         },
       },
     })
@@ -169,12 +182,14 @@ describe('useSuspenseInfiniteQuery', () => {
     function Page() {
       const [stateKey, setStateKey] = React.useState(key)
 
-      const state = useSuspenseInfiniteQuery({
-        queryKey: stateKey,
-        queryFn: () => sleep(10).then(() => ++count),
-        initialPageParam: 1,
-        getNextPageParam: () => undefined,
-      })
+      const state = useQuery(
+        suspenseInfiniteQueryOptions({
+          queryKey: stateKey,
+          queryFn: () => sleep(10).then(() => ++count),
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+        }),
+      )
 
       states.push(state)
 
@@ -203,14 +218,14 @@ describe('useSuspenseInfiniteQuery', () => {
     })
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
-    expect(states.at(-1)).toMatchObject({
+    expect(resultForComparison(states.at(-1))).toMatchObject({
       data: { pages: [1], pageParams: [1] },
       isPlaceholderData: true,
       isFetching: true,
     })
     await act(() => vi.advanceTimersByTimeAsync(11))
     expect(rendered.getByText('data: 2')).toBeInTheDocument()
-    expect(states.at(-1)).toMatchObject({
+    expect(resultForComparison(states.at(-1))).toMatchObject({
       data: { pages: [2], pageParams: [1] },
       isPlaceholderData: false,
       isFetching: false,
@@ -225,13 +240,15 @@ describe('useSuspenseInfiniteQuery', () => {
 
     function Page() {
       const [count, setCount] = React.useState(0)
-      const state = useSuspenseInfiniteQuery({
-        queryKey: [...key, count],
-        queryFn: () => queryFn(count),
-        initialPageParam: 1,
-        getNextPageParam: () => undefined,
-        placeholderData: keepPreviousData,
-      })
+      const state = useQuery(
+        suspenseInfiniteQueryOptions({
+          queryKey: [...key, count],
+          queryFn: () => queryFn(count),
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+          placeholderData: optionalPlaceholderData(keepPreviousData),
+        }),
+      )
 
       return (
         <div>

@@ -11,16 +11,16 @@ A query filter is an object with certain conditions to match a query with:
 
 ```tsx
 // Cancel all queries
-await queryClient.cancelQueries()
+await cancelQueries(queryClient)
 
 // Remove all inactive queries that begin with `posts` in the key
-queryClient.removeQueries({ queryKey: ['posts'], type: 'inactive' })
+removeQueries(queryClient, { queryKey: ['posts'], type: 'inactive' })
 
 // Refetch all active queries
-await queryClient.refetchQueries({ type: 'active' })
+await refetchQueries(queryClient, { type: 'active' })
 
 // Refetch all active queries that begin with `posts` in the key
-await queryClient.refetchQueries({ queryKey: ['posts'], type: 'active' })
+await refetchQueries(queryClient, { queryKey: ['posts'], type: 'active' })
 ```
 
 A query filter object supports the following properties:
@@ -49,13 +49,13 @@ A mutation filter is an object with certain conditions to match a mutation with:
 
 ```tsx
 // Get the number of all fetching mutations
-await queryClient.isMutating()
+await isMutating(queryClient)
 
 // Filter mutations by mutationKey
-await queryClient.isMutating({ mutationKey: ['post'] })
+await isMutating(queryClient, { mutationKey: ['post'] })
 
 // Filter mutations using a predicate function
-await queryClient.isMutating({
+await isMutating(queryClient, {
   predicate: (mutation) => mutation.state.variables?.id === 1,
 })
 ```

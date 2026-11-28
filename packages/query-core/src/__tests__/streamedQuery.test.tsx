@@ -1,6 +1,17 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, QueryObserver, streamedQuery } from '..'
+import {
+  QueryClient,
+  QueryObserver,
+  cancelQueries,
+  clearQueryClient,
+  getQueryData,
+  getQueryState,
+  mountQueryClient,
+  query,
+  setQueryData,
+  streamedQuery,
+} from '..'
 
 describe('streamedQuery', () => {
   let queryClient: QueryClient
@@ -8,11 +19,11 @@ describe('streamedQuery', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
-    queryClient.mount()
+    mountQueryClient(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -343,13 +354,13 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-    expect(queryClient.getQueryState(key)).toMatchObject({
+    expect(getQueryState(queryClient, key)).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
     await vi.advanceTimersByTimeAsync(60)
-    expect(queryClient.getQueryState(key)).toMatchObject({
+    expect(getQueryState(queryClient, key)).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [0],
@@ -357,7 +368,7 @@ describe('streamedQuery', () => {
 
     unsubscribe()
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getQueryState(key)).toMatchObject({
+    expect(getQueryState(queryClient, key)).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: [0],
@@ -374,13 +385,13 @@ describe('streamedQuery', () => {
     })
 
     const unsubscribe = observer.subscribe(vi.fn())
-    expect(queryClient.getQueryState(key)).toMatchObject({
+    expect(getQueryState(queryClient, key)).toMatchObject({
       status: 'pending',
       fetchStatus: 'fetching',
       data: undefined,
     })
     await vi.advanceTimersByTimeAsync(60)
-    expect(queryClient.getQueryState(key)).toMatchObject({
+    expect(getQueryState(queryClient, key)).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [0],
@@ -388,7 +399,7 @@ describe('streamedQuery', () => {
 
     unsubscribe()
     await vi.advanceTimersByTimeAsync(50)
-    expect(queryClient.getQueryState(key)).toMatchObject({
+    expect(getQueryState(queryClient, key)).toMatchObject({
       status: 'success',
       fetchStatus: 'fetching',
       data: [0, 1],
@@ -399,7 +410,7 @@ describe('streamedQuery', () => {
     'should stop %s writes after explicit cancellation when the stream ignores the signal',
     async (refetchMode) => {
       const key = createKey()
-      queryClient.setQueryData(key, [99])
+      setQueryData(queryClient, key, [99])
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn: streamedQuery({
@@ -411,14 +422,14 @@ describe('streamedQuery', () => {
 
       const unsubscribe = observer.subscribe(vi.fn())
       await vi.advanceTimersByTimeAsync(50)
-      await queryClient.cancelQueries({ queryKey: key })
-      const cancelledData = queryClient.getQueryData(key)
+      await cancelQueries(queryClient, { queryKey: key })
+      const cancelledData = getQueryData(queryClient, key)
       expect(cancelledData).toStrictEqual(
         refetchMode === 'append' ? [99, 0] : [99],
       )
 
       await vi.advanceTimersByTimeAsync(150)
-      expect(queryClient.getQueryData(key)).toStrictEqual(cancelledData)
+      expect(getQueryData(queryClient, key)).toStrictEqual(cancelledData)
       unsubscribe()
     },
   )
@@ -439,7 +450,7 @@ describe('streamedQuery', () => {
     await observer.refetch()
     await vi.advanceTimersByTimeAsync(150)
 
-    expect(queryClient.getQueryData(key)).toStrictEqual([100])
+    expect(getQueryData(queryClient, key)).toStrictEqual([100])
     unsubscribe()
   })
 
@@ -462,13 +473,13 @@ describe('streamedQuery', () => {
     void observer.refetch()
     await vi.advanceTimersByTimeAsync(150)
 
-    expect(queryClient.getQueryData(key)).toStrictEqual([100, 101, 102])
+    expect(getQueryData(queryClient, key)).toStrictEqual([100, 101, 102])
     unsubscribe()
   })
 
   it('should ignore a chunk queued just before cancellation', async () => {
     const key = createKey()
-    queryClient.setQueryData(key, [99])
+    setQueryData(queryClient, key, [99])
     let resolveChunk: (chunk: IteratorResult<number>) => void = () => {
       throw new Error('The iterator has not started')
     }
@@ -491,10 +502,10 @@ describe('streamedQuery', () => {
     const unsubscribe = observer.subscribe(vi.fn())
     await vi.advanceTimersByTimeAsync(0)
     resolveChunk({ done: false, value: 1 })
-    void queryClient.cancelQueries({ queryKey: key })
+    void cancelQueries(queryClient, { queryKey: key })
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(queryClient.getQueryData(key)).toStrictEqual([99])
+    expect(getQueryData(queryClient, key)).toStrictEqual([99])
     expect(next).toHaveBeenCalledTimes(1)
     unsubscribe()
   })
@@ -503,7 +514,7 @@ describe('streamedQuery', () => {
     'should not start a stream after cancellation during a delayed %s',
     async (delayIn) => {
       const key = createKey()
-      queryClient.setQueryData(key, [99])
+      setQueryData(queryClient, key, [99])
       const streamFn = vi.fn<() => AsyncIterable<number>>(() =>
         createAsyncNumberGenerator(1),
       )
@@ -527,12 +538,12 @@ describe('streamedQuery', () => {
       })
 
       const unsubscribe = observer.subscribe(vi.fn())
-      await queryClient.cancelQueries({ queryKey: key })
-      queryClient.setQueryData(key, [100])
+      await cancelQueries(queryClient, { queryKey: key })
+      setQueryData(queryClient, key, [100])
       await vi.advanceTimersByTimeAsync(100)
 
       expect(streamFn).not.toHaveBeenCalled()
-      expect(queryClient.getQueryData(key)).toStrictEqual([100])
+      expect(getQueryData(queryClient, key)).toStrictEqual([100])
       unsubscribe()
     },
   )
@@ -633,7 +644,7 @@ describe('streamedQuery', () => {
 
   it('should preserve null returned by a custom reducer', async () => {
     const key = createKey()
-    const data = await queryClient.query({
+    const data = await query(queryClient, {
       queryKey: key,
       queryFn: streamedQuery<number, string | null>({
         initialValue: 'initial',
@@ -645,7 +656,7 @@ describe('streamedQuery', () => {
       }),
     })
     expect(data).toBeNull()
-    expect(queryClient.getQueryData(key)).toBeNull()
+    expect(getQueryData(queryClient, key)).toBeNull()
   })
 
   it('should keep error state on reset refetch when initialData is defined', async () => {

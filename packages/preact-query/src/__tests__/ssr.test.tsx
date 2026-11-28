@@ -1,3 +1,9 @@
+import {
+  clearQueryClient,
+  findCachedQuery,
+  infiniteQuery,
+  query as queryQuery,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { renderToString } from 'preact-render-to-string'
 import { useState } from 'preact/hooks'
@@ -15,8 +21,9 @@ import {
   QueryCache,
   QueryClient,
   QueryClientProvider,
+  infiniteQueryOptions,
   noop,
-  useInfiniteQuery,
+  queryOptions,
   useMutationState,
   useQuery,
 } from '..'
@@ -38,7 +45,7 @@ describe('Server Side Rendering', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -53,7 +60,7 @@ describe('Server Side Rendering', () => {
     )
 
     function Page() {
-      const query = useQuery({ queryKey: key, queryFn })
+      const query = useQuery(queryOptions({ queryKey: key, queryFn }))
 
       const content = `status ${query.status}`
 
@@ -77,7 +84,7 @@ describe('Server Side Rendering', () => {
   it('should add prefetched data to cache', async () => {
     const key = createKey()
 
-    const promise = queryClient.query({
+    const promise = queryQuery(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
     })
@@ -86,7 +93,9 @@ describe('Server Side Rendering', () => {
     const data = await promise
 
     expect(data).toBe('data')
-    expect(queryCache.find({ queryKey: key })?.state.data).toBe('data')
+    expect(findCachedQuery(queryCache, { queryKey: key })?.state.data).toBe(
+      'data',
+    )
   })
 
   it('should return existing data from the cache', async () => {
@@ -96,7 +105,7 @@ describe('Server Side Rendering', () => {
     )
 
     function Page() {
-      const query = useQuery({ queryKey: key, queryFn })
+      const query = useQuery(queryOptions({ queryKey: key, queryFn }))
 
       const content = `status ${query.status}`
 
@@ -107,7 +116,7 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    void queryClient.query({ queryKey: key, queryFn }).catch(noop)
+    void queryQuery(queryClient, { queryKey: key, queryFn }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(
@@ -125,11 +134,13 @@ describe('Server Side Rendering', () => {
 
     function Page() {
       const [page, setPage] = useState(1)
-      const { data } = useQuery({
-        queryKey: [key, page],
-        queryFn: () => sleep(10).then(() => page),
-        initialData: 1,
-      })
+      const { data } = useQuery(
+        queryOptions({
+          queryKey: [key, page],
+          queryFn: () => sleep(10).then(() => page),
+          initialData: 1,
+        }),
+      )
 
       return (
         <div>
@@ -173,12 +184,14 @@ describe('Server Side Rendering', () => {
     )
 
     function Page() {
-      const query = useInfiniteQuery({
-        queryKey: key,
-        queryFn,
-        getNextPageParam: () => undefined,
-        initialPageParam: 0,
-      })
+      const query = useQuery(
+        infiniteQueryOptions({
+          queryKey: key,
+          queryFn,
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+        }),
+      )
       return (
         <ul>
           {query.data?.pages.map((page) => (
@@ -188,14 +201,12 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    void queryClient
-      .infiniteQuery({
-        queryKey: key,
-        queryFn,
-        getNextPageParam: () => undefined,
-        initialPageParam: 0,
-      })
-      .catch(noop)
+    void infiniteQuery(queryClient, {
+      queryKey: key,
+      queryFn,
+      getNextPageParam: () => undefined,
+      initialPageParam: 0,
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const markup = renderToString(

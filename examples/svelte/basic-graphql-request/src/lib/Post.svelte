@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+  import { isFetching, createQuery } from '@tanstack/svelte-query'
   import { postsQueries } from './services/posts/queries'
 
   type Props = {
@@ -33,6 +33,6 @@
     <div>
       <p>{query.data.body}</p>
     </div>
-    <div>{query.isFetching ? 'Background Updating...' : ' '}</div>
+    <div>{isFetching(query) ? 'Background Updating...' : ' '}</div>
   {/if}
 </div>

@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/solid-query'
+import {
+  invalidateQueries,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/solid-query'
 import { createFileRoute, useNavigate } from '@tanstack/solid-router'
 import { Show } from 'solid-js'
 import ContactForm from '../contact-form'
@@ -23,7 +28,7 @@ function Edit() {
   const updateContact = useMutation(() => ({
     ...contactsMutations.update(),
     onSuccess: async (_data, { id }) => {
-      await queryClient.invalidateQueries({ queryKey: contactsQueries.all() })
+      await invalidateQueries(queryClient, { queryKey: contactsQueries.all() })
       await navigate({
         to: '/contacts/$contactId',
         params: { contactId: id },

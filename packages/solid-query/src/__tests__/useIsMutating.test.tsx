@@ -1,5 +1,9 @@
 import { fireEvent, render } from '@solidjs/testing-library'
-import { Mutation } from '@tanstack/query-core'
+import {
+  Mutation,
+  clearQueryClient,
+  getMutationCache,
+} from '@tanstack/query-core'
 import * as QueryCore from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
@@ -16,7 +20,7 @@ describe('useIsMutating', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -193,7 +197,7 @@ describe('useIsMutating', () => {
     const queryClient1 = new QueryClient()
     const queryClient2 = new QueryClient()
     const [client, setClient] = createSignal(queryClient1)
-    const mutationCache1 = queryClient1.getMutationCache()
+    const mutationCache1 = getMutationCache(queryClient1)
     const originalSubscribe1 = mutationCache1.subscribe.bind(mutationCache1)
     const unsubscribe1 = vi.fn<() => void>()
 
@@ -290,12 +294,12 @@ describe('useIsMutating', () => {
     expect(states).toStrictEqual([0, 1])
 
     fireEvent.click(rendered.getByText('unmount'))
-    expect(spiedClient.getMutationCache().getAll()[0]?.state.status).toBe(
+    expect(getMutationCache(spiedClient).getAll()[0]?.state.status).toBe(
       'pending',
     )
 
     await vi.advanceTimersByTimeAsync(20)
-    expect(spiedClient.getMutationCache().getAll()[0]?.state.status).toBe(
+    expect(getMutationCache(spiedClient).getAll()[0]?.state.status).toBe(
       'success',
     )
     expect(states).toStrictEqual([0, 1])

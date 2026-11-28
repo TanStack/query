@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createInfiniteQuery } from '@tanstack/svelte-query'
+  import { select, createInfiniteQuery } from '@tanstack/svelte-query'
   import { productsQueries } from './services/products/queries'
 
   type Product = {
@@ -20,7 +20,7 @@
       query,
       hitsPerPage: 5,
     }),
-    select: (data) => data.pages.flatMap((page) => page.hits),
+    select: [select, (data) => data.pages.flatMap((page) => page.hits)],
     staleTime: 30 * 1000, // 30s
     gcTime: 15 * 60 * 1000, // 15m
   }))

@@ -3,7 +3,10 @@ import {
   MutationObserver,
   QueriesObserver,
   QueryClient,
+  clearQueryClient,
   dehydrate,
+  getQueryData,
+  setQueryData,
 } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
@@ -21,7 +24,7 @@ describe('persist', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   describe('persistQueryClientSubscribe', () => {
@@ -62,7 +65,7 @@ describe('persist', () => {
       })
 
       // Triggers 2 saves: the query being added and its data being updated
-      queryClient.setQueryData(['key'], 'data')
+      setQueryData(queryClient, ['key'], 'data')
       await vi.waitFor(() => expect(consoleErrorMock).toHaveBeenCalledTimes(2))
 
       expect(persister.persistClient).toHaveBeenCalledTimes(2)
@@ -97,7 +100,7 @@ describe('persist', () => {
       })
 
       // Triggers 2 saves: the query being added and its data being updated
-      queryClient.setQueryData(['key'], 'data')
+      setQueryData(queryClient, ['key'], 'data')
       await vi.waitFor(() => expect(consoleErrorMock).toHaveBeenCalledTimes(2))
 
       expect(persister.persistClient).not.toHaveBeenCalled()
@@ -129,7 +132,7 @@ describe('persist', () => {
         ?.setOptions({ queryKey, queryFn, refetchOnWindowFocus: false })
       unsubscribeObserver()
 
-      queryClient.setQueryData(queryKey, 2)
+      setQueryData(queryClient, queryKey, 2)
 
       // persistClient should be called 3 times:
       // 1. When query is added
@@ -248,7 +251,7 @@ describe('persist', () => {
 
     it('should hydrate the query client when the persisted cache is valid', async () => {
       const sourceClient = new QueryClient()
-      sourceClient.setQueryData(['key'], 'data')
+      setQueryData(sourceClient, ['key'], 'data')
 
       persister.restoreClient = () =>
         Promise.resolve({
@@ -262,7 +265,7 @@ describe('persist', () => {
         persister,
       })
       expect(persister.removeClient).not.toHaveBeenCalled()
-      expect(queryClient.getQueryData(['key'])).toBe('data')
+      expect(getQueryData(queryClient, ['key'])).toBe('data')
     })
 
     it('should remove the client when the persisted cache is expired', async () => {
@@ -324,7 +327,7 @@ describe('persist', () => {
       })
       await restorePromise
 
-      queryClient.setQueryData(['key'], 'data')
+      setQueryData(queryClient, ['key'], 'data')
       expect(persister.persistClient).toHaveBeenCalledWith(
         expect.objectContaining({
           clientState: expect.objectContaining({
@@ -353,7 +356,7 @@ describe('persist', () => {
       resolveRestore!()
       await restorePromise
 
-      queryClient.setQueryData(['key'], 'data')
+      setQueryData(queryClient, ['key'], 'data')
       expect(persister.persistClient).not.toHaveBeenCalled()
     })
   })

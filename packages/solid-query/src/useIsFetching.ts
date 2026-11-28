@@ -1,3 +1,4 @@
+import { countFetchingQueries, getQueryCache } from '@tanstack/query-core'
 import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import { useQueryClientResolver } from './QueryClientProvider'
 import type { QueryFilters } from '@tanstack/query-core'
@@ -30,15 +31,17 @@ export function useIsFetching(
 ): Accessor<number> {
   const resolveClient = useQueryClientResolver(queryClient)
   const client = createMemo(() => resolveClient())
-  const queryCache = createMemo(() => client().getQueryCache())
+  const queryCache = createMemo(() => getQueryCache(client()))
 
-  const [fetches, setFetches] = createSignal(client().isFetching(filters?.()))
+  const [fetches, setFetches] = createSignal(
+    countFetchingQueries(client(), filters?.()),
+  )
 
   createEffect(() => {
-    setFetches(client().isFetching(filters?.()))
+    setFetches(countFetchingQueries(client(), filters?.()))
 
     const unsubscribe = queryCache().subscribe(() => {
-      setFetches(client().isFetching(filters?.()))
+      setFetches(countFetchingQueries(client(), filters?.()))
     })
 
     onCleanup(unsubscribe)

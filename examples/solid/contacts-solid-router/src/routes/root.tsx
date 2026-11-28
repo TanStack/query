@@ -1,6 +1,6 @@
 import { A, useIsRouting, useSearchParams } from '@solidjs/router'
 import { createDebouncer } from '@tanstack/solid-pacer/debouncer'
-import { noop, useIsFetching, useQuery } from '@tanstack/solid-query'
+import { query, noop, useIsFetching, useQuery } from '@tanstack/solid-query'
 import { ErrorBoundary, For, Show, Suspense } from 'solid-js'
 import ErrorPage from '../error-page'
 import { queryClient } from '../queryClient'
@@ -9,9 +9,10 @@ import type { RoutePreloadFuncArgs, RouteSectionProps } from '@solidjs/router'
 
 export const preload = ({ location }: RoutePreloadFuncArgs) => {
   const q = location.query.q
-  queryClient
-    .query(contactsQueries.list(typeof q === 'string' ? q : ''))
-    .catch(noop)
+  query(
+    queryClient,
+    contactsQueries.list(typeof q === 'string' ? q : ''),
+  ).catch(noop)
 }
 
 export default function Root(props: RouteSectionProps) {

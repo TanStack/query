@@ -1,5 +1,10 @@
 'use client'
-import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
+
+import {
+  getMutationCache,
+  notifyManager,
+  replaceEqualDeep,
+} from '@tanstack/query-core'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
 import type {
@@ -187,7 +192,7 @@ export function useMutationState<
   options: MutationStateOptions<TResult, TMutation> = {},
   queryClient?: QueryClient,
 ): Array<TResult> {
-  const mutationCache = useQueryClient(queryClient).getMutationCache()
+  const mutationCache = getMutationCache(useQueryClient(queryClient))
   const [createSnapshot] = React.useState(() =>
     createSnapshotFactory<TResult, TMutation>(),
   )

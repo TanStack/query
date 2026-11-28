@@ -18,7 +18,7 @@ import type { QueryClient } from './queryClient'
  * const queryClient = useQueryClient()
  *
  * function invalidate() {
- *   queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *   invalidateQueries(queryClient, { queryKey: ['todos'] })
  * }
  * </script>
  * ```

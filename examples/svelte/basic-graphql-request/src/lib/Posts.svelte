@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { createQuery, useQueryClient } from '@tanstack/svelte-query'
+  import {
+    getQueryData,
+    isFetching,
+    createQuery,
+    useQueryClient,
+  } from '@tanstack/svelte-query'
   import { postsQueries } from './services/posts/queries'
 
   type Props = {
@@ -31,7 +36,7 @@
               href="#{post.id}"
               style={// We can find the existing query data here to show bold links for
               // ones that are cached
-              queryClient.getQueryData(postsQueries.detail(post.id).queryKey)
+              getQueryData(queryClient, postsQueries.detail(post.id).queryKey)
                 ? 'font-weight: bold; color: green'
                 : ''}
             >
@@ -40,7 +45,7 @@
           </p>
         {/each}
       </div>
-      <div>{query.isFetching ? 'Background Updating...' : ' '}</div>
+      <div>{isFetching(query) ? 'Background Updating...' : ' '}</div>
     {/if}
   </div>
 </div>

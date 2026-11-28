@@ -1,4 +1,11 @@
-import { QueryClient, noop, useQuery } from '@tanstack/preact-query'
+import {
+  QueryClient,
+  clearQueryClient,
+  noop,
+  query,
+  queryOptions,
+  useQuery,
+} from '@tanstack/preact-query'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, render } from '@testing-library/preact'
@@ -42,12 +49,10 @@ describe('PersistQueryClientProvider (preact)', () => {
     const states: Array<UseQueryResult<string>> = []
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -55,13 +60,18 @@ describe('PersistQueryClientProvider (preact)', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     function Page() {
-      const state = useQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'fetched'),
-      })
+      const state = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            return 'fetched'
+          },
+        }),
+      )
 
       states.push(state)
 

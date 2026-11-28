@@ -1,15 +1,29 @@
 <script setup lang="ts">
-import { defaultQueryFn, useQuery } from '@tanstack/vue-query'
+import {
+  isPending as queryIsPending,
+  isError as queryIsError,
+  isFetching as queryIsFetching,
+  defaultQueryFn,
+  useQuery,
+} from '@tanstack/vue-query'
+import { computed } from 'vue'
 import type { Post } from './types'
 
 const props = defineProps<{ postId: number }>()
 defineEmits<{ setPostId: [id: number] }>()
 
-const { isPending, isError, isFetching, data, error } = useQuery<Post>(() => ({
+const {
+  state: queryState,
+  data,
+  error,
+} = useQuery<Post>(() => ({
   queryKey: [`/posts/${props.postId}`],
   queryFn: defaultQueryFn,
   enabled: !!props.postId,
 }))
+const isPending = computed(() => queryIsPending(queryState))
+const isError = computed(() => queryIsError(queryState))
+const isFetching = computed(() => queryIsFetching(queryState))
 </script>
 
 <template>

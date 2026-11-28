@@ -13,7 +13,7 @@ import type { HydrateOptions, QueryClient } from '@tanstack/query-core'
  * be used.
  * @example
  * Server-side prefetch handed off to the client via `dehydrate` — `dehydratedState` would typically come
- * from a server load function that prefetched with `queryClient.query` and called `dehydrate(queryClient)`:
+ * from a server load function that prefetched with `query` and called `dehydrate(queryClient)`:
  * ```svelte
  * <script lang="ts">
  *   import { HydrationBoundary } from '@tanstack/svelte-query'

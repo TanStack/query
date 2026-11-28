@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/solid-query'
+import { isFetching, useQuery } from '@tanstack/solid-query'
 import { Show } from 'solid-js'
 import { projectsQueries } from '../services/projects/queries'
 import Button from './Button'
@@ -18,7 +18,7 @@ export default function Project(props: {
       <Button onClick={() => props.setActiveProject(null)}>Back</Button>
       <h1>
         {props.activeProject}{' '}
-        <Show when={projectQuery.isFetching}>
+        <Show when={isFetching(projectQuery)}>
           <Spinner />
         </Show>
       </h1>

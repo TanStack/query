@@ -1,4 +1,11 @@
-import { QueryClient, noop } from '@tanstack/query-core'
+import {
+  QueryClient,
+  clearQueryClient,
+  getQueryData,
+  getQueryState,
+  noop,
+  setQueryData,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/svelte'
 import { flushSync } from 'svelte'
@@ -26,7 +33,7 @@ describe('createMutation', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -508,7 +515,7 @@ describe('createMutation', () => {
 
   it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
     const key = createKey()
-    queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+    setQueryData<Array<string>>(queryClient, key, ['Todo 1'])
 
     const rendered = render(OptimisticUpdate, {
       props: { queryClient, queryKey: key, shouldSucceed: false },
@@ -518,14 +525,14 @@ describe('createMutation', () => {
     // The optimistic value lands after onMutate's first await, so flush
     // microtasks before asserting.
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
+    expect(getQueryData(queryClient, key)).toStrictEqual(['Todo 1', 'Todo 2'])
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1'])
+    expect(getQueryData(queryClient, key)).toStrictEqual(['Todo 1'])
   })
 
   it('should keep the optimistic update in place when the mutation succeeds', async () => {
     const key = createKey()
-    queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+    setQueryData<Array<string>>(queryClient, key, ['Todo 1'])
 
     const rendered = render(OptimisticUpdate, {
       props: { queryClient, queryKey: key, shouldSucceed: true },
@@ -533,7 +540,7 @@ describe('createMutation', () => {
 
     fireEvent.click(rendered.getByRole('button', { name: /add/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
+    expect(getQueryData(queryClient, key)).toStrictEqual(['Todo 1', 'Todo 2'])
   })
 
   it('should pass a non-undefined onMutateResult alongside context to onSuccess', async () => {
@@ -590,7 +597,7 @@ describe('createMutation', () => {
 
   it('should give mutationFn the same QueryClient instance via context', async () => {
     const key = createKey()
-    queryClient.setQueryData(key, 'tag-from-this-client')
+    setQueryData(queryClient, key, 'tag-from-this-client')
 
     const rendered = render(MutationFnContext, {
       props: { queryClient, queryKey: key },
@@ -603,17 +610,17 @@ describe('createMutation', () => {
 
   it('should let onSuccess invalidate queries via context.client without a useQueryClient() closure', async () => {
     const key = createKey()
-    queryClient.setQueryData(key, 'data')
+    setQueryData(queryClient, key, 'data')
 
     const rendered = render(InvalidateFromContext, {
       props: { queryClient, queryKey: key },
     })
 
-    expect(queryClient.getQueryState(key)?.isInvalidated).toBe(false)
+    expect(getQueryState(queryClient, key)?.isInvalidated).toBe(false)
 
     fireEvent.click(rendered.getByRole('button', { name: /Mutate/i }))
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getQueryState(key)?.isInvalidated).toBe(true)
+    expect(getQueryState(queryClient, key)?.isInvalidated).toBe(true)
   })
 
   it('should give a per-call onSuccess the same QueryClient instance via context', async () => {

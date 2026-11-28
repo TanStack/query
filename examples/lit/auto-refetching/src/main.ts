@@ -3,6 +3,8 @@ import {
   QueryClientProvider,
   createMutationController,
   createQueryController,
+  invalidateQueries,
+  refetchInterval,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { worker } from './mocks'
@@ -29,19 +31,19 @@ class AutoRefetchingExample extends LitElement {
   private readonly todos = createQueryController(this, () => ({
     ...todosQueries.list(),
     // Refetch the data every second
-    refetchInterval: this.intervalMs,
+    refetchInterval: refetchInterval(this.intervalMs),
   }))
 
   private readonly addMutation = createMutationController(this, () => ({
     ...todosMutations.create(),
     onSuccess: (_data, _variables, _onMutateResult, { client }) =>
-      client.invalidateQueries({ queryKey: todosQueries.all() }),
+      invalidateQueries(client, { queryKey: todosQueries.all() }),
   }))
 
   private readonly clearMutation = createMutationController(this, () => ({
     ...todosMutations.deleteAll(),
     onSuccess: (_data, _variables, _onMutateResult, { client }) =>
-      client.invalidateQueries({ queryKey: todosQueries.all() }),
+      invalidateQueries(client, { queryKey: todosQueries.all() }),
   }))
 
   protected override createRenderRoot(): HTMLElement | DocumentFragment {

@@ -35,8 +35,10 @@ export type {
 export { useQueries } from './useQueries'
 export type { QueriesResults, QueriesOptions } from './useQueries'
 export { useQuery } from './useQuery'
-export { useSuspenseQuery } from './useSuspenseQuery'
-export { useSuspenseInfiniteQuery } from './useSuspenseInfiniteQuery'
+export type { PreparedQuery } from './useQuery'
+export { suspenseQueryOptions } from './suspenseQueryOptions'
+export { suspenseInfiniteQueryOptions } from './suspenseInfiniteQueryOptions'
+export { throwOnError } from './throwOnError'
 export { useSuspenseQueries } from './useSuspenseQueries'
 export type {
   SuspenseQueriesResults,
@@ -79,5 +81,4 @@ export { useIsFetching } from './useIsFetching'
 export { useIsMutating, useMutationState } from './useMutationState'
 export { useMutation } from './useMutation'
 export { mutationOptions } from './mutationOptions'
-export { useInfiniteQuery } from './useInfiniteQuery'
 export { useIsRestoring, IsRestoringProvider } from './IsRestoringProvider'

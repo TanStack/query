@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/preact-query'
+import { queryOptions, useQuery } from '@tanstack/preact-query'
 import { useRoute } from 'preact-iso'
 import { charactersQueries } from './services/characters/queries'
 
@@ -8,7 +8,7 @@ export default function CharacterPage() {
   const isValidId = /^\d+$/.test(params.id) && id > 0
 
   const { status, data, error, isFetching } = useQuery(
-    charactersQueries.detail(isValidId ? id : undefined),
+    queryOptions(charactersQueries.detail(isValidId ? id : undefined)),
   )
 
   return (

@@ -1,7 +1,10 @@
+import { clearQueryClient } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, useQueries, useQuery } from '..'
+import { QueryClient, queryOptions, useQueries, useQuery } from '..'
+import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
+import type { PlaceholderSetting, SelectSetting } from './helpers/projection'
 
 class Placeholder {
   constructor(readonly value: number) {}
@@ -10,8 +13,12 @@ class Placeholder {
 type Options = {
   queryKey: ReadonlyArray<unknown>
   queryFn: () => Promise<Placeholder>
-  placeholderData: Placeholder
-  select?: (data: Placeholder) => Placeholder | Set<number>
+  placeholderData: PlaceholderSetting<Placeholder>
+  select?: SelectSetting<(data: Placeholder) => Placeholder | Set<number>>
+}
+
+function useSingle(options: Options, client: QueryClient) {
+  return useQuery(queryOptions(options), client)
 }
 
 function useMultiple(options: Options, client: QueryClient) {
@@ -33,7 +40,7 @@ describe('placeholder updates', () => {
   })
 
   afterEach(() => {
-    client.clear()
+    clearQueryClient(client)
     vi.useRealTimers()
   })
 
@@ -56,14 +63,19 @@ describe('placeholder updates', () => {
       () => ({ value: 1 }),
       selectSet,
     ],
-    ['useQuery with a Set selector', useQuery, () => ({ value: 1 }), selectSet],
+    [
+      'useQuery with a Set selector',
+      useSingle,
+      () => ({ value: 1 }),
+      selectSet,
+    ],
     [
       'useQueries with a throwing selector',
       useMultiple,
       () => stable,
       selectError,
     ],
-    ['useQuery with a throwing selector', useQuery, () => stable, selectError],
+    ['useQuery with a throwing selector', useSingle, () => stable, selectError],
   ] as const)(
     '%s settles after a parent render',
     async (_name, useResult, placeholder, select) => {
@@ -78,8 +90,8 @@ describe('placeholder updates', () => {
           {
             queryKey: key,
             queryFn: () => new Promise<Placeholder>(() => {}),
-            placeholderData: input,
-            select,
+            placeholderData: optionalPlaceholderData(input),
+            select: optionalSelect(select),
           },
           client,
         )
@@ -108,7 +120,16 @@ describe('placeholder updates', () => {
     const queryFn = () => sleep(10).then(() => ({ value: 1 }))
     const { result, rerender } = renderHook(() => {
       const [{ data, error }] = useQueries(
-        { queries: [{ queryKey, queryFn, placeholderData, select }] },
+        {
+          queries: [
+            {
+              queryKey,
+              queryFn,
+              placeholderData: optionalPlaceholderData(placeholderData),
+              select: optionalSelect(select),
+            },
+          ],
+        },
         client,
       )
       return { data, error }

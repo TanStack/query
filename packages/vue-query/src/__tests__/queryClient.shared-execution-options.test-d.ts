@@ -1,7 +1,7 @@
-import { skipToken } from '@tanstack/query-core'
+import { select, skipToken } from '@tanstack/query-core'
 import { describe, expectTypeOf, it } from 'vitest'
 import { computed, ref } from 'vue'
-import { QueryClient } from '../queryClient'
+import { QueryClient, query } from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQuery } from '../useQuery'
 import type { UseQueryOptions } from '../queryOptions'
@@ -15,10 +15,10 @@ describe('shared query options', () => {
       queryFn: computed(() =>
         enabled.value ? () => Promise.resolve('value') : skipToken,
       ),
-      select: (data) => data.length,
+      select: [select, (data) => data.length],
     }
 
-    expectTypeOf(queryClient.query(options)).toEqualTypeOf<
+    expectTypeOf(query(queryClient, options)).toEqualTypeOf<
       Promise<number | undefined>
     >()
   })
@@ -30,7 +30,7 @@ describe('shared query options', () => {
       queryFn: () => Promise.resolve('value'),
     })
 
-    expectTypeOf(queryClient.query(options)).toEqualTypeOf<
+    expectTypeOf(query(queryClient, options)).toEqualTypeOf<
       Promise<string | undefined>
     >()
   })
@@ -40,11 +40,14 @@ describe('shared query options', () => {
     const options: UseQueryOptions<string, Error, number, string, ['key']> = {
       queryKey: () => ['key'],
       queryFn: () => Promise.resolve('value'),
-      select: (data) => data.length,
+      select: [select, (data) => data.length],
     }
 
     expectTypeOf(
-      queryClient.query<string, Error, number, string, ['key'], never>(options),
+      query<string, Error, number, string, ['key'], never>(
+        queryClient,
+        options,
+      ),
     ).toEqualTypeOf<Promise<number | undefined>>()
   })
 
@@ -56,7 +59,7 @@ describe('shared query options', () => {
     useQuery(options)
     queryOptions(options)
 
-    expectTypeOf(queryClient.query(sharedOptions)).toEqualTypeOf<
+    expectTypeOf(query(queryClient, sharedOptions)).toEqualTypeOf<
       Promise<number | undefined>
     >()
   })

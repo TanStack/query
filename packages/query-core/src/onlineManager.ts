@@ -1,7 +1,4 @@
-import { Subscribable } from './subscribable'
-
-type Listener = (online: boolean) => void
-type SetupFn = (setOnline: Listener) => (() => void) | undefined
+import { EventManager, listenToWindow } from './eventManager'
 
 /**
  * The `OnlineManager` manages the online state within TanStack Query. It can
@@ -12,71 +9,22 @@ type SetupFn = (setOnline: Listener) => (() => void) | undefined
  * listens to the `online` and `offline` events on the `window` object to
  * detect changes.
  */
-export class OnlineManager extends Subscribable<Listener> {
+export class OnlineManager extends EventManager<(online: boolean) => void> {
   #online = true
-  #cleanup?: () => void
-
-  #setup: SetupFn
-
   constructor() {
-    super()
-    this.#setup = (onOnline) => {
-      // addEventListener does not exist in React Native, but window does
-      // oxlint-disable-next-line typescript/no-unnecessary-condition
-      if (typeof window !== 'undefined' && window.addEventListener) {
-        const onlineListener = () => onOnline(true)
-        const offlineListener = () => onOnline(false)
-        // Listen to online
-        window.addEventListener('online', onlineListener, false)
-        window.addEventListener('offline', offlineListener, false)
-
-        return () => {
-          // Be sure to unsubscribe if a new handler is set
-          window.removeEventListener('online', onlineListener)
-          window.removeEventListener('offline', offlineListener)
-        }
+    super((onOnline) => {
+      const online = listenToWindow('online', () => onOnline(true))
+      if (!online) return undefined
+      const offline = listenToWindow('offline', () => onOnline(false))
+      return () => {
+        online()
+        offline?.()
       }
-
-      return
-    }
+    })
   }
 
-  protected override onSubscribe(): void {
-    if (!this.#cleanup) {
-      this.setEventListener(this.#setup)
-    }
-  }
-
-  protected override onUnsubscribe() {
-    if (!this.hasListeners()) {
-      this.#cleanup?.()
-      this.#cleanup = undefined
-    }
-  }
-
-  /**
-   * `setEventListener` can be used to set a custom event listener that will
-   * be used to determine the online state. The provided `setup` function
-   * receives a `setOnline` callback that should be called with a `boolean`
-   * whenever the online state changes.
-   * @param setup - Receives the `setOnline` callback, registers the event listener, and may return
-   * a cleanup function that is called when the listener is replaced or no longer needed.
-   * @example
-   * ```ts
-   * import NetInfo from '@react-native-community/netinfo'
-   * import { onlineManager } from '@tanstack/query-core'
-   *
-   * onlineManager.setEventListener((setOnline) => {
-   *   return NetInfo.addEventListener((state) => {
-   *     setOnline(!!state.isConnected)
-   *   })
-   * })
-   * ```
-   */
-  setEventListener(setup: SetupFn): void {
-    this.#setup = setup
-    this.#cleanup?.()
-    this.#cleanup = setup(this.setOnline.bind(this))
+  protected getListener() {
+    return this.setOnline.bind(this)
   }
 
   /**

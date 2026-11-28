@@ -1,5 +1,7 @@
 <script lang="ts">
   import {
+    refetchInterval,
+    invalidateQueries,
     useQueryClient,
     createQuery,
     createMutation,
@@ -14,19 +16,19 @@
   const todos = createQuery(() => ({
     ...todosQueries.list(),
     // Refetch the data every second
-    refetchInterval: intervalMs,
+    refetchInterval: refetchInterval(intervalMs),
   }))
 
   const addMutation = createMutation(() => ({
     ...todosMutations.create(),
     onSuccess: () =>
-      client.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
+      invalidateQueries(client, { queryKey: todosQueries.list().queryKey }),
   }))
 
   const clearMutation = createMutation(() => ({
     ...todosMutations.deleteAll(),
     onSuccess: () =>
-      client.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
+      invalidateQueries(client, { queryKey: todosQueries.list().queryKey }),
   }))
 </script>
 

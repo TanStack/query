@@ -1,4 +1,6 @@
 import {
+  select,
+  placeholderData,
   QueryClient,
   QueryClientProvider,
   keepPreviousData,
@@ -92,20 +94,23 @@ const PokemonDex = (props: { id: string }) => {
 
   const pokemon_stats = useQuery(() => ({
     ...pokemonsQueries.detail(props.id),
-    select(data) {
-      const nameMap = {
-        hp: 'HP',
-        attack: 'Attack',
-        defense: 'Defense',
-        'special-attack': 'Special Attack',
-        'special-defense': 'Special Defense',
-        speed: 'Speed',
-      }
-      return data.stats.map((stat) => ({
-        name: nameMap[stat.stat.name as keyof typeof nameMap],
-        value: stat.base_stat,
-      }))
-    },
+    select: [
+      select,
+      function (data) {
+        const nameMap = {
+          hp: 'HP',
+          attack: 'Attack',
+          defense: 'Defense',
+          'special-attack': 'Special Attack',
+          'special-defense': 'Special Defense',
+          speed: 'Speed',
+        }
+        return data.stats.map((stat) => ({
+          name: nameMap[stat.stat.name as keyof typeof nameMap],
+          value: stat.base_stat,
+        }))
+      },
+    ],
     reconcile: 'name',
   }))
 
@@ -115,7 +120,7 @@ const PokemonDex = (props: { id: string }) => {
       if (isServer) return true
       return false
     },
-    placeholderData: keepPreviousData,
+    placeholderData: placeholderData(keepPreviousData),
   }))
 
   return (
@@ -191,19 +196,22 @@ const SideNav = () => {
 
   const pokemonsList = useQuery(() => ({
     ...pokemonsQueries.list(),
-    select(data) {
-      return data.results.map((p) => {
-        const regex = /\/pokemon\/(\d+)\/$/
-        const match = p.url.match(regex)
-        const pokemonId = match ? match[1] : ''
-        return {
-          name: properCase(p.name),
-          id: pokemonId,
-          avatar: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`,
-        }
-      })
-    },
-    placeholderData: keepPreviousData,
+    select: [
+      select,
+      function (data) {
+        return data.results.map((p) => {
+          const regex = /\/pokemon\/(\d+)\/$/
+          const match = p.url.match(regex)
+          const pokemonId = match ? match[1] : ''
+          return {
+            name: properCase(p.name),
+            id: pokemonId,
+            avatar: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`,
+          }
+        })
+      },
+    ],
+    placeholderData: placeholderData(keepPreviousData),
     reconcile: 'id',
   }))
 

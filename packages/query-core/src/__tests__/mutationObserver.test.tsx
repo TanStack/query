@@ -1,6 +1,12 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { MutationObserver, QueryClient } from '..'
+import {
+  MutationObserver,
+  QueryClient,
+  clearQueryClient,
+  getMutationCache,
+  mountQueryClient,
+} from '..'
 import type { MutationFunctionContext, MutationObserverResult } from '..'
 
 describe('mutationObserver', () => {
@@ -9,11 +15,11 @@ describe('mutationObserver', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
-    queryClient.mount()
+    mountQueryClient(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -61,11 +67,11 @@ describe('mutationObserver', () => {
 
     mutation.mutate('input')
     await vi.advanceTimersByTimeAsync(5)
-    expect(queryClient.getMutationCache().findAll()).toHaveLength(1)
+    expect(getMutationCache(queryClient).findAll()).toHaveLength(1)
 
     unsubscribe()
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getMutationCache().findAll()).toHaveLength(0)
+    expect(getMutationCache(queryClient).findAll()).toHaveLength(0)
   })
 
   it('should reattach the observer to the in-flight mutation when resubscribing', async () => {
@@ -125,11 +131,11 @@ describe('mutationObserver', () => {
 
     mutation.mutate('input')
     await vi.advanceTimersByTimeAsync(5)
-    expect(queryClient.getMutationCache().findAll()).toHaveLength(1)
+    expect(getMutationCache(queryClient).findAll()).toHaveLength(1)
 
     mutation.reset()
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getMutationCache().findAll()).toHaveLength(0)
+    expect(getMutationCache(queryClient).findAll()).toHaveLength(0)
 
     unsubscribe()
   })
@@ -182,7 +188,7 @@ describe('mutationObserver', () => {
     mutationObserver.mutate('input')
     await vi.advanceTimersByTimeAsync(5)
     expect(
-      queryClient.getMutationCache().find({ mutationKey: [...key, '1'] }),
+      getMutationCache(queryClient).find({ mutationKey: [...key, '1'] }),
     ).toMatchObject({
       options: { mutationKey: [...key, '1'] },
       state: {
@@ -195,7 +201,7 @@ describe('mutationObserver', () => {
       mutationKey: [...key, '2'],
     })
     expect(
-      queryClient.getMutationCache().find({ mutationKey: [...key, '1'] }),
+      getMutationCache(queryClient).find({ mutationKey: [...key, '1'] }),
     ).toMatchObject({
       options: { mutationKey: [...key, '1'] },
       state: {
@@ -222,7 +228,7 @@ describe('mutationObserver', () => {
 
     mutationObserver.mutate('input')
     await vi.advanceTimersByTimeAsync(5)
-    expect(queryClient.getMutationCache().find({})).toMatchObject({
+    expect(getMutationCache(queryClient).find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
         status: 'success',
@@ -233,7 +239,7 @@ describe('mutationObserver', () => {
     mutationObserver.setOptions({
       meta: { a: 2 },
     })
-    expect(queryClient.getMutationCache().find({})).toMatchObject({
+    expect(getMutationCache(queryClient).find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
         status: 'success',
@@ -269,7 +275,7 @@ describe('mutationObserver', () => {
     mutationObserver.mutate('input')
     await vi.advanceTimersByTimeAsync(5)
 
-    const mutations = queryClient.getMutationCache().findAll()
+    const mutations = getMutationCache(queryClient).findAll()
     expect(mutations[0]).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
@@ -304,7 +310,7 @@ describe('mutationObserver', () => {
 
     mutationObserver.mutate('input').catch(() => undefined)
     await vi.advanceTimersByTimeAsync(5)
-    expect(queryClient.getMutationCache().find({})).toMatchObject({
+    expect(getMutationCache(queryClient).find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
         status: 'error',
@@ -314,7 +320,7 @@ describe('mutationObserver', () => {
     mutationObserver.setOptions({
       meta: { a: 2 },
     })
-    expect(queryClient.getMutationCache().find({})).toMatchObject({
+    expect(getMutationCache(queryClient).find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
         status: 'error',
@@ -339,7 +345,7 @@ describe('mutationObserver', () => {
 
     mutationObserver.mutate('input')
     await vi.advanceTimersByTimeAsync(5)
-    expect(queryClient.getMutationCache().find({})).toMatchObject({
+    expect(getMutationCache(queryClient).find({})).toMatchObject({
       options: { meta: { a: 1 } },
       state: {
         status: 'pending',
@@ -349,7 +355,7 @@ describe('mutationObserver', () => {
     mutationObserver.setOptions({
       meta: { a: 2 },
     })
-    expect(queryClient.getMutationCache().find({})).toMatchObject({
+    expect(getMutationCache(queryClient).find({})).toMatchObject({
       options: { meta: { a: 2 } },
       state: {
         status: 'pending',
@@ -598,7 +604,7 @@ describe('mutationObserver', () => {
       mutationFn: (text: string) => Promise.resolve(text),
     })
 
-    const notifySpy = vi.spyOn(queryClient.getMutationCache(), 'notify')
+    const notifySpy = vi.spyOn(getMutationCache(queryClient), 'notify')
 
     const unsubscribe = mutationObserver.subscribe(() => undefined)
 

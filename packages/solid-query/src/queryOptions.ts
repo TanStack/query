@@ -56,7 +56,7 @@ export type DefinedInitialDataOptions<
 
 /**
  * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
- * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
+ * be shared across hooks and imperative APIs such as `query`. `options.queryKey` is required and
  * is the query key to generate options for.
  *
  * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
@@ -107,7 +107,7 @@ export function queryOptions<
 
 /**
  * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
- * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
+ * be shared across hooks and imperative APIs such as `query`. `options.queryKey` is required and
  * is the query key to generate options for.
  * @param options - The {@link UndefinedInitialDataOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.

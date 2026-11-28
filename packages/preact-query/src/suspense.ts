@@ -1,5 +1,12 @@
-import { QueryObserver } from '@tanstack/query-core'
+import {
+  QueryObserver,
+  fetchOptimistic,
+  getQueryCache,
+  isFetching,
+  isPending,
+} from '@tanstack/query-core'
 import { use } from 'preact/compat'
+import { throwOnError } from './throwOnError'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
@@ -77,13 +84,14 @@ export const shouldSuspend = (
     | DefaultedQueryObserverOptions<any, any, any, any, any>
     | undefined,
   result: QueryObserverResult<any, any>,
-) => defaultedOptions?.suspense && result.isPending
+) => defaultedOptions?.suspense && isPending(result)
 
 const shouldFetchInBackground = (result: QueryObserverResult<any, any>) =>
-  result.isFetching && result.isPlaceholderData
+  isFetching(result) && result.isPlaceholderData
 
 /**
  * Starts or reuses a Suspense fetch without affecting the observer's own result.
+ * @param client - The client whose cache owns the query.
  * @param defaultedOptions - The defaulted query options to fetch with.
  * @param observer - The observer of the query.
  * @param errorResetBoundary - The value of the nearest `QueryErrorResetBoundary`.
@@ -97,6 +105,7 @@ export const getSuspensePromise = <
   TQueryData,
   TQueryKey extends QueryKey,
 >(
+  client: QueryClient,
   defaultedOptions: DefaultedQueryObserverOptions<
     TQueryFnData,
     TError,
@@ -114,7 +123,7 @@ export const getSuspensePromise = <
     return cached.promise
   }
 
-  const fetchPromise = observer.fetchOptimistic(defaultedOptions)
+  const fetchPromise = fetchOptimistic(client, observer, defaultedOptions)
   const settle = () => {
     suspensePromises.delete(query)
   }
@@ -144,8 +153,9 @@ const useReadSuspenseQuery = (
   const suspend = shouldSuspend(defaultedOptions, result)
   if (!suspend && !shouldFetchInBackground(result)) return
 
-  const query = client.getQueryCache().build(client, defaultedOptions)
+  const query = getQueryCache(client).build(client, defaultedOptions)
   const promise = getSuspensePromise(
+    client,
     defaultedOptions,
     observer,
     errorResetBoundary,
@@ -156,6 +166,8 @@ const useReadSuspenseQuery = (
 
 /** Supplies Suspense behavior for one query. */
 export const suspenseQueryPolicy = {
+  suspense: true as const,
+  errorBoundary: throwOnError,
   prepare: ensureSuspenseTimers,
   readQuery: useReadSuspenseQuery,
 }
@@ -175,6 +187,7 @@ const useReadSuspenseQueries = (
 
     const observer = new QueryObserver(client, options)
     const promise = getSuspensePromise(
+      client,
       options,
       observer,
       errorResetBoundary,

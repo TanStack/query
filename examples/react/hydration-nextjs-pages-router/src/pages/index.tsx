@@ -1,4 +1,4 @@
-import { QueryClient, dehydrate, noop } from '@tanstack/react-query'
+import { QueryClient, dehydrate, noop, query } from '@tanstack/react-query'
 import React from 'react'
 import { Header, InfoBox, Layout, PostList } from '../components'
 import { postsQueries } from '../services/posts/queries'
@@ -16,7 +16,7 @@ const Home = () => {
 export async function getStaticProps() {
   const queryClient = new QueryClient()
 
-  await queryClient.query(postsQueries.list(10)).catch(noop)
+  await query(queryClient, postsQueries.list(10)).catch(noop)
 
   return {
     props: {

@@ -15,6 +15,16 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import {
+  findCachedQuery,
+  getQueryCache,
+  getQueryObserverCount,
+  invalidateQueries,
+  placeholderData,
+  select,
+  setDefaultOptions,
+  setQueryData,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/angular'
 import { lastValueFrom } from 'rxjs'
@@ -65,7 +75,7 @@ describe('injectQuery', () => {
 
   it('should keep failed refetch state and cached data readable without global reporting', async () => {
     vi.useRealTimers()
-    queryClient.setDefaultOptions({
+    setDefaultOptions(queryClient, {
       queries: { retry: false, throwOnError: true },
     })
     const report = vi.spyOn(TestBed.inject(ErrorHandler), 'handleError')
@@ -552,7 +562,7 @@ describe('injectQuery', () => {
       readonly query = injectQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'real-data'),
-        placeholderData: 'placeholder',
+        placeholderData: placeholderData('placeholder'),
       }))
     }
 
@@ -584,7 +594,7 @@ describe('injectQuery', () => {
       readonly query = injectQuery(() => ({
         queryKey: [...key, this.count()],
         queryFn: () => sleep(10).then(() => this.count()),
-        placeholderData: keepPreviousData,
+        placeholderData: placeholderData(keepPreviousData),
       }))
     }
 
@@ -764,7 +774,7 @@ describe('injectQuery', () => {
 
     expect(query.status()).toBe('pending')
     TestBed.tick()
-    const cachedQuery = queryCache.find({
+    const cachedQuery = findCachedQuery(queryCache, {
       queryKey: ['stable-option-subscription'],
     })!
     const subscriptionEvents: Array<string> = []
@@ -778,7 +788,7 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('pending')
     TestBed.tick()
 
-    expect(cachedQuery.getObserversCount()).toBe(1)
+    expect(getQueryObserverCount(cachedQuery)).toBe(1)
     expect(subscriptionEvents).toStrictEqual([])
     unsubscribe()
   })
@@ -961,7 +971,7 @@ describe('injectQuery', () => {
       query = injectQuery(() => ({
         queryKey: ['key13'],
         queryFn: () => [{ id: 1 }, { id: 2 }],
-        select: (data) => data.map((item) => item.id),
+        select: [select, (data) => data.map((item) => item.id)],
       }))
     }
 
@@ -1089,8 +1099,8 @@ describe('injectQuery', () => {
   it('should render with an initial value for input signal if available before change detection', async () => {
     const key1 = createKey() as [string]
     const key2 = createKey() as [string]
-    queryClient.setQueryData(key1, 'value 1')
-    queryClient.setQueryData(key2, 'value 2')
+    setQueryData(queryClient, key1, 'value 1')
+    setQueryData(queryClient, key2, 'value 2')
 
     @Component({
       selector: 'app-test',
@@ -1181,7 +1191,7 @@ describe('injectQuery', () => {
     TestBed.tick()
 
     expect(query.data()).toBe('initial data')
-    queryClient.setQueryData(['test'], 'new data')
+    setQueryData(queryClient, ['test'], 'new data')
     expect(query.data()).toBe('new data')
   })
 
@@ -1233,21 +1243,21 @@ describe('injectQuery', () => {
     expect(query.status()).toBe('success')
     expect(query.data()).toBe('restored-data')
 
-    const cachedQuery = queryClient
-      .getQueryCache()
-      .find({ queryKey: ['restoring'] })!
-    expect(cachedQuery.getObserversCount()).toBe(1)
+    const cachedQuery = findCachedQuery(getQueryCache(queryClient), {
+      queryKey: ['restoring'],
+    })!
+    expect(getQueryObserverCount(cachedQuery)).toBe(1)
 
     isRestoring.set(true)
     fixture.detectChanges()
-    expect(cachedQuery.getObserversCount()).toBe(0)
+    expect(getQueryObserverCount(cachedQuery)).toBe(0)
 
     isRestoring.set(false)
     fixture.detectChanges()
-    expect(cachedQuery.getObserversCount()).toBe(1)
+    expect(getQueryObserverCount(cachedQuery)).toBe(1)
 
     fixture.destroy()
-    expect(cachedQuery.getObserversCount()).toBe(0)
+    expect(getQueryObserverCount(cachedQuery)).toBe(0)
   })
 
   it.each(['options-first', 'restoring-first'] as const)(
@@ -1296,16 +1306,16 @@ describe('injectQuery', () => {
       expect(queriedKeys).toStrictEqual(['new'])
       expect(query.data()).toBe('new')
       expect(
-        queryClient
-          .getQueryCache()
-          .find({ queryKey: ['same-turn-restoration', 'old'] })?.state
-          .fetchStatus,
+        findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['same-turn-restoration', 'old'],
+        })?.state.fetchStatus,
       ).toBe('idle')
       expect(
-        queryClient
-          .getQueryCache()
-          .find({ queryKey: ['same-turn-restoration', 'new'] })
-          ?.getObserversCount(),
+        getQueryObserverCount(
+          findCachedQuery(getQueryCache(queryClient), {
+            queryKey: ['same-turn-restoration', 'new'],
+          })!,
+        ),
       ).toBe(1)
     },
   )
@@ -1340,7 +1350,7 @@ describe('injectQuery', () => {
     const unsubscribe = queryCache.subscribe((event) => {
       if (
         event.type === 'observerOptionsUpdated' &&
-        event.query.getObserversCount() === 0
+        getQueryObserverCount(event.query) === 0
       ) {
         boundaryRead()
       }
@@ -1352,9 +1362,11 @@ describe('injectQuery', () => {
     expect(() => TestBed.tick()).not.toThrow()
     expect(boundaryRead).toHaveBeenCalledWith()
     expect(
-      queryCache
-        .find({ queryKey: ['restoration-reentrant', 'new'] })
-        ?.getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(queryCache, {
+          queryKey: ['restoration-reentrant', 'new'],
+        })!,
+      ),
     ).toBe(1)
 
     unsubscribe()
@@ -1390,27 +1402,27 @@ describe('injectQuery', () => {
 
     expect(query.status()).toBe('pending')
     TestBed.tick()
-    const oldQuery = queryCache.find({ queryKey: oldQueryKey })!
-    expect(oldQuery.getObserversCount()).toBe(0)
+    const oldQuery = findCachedQuery(queryCache, { queryKey: oldQueryKey })!
+    expect(getQueryObserverCount(oldQuery)).toBe(0)
 
     key.set('new')
     isRestoring.set(false)
 
     // Pull before the option-configuration effect gets a chance to run.
     expect(query.status()).toBe('pending')
-    expect(queryCache.find({ queryKey: newQueryKey })).toBeDefined()
+    expect(findCachedQuery(queryCache, { queryKey: newQueryKey })).toBeDefined()
 
     // A cache write to the optimistic query is adopted after configuration.
-    queryClient.setQueryData(newQueryKey, 'early data')
-    const newQuery = queryCache.find({ queryKey: newQueryKey })!
-    expect(newQuery.getObserversCount()).toBe(0)
+    setQueryData(queryClient, newQueryKey, 'early data')
+    const newQuery = findCachedQuery(queryCache, { queryKey: newQueryKey })!
+    expect(getQueryObserverCount(newQuery)).toBe(0)
     TestBed.tick()
     const stablePromise = TestBed.inject(ApplicationRef).whenStable()
     await vi.advanceTimersByTimeAsync(0)
     await stablePromise
 
-    expect(oldQuery.getObserversCount()).toBe(0)
-    expect(newQuery.getObserversCount()).toBe(1)
+    expect(getQueryObserverCount(oldQuery)).toBe(0)
+    expect(getQueryObserverCount(newQuery)).toBe(1)
     expect(queriedKeys).not.toContain('new')
     expect(query.data()).toBe('early data')
   })
@@ -1429,24 +1441,24 @@ describe('injectQuery', () => {
 
     expect(query.status()).toBe('pending')
     TestBed.tick()
-    const oldQuery = queryCache.find({ queryKey: oldQueryKey })!
-    expect(oldQuery.getObserversCount()).toBe(1)
+    const oldQuery = findCachedQuery(queryCache, { queryKey: oldQueryKey })!
+    expect(getQueryObserverCount(oldQuery)).toBe(1)
 
     key.set('new')
 
     expect(query.status()).toBe('pending')
     // An existing observer stays attached until the configuration effect can
     // move it atomically.
-    expect(oldQuery.getObserversCount()).toBe(1)
-    expect(queryCache.find({ queryKey: newQueryKey })).toBeDefined()
+    expect(getQueryObserverCount(oldQuery)).toBe(1)
+    expect(findCachedQuery(queryCache, { queryKey: newQueryKey })).toBeDefined()
 
-    queryClient.setQueryData(newQueryKey, 'early data')
-    const newQuery = queryCache.find({ queryKey: newQueryKey })!
-    expect(newQuery.getObserversCount()).toBe(0)
+    setQueryData(queryClient, newQueryKey, 'early data')
+    const newQuery = findCachedQuery(queryCache, { queryKey: newQueryKey })!
+    expect(getQueryObserverCount(newQuery)).toBe(0)
     TestBed.tick()
 
-    expect(oldQuery.getObserversCount()).toBe(0)
-    expect(newQuery.getObserversCount()).toBe(1)
+    expect(getQueryObserverCount(oldQuery)).toBe(0)
+    expect(getQueryObserverCount(newQuery)).toBe(1)
     expect(query.data()).toBe('early data')
   })
 
@@ -1689,7 +1701,7 @@ describe('injectQuery', () => {
       expect(query.data()).toBe('sync-data-1')
       expect(component.callCount).toBe(1)
 
-      await queryClient.invalidateQueries({ queryKey: testKey })
+      await invalidateQueries(queryClient, { queryKey: testKey })
       await app.whenStable()
       expect(query.status()).toBe('success')
       expect(query.data()).toBe('sync-data-2')
@@ -1721,7 +1733,7 @@ describe('injectQuery', () => {
       const app = TestBed.inject(ApplicationRef)
       await app.whenStable()
 
-      const invalidation = queryClient.invalidateQueries({
+      const invalidation = invalidateQueries(queryClient, {
         queryKey: ['pending-invalidation'],
       })
       const stable = app.whenStable()

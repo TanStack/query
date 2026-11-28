@@ -1,5 +1,7 @@
 <script lang="ts">
   import {
+    getQueryData,
+    isFetching,
     createQuery,
     defaultQueryFn,
     useQueryClient,
@@ -39,7 +41,7 @@
               href="#{post.id}"
               style={// We can use the queryCache here to show bold links for
               // ones that are cached
-              queryClient.getQueryData([`/posts/${post.id}`])
+              getQueryData(queryClient, [`/posts/${post.id}`])
                 ? 'font-weight: bold; color: green'
                 : ''}
             >
@@ -48,7 +50,7 @@
           </p>
         {/each}
       </div>
-      <div>{query.isFetching ? 'Background Updating...' : ' '}</div>
+      <div>{isFetching(query) ? 'Background Updating...' : ' '}</div>
     {/if}
   </div>
 </div>

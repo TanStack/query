@@ -1,5 +1,10 @@
-import { QueryClient, skipToken } from '@tanstack/query-core'
-import { createKey, sleep } from '@tanstack/query-test-utils'
+import * as queryPredicates from '@tanstack/query-core'
+import { QueryClient, clearQueryClient, skipToken } from '@tanstack/query-core'
+import {
+  createKey,
+  createQueryResultSnapshot,
+  sleep,
+} from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/svelte'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from '../utils.svelte.js'
@@ -10,6 +15,8 @@ import Options from './Options.svelte'
 import Select from './Select.svelte'
 import type { QueryObserverResult } from '@tanstack/query-core'
 
+const snapshot = createQueryResultSnapshot(queryPredicates)
+
 describe('createInfiniteQuery', () => {
   let queryClient: QueryClient
 
@@ -19,7 +26,7 @@ describe('createInfiniteQuery', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -38,7 +45,7 @@ describe('createInfiniteQuery', () => {
 
     expect(states.value).toHaveLength(2)
 
-    expect(states.value[0]).toStrictEqual({
+    expect(snapshot(states.value[0])).toStrictEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -73,7 +80,7 @@ describe('createInfiniteQuery', () => {
       fetchStatus: 'fetching',
     })
 
-    expect(states.value[1]).toStrictEqual({
+    expect(snapshot(states.value[1])).toStrictEqual({
       data: { pages: [0], pageParams: [0] },
       dataUpdatedAt: expect.any(Number),
       error: null,
@@ -199,12 +206,12 @@ describe('createInfiniteQuery', () => {
 
     expect(states.value).toHaveLength(2)
 
-    expect(states.value[0]).toMatchObject({
+    expect(snapshot(states.value[0])).toMatchObject({
       data: undefined,
       isSuccess: false,
     })
 
-    expect(states.value[1]).toMatchObject({
+    expect(snapshot(states.value[1])).toMatchObject({
       data: { pages: ['count: 1'] },
       isSuccess: true,
     })

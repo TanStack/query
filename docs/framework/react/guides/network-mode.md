@@ -15,7 +15,7 @@ In this mode, Queries and Mutations will not fire unless you have network connec
 - `paused`: The query is not executing - it is `paused` until you have connection again
 - `idle`: The query is not fetching and not paused
 
-The flags `isFetching` and `isPaused` are derived from this state and exposed for convenience.
+The helpers `isFetching(result)` and `isPaused(result)` read this state from a query result.
 
 > Keep in mind that it might not be enough to check for `pending` state to show a loading spinner. Queries can be in `state: 'pending'`, but `fetchStatus: 'paused'` if they are mounting for the first time, and you have no network connection.
 

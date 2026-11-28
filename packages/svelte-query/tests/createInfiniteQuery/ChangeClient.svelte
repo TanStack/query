@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { QueryClient } from '@tanstack/query-core'
+  import { QueryClient, setQueryData } from '@tanstack/query-core'
   import { sleep } from '@tanstack/query-test-utils'
   import { setQueryClientContext } from '../../src/context.js'
   import { createInfiniteQuery } from '../../src/index.js'
@@ -26,7 +26,7 @@
 
 <button
   onclick={() => {
-    queryClient.setQueryData(queryKey, {
+    setQueryData(queryClient, queryKey, {
       pages: [7, 8],
       pageParams: [7, 8],
     })

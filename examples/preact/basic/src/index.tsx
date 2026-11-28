@@ -1,4 +1,10 @@
-import { QueryClient, useQuery, useQueryClient } from '@tanstack/preact-query'
+import {
+  QueryClient,
+  getQueryData,
+  queryOptions,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/preact-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
@@ -20,7 +26,9 @@ const persister = createAsyncStoragePersister({
 
 function Posts({ setPostId }: { setPostId: (postId: number) => void }) {
   const queryClient = useQueryClient()
-  const { status, data, error, isFetching } = useQuery(postsQueries.list())
+  const { status, data, error, isFetching } = useQuery(
+    queryOptions(postsQueries.list()),
+  )
 
   return (
     <div>
@@ -41,7 +49,8 @@ function Posts({ setPostId }: { setPostId: (postId: number) => void }) {
                     style={
                       // We can access the query data here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(
+                      getQueryData(
+                        queryClient,
                         postsQueries.detail(post.id).queryKey,
                       )
                         ? {
@@ -72,7 +81,7 @@ function Post({
   setPostId: (postId: number) => void
 }) {
   const { status, data, error, isFetching } = useQuery(
-    postsQueries.detail(postId),
+    queryOptions(postsQueries.detail(postId)),
   )
 
   return (

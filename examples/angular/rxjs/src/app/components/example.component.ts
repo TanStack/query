@@ -1,7 +1,11 @@
 import { Component, inject } from '@angular/core'
 import { toSignal } from '@angular/core/rxjs-interop'
 import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms'
-import { injectQuery, keepPreviousData } from '@tanstack/angular-query'
+import {
+  injectQuery,
+  keepPreviousData,
+  placeholderData,
+} from '@tanstack/angular-query'
 import { debounceTime, distinctUntilChanged } from 'rxjs'
 import { SuggestionsQueries } from '../services/suggestions/queries'
 
@@ -28,7 +32,7 @@ export class ExampleComponent {
 
   readonly query = injectQuery(() => ({
     ...this.#suggestionsQueries.list(this.term()),
-    placeholderData: keepPreviousData,
+    placeholderData: placeholderData(keepPreviousData),
     staleTime: 5 * 60 * 1000, // 5 minutes
   }))
 }

@@ -1,5 +1,5 @@
 import { computed, effect, inject, untracked } from '@angular/core'
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, defaultQueryOptions } from '@tanstack/query-core'
 import { injectIsRestoring } from './inject-is-restoring'
 import { injectExternalStore } from './utils/inject-external-store'
 import { injectPendingTasksLifecycle } from './utils/inject-pending-tasks-lifecycle'
@@ -49,7 +49,7 @@ export function injectBaseQuery<
   }
 
   const defaultedOptionsSignal = computed(() => {
-    const defaultedOptions = queryClient.defaultQueryOptions(optionsFn())
+    const defaultedOptions = defaultQueryOptions(queryClient, optionsFn())
     defaultedOptions._optimisticResults = isRestoring()
       ? 'isRestoring'
       : 'optimistic'

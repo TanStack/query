@@ -2,6 +2,11 @@ import {
   QueryClient,
   dataTagErrorSymbol,
   dataTagSymbol,
+  getQueryData,
+  infiniteQuery,
+  query,
+  select,
+  setQueryData,
   skipToken,
 } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
@@ -38,9 +43,12 @@ describe('infiniteQueryOptions', () => {
       staleTime: 1000,
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      select: (data) => {
-        expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
-      },
+      select: [
+        select,
+        (data) => {
+          expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+        },
+      ],
     })
   })
 
@@ -69,7 +77,7 @@ describe('infiniteQueryOptions', () => {
         queryFn: () => Promise.resolve('string'),
         getNextPageParam: () => 1,
         initialPageParam: 1,
-        select: (data) => data.pages,
+        select: [select, (data) => data.pages],
       }),
       new QueryClient(),
     )
@@ -85,7 +93,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number> | undefined>()
   })
 
@@ -95,10 +103,10 @@ describe('infiniteQueryOptions', () => {
       queryFn: () => Promise.resolve('data'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      select: (data) => data.pages,
+      select: [select, (data) => data.pages],
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
     expectTypeOf(data).toEqualTypeOf<Array<string> | undefined>()
   })
 
@@ -111,7 +119,7 @@ describe('infiniteQueryOptions', () => {
       enabled: false,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number> | undefined>()
   })
 
@@ -123,7 +131,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    const data = await new QueryClient().infiniteQuery(options)
+    const data = await infiniteQuery(new QueryClient(), options)
     expectTypeOf(data).toEqualTypeOf<
       InfiniteData<unknown, number> | undefined
     >()
@@ -158,7 +166,7 @@ describe('infiniteQueryOptions', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve('string'),
-      select: (data) => data.pages,
+      select: [select, (data) => data.pages],
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })
@@ -174,7 +182,7 @@ describe('infiniteQueryOptions', () => {
       getNextPageParam: (lastPage) => lastPage.page + 1,
     })
 
-    const data = new QueryClient().getQueryData(tagged)
+    const data = getQueryData(new QueryClient(), tagged)
     expectTypeOf(data).toEqualTypeOf<
       InfiniteData<{ page: number }> | undefined
     >()
@@ -189,7 +197,7 @@ describe('infiniteQueryOptions', () => {
     })
 
     const queryClient = new QueryClient()
-    const updatedPages = queryClient.setQueryData(tagged, {
+    const updatedPages = setQueryData(queryClient, tagged, {
       pages: [{ page: 4 }],
       pageParams: [0],
     })
@@ -197,7 +205,8 @@ describe('infiniteQueryOptions', () => {
       InfiniteData<{ page: number }> | undefined
     >()
 
-    const updatedPagesViaCallback = queryClient.setQueryData(
+    const updatedPagesViaCallback = setQueryData(
+      queryClient,
       tagged,
       (previous) => {
         expectTypeOf(previous).toEqualTypeOf<
@@ -221,7 +230,7 @@ describe('infiniteQueryOptions', () => {
     })
     assertType(
       // @ts-expect-error cannot pass infinite options to non-infinite query functions
-      queryClient.query(options),
+      query(queryClient, options),
     )
   })
 

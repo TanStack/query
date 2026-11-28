@@ -9,6 +9,15 @@ import {
   signal,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import {
+  cancelQueries,
+  getMutationCache,
+  getQueryData,
+  getQueryState,
+  invalidateQueries,
+  setDefaultOptions,
+  setQueryData,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/angular'
 import { firstValueFrom } from 'rxjs'
@@ -45,9 +54,9 @@ describe('injectMutation', () => {
 
   it('publishes mutation failures to observers and cache signals without global reporting', async () => {
     vi.useRealTimers()
-    queryClient.setDefaultOptions({ mutations: { throwOnError: true } })
+    setDefaultOptions(queryClient, { mutations: { throwOnError: true } })
     const cacheReport = vi.fn<(error: Error) => void>()
-    queryClient.getMutationCache().config.onError = cacheReport
+    getMutationCache(queryClient).config.onError = cacheReport
     const report = vi.spyOn(TestBed.inject(ErrorHandler), 'handleError')
     const error = new Error('mutation failed')
     const mutation = TestBed.runInInjectionContext(() =>
@@ -160,7 +169,7 @@ describe('injectMutation', () => {
   })
 
   it('reactive options should update mutation', () => {
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
     // Signal will be updated before the mutation is called
     // this test confirms that the mutation uses the updated value
     const mutationKey = signal(['1'])
@@ -223,7 +232,7 @@ describe('injectMutation', () => {
     const readResult = vi.fn<() => 'error' | 'idle' | 'pending' | 'success'>(
       () => mutation.status(),
     )
-    const unsubscribe = queryClient.getMutationCache().subscribe((event) => {
+    const unsubscribe = getMutationCache(queryClient).subscribe((event) => {
       // setOptions emits synchronously; this read must not re-enter the signal
       // computation that caused the options update.
       if (event.type === 'observerOptionsUpdated') readResult()
@@ -635,7 +644,7 @@ describe('injectMutation', () => {
 
     it('should give mutationFn the same QueryClient instance via context', async () => {
       const key = createKey()
-      queryClient.setQueryData(key, 'tag-from-this-client')
+      setQueryData(queryClient, key, 'tag-from-this-client')
 
       @Component({
         template: `<div>data: {{ mutation.data() ?? 'none' }}</div>`,
@@ -643,7 +652,7 @@ describe('injectMutation', () => {
       class Page {
         readonly mutation = injectMutation(() => ({
           mutationFn: (_text: string, context) =>
-            sleep(10).then(() => context.client.getQueryData(key)),
+            sleep(10).then(() => getQueryData(context.client, key)),
         }))
       }
 
@@ -686,22 +695,22 @@ describe('injectMutation', () => {
 
     it('should let onSuccess invalidate queries via context.client without an injected QueryClient', async () => {
       const key = createKey()
-      queryClient.setQueryData(key, 'data')
+      setQueryData(queryClient, key, 'data')
 
       const mutation = TestBed.runInInjectionContext(() => {
         return injectMutation(() => ({
           mutationFn: () => sleep(10).then(() => 'mutated'),
           onSuccess: (_data, _variables, _onMutateResult, context) => {
-            context.client.invalidateQueries({ queryKey: key })
+            invalidateQueries(context.client, { queryKey: key })
           },
         }))
       })
 
-      expect(queryClient.getQueryState(key)?.isInvalidated).toBe(false)
+      expect(getQueryState(queryClient, key)?.isInvalidated).toBe(false)
 
       mutation.mutate()
       await vi.advanceTimersByTimeAsync(10)
-      expect(queryClient.getQueryState(key)?.isInvalidated).toBe(true)
+      expect(getQueryState(queryClient, key)?.isInvalidated).toBe(true)
     })
 
     it('should give a per-call onSuccess the same QueryClient instance via context', async () => {
@@ -728,7 +737,7 @@ describe('injectMutation', () => {
   })
 
   it('should support required signal inputs', async () => {
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
 
     @Component({
       selector: 'app-fake',
@@ -772,7 +781,7 @@ describe('injectMutation', () => {
   })
 
   it('should update options on required signal input change', async () => {
-    const mutationCache = queryClient.getMutationCache()
+    const mutationCache = getMutationCache(queryClient)
 
     @Component({
       selector: 'app-fake',
@@ -982,7 +991,7 @@ describe('injectMutation', () => {
       let onSuccessCalled = false
       let queryDataInsideOnMutate: string | undefined
 
-      queryClient.setQueryData(testQueryKey, 'initial')
+      setQueryData(queryClient, testQueryKey, 'initial')
 
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
@@ -1000,19 +1009,19 @@ describe('injectMutation', () => {
           },
           onMutate: async (variables) => {
             onMutateCalled = true
-            queryClient.setQueryData(testQueryKey, `optimistic: ${variables}`)
+            setQueryData(queryClient, testQueryKey, `optimistic: ${variables}`)
             queryDataInsideOnMutate = query.data()
           },
           onSuccess: (data) => {
             onSuccessCalled = true
-            queryClient.setQueryData(testQueryKey, data)
+            setQueryData(queryClient, testQueryKey, data)
           },
         })),
       )
 
       TestBed.tick()
 
-      expect(queryClient.getQueryData(testQueryKey)).toBe('initial')
+      expect(getQueryData(queryClient, testQueryKey)).toBe('initial')
       mutation.mutate('test')
 
       // Flush microtasks to allow TanStack Query's scheduled notifications to process
@@ -1021,7 +1030,7 @@ describe('injectMutation', () => {
       // The observed query signal must be current inside the onMutate callback,
       // immediately after the optimistic cache write.
       expect(onMutateCalled).toBe(true)
-      expect(queryClient.getQueryData(testQueryKey)).toBe('optimistic: test')
+      expect(getQueryData(queryClient, testQueryKey)).toBe('optimistic: test')
       expect(queryDataInsideOnMutate).toBe('optimistic: test')
 
       // Check stability before the mutation completes, waiting for the next macro task
@@ -1037,13 +1046,13 @@ describe('injectMutation', () => {
       expect(onSuccessCalled).toBe(true)
       expect(mutation.isSuccess()).toBe(true)
       expect(mutation.data()).toBe('final: test')
-      expect(queryClient.getQueryData(testQueryKey)).toBe('final: test')
+      expect(getQueryData(queryClient, testQueryKey)).toBe('final: test')
     })
 
     it('reads an optimistic update inside onMutate before the query signal or effects initialize', async () => {
       const testQueryKey = ['unread-sync-optimistic']
       const seenInsideOnMutate: Array<string | undefined> = []
-      queryClient.setQueryData(testQueryKey, 'initial')
+      setQueryData(queryClient, testQueryKey, 'initial')
 
       const query = TestBed.runInInjectionContext(() =>
         injectQuery(() => ({
@@ -1056,7 +1065,7 @@ describe('injectMutation', () => {
         injectMutation(() => ({
           mutationFn: async () => 'server',
           onMutate: () => {
-            queryClient.setQueryData(testQueryKey, 'optimistic')
+            setQueryData(queryClient, testQueryKey, 'optimistic')
             seenInsideOnMutate.push(query.data())
           },
         })),
@@ -1108,7 +1117,7 @@ describe('injectMutation', () => {
   describe('optimistic updates', () => {
     it('should update the cache in onMutate and roll back via onMutateResult in onError', async () => {
       const key = createKey()
-      queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+      setQueryData<Array<string>>(queryClient, key, ['Todo 1'])
 
       @Component({
         template: `<div>isError: {{ mutation.isError() }}</div>`,
@@ -1118,10 +1127,10 @@ describe('injectMutation', () => {
           mutationFn: () =>
             sleep(10).then(() => Promise.reject(new Error('Some error'))),
           onMutate: async (newTodo: string) => {
-            await queryClient.cancelQueries({ queryKey: key })
-            const previousTodos = queryClient.getQueryData<Array<string>>(key)
+            await cancelQueries(queryClient, { queryKey: key })
+            const previousTodos = getQueryData<Array<string>>(queryClient, key)
 
-            queryClient.setQueryData<Array<string>>(key, (old) => [
+            setQueryData<Array<string>>(queryClient, key, (old) => [
               ...(old ?? []),
               newTodo,
             ])
@@ -1129,7 +1138,7 @@ describe('injectMutation', () => {
             return { previousTodos }
           },
           onError: (_err, _newTodo, onMutateResult) => {
-            queryClient.setQueryData(key, onMutateResult?.previousTodos)
+            setQueryData(queryClient, key, onMutateResult?.previousTodos)
           },
         }))
       }
@@ -1140,16 +1149,16 @@ describe('injectMutation', () => {
       // onMutate runs synchronously up to its first await, so the optimistic
       // value is visible immediately, before the mutationFn settles.
       await vi.advanceTimersByTimeAsync(0)
-      expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
+      expect(getQueryData(queryClient, key)).toStrictEqual(['Todo 1', 'Todo 2'])
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
       expect(rendered.getByText('isError: true')).toBeInTheDocument()
-      expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1'])
+      expect(getQueryData(queryClient, key)).toStrictEqual(['Todo 1'])
     })
 
     it('should keep the optimistic update in place when the mutation succeeds', async () => {
       const key = createKey()
-      queryClient.setQueryData<Array<string>>(key, ['Todo 1'])
+      setQueryData<Array<string>>(queryClient, key, ['Todo 1'])
 
       @Component({
         template: `<div>isSuccess: {{ mutation.isSuccess() }}</div>`,
@@ -1158,10 +1167,10 @@ describe('injectMutation', () => {
         readonly mutation = injectMutation(() => ({
           mutationFn: (newTodo: string) => sleep(10).then(() => newTodo),
           onMutate: async (newTodo: string) => {
-            await queryClient.cancelQueries({ queryKey: key })
-            const previousTodos = queryClient.getQueryData<Array<string>>(key)
+            await cancelQueries(queryClient, { queryKey: key })
+            const previousTodos = getQueryData<Array<string>>(queryClient, key)
 
-            queryClient.setQueryData<Array<string>>(key, (old) => [
+            setQueryData<Array<string>>(queryClient, key, (old) => [
               ...(old ?? []),
               newTodo,
             ])
@@ -1169,7 +1178,7 @@ describe('injectMutation', () => {
             return { previousTodos }
           },
           onError: (_err, _newTodo, onMutateResult) => {
-            queryClient.setQueryData(key, onMutateResult?.previousTodos)
+            setQueryData(queryClient, key, onMutateResult?.previousTodos)
           },
         }))
       }
@@ -1180,7 +1189,7 @@ describe('injectMutation', () => {
       await vi.advanceTimersByTimeAsync(11)
       rendered.fixture.detectChanges()
       expect(rendered.getByText('isSuccess: true')).toBeInTheDocument()
-      expect(queryClient.getQueryData(key)).toStrictEqual(['Todo 1', 'Todo 2'])
+      expect(getQueryData(queryClient, key)).toStrictEqual(['Todo 1', 'Todo 2'])
     })
   })
 

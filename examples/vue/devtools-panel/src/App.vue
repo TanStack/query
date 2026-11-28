@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
+import {
+  isPending as queryIsPending,
+  isFetching as queryIsFetching,
+  useQuery,
+} from '@tanstack/vue-query'
 import { VueQueryDevtoolsPanel } from '@tanstack/vue-query-devtools'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { reposQueries } from './services/repos/queries'
 
 const isOpen = ref(false)
 
-const { isPending, error, data, isFetching } = useQuery(reposQueries.detail())
+const { state: queryState, error, data } = useQuery(reposQueries.detail())
+const isPending = computed(() => queryIsPending(queryState))
+const isFetching = computed(() => queryIsFetching(queryState))
 </script>
 
 <template>

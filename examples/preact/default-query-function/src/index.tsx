@@ -2,6 +2,8 @@ import {
   QueryClient,
   QueryClientProvider,
   defaultQueryFn,
+  getQueryData,
+  queryOptions,
   useQuery,
   useQueryClient,
 } from '@tanstack/preact-query'
@@ -62,10 +64,12 @@ function App() {
 function Posts({ setPostId }: { setPostId: (postId: number) => void }) {
   const queryClient = useQueryClient()
 
-  const { status, data, error, isFetching } = useQuery<Array<Post>>({
-    queryKey: ['/posts'],
-    queryFn: defaultQueryFn,
-  })
+  const { status, data, error, isFetching } = useQuery(
+    queryOptions<Array<Post>>({
+      queryKey: ['/posts'],
+      queryFn: defaultQueryFn,
+    }),
+  )
 
   return (
     <div>
@@ -86,7 +90,7 @@ function Posts({ setPostId }: { setPostId: (postId: number) => void }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData([`/posts/${post.id}`])
+                      getQueryData(queryClient, [`/posts/${post.id}`])
                         ? {
                             fontWeight: 'bold',
                             color: 'green',
@@ -114,11 +118,13 @@ function Post({
   postId: number
   setPostId: (postId: number) => void
 }) {
-  const { status, data, error, isFetching } = useQuery<Post>({
-    queryKey: [`/posts/${postId}`],
-    queryFn: defaultQueryFn,
-    enabled: !!postId,
-  })
+  const { status, data, error, isFetching } = useQuery(
+    queryOptions<Post>({
+      queryKey: [`/posts/${postId}`],
+      queryFn: defaultQueryFn,
+      enabled: !!postId,
+    }),
+  )
 
   return (
     <div>

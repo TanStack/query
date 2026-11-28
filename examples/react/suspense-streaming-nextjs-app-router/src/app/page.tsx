@@ -1,12 +1,12 @@
 'use client'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { waitQueries } from '../services/wait/queries'
 
 export const runtime = 'edge' // 'nodejs' (default) | 'edge'
 
 function MyComponent(props: { wait: number }) {
-  const { data } = useSuspenseQuery(waitQueries.detail(props.wait))
+  const { data } = useQuery(waitQueries.detail(props.wait))
 
   return <div>result: {data}</div>
 }

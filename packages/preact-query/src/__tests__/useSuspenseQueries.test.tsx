@@ -1,3 +1,10 @@
+import {
+  clearQueryClient,
+  getQueryData,
+  placeholderData,
+  select,
+  setQueryData,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent, render } from '@testing-library/preact'
 import { Suspense, startTransition, useTransition } from 'preact/compat'
@@ -15,8 +22,9 @@ import {
 import {
   QueryClient,
   skipToken,
+  suspenseQueryOptions,
+  useQuery,
   useSuspenseQueries,
-  useSuspenseQuery,
 } from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
@@ -33,7 +41,7 @@ describe('useSuspenseQueries', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     onSuspend.mockClear()
     onQueriesResolution.mockClear()
     vi.useRealTimers()
@@ -113,7 +121,7 @@ describe('useSuspenseQueries', () => {
     const key = createKey()
     const queryFn = () => sleep(1000).then(() => 1)
 
-    queryClient.setQueryData(key, queryFn)
+    setQueryData(queryClient, key, queryFn)
 
     function Page() {
       const queriesResults = useSuspenseQueries(
@@ -303,14 +311,14 @@ describe('useSuspenseQueries', () => {
     function getName() {
       return {
         ...getUserData(),
-        select: (data: any) => data.name,
+        select: [select, (data: any) => data.name] as const,
       }
     }
 
     function getAge() {
       return {
         ...getUserData(),
-        select: (data: any) => data.age,
+        select: [select, (data: any) => data.age] as const,
       }
     }
 
@@ -469,10 +477,12 @@ describe('useSuspenseQueries', () => {
   // https://github.com/TanStack/query/issues/6344
   it('should suspend on offline when query changes, and data should not be undefined', async () => {
     function Page({ id }: { id: number }) {
-      const { data } = useSuspenseQuery({
-        queryKey: [id],
-        queryFn: () => sleep(10).then(() => `Data ${id}`),
-      })
+      const { data } = useQuery(
+        suspenseQueryOptions({
+          queryKey: [id],
+          queryFn: () => sleep(10).then(() => `Data ${id}`),
+        }),
+      )
 
       // defensive guard here
       if (data === undefined) {
@@ -566,15 +576,17 @@ describe('useSuspenseQueries', () => {
     const key = createKey()
 
     function Page({ fail }: { fail: boolean }) {
-      const { data } = useSuspenseQuery({
-        queryKey: [key, fail],
-        queryFn: () =>
-          sleep(10).then(() => {
-            if (fail) throw new Error('Suspense Error Bingo')
-            return 'data'
-          }),
-        retry: 0,
-      })
+      const { data } = useQuery(
+        suspenseQueryOptions({
+          queryKey: [key, fail],
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (fail) throw new Error('Suspense Error Bingo')
+              return 'data'
+            }),
+          retry: 0,
+        }),
+      )
 
       return <div>rendered: {data}</div>
     }
@@ -614,10 +626,12 @@ describe('useSuspenseQueries', () => {
     const key = createKey()
 
     function Page({ count, isPending }: { count: number; isPending: boolean }) {
-      const { data } = useSuspenseQuery({
-        queryKey: [key, count],
-        queryFn: () => sleep(10).then(() => `data${count}`),
-      })
+      const { data } = useQuery(
+        suspenseQueryOptions({
+          queryKey: [key, count],
+          queryFn: () => sleep(10).then(() => `data${count}`),
+        }),
+      )
 
       return <div>{isPending ? 'pending' : data}</div>
     }
@@ -671,14 +685,16 @@ describe('useSuspenseQueries', () => {
     }
 
     function Page({ count }: { count: number }) {
-      const { data } = useSuspenseQuery({
-        queryKey: [key, count],
-        queryFn: () =>
-          sleep(10).then(() => {
-            queryFnCount++
-            return `data${count}`
-          }),
-      })
+      const { data } = useQuery(
+        suspenseQueryOptions({
+          queryKey: [key, count],
+          queryFn: () =>
+            sleep(10).then(() => {
+              queryFnCount++
+              return `data${count}`
+            }),
+        }),
+      )
 
       return (
         <div>
@@ -709,7 +725,7 @@ describe('useSuspenseQueries', () => {
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          placeholderData: 'preview',
+          placeholderData: placeholderData('preview'),
         },
       },
     })
@@ -771,16 +787,18 @@ describe('useSuspenseQueries', () => {
     let count = 0
 
     function Page() {
-      useSuspenseQuery({
-        queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => {
-            count++
-            throw new Error('Query failed')
-          }),
-        gcTime: 0,
-        retry: false,
-      })
+      useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => {
+              count++
+              throw new Error('Query failed')
+            }),
+          gcTime: 0,
+          retry: false,
+        }),
+      )
 
       return null
     }
@@ -829,11 +847,13 @@ describe('useSuspenseQueries', () => {
       }
 
       function Component() {
-        const { data } = useSuspenseQuery({
-          queryKey: key,
-          queryFn: () => sleep(3000).then(() => 'data'),
-          gcTime: 1000,
-        })
+        const { data } = useQuery(
+          suspenseQueryOptions({
+            queryKey: key,
+            queryFn: () => sleep(3000).then(() => 'data'),
+            gcTime: 1000,
+          }),
+        )
 
         return <div>{data}</div>
       }
@@ -861,10 +881,10 @@ describe('useSuspenseQueries', () => {
       expect(rendered.getByText('page2')).toBeInTheDocument()
       // wait for query to be resolved
       await vi.advanceTimersByTimeAsync(3000)
-      expect(queryClient.getQueryData(key)).toBe('data')
+      expect(getQueryData(queryClient, key)).toBe('data')
       // wait for gc
       await vi.advanceTimersByTimeAsync(1000)
-      expect(queryClient.getQueryData(key)).toBeUndefined()
+      expect(getQueryData(queryClient, key)).toBeUndefined()
     })
   })
 
@@ -975,7 +995,7 @@ describe('useSuspenseQueries', () => {
     const key1 = createKey()
     const key2 = createKey()
 
-    queryClient.setQueryData(key1, 'cached')
+    setQueryData(queryClient, key1, 'cached')
 
     function Page() {
       const [result1, result2] = useSuspenseQueries({
@@ -1026,7 +1046,7 @@ describe('useSuspenseQueries', () => {
     const key1 = createKey()
     const key2 = createKey()
 
-    queryClient.setQueryData(key2, 'cached')
+    setQueryData(queryClient, key2, 'cached')
 
     function Page() {
       const [result1, result2] = useSuspenseQueries({
@@ -1077,8 +1097,8 @@ describe('useSuspenseQueries', () => {
     const key1 = createKey()
     const key2 = createKey()
 
-    queryClient.setQueryData(key1, 'cached1')
-    queryClient.setQueryData(key2, 'cached2')
+    setQueryData(queryClient, key1, 'cached1')
+    setQueryData(queryClient, key2, 'cached2')
 
     const queryFn1 = vi.fn<() => Promise<string>>(() =>
       sleep(20).then(() => 'data1'),
@@ -1129,14 +1149,14 @@ describe('useSuspenseQueries', () => {
     const key1 = createKey()
     const key2 = createKey()
 
-    queryClient.setQueryData(key1, 'cached1')
-    queryClient.setQueryData(key2, 'cached2')
+    setQueryData(queryClient, key1, 'cached1')
+    setQueryData(queryClient, key2, 'cached2')
 
     // Advance past staleTime (min 1000ms in suspense) so key2 becomes stale before mount
     vi.advanceTimersByTime(1000)
 
     // Make key1 fresh again by resetting its data
-    queryClient.setQueryData(key1, 'cached1')
+    setQueryData(queryClient, key1, 'cached1')
 
     const queryFn1 = vi.fn<() => Promise<string>>(() =>
       sleep(20).then(() => 'data1'),
@@ -1197,14 +1217,14 @@ describe('useSuspenseQueries', () => {
     const key1 = createKey()
     const key2 = createKey()
 
-    queryClient.setQueryData(key1, 'cached1')
-    queryClient.setQueryData(key2, 'cached2')
+    setQueryData(queryClient, key1, 'cached1')
+    setQueryData(queryClient, key2, 'cached2')
 
     // Advance past staleTime (min 1000ms in suspense) so key1 becomes stale before mount
     vi.advanceTimersByTime(1000)
 
     // Make key2 fresh again by resetting its data
-    queryClient.setQueryData(key2, 'cached2')
+    setQueryData(queryClient, key2, 'cached2')
 
     const queryFn2 = vi.fn<() => Promise<string>>(() =>
       sleep(20).then(() => 'data2'),
@@ -1265,8 +1285,8 @@ describe('useSuspenseQueries', () => {
     const key1 = createKey()
     const key2 = createKey()
 
-    queryClient.setQueryData(key1, 'cached1')
-    queryClient.setQueryData(key2, 'cached2')
+    setQueryData(queryClient, key1, 'cached1')
+    setQueryData(queryClient, key2, 'cached2')
 
     // Advance past staleTime (min 1000ms in suspense) so data becomes stale before mount
     vi.advanceTimersByTime(1000)

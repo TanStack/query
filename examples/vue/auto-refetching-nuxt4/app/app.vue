@@ -1,29 +1,42 @@
 <script setup lang="ts">
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import {
+  isFetching as queryIsFetching,
+  refetchInterval,
+  invalidateQueries,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { todosMutations, todosQueries } from './services/todos/queries'
 
 const queryClient = useQueryClient()
 const intervalMs = ref(1000)
 const value = ref('')
 
-const { status, data, error, isFetching } = useQuery(() => ({
+const {
+  state: queryState,
+  status,
+  data,
+  error,
+} = useQuery(() => ({
   ...todosQueries.list(),
   // Refetch the data every second
-  refetchInterval: intervalMs.value,
+  refetchInterval: refetchInterval(intervalMs.value),
 }))
+const isFetching = computed(() => queryIsFetching(queryState))
 
 const { mutate: addTodo } = useMutation({
   ...todosMutations.create(),
   onSuccess: () =>
-    queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
+    invalidateQueries(queryClient, { queryKey: todosQueries.all() }),
 })
 
 const { mutate: clearTodos } = useMutation({
   ...todosMutations.deleteAll(),
   onSuccess: () =>
-    queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
+    invalidateQueries(queryClient, { queryKey: todosQueries.all() }),
 })
 
 const onSubmit = () => {

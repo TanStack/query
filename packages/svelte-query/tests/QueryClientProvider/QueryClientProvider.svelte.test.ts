@@ -1,4 +1,9 @@
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  clearQueryClient,
+  findCachedQuery,
+  getQueryCache,
+} from '@tanstack/query-core'
 import { render } from '@testing-library/svelte'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Base from './Base.svelte'
@@ -12,12 +17,12 @@ describe('QueryClientProvider', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
   it('should set a specific cache for all queries to use', async () => {
-    const queryCache = queryClient.getQueryCache()
+    const queryCache = getQueryCache(queryClient)
 
     const rendered = render(Base, {
       props: {
@@ -28,6 +33,8 @@ describe('QueryClientProvider', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(rendered.getByText('Data: test')).toBeInTheDocument()
 
-    expect(queryCache.find({ queryKey: ['hello'] })?.state.data).toBe('test')
+    expect(
+      findCachedQuery(queryCache, { queryKey: ['hello'] })?.state.data,
+    ).toBe('test')
   })
 })

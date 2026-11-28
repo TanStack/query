@@ -1,5 +1,18 @@
 <script setup lang="ts">
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import {
+  isError as queryIsError,
+  isFetching as queryIsFetching,
+  isLoading as queryIsLoading,
+  isPaused as queryIsPaused,
+  select,
+  cancelQueries,
+  getQueryData,
+  setQueryData,
+  invalidateQueries,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/vue-query'
 import { Link, useParams } from '@tanstack/vue-router'
 import { computed, ref } from 'vue'
 import { moviesMutations, moviesQueries } from '../services/movies/queries'
@@ -10,9 +23,15 @@ const movieId = useParams({
 })
 
 const queryClient = useQueryClient()
-const { data, error, isError, isFetching, isLoading, isPaused } = useQuery(() =>
-  moviesQueries.detail(movieId.value),
-)
+const {
+  state: queryState,
+  data,
+  error,
+} = useQuery(() => moviesQueries.detail(movieId.value))
+const isError = computed(() => queryIsError(queryState))
+const isFetching = computed(() => queryIsFetching(queryState))
+const isLoading = computed(() => queryIsLoading(queryState))
+const isPaused = computed(() => queryIsPaused(queryState))
 
 const commentDraft = ref<string | undefined>()
 
@@ -24,16 +43,17 @@ const {
   ...moviesMutations.update(),
   mutationKey: moviesQueries.detail(movieId.value).queryKey,
   onMutate: async (variables) => {
-    await queryClient.cancelQueries({
+    await cancelQueries(queryClient, {
       queryKey: moviesQueries.detail(movieId.value).queryKey,
     })
     const { queryKey } = moviesQueries.detail(movieId.value)
-    const previousData = queryClient.getQueryData(queryKey)
+    const previousData = getQueryData(queryClient, queryKey)
 
     // remove local state so that server state is taken instead
     commentDraft.value = undefined
 
-    queryClient.setQueryData(
+    setQueryData(
+      queryClient,
       queryKey,
       (old) =>
         old && {
@@ -48,13 +68,14 @@ const {
     return { previousData }
   },
   onError: (_, __, onMutateResult) => {
-    queryClient.setQueryData(
+    setQueryData(
+      queryClient,
       moviesQueries.detail(movieId.value).queryKey,
       onMutateResult?.previousData,
     )
   },
   onSettled: () => {
-    queryClient.invalidateQueries({
+    invalidateQueries(queryClient, {
       queryKey: moviesQueries.detail(movieId.value).queryKey,
     })
   },

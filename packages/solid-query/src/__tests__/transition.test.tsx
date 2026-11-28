@@ -1,4 +1,5 @@
 import { fireEvent } from '@solidjs/testing-library'
+import { clearQueryClient } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { Show, Suspense, createSignal, startTransition } from 'solid-js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -16,7 +17,7 @@ describe("useQuery's in Suspense mode with transitions", () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 

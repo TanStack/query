@@ -3,12 +3,31 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   QueryClient,
   QueryObserver,
+  clearQueryClient,
   defaultQueryFn,
+  defaultQueryOptions,
+  fetchOptimistic,
+  query as fetchQueryData,
+  findCachedQuery,
   focusManager,
+  getQueryCache,
+  getQueryData,
+  getQueryState,
+  invalidateQueries,
+  isError,
   keepPreviousData,
+  mountQueryClient,
   noop,
+  placeholderData,
+  refetchInterval as refetchIntervalOption,
+  removeQueries,
+  resetQueries,
+  select as selectData,
+  setQueryData,
   timeoutManager,
 } from '..'
+import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
+import { resultForComparison } from './helpers/result'
 import { setIsServer } from './utils'
 import type {
   QueryCacheNotifyEvent,
@@ -22,24 +41,24 @@ describe('queryObserver', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
-    queryClient.mount()
+    mountQueryClient(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
   it('should select again when an input that threw comes back', () => {
     const queryKey = createKey()
-    queryClient.setQueryData(queryKey, 'cached')
+    setQueryData(queryClient, queryKey, 'cached')
     const options = {
       queryKey,
       queryFn: defaultQueryFn,
       enabled: false,
-      select: () => {
+      select: optionalSelect(() => {
         throw new Error('selection failed')
-      },
+      }),
     } as const
     const observer = new QueryObserver(queryClient, options)
     expect(observer.getCurrentResult().error?.message).toBe('selection failed')
@@ -96,7 +115,7 @@ describe('queryObserver', () => {
 
   it('should be able to read latest data after subscribing', () => {
     const key = createKey()
-    queryClient.setQueryData(key, 'data')
+    setQueryData(queryClient, key, 'data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: defaultQueryFn,
@@ -152,7 +171,7 @@ describe('queryObserver', () => {
     it('should not be re-fetched when invalidated with refetchType: all', async () => {
       const unsubscribe = observer.subscribe(vi.fn())
 
-      queryClient.invalidateQueries({ queryKey: key, refetchType: 'all' })
+      invalidateQueries(queryClient, { queryKey: key, refetchType: 'all' })
 
       // So we still expect it to not have fetched and not be fetching
       expect(count).toBe(0)
@@ -222,7 +241,7 @@ describe('queryObserver', () => {
 
       unsubscribe()
 
-      queryClient.invalidateQueries({ queryKey: key, refetchType: 'active' })
+      invalidateQueries(queryClient, { queryKey: key, refetchType: 'active' })
       expect(observer.getCurrentResult()).toMatchObject({
         status: 'pending',
         fetchStatus: 'idle',
@@ -237,7 +256,7 @@ describe('queryObserver', () => {
       // Toggle enabled
       enabled = true
 
-      queryClient.invalidateQueries({ queryKey: key, refetchType: 'active' })
+      invalidateQueries(queryClient, { queryKey: key, refetchType: 'active' })
       expect(observer.getCurrentResult()).toMatchObject({
         status: 'pending',
         fetchStatus: 'fetching',
@@ -255,13 +274,13 @@ describe('queryObserver', () => {
       // Toggle enabled
       enabled = true
 
-      queryClient.invalidateQueries({ queryKey: key, refetchType: 'inactive' })
+      invalidateQueries(queryClient, { queryKey: key, refetchType: 'inactive' })
 
       // should not refetch since it was active and we only refetch inactive
       await vi.advanceTimersByTimeAsync(10)
       expect(count).toBe(0)
 
-      queryClient.invalidateQueries({ queryKey: key, refetchType: 'active' })
+      invalidateQueries(queryClient, { queryKey: key, refetchType: 'active' })
 
       // should refetch since it was active and we refetch active
       await vi.advanceTimersByTimeAsync(10)
@@ -271,7 +290,7 @@ describe('queryObserver', () => {
       enabled = false
 
       // should not refetch since it is not active and we only refetch active
-      queryClient.invalidateQueries({ queryKey: key, refetchType: 'active' })
+      invalidateQueries(queryClient, { queryKey: key, refetchType: 'active' })
       await vi.advanceTimersByTimeAsync(10)
       expect(count).toBe(1)
 
@@ -343,7 +362,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
-      select: (data) => ({ myCount: data.count }),
+      select: [selectData, (data) => ({ myCount: data.count })],
     })
     let observerResult
     const unsubscribe = observer.subscribe((result) => {
@@ -359,7 +378,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
-      select: (data) => ({ myCount: data.count }),
+      select: [selectData, (data) => ({ myCount: data.count })],
     })
     const observerResult = await observer.refetch()
     expect(observerResult.data).toMatchObject({ myCount: 1 })
@@ -370,7 +389,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
-      select: (data) => ({ myCount: data.count }),
+      select: [selectData, (data) => ({ myCount: data.count })],
     })
     let observerResult
     const unsubscribe = observer.subscribe((result) => {
@@ -387,10 +406,13 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count }),
-      select: (data) => {
-        count++
-        return { myCount: data.count }
-      },
+      select: [
+        selectData,
+        (data) => {
+          count++
+          return { myCount: data.count }
+        },
+      ],
     })
     const observerResult1 = await observer.refetch()
     const observerResult2 = await observer.refetch()
@@ -415,7 +437,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
-      select: select1,
+      select: optionalSelect(select1),
     })
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -424,33 +446,33 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key,
       queryFn,
-      select: select2,
+      select: optionalSelect(select2),
     })
     await observer.refetch()
     unsubscribe()
     expect(count).toBe(2)
     expect(results).toHaveLength(5)
-    expect(results[0]).toMatchObject({
+    expect(resultForComparison(results[0])).toMatchObject({
       status: 'pending',
       isFetching: true,
       data: undefined,
     })
-    expect(results[1]).toMatchObject({
+    expect(resultForComparison(results[1])).toMatchObject({
       status: 'success',
       isFetching: false,
       data: { myCount: 1 },
     })
-    expect(results[2]).toMatchObject({
+    expect(resultForComparison(results[2])).toMatchObject({
       status: 'success',
       isFetching: false,
       data: { myCount: 99 },
     })
-    expect(results[3]).toMatchObject({
+    expect(resultForComparison(results[3])).toMatchObject({
       status: 'success',
       isFetching: true,
       data: { myCount: 99 },
     })
-    expect(results[4]).toMatchObject({
+    expect(resultForComparison(results[4])).toMatchObject({
       status: 'success',
       isFetching: false,
       data: { myCount: 99 },
@@ -469,7 +491,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
-      select,
+      select: optionalSelect(select),
     })
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -478,28 +500,28 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key,
       queryFn,
-      select,
+      select: optionalSelect(select),
     })
     await observer.refetch()
     unsubscribe()
     expect(count).toBe(1)
     expect(results).toHaveLength(4)
-    expect(results[0]).toMatchObject({
+    expect(resultForComparison(results[0])).toMatchObject({
       status: 'pending',
       isFetching: true,
       data: undefined,
     })
-    expect(results[1]).toMatchObject({
+    expect(resultForComparison(results[1])).toMatchObject({
       status: 'success',
       isFetching: false,
       data: { myCount: 1 },
     })
-    expect(results[2]).toMatchObject({
+    expect(resultForComparison(results[2])).toMatchObject({
       status: 'success',
       isFetching: true,
       data: { myCount: 1 },
     })
-    expect(results[3]).toMatchObject({
+    expect(resultForComparison(results[3])).toMatchObject({
       status: 'success',
       isFetching: false,
       data: { myCount: 1 },
@@ -512,10 +534,13 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
-      select: (data) => {
-        count++
-        return { myCount: data.count }
-      },
+      select: [
+        selectData,
+        (data) => {
+          count++
+          return { myCount: data.count }
+        },
+      ],
     })
     const observerResult1 = await observer.refetch()
     const observerResult2 = await observer.refetch()
@@ -531,9 +556,9 @@ describe('queryObserver', () => {
       queryFn: defaultQueryFn,
       initialData: 'data',
       enabled: false,
-      select: () => {
+      select: optionalSelect(() => {
         throw error
-      },
+      }),
     })
     const result = observer.getCurrentResult()
 
@@ -552,9 +577,9 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
-      select: () => {
+      select: optionalSelect(() => {
         throw new Error('selector error')
-      },
+      }),
     })
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -563,22 +588,22 @@ describe('queryObserver', () => {
     observer.refetch()
     await vi.advanceTimersByTimeAsync(10)
     unsubscribe()
-    expect(results[0]).toMatchObject({
+    expect(resultForComparison(results[0])).toMatchObject({
       status: 'pending',
       isFetching: true,
       data: undefined,
     })
-    expect(results[1]).toMatchObject({
+    expect(resultForComparison(results[1])).toMatchObject({
       status: 'error',
       isFetching: false,
       data: undefined,
     })
-    expect(results[2]).toMatchObject({
+    expect(resultForComparison(results[2])).toMatchObject({
       status: 'error',
       isFetching: true,
       data: undefined,
     })
-    expect(results[3]).toMatchObject({
+    expect(resultForComparison(results[3])).toMatchObject({
       status: 'error',
       isFetching: false,
       data: undefined,
@@ -591,15 +616,15 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
-      placeholderData: { count: 0 },
-      select: () => {
+      placeholderData: optionalPlaceholderData({ count: 0 }),
+      select: optionalSelect(() => {
         throw new Error('selector error')
-      },
+      }),
     })
 
     const result = observer.getCurrentResult()
 
-    expect(result.isError).toBe(true)
+    expect(isError(result)).toBe(true)
     expect(result.isPlaceholderData).toBe(false)
     expect(result.data).toBeUndefined()
   })
@@ -613,13 +638,16 @@ describe('queryObserver', () => {
       queryKey: key,
       retry: 0,
       queryFn: () => sleep(10).then(() => (shouldError ? 2 : 1)),
-      select: (num) => {
-        if (shouldError) {
-          throw error
-        }
-        shouldError = true
-        return String(num)
-      },
+      select: [
+        selectData,
+        (num) => {
+          if (shouldError) {
+            throw error
+          }
+          shouldError = true
+          return String(num)
+        },
+      ],
     })
 
     const unsubscribe = observer.subscribe((result) => {
@@ -630,25 +658,25 @@ describe('queryObserver', () => {
     await vi.advanceTimersByTimeAsync(10)
     unsubscribe()
 
-    expect(results[0]).toMatchObject({
+    expect(resultForComparison(results[0])).toMatchObject({
       status: 'pending',
       isFetching: true,
       data: undefined,
       error: null,
     })
-    expect(results[1]).toMatchObject({
+    expect(resultForComparison(results[1])).toMatchObject({
       status: 'success',
       isFetching: false,
       data: '1',
       error: null,
     })
-    expect(results[2]).toMatchObject({
+    expect(resultForComparison(results[2])).toMatchObject({
       status: 'success',
       isFetching: true,
       data: '1',
       error: null,
     })
-    expect(results[3]).toMatchObject({
+    expect(resultForComparison(results[3])).toMatchObject({
       status: 'error',
       isFetching: false,
       data: '1',
@@ -662,9 +690,9 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key1,
       queryFn: () => sleep(10).then(() => ({ count: 1 })),
-      select: (): { count: number } => {
+      select: optionalSelect((): { count: number } => {
         throw new Error('selector error')
-      },
+      }),
     })
     const unsubscribe = observer.subscribe(() => {})
     await vi.advanceTimersByTimeAsync(10)
@@ -675,7 +703,7 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key2,
       queryFn: () => sleep(10).then(() => ({ count: 2 })),
-      select: (data) => data,
+      select: [selectData, (data) => data],
     })
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
@@ -699,8 +727,8 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: keyA,
       queryFn: () => sleep(10).then(() => ({ count: 1 })),
-      placeholderData: placeholder,
-      select: (data) => ({ selected: data.count }),
+      placeholderData: optionalPlaceholderData(placeholder),
+      select: [selectData, (data) => ({ selected: data.count })],
     })
     const unsubscribe = observer.subscribe(() => {})
     await vi.advanceTimersByTimeAsync(10)
@@ -712,10 +740,10 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: keyB,
       queryFn: () => sleep(10).then(() => ({ count: 2 })),
-      placeholderData: placeholder,
-      select: (): { selected: number } => {
+      placeholderData: optionalPlaceholderData(placeholder),
+      select: optionalSelect((): { selected: number } => {
         throw new Error('selector error')
-      },
+      }),
     })
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'error',
@@ -724,8 +752,8 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: keyC,
       queryFn: () => sleep(10).then(() => ({ count: 3 })),
-      placeholderData: placeholder,
-      select: (data) => ({ selected: data.count }),
+      placeholderData: optionalPlaceholderData(placeholder),
+      select: [selectData, (data) => ({ selected: data.count })],
     })
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
@@ -748,12 +776,15 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => ({ count: 1 })),
-      select: (data): { count: number } => {
-        if (shouldThrow) {
-          throw new Error('selector error')
-        }
-        return data
-      },
+      select: [
+        selectData,
+        (data): { count: number } => {
+          if (shouldThrow) {
+            throw new Error('selector error')
+          }
+          return data
+        },
+      ],
     })
     const unsubscribe = observer.subscribe(() => {})
     await vi.advanceTimersByTimeAsync(10)
@@ -762,7 +793,7 @@ describe('queryObserver', () => {
     })
 
     shouldThrow = false
-    queryClient.resetQueries({ queryKey: key })
+    resetQueries(queryClient, { queryKey: key })
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       data: undefined,
@@ -783,7 +814,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: ++count }),
-      select: () => ({ myCount: 1 }),
+      select: optionalSelect(() => ({ myCount: 1 })),
     })
     const observerResult1 = await observer.refetch()
     const observerResult2 = await observer.refetch()
@@ -847,7 +878,7 @@ describe('queryObserver', () => {
       enabled: false,
     })
     const unsubscribe = observer.subscribe(callback)
-    await queryClient.query({ queryKey: key, queryFn })
+    await fetchQueryData(queryClient, { queryKey: key, queryFn })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -874,7 +905,7 @@ describe('queryObserver', () => {
       enabled: false,
       staleTime: 10,
     })
-    await queryClient.query({ queryKey: key, queryFn })
+    await fetchQueryData(queryClient, { queryKey: key, queryFn })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -901,7 +932,7 @@ describe('queryObserver', () => {
     const unsubscribe2 = observer.subscribe((x) => {
       results2.push(x)
     })
-    await queryClient.query({ queryKey: key, queryFn })
+    await fetchQueryData(queryClient, { queryKey: key, queryFn })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe1()
     unsubscribe2()
@@ -945,7 +976,7 @@ describe('queryObserver', () => {
       queryKey: key,
       queryFn: fetchData,
       gcTime: 0,
-      refetchInterval: 10,
+      refetchInterval: refetchIntervalOption(10),
     })
     const unsubscribe = observer.subscribe(() => undefined)
     expect(count).toBe(1)
@@ -954,7 +985,9 @@ describe('queryObserver', () => {
 
     unsubscribe()
     await vi.advanceTimersByTimeAsync(10)
-    expect(queryClient.getQueryCache().find({ queryKey: key })).toBeUndefined()
+    expect(
+      findCachedQuery(getQueryCache(queryClient), { queryKey: key }),
+    ).toBeUndefined()
     expect(count).toBe(2)
   })
 
@@ -967,7 +1000,7 @@ describe('queryObserver', () => {
         count++
         return Promise.resolve('data')
       },
-      refetchInterval: () => 10,
+      refetchInterval: refetchIntervalOption(() => 10),
     })
     const unsubscribe = observer.subscribe(() => undefined)
     expect(count).toBe(1)
@@ -983,12 +1016,12 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
-      refetchInterval,
+      refetchInterval: refetchIntervalOption(refetchInterval),
     })
     const unsubscribe = observer.subscribe(() => undefined)
     await vi.advanceTimersByTimeAsync(10)
     expect(refetchInterval).toHaveBeenCalledWith(
-      queryClient.getQueryCache().find({ queryKey: key }),
+      findCachedQuery(getQueryCache(queryClient), { queryKey: key }),
     )
 
     unsubscribe()
@@ -1006,7 +1039,7 @@ describe('queryObserver', () => {
 
     await vi.advanceTimersByTimeAsync(10)
 
-    expect(queryClient.getQueryData(key)).toBe('data')
+    expect(getQueryData(queryClient, key)).toBe('data')
     expect(observer.getCurrentResult().data).toBe('data')
     expect(listener).not.toHaveBeenCalled()
 
@@ -1039,7 +1072,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 'data',
-      placeholderData: 'placeholder',
+      placeholderData: optionalPlaceholderData('placeholder'),
     })
 
     expect(observer.getCurrentResult()).toMatchObject({
@@ -1066,7 +1099,7 @@ describe('queryObserver', () => {
       queryKey: key,
       enabled: false,
       queryFn: () => 'data',
-      placeholderData: {},
+      placeholderData: optionalPlaceholderData({}),
     })
 
     const firstData = observer.getCurrentResult().data
@@ -1074,7 +1107,7 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key,
       queryFn: defaultQueryFn,
-      placeholderData: {},
+      placeholderData: optionalPlaceholderData({}),
     })
 
     const secondData = observer.getCurrentResult().data
@@ -1137,7 +1170,7 @@ describe('queryObserver', () => {
       queryKey: key,
       queryFn,
       refetchIntervalInBackground: false,
-      refetchInterval: 10,
+      refetchInterval: refetchIntervalOption(10),
     })
 
     const unsubscribe = observer.subscribe(() => undefined)
@@ -1158,7 +1191,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => data,
-      select: () => data,
+      select: optionalSelect(() => data),
     })
 
     const unsubscribe = observer.subscribe(() => undefined)
@@ -1169,7 +1202,7 @@ describe('queryObserver', () => {
       queryKey: key,
       queryFn: () => data,
       structuralSharing: false,
-      select: () => selectedData,
+      select: optionalSelect(() => selectedData),
     })
 
     await observer.refetch()
@@ -1190,25 +1223,25 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => data,
-      select: () => data,
+      select: optionalSelect(() => data),
     })
 
     observer.setOptions({
       queryKey: key,
       queryFn: () => data,
-      select: () => {
+      select: optionalSelect(() => {
         return selectedData1
-      },
-      placeholderData: placeholderData1,
+      }),
+      placeholderData: optionalPlaceholderData(placeholderData1),
     })
 
     observer.setOptions({
       queryKey: key,
       queryFn: () => data,
-      select: () => {
+      select: optionalSelect(() => {
         return selectedData2
-      },
-      placeholderData: placeholderData2,
+      }),
+      placeholderData: optionalPlaceholderData(placeholderData2),
       structuralSharing: false,
     })
     expect(observer.getCurrentResult().data).toBe(selectedData2)
@@ -1227,11 +1260,14 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key1,
       queryFn: () => data1,
-      placeholderData: (prev, prevQuery) => {
-        keys.push(prevQuery?.queryKey || null)
-        return prev
-      },
-      select: (data) => data.value,
+      placeholderData: [
+        placeholderData,
+        (prev, prevQuery) => {
+          keys.push(prevQuery?.queryKey || null)
+          return prev
+        },
+      ],
+      select: [selectData, (data) => data.value],
     })
 
     const unsubscribe = observer.subscribe((result) => {
@@ -1242,11 +1278,14 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key2,
       queryFn: () => data2,
-      placeholderData: (prev, prevQuery) => {
-        keys.push(prevQuery?.queryKey || null)
-        return prev
-      },
-      select: (data) => data.value,
+      placeholderData: [
+        placeholderData,
+        (prev, prevQuery) => {
+          keys.push(prevQuery?.queryKey || null)
+          return prev
+        },
+      ],
+      select: [selectData, (data) => data.value],
     })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
@@ -1292,11 +1331,14 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key1,
       queryFn: () => data1,
-      placeholderData: (prev) => prev,
-      select: (data) => {
-        selectCount++
-        return data.value
-      },
+      placeholderData: [placeholderData, (prev) => prev],
+      select: [
+        selectData,
+        (data) => {
+          selectCount++
+          return data.value
+        },
+      ],
     })
 
     const unsubscribe = observer.subscribe((result) => {
@@ -1307,11 +1349,14 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key2,
       queryFn: () => data2,
-      placeholderData: (prev) => prev,
-      select: (data) => {
-        selectCount++
-        return data.value
-      },
+      placeholderData: [placeholderData, (prev) => prev],
+      select: [
+        selectData,
+        (data) => {
+          selectCount++
+          return data.value
+        },
+      ],
     })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
@@ -1358,8 +1403,8 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key1,
       queryFn: () => data1,
-      placeholderData: (prev) => prev,
-      select: stableSelect,
+      placeholderData: [placeholderData, (prev) => prev],
+      select: optionalSelect(stableSelect),
     })
 
     const unsubscribe = observer.subscribe((result) => {
@@ -1370,8 +1415,8 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key2,
       queryFn: () => data2,
-      placeholderData: (prev) => prev,
-      select: stableSelect,
+      placeholderData: [placeholderData, (prev) => prev],
+      select: optionalSelect(stableSelect),
     })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
@@ -1413,15 +1458,15 @@ describe('queryObserver', () => {
     })
 
     const spy = vi.fn<(event: QueryCacheNotifyEvent) => void>()
-    const unsubscribe = queryClient.getQueryCache().subscribe(spy)
+    const unsubscribe = getQueryCache(queryClient).subscribe(spy)
     observer.setOptions({
       queryKey: key,
       queryFn: defaultQueryFn,
       enabled: false,
-      refetchInterval: 10,
+      refetchInterval: refetchIntervalOption(10),
     })
 
-    const query = queryClient.getQueryCache().find({ queryKey: key })
+    const query = findCachedQuery(getQueryCache(queryClient), { queryKey: key })
     expect(spy).toHaveBeenCalledTimes(1)
     expect(spy).toHaveBeenCalledWith({
       type: 'observerOptionsUpdated',
@@ -1447,7 +1492,7 @@ describe('queryObserver', () => {
 
   it('should not schedule timers for disabled observers', () => {
     const key = createKey()
-    queryClient.setQueryData(key, 'data', {
+    setQueryData(queryClient, key, 'data', {
       updatedAt: Date.now() - 20,
     })
 
@@ -1456,7 +1501,7 @@ describe('queryObserver', () => {
       queryFn: defaultQueryFn,
       enabled: false,
       staleTime: 10,
-      refetchInterval: 10,
+      refetchInterval: refetchIntervalOption(10),
     })
     const setTimeoutSpy = vi.spyOn(timeoutManager, 'setTimeout')
     const setIntervalSpy = vi.spyOn(timeoutManager, 'setInterval')
@@ -1473,13 +1518,13 @@ describe('queryObserver', () => {
 
     try {
       const key = createKey()
-      queryClient.setQueryData(key, 'data')
+      setQueryData(queryClient, key, 'data')
 
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn: defaultQueryFn,
         staleTime: 10,
-        refetchInterval: 10,
+        refetchInterval: refetchIntervalOption(10),
       })
       const setTimeoutSpy = vi.spyOn(timeoutManager, 'setTimeout')
       const setIntervalSpy = vi.spyOn(timeoutManager, 'setInterval')
@@ -1571,12 +1616,10 @@ describe('queryObserver', () => {
   it('should return true from shouldFetchOnWindowFocus when refetchOnWindowFocus is "always" even if the query is fresh', async () => {
     const key = createKey()
 
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'data'),
-      })
-      .catch(noop)
+    void fetchQueryData(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const observer = new QueryObserver(queryClient, {
@@ -1601,7 +1644,7 @@ describe('queryObserver', () => {
 
     expect(observer.shouldFetchOnWindowFocus()).toBe(true)
     expect(refetchOnWindowFocus).toHaveBeenCalledWith(
-      queryClient.getQueryCache().find({ queryKey: key }),
+      findCachedQuery(getQueryCache(queryClient), { queryKey: key }),
     )
   })
 
@@ -1617,7 +1660,7 @@ describe('queryObserver', () => {
 
     expect(observer.shouldFetchOnWindowFocus()).toBe(false)
     expect(refetchOnWindowFocus).toHaveBeenCalledWith(
-      queryClient.getQueryCache().find({ queryKey: key }),
+      findCachedQuery(getQueryCache(queryClient), { queryKey: key }),
     )
   })
 
@@ -1625,12 +1668,10 @@ describe('queryObserver', () => {
     const key = createKey()
     const refetchOnWindowFocus = vi.fn<() => 'always'>(() => 'always' as const)
 
-    void queryClient
-      .query({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'data'),
-      })
-      .catch(noop)
+    void fetchQueryData(queryClient, {
+      queryKey: key,
+      queryFn: () => sleep(10).then(() => 'data'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const observer = new QueryObserver(queryClient, {
@@ -1642,7 +1683,7 @@ describe('queryObserver', () => {
 
     expect(observer.shouldFetchOnWindowFocus()).toBe(true)
     expect(refetchOnWindowFocus).toHaveBeenCalledWith(
-      queryClient.getQueryCache().find({ queryKey: key }),
+      findCachedQuery(getQueryCache(queryClient), { queryKey: key }),
     )
   })
 
@@ -1653,7 +1694,7 @@ describe('queryObserver', () => {
       queryFn: () => 'data',
     })
 
-    const result = await observer.fetchOptimistic({
+    const result = await fetchOptimistic(queryClient, observer, {
       queryKey: key,
       queryFn: () => 'data',
     })
@@ -1673,19 +1714,21 @@ describe('queryObserver', () => {
       staleTime: Infinity,
     }
 
-    queryClient.setQueryData(key, 'data')
+    setQueryData(queryClient, key, 'data')
 
     const observer = new QueryObserver(queryClient, options)
     const unsubscribe = observer.subscribe(noop)
 
-    queryClient.removeQueries({ queryKey: key })
+    removeQueries(queryClient, { queryKey: key })
     // Broadcast can recreate the query without a queryFn before the observer updates.
-    queryClient.getQueryCache().build(queryClient, {
+    getQueryCache(queryClient).build(queryClient, {
       queryKey: key,
       retry: false,
     })
 
-    await expect(observer.fetchOptimistic(options)).rejects.toBe(error)
+    await expect(fetchOptimistic(queryClient, observer, options)).rejects.toBe(
+      error,
+    )
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     unsubscribe()
@@ -1701,14 +1744,14 @@ describe('queryObserver', () => {
       queryFn,
     })
 
-    const promise = observer.fetchOptimistic({
+    const promise = fetchOptimistic(queryClient, observer, {
       queryKey: key,
       queryFn,
     })
 
     await vi.advanceTimersByTimeAsync(10)
 
-    queryClient.setQueryData(key, 'cached')
+    setQueryData(queryClient, key, 'cached')
 
     const result = await promise
 
@@ -1718,10 +1761,10 @@ describe('queryObserver', () => {
       fetchStatus: 'fetching',
     })
 
-    expect(queryClient.getQueryState(key)?.fetchStatus).toBe('fetching')
+    expect(getQueryState(queryClient, key)?.fetchStatus).toBe('fetching')
     await vi.advanceTimersByTimeAsync(100)
-    expect(queryClient.getQueryData(key)).toBe('fetched')
-    expect(queryClient.getQueryState(key)?.fetchStatus).toBe('idle')
+    expect(getQueryData(queryClient, key)).toBe('fetched')
+    expect(getQueryState(queryClient, key)?.fetchStatus).toBe('idle')
   })
 
   it('should track error prop when throwOnError is true', async () => {
@@ -1808,7 +1851,7 @@ describe('queryObserver', () => {
     const unsubscribeFirst = firstObserver.subscribe(vi.fn())
     await vi.advanceTimersByTimeAsync(0)
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(queryClient.getQueryState(key)?.status).toBe('error')
+    expect(getQueryState(queryClient, key)?.status).toBe('error')
 
     unsubscribeFirst()
 
@@ -1831,7 +1874,7 @@ describe('queryObserver', () => {
   it('should not refetchOnMount when set to "always" when staleTime is Static', async () => {
     const key = createKey()
     const queryFn = vi.fn<() => string>(() => 'data')
-    queryClient.setQueryData(key, 'initial')
+    setQueryData(queryClient, key, 'initial')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -1969,7 +2012,7 @@ describe('queryObserver', () => {
       queryFn: () => 'data',
     })
 
-    const defaultedOptions = queryClient.defaultQueryOptions({
+    const defaultedOptions = defaultQueryOptions(queryClient, {
       queryKey: key,
       queryFn: () => 'data',
     })
@@ -1982,7 +2025,7 @@ describe('queryObserver', () => {
     const currentResult = observer.getCurrentResult()
 
     // Another component sets data (e.g., dependent query resolved)
-    queryClient.setQueryData(key, 'updated')
+    setQueryData(queryClient, key, 'updated')
 
     // Reading picks up the cache update without changing the committed result.
     const updatedResult = observer
@@ -2015,7 +2058,7 @@ describe('queryObserver', () => {
       await vi.advanceTimersByTimeAsync(5)
       const unsubscribe2 = observer.subscribe(vi.fn())
       await vi.advanceTimersByTimeAsync(40)
-      expect(queryClient.getQueryState(key)).toMatchObject({
+      expect(getQueryState(queryClient, key)).toMatchObject({
         status: 'success',
         data: 'data',
       })
@@ -2043,7 +2086,7 @@ describe('queryObserver', () => {
       await vi.advanceTimersByTimeAsync(5)
       const unsubscribe2 = observer.subscribe(vi.fn())
       await vi.advanceTimersByTimeAsync(50)
-      expect(queryClient.getQueryState(key)).toMatchObject({
+      expect(getQueryState(queryClient, key)).toMatchObject({
         status: 'success',
         data: 'data[object AbortSignal]',
       })
@@ -2057,12 +2100,14 @@ describe('queryObserver', () => {
   it('should keep a placeholder that select maps to undefined', async () => {
     const key = createKey()
     const options = (id: string) =>
-      queryClient.defaultQueryOptions({
+      defaultQueryOptions(queryClient, {
         queryKey: [...key, id],
         queryFn: () => [id],
         enabled: id !== '',
-        placeholderData: keepPreviousData,
-        select: (items: Array<string>) => items.find((item) => item === id),
+        placeholderData: optionalPlaceholderData(keepPreviousData),
+        select: optionalSelect((items: Array<string>) =>
+          items.find((item) => item === id),
+        ),
       })
     const observer = new QueryObserver(queryClient, options('a'))
     const unsubscribe = observer.subscribe(() => undefined)
@@ -2086,7 +2131,10 @@ describe('queryObserver', () => {
     }
 
     // A new placeholderData is not memoized, so its undefined means pending
-    observer.setOptions({ ...options(''), placeholderData: () => undefined })
+    observer.setOptions({
+      ...options(''),
+      placeholderData: optionalPlaceholderData(() => undefined),
+    })
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
       isPlaceholderData: false,

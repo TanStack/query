@@ -5,7 +5,6 @@ import type { QueryClient, QueryFunction, QueryKey, QueryMeta } from '..'
 function numberStream(): AsyncIterable<number> {
   return {} as AsyncIterable<number>
 }
-
 // `StreamedQueryParams` is a union, and `keyof` on a union is the intersection
 // of its members' keys, so each arm has to be pinned on its own.
 type Params = Parameters<typeof streamedQuery<number, string, ['stream']>>[0]

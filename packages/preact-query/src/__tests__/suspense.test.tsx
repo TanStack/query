@@ -1,8 +1,14 @@
+import { clearQueryClient } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/preact'
 import { Suspense } from 'preact/compat'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, QueryClientProvider, useSuspenseQuery } from '..'
+import {
+  QueryClient,
+  QueryClientProvider,
+  suspenseQueryOptions,
+  useQuery,
+} from '..'
 import type { StaleTime } from '@tanstack/query-core'
 import type { ComponentChildren } from 'preact'
 import type { QueryKey } from '..'
@@ -21,15 +27,17 @@ function createTestQuery(options: {
   staleTime?: StaleTime | (() => StaleTime)
 }) {
   return function TestComponent() {
-    const { data } = useSuspenseQuery({
-      queryKey: options.queryKey,
-      queryFn: () =>
-        sleep(10).then(() => {
-          options.fetchCount.count++
-          return 'data'
-        }),
-      staleTime: options.staleTime,
-    })
+    const { data } = useQuery(
+      suspenseQueryOptions({
+        queryKey: options.queryKey,
+        queryFn: () =>
+          sleep(10).then(() => {
+            options.fetchCount.count++
+            return 'data'
+          }),
+        staleTime: options.staleTime,
+      }),
+    )
     return <div>data: {data}</div>
   }
 }
@@ -51,7 +59,7 @@ describe('Suspense Timer Tests', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 

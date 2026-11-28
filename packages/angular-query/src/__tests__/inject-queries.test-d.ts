@@ -1,4 +1,5 @@
 import { computed } from '@angular/core'
+import { select } from '@tanstack/query-core'
 import { describe, expectTypeOf, it } from 'vitest'
 import { injectQueries, skipToken, toResource } from '..'
 import { queryOptions } from '../query-options'
@@ -170,13 +171,13 @@ describe('InjectQueries config object overload', () => {
     const query1 = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(1),
-      select: (data) => data > 1,
+      select: [select, (data) => data > 1],
     })
 
     const query2 = {
       queryKey: ['key'],
       queryFn: () => Promise.resolve(1),
-      select: (data: number) => data > 1,
+      select: [select, (data: number) => data > 1] as const,
     }
 
     const queryResults = injectQueries(() => ({ queries: [query1, query2] }))

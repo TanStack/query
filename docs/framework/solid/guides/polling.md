@@ -8,10 +8,12 @@ replace: { '@tanstack/react-query': '@tanstack/solid-query' }
 [//]: # 'Example1'
 
 ```tsx
+import { refetchInterval } from '@tanstack/solid-query'
+
 useQuery(() => ({
   queryKey: ['prices'],
   queryFn: fetchPrices,
-  refetchInterval: 5 * 1000, // every 5 seconds
+  refetchInterval: refetchInterval(5 * 1000), // every 5 seconds
 }))
 ```
 
@@ -19,14 +21,16 @@ useQuery(() => ({
 [//]: # 'Example2'
 
 ```tsx
+import { refetchInterval } from '@tanstack/solid-query'
+
 useQuery(() => ({
   queryKey: ['job', jobId],
   queryFn: () => fetchJobStatus(jobId),
-  refetchInterval: (query) => {
+  refetchInterval: refetchInterval((query) => {
     // Stop polling once the job finishes
     if (query.state.data?.status === 'complete') return false
     return 2 * 1000
-  },
+  }),
 }))
 ```
 
@@ -34,10 +38,12 @@ useQuery(() => ({
 [//]: # 'Example3'
 
 ```tsx
+import { refetchInterval } from '@tanstack/solid-query'
+
 useQuery(() => ({
   queryKey: ['portfolio'],
   queryFn: fetchPortfolio,
-  refetchInterval: 30 * 1000,
+  refetchInterval: refetchInterval(30 * 1000),
   refetchIntervalInBackground: true,
 }))
 ```
@@ -46,13 +52,15 @@ useQuery(() => ({
 [//]: # 'Example4'
 
 ```tsx
+import { refetchInterval } from '@tanstack/solid-query'
+
 useQuery(() => ({
   queryKey: ['prices', tokenAddress],
   queryFn: () => fetchPrice(tokenAddress),
-  refetchInterval: () => {
+  refetchInterval: refetchInterval(() => {
     if (!tokenAddress || isPaused) return false
     return 15 * 1000
-  },
+  }),
 }))
 ```
 
@@ -60,10 +68,12 @@ useQuery(() => ({
 [//]: # 'Example5'
 
 ```tsx
+import { refetchInterval } from '@tanstack/solid-query'
+
 useQuery(() => ({
   queryKey: ['chainStatus'],
   queryFn: fetchChainStatus,
-  refetchInterval: 10 * 1000,
+  refetchInterval: refetchInterval(10 * 1000),
   networkMode: 'always',
 }))
 ```

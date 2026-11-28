@@ -1,4 +1,4 @@
-import { noop, onlineManager } from '@tanstack/vue-query'
+import { getQueryData, query, noop, onlineManager } from '@tanstack/vue-query'
 import { createRouter, createWebHistory } from 'vue-router'
 import { queryClient } from './queryClient'
 import MovieDetailView from './routes/MovieDetailView.vue'
@@ -16,15 +16,16 @@ export const router = createRouter({
       beforeEnter: async (to) => {
         const { queryKey } = moviesQueries.detail(String(to.params.movieId))
         if (
-          !queryClient.getQueryData(queryKey) &&
+          !getQueryData(queryClient, queryKey) &&
           // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
           // we just let the MovieDetailView component handle it
           onlineManager.isOnline() &&
           !queryClient.isRestoring?.value
         ) {
-          await queryClient
-            .query(moviesQueries.detail(String(to.params.movieId)))
-            .catch(noop)
+          await query(
+            queryClient,
+            moviesQueries.detail(String(to.params.movieId)),
+          ).catch(noop)
         }
       },
     },

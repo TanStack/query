@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
+import {
+  isPending as queryIsPending,
+  isError as queryIsError,
+  isFetching as queryIsFetching,
+  useQuery,
+} from '@tanstack/vue-query'
 import { computed } from 'vue'
 import { authorsQueries } from './services/authors/queries'
 import { postsQueries } from './services/posts/queries'
@@ -8,12 +13,13 @@ const props = defineProps<{ postId: number }>()
 defineEmits<{ setPostId: [id: number] }>()
 
 const {
-  isPending,
-  isError,
-  isFetching,
+  state: queryState,
   data: post,
   error,
 } = useQuery(() => postsQueries.detail(props.postId))
+const isPending = computed(() => queryIsPending(queryState))
+const isError = computed(() => queryIsError(queryState))
+const isFetching = computed(() => queryIsFetching(queryState))
 
 const authorId = computed(() => post.value?.userId)
 

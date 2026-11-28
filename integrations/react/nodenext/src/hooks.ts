@@ -1,10 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, queryOptions } from '@tanstack/react-query'
 
 export function useMyHook() {
-  const query = useQuery({
-    queryKey: ['test'],
-    queryFn: () => 'hello',
-  })
+  const query = useQuery(
+    queryOptions({
+      queryKey: ['test'],
+      queryFn: () => 'hello',
+    }),
+  )
 
   return { data: query.data }
 }

@@ -1,4 +1,5 @@
 import { fireEvent, render } from '@solidjs/testing-library'
+import { clearQueryClient, getQueryCache, query } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { Show, createEffect, createRenderEffect, createSignal } from 'solid-js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -16,7 +17,7 @@ describe('useIsFetching', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -243,7 +244,7 @@ describe('useIsFetching', () => {
     const key1 = createKey()
     const key2 = createKey()
     const [client, setClient] = createSignal(queryClient1)
-    const queryCache1 = queryClient1.getQueryCache()
+    const queryCache1 = getQueryCache(queryClient1)
     const originalSubscribe1 = queryCache1.subscribe.bind(queryCache1)
     const unsubscribe1 = vi.fn<() => void>()
 
@@ -264,7 +265,7 @@ describe('useIsFetching', () => {
 
     const rendered = render(() => <Page />)
 
-    const firstQuery = queryClient1.query({
+    const firstQuery = query(queryClient1, {
       queryKey: key1,
       queryFn: () => sleep(20).then(() => 'test1'),
     })
@@ -275,7 +276,7 @@ describe('useIsFetching', () => {
     expect(unsubscribe1).toHaveBeenCalledTimes(1)
     expect(rendered.getByText('isFetching: 0')).toBeInTheDocument()
 
-    const secondQuery = queryClient2.query({
+    const secondQuery = query(queryClient2, {
       queryKey: key2,
       queryFn: () => sleep(20).then(() => 'test2'),
     })

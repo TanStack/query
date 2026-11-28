@@ -6,7 +6,9 @@ import type {
   QueryFunction,
   QueryKey,
   QueryObserverResult,
+  Select,
   dataTagErrorSymbol,
+  placeholderData,
 } from '@tanstack/query-core'
 import type {
   CreateQueryOptions,
@@ -23,7 +25,10 @@ type QueryObserverOptionsForCreateQueries<
   CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?: readonly [
+    typeof placeholderData,
+    TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>,
+  ]
 }
 
 type QueryError<T> = T extends {
@@ -59,7 +64,7 @@ type GetCreateQueryOptionsForCreateQueries<T> = T extends {
                   queryFn?:
                     | QueryFunction<infer TQueryFnData, infer TQueryKey>
                     | SkipTokenForCreateQueries
-                  select?: (data: any) => infer TData
+                  select?: Select<any, infer TData>
                 }
               ? QueryObserverOptionsForCreateQueries<
                   TQueryFnData,
@@ -108,7 +113,7 @@ type InferDataAndError<T> = T extends {
                   queryFn?:
                     | QueryFunction<infer TQueryFnData, any>
                     | SkipTokenForCreateQueries
-                  select?: (data: any) => infer TData
+                  select?: Select<any, infer TData>
                 }
               ? {
                   data: unknown extends TData ? TQueryFnData : TData

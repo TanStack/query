@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/preact-query'
+import { queryOptions, useQuery } from '@tanstack/preact-query'
 import { filmsQueries } from './services/films/queries'
 
 export default function Films() {
-  const { data, status } = useQuery(filmsQueries.list())
+  const { data, status } = useQuery(queryOptions(filmsQueries.list()))
 
   if (status === 'pending') {
     return <p>Loading...</p>

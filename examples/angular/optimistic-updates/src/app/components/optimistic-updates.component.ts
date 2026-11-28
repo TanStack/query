@@ -3,8 +3,12 @@ import { Component, inject } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import {
   QueryClient,
+  cancelQueries,
+  getQueryData,
   injectMutation,
   injectQuery,
+  invalidateQueries,
+  setQueryData,
 } from '@tanstack/angular-query'
 import { TasksMutations, TasksQueries } from '../services/tasks/queries'
 
@@ -60,25 +64,26 @@ export class OptimisticUpdatesComponent {
   addMutation = injectMutation(() => ({
     ...this.#tasksMutations.create(),
     onSuccess: () => {
-      this.#queryClient.invalidateQueries({
+      invalidateQueries(this.#queryClient, {
         queryKey: this.#tasksQueries.list().queryKey,
       })
     },
     onMutate: async ({ task }) => {
       // Cancel any outgoing refetches
       // (so they don't overwrite our optimistic update)
-      await this.#queryClient.cancelQueries({
+      await cancelQueries(this.#queryClient, {
         queryKey: this.#tasksQueries.list().queryKey,
       })
 
       // Snapshot the previous value
-      const previousTodos = this.#queryClient.getQueryData(
+      const previousTodos = getQueryData(
+        this.#queryClient,
         this.#tasksQueries.list().queryKey,
       )
 
       // Optimistically update to the new value
       if (previousTodos) {
-        this.#queryClient.setQueryData(this.#tasksQueries.list().queryKey, [
+        setQueryData(this.#queryClient, this.#tasksQueries.list().queryKey, [
           ...previousTodos,
           task,
         ])
@@ -88,7 +93,8 @@ export class OptimisticUpdatesComponent {
     },
     onError: (_err, _variables, onMutateResult) => {
       if (onMutateResult) {
-        this.#queryClient.setQueryData(
+        setQueryData(
+          this.#queryClient,
           this.#tasksQueries.list().queryKey,
           onMutateResult,
         )
@@ -96,7 +102,7 @@ export class OptimisticUpdatesComponent {
     },
     // Always refetch after error or success:
     onSettled: () => {
-      this.#queryClient.invalidateQueries({
+      invalidateQueries(this.#queryClient, {
         queryKey: this.#tasksQueries.list().queryKey,
       })
     },

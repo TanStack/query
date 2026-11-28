@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, clearQueryClient } from '@tanstack/query-core'
 import { LitElement } from 'lit'
 import {
   afterEach,
@@ -57,7 +57,7 @@ describe('BaseController', () => {
 
   afterEach(() => {
     container.remove()
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 

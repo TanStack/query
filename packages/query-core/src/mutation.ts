@@ -1,4 +1,6 @@
+import { getMutationCache } from './mutationCache'
 import { notifyManager } from './notifyManager'
+import { defaultMutationOptions } from './queryClient'
 import { Removable } from './removable'
 import { createRetryer } from './retryer'
 import type { MutationCache } from './mutationCache'
@@ -13,8 +15,6 @@ import type {
   MutationStatus,
 } from './types'
 
-// TYPES
-
 interface MutationConfig<TData, TError, TVariables, TOnMutateResult> {
   client: QueryClient
   mutationId: number
@@ -22,100 +22,6 @@ interface MutationConfig<TData, TError, TVariables, TOnMutateResult> {
   options: MutationOptions<TData, TError, TVariables, TOnMutateResult>
   state?: MutationState<TData, TError, TVariables, TOnMutateResult>
 }
-
-/**
- * The raw state stored on a `Mutation` instance. This is the underlying state
- * that observer results (e.g. `MutationObserverResult`) are derived from.
- */
-export interface MutationState<
-  TData = unknown,
-  TError = DefaultError,
-  TVariables = unknown,
-  TOnMutateResult = unknown,
-> {
-  /**
-   * The value returned by `onMutate`, if defined. Passed to `onSuccess`,
-   * `onError` and `onSettled` as the mutation's context.
-   */
-  context: TOnMutateResult | undefined
-  /**
-   * The last successfully resolved data for the mutation.
-   */
-  data: TData | undefined
-  /**
-   * The error object for the mutation, if the last attempt resulted in an error.
-   * - Defaults to `null`.
-   */
-  error: TError | null
-  /**
-   * The number of times the mutation function has failed for the current attempt.
-   */
-  failureCount: number
-  /**
-   * The reason the current attempt failed, as reported by the retryer.
-   */
-  failureReason: TError | null
-  /**
-   * Whether the mutation is currently paused (see network mode), or is
-   * waiting for another mutation with the same `scope` to finish.
-   */
-  isPaused: boolean
-  /**
-   * The status of the mutation.
-   */
-  status: MutationStatus
-  /**
-   * The variables the mutation was last called with.
-   */
-  variables: TVariables | undefined
-  /**
-   * The timestamp for when the mutation was submitted.
-   */
-  submittedAt: number
-}
-
-interface FailedAction<TError> {
-  type: 'failed'
-  failureCount: number
-  error: TError | null
-}
-
-interface PendingAction<TVariables, TOnMutateResult> {
-  type: 'pending'
-  isPaused: boolean
-  variables?: TVariables
-  context?: TOnMutateResult
-}
-
-interface SuccessAction<TData> {
-  type: 'success'
-  data: TData
-}
-
-interface ErrorAction<TError> {
-  type: 'error'
-  error: TError
-}
-
-interface PauseAction {
-  type: 'pause'
-}
-
-interface ContinueAction {
-  type: 'continue'
-}
-
-/**
- * The actions a mutation dispatches to update its state, e.g. when it starts, fails, pauses, or
- * succeeds.
- */
-export type Action<TData, TError, TVariables, TOnMutateResult> =
-  | ContinueAction
-  | ErrorAction<TError>
-  | FailedAction<TError>
-  | PendingAction<TVariables, TOnMutateResult>
-  | PauseAction
-  | SuccessAction<TData>
 
 // CLASS
 
@@ -130,7 +36,7 @@ export type Action<TData, TError, TVariables, TOnMutateResult> =
  * is possible via `mutationCache.find()`/`getAll()` for inspecting cache state.
  * @example
  * ```ts
- * const mutationCache = queryClient.getMutationCache()
+ * const mutationCache = getMutationCache(queryClient)
  *
  * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
  * ```
@@ -164,14 +70,14 @@ export class Mutation<
     options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
     state?: MutationState<TData, TError, TVariables, TOnMutateResult>,
   ): Mutation<TData, TError, TVariables, TOnMutateResult> {
-    const cache = client.getMutationCache()
+    const cache = getMutationCache(client)
     return cache.register(
       (mutationId) =>
         new Mutation({
           client,
           mutationCache: cache,
           mutationId,
-          options: client.defaultMutationOptions(options),
+          options: defaultMutationOptions(client, options),
           state,
         }),
     )
@@ -188,7 +94,8 @@ export class Mutation<
     this.#observers = []
     this.state = config.state || getDefaultState()
 
-    this.setOptions(config.options)
+    this.options = config.options
+    this.updateGcTime(config.options.gcTime)
     this.scheduleGc()
   }
 
@@ -200,9 +107,10 @@ export class Mutation<
   setOptions(
     options: MutationOptions<TData, TError, TVariables, TOnMutateResult>,
   ): void {
-    this.options = options
-
-    this.updateGcTime(this.options.gcTime)
+    // An observer may change options while its previous mutation is still queued.
+    const scope = this.options.scope
+    this.options = options.scope === scope ? options : { ...options, scope }
+    this.updateGcTime(options.gcTime)
   }
 
   /**
@@ -280,7 +188,7 @@ export class Mutation<
    * @see {@link Mutation#execute}
    * @example
    * ```ts
-   * // typically driven by reconnect handling, e.g. queryClient.resumePausedMutations()
+   * // typically driven by reconnect handling, e.g. resumePausedMutations()
    * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
    * await mutation?.continue()
    * ```
@@ -586,3 +494,97 @@ export function getDefaultState<
     submittedAt: 0,
   }
 }
+
+/**
+ * The raw state stored on a `Mutation` instance. This is the underlying state
+ * that observer results (e.g. `MutationObserverResult`) are derived from.
+ */
+export interface MutationState<
+  TData = unknown,
+  TError = DefaultError,
+  TVariables = unknown,
+  TOnMutateResult = unknown,
+> {
+  /**
+   * The value returned by `onMutate`, if defined. Passed to `onSuccess`,
+   * `onError` and `onSettled` as the mutation's context.
+   */
+  context: TOnMutateResult | undefined
+  /**
+   * The last successfully resolved data for the mutation.
+   */
+  data: TData | undefined
+  /**
+   * The error object for the mutation, if the last attempt resulted in an error.
+   * - Defaults to `null`.
+   */
+  error: TError | null
+  /**
+   * The number of times the mutation function has failed for the current attempt.
+   */
+  failureCount: number
+  /**
+   * The reason the current attempt failed, as reported by the retryer.
+   */
+  failureReason: TError | null
+  /**
+   * Whether the mutation is currently paused (see network mode), or is
+   * waiting for another mutation with the same `scope` to finish.
+   */
+  isPaused: boolean
+  /**
+   * The status of the mutation.
+   */
+  status: MutationStatus
+  /**
+   * The variables the mutation was last called with.
+   */
+  variables: TVariables | undefined
+  /**
+   * The timestamp for when the mutation was submitted.
+   */
+  submittedAt: number
+}
+
+interface FailedAction<TError> {
+  type: 'failed'
+  failureCount: number
+  error: TError | null
+}
+
+interface PendingAction<TVariables, TOnMutateResult> {
+  type: 'pending'
+  isPaused: boolean
+  variables?: TVariables
+  context?: TOnMutateResult
+}
+
+interface SuccessAction<TData> {
+  type: 'success'
+  data: TData
+}
+
+interface ErrorAction<TError> {
+  type: 'error'
+  error: TError
+}
+
+interface PauseAction {
+  type: 'pause'
+}
+
+interface ContinueAction {
+  type: 'continue'
+}
+
+/**
+ * The actions a mutation dispatches to update its state, e.g. when it starts, fails, pauses, or
+ * succeeds.
+ */
+export type Action<TData, TError, TVariables, TOnMutateResult> =
+  | ContinueAction
+  | ErrorAction<TError>
+  | FailedAction<TError>
+  | PendingAction<TVariables, TOnMutateResult>
+  | PauseAction
+  | SuccessAction<TData>

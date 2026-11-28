@@ -1,14 +1,15 @@
 'use client'
-import { QueriesObserver, noop, notifyManager } from '@tanstack/query-core'
+import {
+  QueriesObserver,
+  defaultQueryOptions,
+  getQueryCache,
+} from '@tanstack/query-core'
 import * as React from 'react'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
-import {
-  ensurePreventErrorBoundaryRetry,
-  getHasError,
-  useClearResetErrorBoundary,
-} from './errorBoundaryUtils'
+import { getHasError, prepareErrorBoundary } from './errorBoundaryUtils'
+import { useObserverSnapshot } from './useObserverSnapshot'
 import type {
   DefaultError,
   OmitKeyof,
@@ -18,11 +19,14 @@ import type {
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
-  ThrowOnError,
+  Select,
+  placeholderData,
 } from '@tanstack/query-core'
 import type { suspenseQueriesPolicy } from './suspense'
 import type {
   DefinedUseQueryResult,
+  GroupThrowOnError,
+  TaggedQueryError,
   UseQueryOptions,
   UseQueryResult,
 } from './types'
@@ -36,9 +40,19 @@ type UseQueryOptionsForUseQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData' | 'subscribed'
+  'placeholderData' | 'subscribed' | 'throwOnError'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  throwOnError?: QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey
+  >['throwOnError']
+  placeholderData?: readonly [
+    typeof placeholderData,
+    TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>,
+  ]
 }
 
 // Avoid TS depth-limit error in case of large array literal
@@ -71,12 +85,15 @@ type GetUseQueryOptionsForUseQueries<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    select?: Select<any, infer TData>
+                    throwOnError?: GroupThrowOnError<infer TError>
                   }
                 ? UseQueryOptionsForUseQueries<
                     TQueryFnData,
-                    unknown extends TError ? DefaultError : TError,
+                    TaggedQueryError<
+                      T,
+                      unknown extends TError ? DefaultError : TError
+                    >,
                     unknown extends TData ? TQueryFnData : TData,
                     TQueryKey
                   >
@@ -120,13 +137,16 @@ type GetUseQueryResult<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    select?: Select<any, infer TData>
+                    throwOnError?: GroupThrowOnError<infer TError>
                   }
                 ? GetDefinedOrUndefinedQueryResult<
                     T,
                     unknown extends TData ? TQueryFnData : TData,
-                    unknown extends TError ? DefaultError : TError
+                    TaggedQueryError<
+                      T,
+                      unknown extends TError ? DefaultError : TError
+                    >
                   >
                 : // Fallback
                   UseQueryResult
@@ -287,8 +307,8 @@ type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
  *   return (
  *     <ul>
  *       {postQueries.map((query, index) => {
- *         if (query.isPending) return <li key={ids[index]}>Loading...</li>
- *         if (query.isError) return <li key={ids[index]}>Error: {query.error.message}</li>
+ *         if (query.status === 'pending') return <li key={ids[index]}>Loading...</li>
+ *         if (query.status === 'error') return <li key={ids[index]}>Error: {query.error.message}</li>
  *         return <li key={ids[index]}>{query.data.title}</li>
  *       })}
  *     </ul>
@@ -309,8 +329,8 @@ type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
  *     combine: (postQueries) => {
  *       return {
  *         data: postQueries.map((query) => query.data),
- *         isPending: postQueries.some((query) => query.isPending),
- *         isError: postQueries.some((query) => query.isError),
+ *         isPending: postQueries.some((query) => query.status === 'pending'),
+ *         isError: postQueries.some((query) => query.status === 'error'),
  *       }
  *     },
  *   })
@@ -332,7 +352,7 @@ type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
  * `select` inline still falls back to `unknown` — wrap the spread in `queryOptions` again so the override is
  * resolved before it reaches `useQueries`:
  * ```tsx
- * import { queryOptions, useQueries } from '@tanstack/react-query'
+ * import { queryOptions, select, useQueries } from '@tanstack/react-query'
  *
  * const postOptions = (id: number) =>
  *   queryOptions({
@@ -346,7 +366,7 @@ type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
  *       {
  *         ...postOptions(id),
  *         // ❌ `data` is `unknown` here
- *         select: (data) => data.title,
+ *         select: [select, (data) => data.title],
  *       },
  *     ],
  *   })
@@ -356,7 +376,7 @@ type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
  *       queryOptions({
  *         ...postOptions(id),
  *         // ✅ `data` is `Post`
- *         select: (data) => data.title,
+ *         select: [select, (data) => data.title],
  *       }),
  *     ],
  *   })
@@ -400,7 +420,7 @@ export function useBaseQueries<
   const defaultedQueries = React.useMemo(
     () =>
       queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions({
+        const defaultedOptions = defaultQueryOptions(client, {
           ...opts,
           suspense: !!suspense,
         } as QueryObserverOptions)
@@ -418,12 +438,12 @@ export function useBaseQueries<
   )
 
   defaultedQueries.forEach((queryOptions) => {
-    suspense?.prepare(queryOptions)
-    const query = client.getQueryCache().get(queryOptions.queryHash)
-    ensurePreventErrorBoundaryRetry(queryOptions, errorResetBoundary, query)
+    const query = getQueryCache(client).get(queryOptions.queryHash)
+    suspense?.prepare?.(queryOptions)
+    prepareErrorBoundary(queryOptions, errorResetBoundary, query)
   })
 
-  useClearResetErrorBoundary(errorResetBoundary)
+  React.useEffect(() => errorResetBoundary.clearReset(), [errorResetBoundary])
 
   const [observer] = React.useState(
     () =>
@@ -440,42 +460,23 @@ export function useBaseQueries<
   )
   suspense?.readQueries(defaultedQueries, reader, client, errorResetBoundary)
 
-  // Commit the combine cache before subscription can start a fetch.
-  React.useEffect(() => {
-    reader.commit()
-  }, [reader])
-
-  const shouldSubscribe = !isRestoring && subscribed
-  const results = React.useSyncExternalStore(
-    React.useCallback(
-      (onStoreChange) => {
-        const unsubscribe = shouldSubscribe
-          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
-          : noop
-
-        // Include cache updates that occurred before subscription.
-        observer
-          .getObservers()
-          .forEach((queryObserver) => queryObserver.updateResult())
-        return unsubscribe
-      },
-      [observer, shouldSubscribe],
-    ),
-    reader.getSnapshot,
-    reader.getSnapshot,
+  const results = useObserverSnapshot(
+    observer,
+    reader,
+    !isRestoring && subscribed,
+    refreshQueries,
   )
 
   const firstErrorResult = results.find((result, index) => {
     const query = defaultedQueries[index]
     return (
       query &&
-      getHasError({
+      getHasError(
         result,
+        query,
+        getQueryCache(client).get(query.queryHash),
         errorResetBoundary,
-        throwOnError: query.throwOnError,
-        query: client.getQueryCache().get(query.queryHash),
-        suspense: query.suspense,
-      })
+      )
     )
   })
 
@@ -484,4 +485,14 @@ export function useBaseQueries<
   }
 
   return reader.combineResult(results)
+}
+
+/**
+ * Refreshes each query after the group subscribes.
+ * @param observer - The observer that was subscribed.
+ */
+function refreshQueries(observer: Pick<QueriesObserver, 'getObservers'>): void {
+  observer
+    .getObservers()
+    .forEach((queryObserver) => queryObserver.updateResult())
 }

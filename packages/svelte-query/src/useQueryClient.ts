@@ -16,7 +16,7 @@ import type { QueryClient } from '@tanstack/query-core'
  *   const queryClient = useQueryClient()
  *
  *   function refreshPosts() {
- *     queryClient.invalidateQueries({ queryKey: ['posts'] })
+ *     invalidateQueries(queryClient, { queryKey: ['posts'] })
  *   }
  * </script>
  * ```

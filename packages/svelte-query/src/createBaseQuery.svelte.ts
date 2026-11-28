@@ -1,3 +1,4 @@
+import { defaultQueryOptions } from '@tanstack/query-core'
 import { onDestroy } from 'svelte'
 import { createRawRef } from './containers.svelte.js'
 import { useIsRestoring } from './useIsRestoring.js'
@@ -35,7 +36,7 @@ export function createBaseQuery<
   const isRestoring = useIsRestoring()
 
   const resolvedOptions = $derived.by(() => {
-    const opts = client.defaultQueryOptions(options())
+    const opts = defaultQueryOptions(client, options())
     opts._optimisticResults = isRestoring.current ? 'isRestoring' : 'optimistic'
     return opts
   })

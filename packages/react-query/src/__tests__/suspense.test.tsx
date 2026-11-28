@@ -1,9 +1,18 @@
-import { QueryObserver } from '@tanstack/query-core'
+import {
+  QueryObserver,
+  clearQueryClient,
+  defaultQueryOptions,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act } from '@testing-library/react'
 import { Suspense } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, QueryClientProvider, useSuspenseQuery } from '..'
+import {
+  QueryClient,
+  QueryClientProvider,
+  suspenseQueryOptions,
+  useQuery,
+} from '..'
 import { getSuspensePromise } from '../suspense'
 import { renderWithSuspense } from './utils'
 import type { StaleTime } from '@tanstack/query-core'
@@ -15,15 +24,17 @@ function createTestQuery(options: {
   staleTime?: StaleTime | (() => StaleTime)
 }) {
   return function TestComponent() {
-    const { data } = useSuspenseQuery({
-      queryKey: options.queryKey,
-      queryFn: () =>
-        sleep(10).then(() => {
-          options.fetchCount.count++
-          return 'data'
-        }),
-      staleTime: options.staleTime,
-    })
+    const { data } = useQuery(
+      suspenseQueryOptions({
+        queryKey: options.queryKey,
+        queryFn: () =>
+          sleep(10).then(() => {
+            options.fetchCount.count++
+            return 'data'
+          }),
+        staleTime: options.staleTime,
+      }),
+    )
     return <div>data: {data}</div>
   }
 }
@@ -45,13 +56,13 @@ describe('Suspense Timer Tests', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
   it('should reuse the suspense promise while a query is pending', async () => {
     const key = createKey()
-    const options = queryClient.defaultQueryOptions({
+    const options = defaultQueryOptions(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
       suspense: true,
@@ -64,12 +75,14 @@ describe('Suspense Timer Tests', () => {
     }
 
     const firstPromise = getSuspensePromise(
+      queryClient,
       options,
       observer,
       errorResetBoundary,
       observer.getCurrentQuery(),
     )
     const secondPromise = getSuspensePromise(
+      queryClient,
       options,
       observer,
       errorResetBoundary,
@@ -84,7 +97,7 @@ describe('Suspense Timer Tests', () => {
 
   it('should create a new suspense promise when fetching again after it settles', async () => {
     const key = createKey()
-    const options = queryClient.defaultQueryOptions({
+    const options = defaultQueryOptions(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
       suspense: true,
@@ -97,6 +110,7 @@ describe('Suspense Timer Tests', () => {
     }
 
     const firstPromise = getSuspensePromise(
+      queryClient,
       options,
       observer,
       errorResetBoundary,
@@ -107,6 +121,7 @@ describe('Suspense Timer Tests', () => {
     await firstPromise
 
     const secondPromise = getSuspensePromise(
+      queryClient,
       options,
       observer,
       errorResetBoundary,

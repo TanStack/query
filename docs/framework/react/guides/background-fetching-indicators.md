@@ -3,32 +3,29 @@ id: background-fetching-indicators
 title: Background Fetching Indicators
 ---
 
-A query's `status === 'pending'` state is sufficient enough to show the initial hard-loading state for a query, but sometimes you may want to display an additional indicator that a query is refetching in the background. To do this, queries also supply you with an `isFetching` boolean that you can use to show that it's in a fetching state, regardless of the state of the `status` variable:
+A query's `status === 'pending'` state is sufficient enough to show the initial hard-loading state for a query, but sometimes you may want to display an additional indicator that a query is refetching in the background. To do this, call `isFetching(result)` to check whether a fetch is in progress, regardless of the state of the `status` variable:
 
 [//]: # 'Example'
 
 ```tsx
 function Todos() {
-  const {
-    status,
-    data: todos,
-    error,
-    isFetching,
-  } = useQuery({
-    queryKey: ['todos'],
-    queryFn: fetchTodos,
-  })
+  const queryResult = useQuery(
+    queryOptions({
+      queryKey: ['todos'],
+      queryFn: fetchTodos,
+    }),
+  )
 
-  return status === 'pending' ? (
+  return queryResult.status === 'pending' ? (
     <span>Loading...</span>
-  ) : status === 'error' ? (
-    <span>Error: {error.message}</span>
+  ) : queryResult.status === 'error' ? (
+    <span>Error: {queryResult.error.message}</span>
   ) : (
     <>
-      {isFetching ? <div>Refreshing...</div> : null}
+      {isFetching(queryResult) ? <div>Refreshing...</div> : null}
 
       <div>
-        {todos.map((todo) => (
+        {queryResult.data.map((todo) => (
           <Todo todo={todo} />
         ))}
       </div>

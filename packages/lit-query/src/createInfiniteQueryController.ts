@@ -1,4 +1,7 @@
-import { InfiniteQueryObserver } from '@tanstack/query-core'
+import {
+  InfiniteQueryObserver,
+  defaultQueryOptions,
+} from '@tanstack/query-core'
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
@@ -74,21 +77,12 @@ function createPendingInfiniteQueryResult<
     errorUpdatedAt: 0,
     failureCount: 0,
     failureReason: null,
+    dataUpdateCount: 0,
     errorUpdateCount: 0,
-    isError: false,
-    isFetched: false,
     isFetchedAfterMount: false,
-    isFetching: false,
-    isLoading: false,
-    isLoadingError: false,
-    isPaused: false,
-    isPending: true,
     isPlaceholderData: false,
-    isRefetchError: false,
-    isRefetching: false,
     isStale: true,
     isEnabled: true,
-    isSuccess: false,
     fetchStatus: 'idle',
     status: 'pending',
     refetch: (() =>
@@ -103,12 +97,9 @@ function createPendingInfiniteQueryResult<
       Promise.reject(
         createMissingQueryClientError(),
       )) as InfiniteQueryObserverResult<TData, TError>['fetchPreviousPage'],
+    fetchDirection: undefined,
     hasNextPage: false,
     hasPreviousPage: false,
-    isFetchNextPageError: false,
-    isFetchingNextPage: false,
-    isFetchPreviousPageError: false,
-    isFetchingPreviousPage: false,
   } as unknown as InfiniteQueryObserverResult<TData, TError>
 }
 
@@ -340,7 +331,8 @@ class InfiniteQueryController<
       throw createMissingQueryClientError()
     }
 
-    const defaulted = client.defaultQueryOptions(
+    const defaulted = defaultQueryOptions(
+      client,
       readAccessor(this.options),
     ) as DefaultedInfiniteQueryObserverOptions<
       TQueryFnData,

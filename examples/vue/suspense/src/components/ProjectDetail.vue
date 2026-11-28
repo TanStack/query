@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
+import { isFetching as queryIsFetching, useQuery } from '@tanstack/vue-query'
+import { computed } from 'vue'
 import { projectsQueries } from '../services/projects/queries'
 import BaseButton from './BaseButton.vue'
 import BaseSpinner from './BaseSpinner.vue'
@@ -7,10 +8,15 @@ import BaseSpinner from './BaseSpinner.vue'
 const props = defineProps<{ activeProject: string }>()
 defineEmits<{ setActiveProject: [project: string | null] }>()
 
-const { data, isFetching, suspense } = useQuery(() => ({
+const {
+  state: queryState,
+  data,
+  suspense,
+} = useQuery(() => ({
   ...projectsQueries.detail(props.activeProject),
   throwOnError: true,
 }))
+const isFetching = computed(() => queryIsFetching(queryState))
 
 await suspense()
 </script>

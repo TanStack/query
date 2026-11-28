@@ -1,5 +1,10 @@
 import { Temporal } from '@js-temporal/polyfill'
-import { HydrationBoundary, dehydrate, noop } from '@tanstack/react-query'
+import {
+  HydrationBoundary,
+  dehydrate,
+  noop,
+  query,
+} from '@tanstack/react-query'
 import { headers } from 'next/headers'
 import React from 'react'
 import { queryExampleAction } from './_action'
@@ -9,24 +14,22 @@ import { makeQueryClient } from './make-query-client'
 export default function Home() {
   const queryClient = makeQueryClient()
 
-  queryClient
-    .query({
-      queryKey: ['data'],
-      queryFn: async () => {
-        const { count } = await (
-          await fetch('http://localhost:3000/count', {
-            headers: await headers(),
-          })
-        ).json()
+  query(queryClient, {
+    queryKey: ['data'],
+    queryFn: async () => {
+      const { count } = await (
+        await fetch('http://localhost:3000/count', {
+          headers: await headers(),
+        })
+      ).json()
 
-        return {
-          text: 'data from server',
-          date: Temporal.PlainDate.from('2024-01-01'),
-          count,
-        }
-      },
-    })
-    .catch(noop)
+      return {
+        text: 'data from server',
+        date: Temporal.PlainDate.from('2024-01-01'),
+        count,
+      }
+    },
+  }).catch(noop)
 
   const state = dehydrate(queryClient)
 

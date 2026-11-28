@@ -1,4 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  invalidateQueries,
+  isFetching,
+  queryOptions,
+  refetchInterval,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import React from 'react'
 import { todosMutations, todosQueries } from '../services/todos/queries'
@@ -8,22 +16,26 @@ export default function Example() {
   const [intervalMs, setIntervalMs] = React.useState(1000)
   const [value, setValue] = React.useState('')
 
-  const { status, data, error, isFetching } = useQuery({
-    ...todosQueries.list(),
-    // Refetch the data every second
-    refetchInterval: intervalMs,
-  })
+  const queryResult = useQuery(
+    queryOptions({
+      ...todosQueries.list(),
+      // Refetch the data every second
+      refetchInterval: refetchInterval(intervalMs),
+    }),
+  )
+  const { status, data, error } = queryResult
+  const fetching = isFetching(queryResult)
 
   const addMutation = useMutation({
     ...todosMutations.create(),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
+      invalidateQueries(queryClient, { queryKey: todosQueries.all() }),
   })
 
   const clearMutation = useMutation({
     ...todosMutations.deleteAll(),
     onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueries.all() }),
+      invalidateQueries(queryClient, { queryKey: todosQueries.all() }),
   })
 
   if (status === 'pending') return <h1>Loading...</h1>
@@ -51,8 +63,8 @@ export default function Example() {
             marginLeft: '.5rem',
             width: 10,
             height: 10,
-            background: isFetching ? 'green' : 'transparent',
-            transition: !isFetching ? 'all .3s ease' : 'none',
+            background: fetching ? 'green' : 'transparent',
+            transition: !fetching ? 'all .3s ease' : 'none',
             borderRadius: '100%',
             transform: 'scale(2)',
           }}

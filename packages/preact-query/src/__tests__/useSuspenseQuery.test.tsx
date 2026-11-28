@@ -1,4 +1,22 @@
-import { createKey, sleep } from '@tanstack/query-test-utils'
+import * as queryPredicates from '@tanstack/query-core'
+import {
+  clearQueryClient,
+  findCachedQuery,
+  getQueryCache,
+  getQueryData,
+  getQueryObserverCount,
+  placeholderData,
+  query,
+  refetchInterval,
+  resetQueries,
+  select,
+  setQueryData,
+} from '@tanstack/query-core'
+import {
+  createKey,
+  createQueryResultSnapshot,
+  sleep,
+} from '@tanstack/query-test-utils'
 import { act, fireEvent } from '@testing-library/preact'
 import { Suspense } from 'preact/compat'
 import { useReducer, useState } from 'preact/hooks'
@@ -9,9 +27,10 @@ import {
   QueryErrorResetBoundary,
   skipToken,
   streamedQuery,
+  suspenseInfiniteQueryOptions,
+  suspenseQueryOptions,
+  useQuery,
   useQueryErrorResetBoundary,
-  useSuspenseInfiniteQuery,
-  useSuspenseQuery,
 } from '..'
 import { ErrorBoundary } from './ErrorBoundary'
 import { renderWithClient } from './utils'
@@ -20,6 +39,8 @@ import type {
   UseSuspenseInfiniteQueryResult,
   UseSuspenseQueryResult,
 } from '..'
+
+const snapshot = createQueryResultSnapshot(queryPredicates)
 
 describe('useSuspenseQuery', () => {
   let queryCache: QueryCache
@@ -32,7 +53,7 @@ describe('useSuspenseQuery', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -50,17 +71,23 @@ describe('useSuspenseQuery', () => {
     const states: Array<UseSuspenseQueryResult<{ id: number; text: string }>> =
       []
 
-    queryClient.setQueryData([...key, 'list'], [{ id: 1, text: 'preview' }])
+    setQueryData(queryClient, [...key, 'list'], [{ id: 1, text: 'preview' }])
 
     function Page() {
-      const state = useSuspenseQuery({
-        queryKey: [...key, 'detail', 1],
-        queryFn,
-        placeholderData: () =>
-          queryClient
-            .getQueryData<Array<{ id: number; text: string }>>([...key, 'list'])
-            ?.find((item) => item.id === 1),
-      })
+      const state = useQuery(
+        suspenseQueryOptions({
+          queryKey: [...key, 'detail', 1],
+          queryFn,
+          placeholderData: [
+            placeholderData,
+            () =>
+              getQueryData<Array<{ id: number; text: string }>>(queryClient, [
+                ...key,
+                'list',
+              ])?.find((item) => item.id === 1),
+          ],
+        }),
+      )
 
       states.push(state)
       return <div>data: {state.data.text}</div>
@@ -76,7 +103,7 @@ describe('useSuspenseQuery', () => {
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
     expect(rendered.getByText('data: preview')).toBeInTheDocument()
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(states.at(-1)).toMatchObject({
+    expect(snapshot(states.at(-1))).toMatchObject({
       isPlaceholderData: true,
       isFetching: true,
       status: 'success',
@@ -87,7 +114,7 @@ describe('useSuspenseQuery', () => {
     })
 
     expect(rendered.getByText('data: full')).toBeInTheDocument()
-    expect(states.at(-1)).toMatchObject({
+    expect(snapshot(states.at(-1))).toMatchObject({
       isPlaceholderData: false,
       isFetching: false,
       status: 'success',
@@ -120,10 +147,12 @@ describe('useSuspenseQuery', () => {
 
     function Page({ stateKey }: { stateKey: Array<string> }) {
       renders++
-      const state = useSuspenseQuery({
-        queryKey: stateKey,
-        queryFn: () => sleep(10).then(() => ++count),
-      })
+      const state = useQuery(
+        suspenseQueryOptions({
+          queryKey: stateKey,
+          queryFn: () => sleep(10).then(() => ++count),
+        }),
+      )
 
       states.push(state)
 
@@ -157,13 +186,15 @@ describe('useSuspenseQuery', () => {
       []
 
     function Page({ multiplier }: { multiplier: number }) {
-      const state = useSuspenseInfiniteQuery({
-        queryKey: [`${key}_${multiplier}`],
-        queryFn: ({ pageParam }) =>
-          sleep(10).then(() => pageParam * multiplier),
-        initialPageParam: 1,
-        getNextPageParam: (lastPage) => lastPage + 1,
-      })
+      const state = useQuery(
+        suspenseInfiniteQueryOptions({
+          queryKey: [`${key}_${multiplier}`],
+          queryFn: ({ pageParam }) =>
+            sleep(10).then(() => pageParam * multiplier),
+          initialPageParam: 1,
+          getNextPageParam: (lastPage) => lastPage + 1,
+        }),
+      )
 
       states.push(state)
 
@@ -215,7 +246,7 @@ describe('useSuspenseQuery', () => {
     )
 
     function Page() {
-      useSuspenseQuery({ queryKey: [key], queryFn })
+      useQuery(suspenseQueryOptions({ queryKey: [key], queryFn }))
 
       return <>rendered</>
     }
@@ -238,10 +269,12 @@ describe('useSuspenseQuery', () => {
     const key = createKey()
 
     function Page() {
-      useSuspenseQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => 'data'),
-      })
+      useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => 'data'),
+        }),
+      )
 
       return <>rendered</>
     }
@@ -264,7 +297,7 @@ describe('useSuspenseQuery', () => {
 
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
-    expect(queryCache.find({ queryKey: key })).toBeUndefined()
+    expect(findCachedQuery(queryCache, { queryKey: key })).toBeUndefined()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     expect(rendered.getByText('loading')).toBeInTheDocument()
@@ -273,7 +306,9 @@ describe('useSuspenseQuery', () => {
     })
     expect(rendered.getByText('rendered')).toBeInTheDocument()
 
-    expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(1)
+    expect(
+      getQueryObserverCount(findCachedQuery(queryCache, { queryKey: key })!),
+    ).toBe(1)
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     expect(rendered.queryByText('loading')).not.toBeInTheDocument()
@@ -281,7 +316,9 @@ describe('useSuspenseQuery', () => {
       await vi.advanceTimersByTimeAsync(10)
     })
     expect(rendered.queryByText('rendered')).not.toBeInTheDocument()
-    expect(queryCache.find({ queryKey: key })?.getObserversCount()).toBe(0)
+    expect(
+      getQueryObserverCount(findCachedQuery(queryCache, { queryKey: key })!),
+    ).toBe(0)
   })
 
   // https://github.com/tannerlinsley/react-query/issues/468
@@ -294,15 +331,17 @@ describe('useSuspenseQuery', () => {
     let succeed = false
 
     function Page() {
-      useSuspenseQuery({
-        queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => {
-            if (!succeed) throw new Error('Suspense Error Bingo')
-            return 'data'
-          }),
-        retryDelay: 10,
-      })
+      useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Suspense Error Bingo')
+              return 'data'
+            }),
+          retryDelay: 10,
+        }),
+      )
 
       return <div>rendered</div>
     }
@@ -357,15 +396,17 @@ describe('useSuspenseQuery', () => {
     let succeed = false
 
     function Page() {
-      useSuspenseQuery({
-        queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => {
-            if (!succeed) throw new Error('Suspense Error Bingo')
-            return 'data'
-          }),
-        retry: false,
-      })
+      useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Suspense Error Bingo')
+              return 'data'
+            }),
+          retry: false,
+        }),
+      )
       return <div>rendered</div>
     }
 
@@ -420,11 +461,13 @@ describe('useSuspenseQuery', () => {
     let count = 0
 
     function Component() {
-      const result = useSuspenseQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ++count),
-        staleTime: () => 60 * 1000,
-      })
+      const result = useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ++count),
+          staleTime: () => 60 * 1000,
+        }),
+      )
       return (
         <div>
           <span>data: {result.data}</span>
@@ -449,8 +492,8 @@ describe('useSuspenseQuery', () => {
     expect(rendered.getByText('data: 1')).toBeInTheDocument()
 
     expect(
-      queryClient.getQueryCache().find({ queryKey: key })?.observers[0]?.options
-        .staleTime,
+      findCachedQuery(getQueryCache(queryClient), { queryKey: key })
+        ?.observers[0]?.options.staleTime,
     ).toBeTypeOf('function')
   })
 
@@ -459,11 +502,13 @@ describe('useSuspenseQuery', () => {
     const key2 = createKey()
 
     function Component(props: { queryKey: Array<string> }) {
-      const result = useSuspenseQuery({
-        queryKey: props.queryKey,
-        queryFn: () => sleep(10).then(() => props.queryKey),
-        retry: false,
-      })
+      const result = useQuery(
+        suspenseQueryOptions({
+          queryKey: props.queryKey,
+          queryFn: () => sleep(10).then(() => props.queryKey),
+          retry: false,
+        }),
+      )
       return <div>data: {result.data}</div>
     }
 
@@ -504,15 +549,17 @@ describe('useSuspenseQuery', () => {
     let succeed = false
 
     function Page() {
-      useSuspenseQuery({
-        queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => {
-            if (!succeed) throw new Error('Suspense Error Bingo')
-            return 'data'
-          }),
-        retry: false,
-      })
+      useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Suspense Error Bingo')
+              return 'data'
+            }),
+          retry: false,
+        }),
+      )
       return <div>rendered</div>
     }
 
@@ -567,12 +614,16 @@ describe('useSuspenseQuery', () => {
     const key = createKey()
 
     function Page() {
-      useSuspenseQuery({
-        queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => Promise.reject(new Error('Suspense Error a1x'))),
-        retry: false,
-      })
+      useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() =>
+              Promise.reject(new Error('Suspense Error a1x')),
+            ),
+          retry: false,
+        }),
+      )
       return <div>rendered</div>
     }
 
@@ -604,13 +655,18 @@ describe('useSuspenseQuery', () => {
     const key = createKey()
 
     function Page() {
-      useSuspenseQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ a: { b: 'c' } })),
-        select: () => {
-          throw new Error('foo')
-        },
-      })
+      useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ a: { b: 'c' } })),
+          select: [
+            select,
+            () => {
+              throw new Error('foo')
+            },
+          ],
+        }),
+      )
       return <div>rendered</div>
     }
 
@@ -646,15 +702,17 @@ describe('useSuspenseQuery', () => {
     function Page({ succeed }: { succeed: boolean }) {
       const [nonce] = useState(0)
       const queryKeys = [`${key}-${succeed}`]
-      const result = useSuspenseQuery({
-        queryKey: queryKeys,
-        queryFn: () =>
-          sleep(10).then(() => {
-            if (!succeed) throw new Error('Suspense Error Bingo')
-            return nonce
-          }),
-        retry: false,
-      })
+      const result = useQuery(
+        suspenseQueryOptions({
+          queryKey: queryKeys,
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Suspense Error Bingo')
+              return nonce
+            }),
+          retry: false,
+        }),
+      )
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
@@ -677,7 +735,7 @@ describe('useSuspenseQuery', () => {
           <button
             aria-label="fail"
             onClick={() => {
-              queryClient.resetQueries()
+              resetQueries(queryClient)
             }}
           />
           <ErrorBoundary
@@ -723,15 +781,17 @@ describe('useSuspenseQuery', () => {
     function Child({ keyVal }: { keyVal: number }) {
       const queryKeys = [keyVal, succeed]
 
-      const result = useSuspenseQuery({
-        queryKey: queryKeys,
-        queryFn: () =>
-          sleep(10).then(() => {
-            if (!succeed) throw new Error('Suspense Error Bingo')
-            return 'data'
-          }),
-        retry: false,
-      })
+      const result = useQuery(
+        suspenseQueryOptions({
+          queryKey: queryKeys,
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Suspense Error Bingo')
+              return 'data'
+            }),
+          retry: false,
+        }),
+      )
 
       if (result.error) {
         throw result.error
@@ -804,11 +864,13 @@ describe('useSuspenseQuery', () => {
     function Page() {
       renders++
 
-      state = useSuspenseQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ++count),
-        gcTime: 0,
-      })
+      state = useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ++count),
+          gcTime: 0,
+        }),
+      )
 
       return (
         <div>
@@ -842,15 +904,17 @@ describe('useSuspenseQuery', () => {
     const key = createKey()
 
     function Page() {
-      const result = useSuspenseQuery({
-        queryKey: key,
-        queryFn: () =>
-          sleep(10).then(() => {
-            if (!succeed) throw new Error('Suspense Error Bingo')
-            return 'data'
-          }),
-        retry: false,
-      })
+      const result = useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () =>
+            sleep(10).then(() => {
+              if (!succeed) throw new Error('Suspense Error Bingo')
+              return 'data'
+            }),
+          retry: false,
+        }),
+      )
 
       return (
         <div>
@@ -899,7 +963,10 @@ describe('useSuspenseQuery', () => {
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          placeholderData: (previousData: any) => previousData,
+          placeholderData: [
+            placeholderData,
+            (previousData: any) => previousData,
+          ],
         },
       },
     })
@@ -925,10 +992,12 @@ describe('useSuspenseQuery', () => {
     }
 
     function Page({ stateKey }: { stateKey: Array<string> }) {
-      const state = useSuspenseQuery({
-        queryKey: stateKey,
-        queryFn: async () => sleep(10).then(() => ++count),
-      })
+      const state = useQuery(
+        suspenseQueryOptions({
+          queryKey: stateKey,
+          queryFn: async () => sleep(10).then(() => ++count),
+        }),
+      )
 
       states.push(state)
 
@@ -957,10 +1026,12 @@ describe('useSuspenseQuery', () => {
 
     function Page() {
       const [ready, setReady] = useState(false)
-      const result = useSuspenseQuery({
-        queryKey: key,
-        queryFn: ready ? queryFn : skipToken,
-      })
+      const result = useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: ready ? queryFn : skipToken,
+        }),
+      )
 
       return (
         <>
@@ -999,7 +1070,7 @@ describe('useSuspenseQuery', () => {
     const error = new Error('query failed')
 
     await expect(
-      queryClient.query({
+      query(queryClient, {
         queryKey,
         queryFn: () => Promise.reject(error),
         retry: false,
@@ -1007,7 +1078,7 @@ describe('useSuspenseQuery', () => {
     ).rejects.toBe(error)
 
     function Page() {
-      useSuspenseQuery({ queryKey, queryFn: skipToken })
+      useQuery(suspenseQueryOptions({ queryKey, queryFn: skipToken }))
       return <div>page</div>
     }
 
@@ -1025,13 +1096,15 @@ describe('useSuspenseQuery', () => {
 
   it('should observe cached data while queryFn is skipToken', async () => {
     const key = createKey()
-    queryClient.setQueryData(key, 'cached')
+    setQueryData(queryClient, key, 'cached')
 
     function Page() {
-      const { data } = useSuspenseQuery<string>({
-        queryKey: key,
-        queryFn: skipToken,
-      })
+      const { data } = useQuery(
+        suspenseQueryOptions<string>({
+          queryKey: key,
+          queryFn: skipToken,
+        }),
+      )
 
       return <div>{data}</div>
     }
@@ -1045,7 +1118,7 @@ describe('useSuspenseQuery', () => {
     expect(rendered.getByText('cached')).toBeInTheDocument()
 
     await act(async () => {
-      queryClient.setQueryData(key, 'updated')
+      setQueryData(queryClient, key, 'updated')
       await vi.advanceTimersByTimeAsync(0)
     })
 
@@ -1057,11 +1130,13 @@ describe('useSuspenseQuery', () => {
     let count = 0
 
     function Page() {
-      const state = useSuspenseQuery({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ++count),
-        refetchInterval: 10,
-      })
+      const state = useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ++count),
+          refetchInterval: refetchInterval(10),
+        }),
+      )
 
       return <div>count: {state.data}</div>
     }
@@ -1094,17 +1169,19 @@ describe('useSuspenseQuery', () => {
     const key = createKey()
 
     function Content() {
-      const { data } = useSuspenseQuery({
-        queryKey: key,
-        queryFn: () => sleep(10000).then(() => 'fetched'),
-      })
+      const { data } = useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10000).then(() => 'fetched'),
+        }),
+      )
       return <div>data: {data}</div>
     }
 
     function Page() {
       return (
         <div>
-          <button onClick={() => queryClient.setQueryData(key, 'manual data')}>
+          <button onClick={() => setQueryData(queryClient, key, 'manual data')}>
             set data
           </button>
           <Suspense fallback="loading">
@@ -1134,12 +1211,14 @@ describe('useSuspenseQuery', () => {
     }
 
     function Page() {
-      const { data } = useSuspenseQuery({
-        queryKey: key,
-        queryFn: streamedQuery({
-          streamFn: () => numberGenerator(),
+      const { data } = useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: streamedQuery({
+            streamFn: () => numberGenerator(),
+          }),
         }),
-      })
+      )
       return <div>data: {data}</div>
     }
 
@@ -1161,13 +1240,15 @@ describe('useSuspenseQuery', () => {
 
   it('should release suspense when setQueryData is called before component mounts', async () => {
     const key = createKey()
-    queryClient.setQueryData(key, 'preloaded')
+    setQueryData(queryClient, key, 'preloaded')
 
     function Page() {
-      const { data } = useSuspenseQuery({
-        queryKey: key,
-        queryFn: () => sleep(10000).then(() => 'fetched'),
-      })
+      const { data } = useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10000).then(() => 'fetched'),
+        }),
+      )
       return <div>data: {data}</div>
     }
 
@@ -1186,17 +1267,19 @@ describe('useSuspenseQuery', () => {
     const key = createKey()
 
     function Content() {
-      const { data } = useSuspenseQuery({
-        queryKey: key,
-        queryFn: () => sleep(10000).then(() => 'fetched'),
-      })
+      const { data } = useQuery(
+        suspenseQueryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10000).then(() => 'fetched'),
+        }),
+      )
       return <div>data: {data}</div>
     }
 
     function Page() {
       return (
         <div>
-          <button onClick={() => queryClient.setQueryData(key, undefined)}>
+          <button onClick={() => setQueryData(queryClient, key, undefined)}>
             set undefined
           </button>
           <Suspense fallback="loading">

@@ -1,6 +1,11 @@
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 import { sleep } from '@tanstack/query-test-utils'
-import { QueryClient, noop } from '@tanstack/svelte-query'
+import {
+  QueryClient,
+  clearQueryClient,
+  noop,
+  query,
+} from '@tanstack/svelte-query'
 import { render } from '@testing-library/svelte'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import AwaitOnSuccess from './AwaitOnSuccess/Provider.svelte'
@@ -65,12 +70,10 @@ describe('PersistQueryClientProvider', () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: ['test'],
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: ['test'],
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -78,7 +81,7 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     const rendered = render(RestoreCache, {
       props: {
@@ -119,12 +122,10 @@ describe('PersistQueryClientProvider', () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: ['test'],
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: ['test'],
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -132,7 +133,7 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     const rendered = render(UseQueries, {
       props: {
@@ -173,12 +174,10 @@ describe('PersistQueryClientProvider', () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: ['test'],
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: ['test'],
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -186,7 +185,7 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     const rendered = render(InitialData, {
       props: {
@@ -227,12 +226,10 @@ describe('PersistQueryClientProvider', () => {
     const states = new StatelessRef<Array<StatusResult<string>>>([])
 
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: ['test'],
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: ['test'],
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -240,7 +237,7 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     let fetched = false
 
@@ -280,12 +277,10 @@ describe('PersistQueryClientProvider', () => {
 
   it('should call onSuccess after successful restoring', async () => {
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: ['test'],
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: ['test'],
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -293,7 +288,7 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     const onSuccess = vi.fn<() => void>()
 
@@ -315,12 +310,10 @@ describe('PersistQueryClientProvider', () => {
 
   it('should await onSuccess after successful restoring', async () => {
     const queryClient = new QueryClient()
-    void queryClient
-      .query({
-        queryKey: ['test'],
-        queryFn: () => sleep(10).then(() => 'hydrated'),
-      })
-      .catch(noop)
+    void query(queryClient, {
+      queryKey: ['test'],
+      queryFn: () => sleep(10).then(() => 'hydrated'),
+    }).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
 
     const persister = createMockPersister()
@@ -328,7 +321,7 @@ describe('PersistQueryClientProvider', () => {
     persistQueryClientSave({ queryClient, persister })
     await vi.advanceTimersByTimeAsync(0)
 
-    queryClient.clear()
+    clearQueryClient(queryClient)
 
     const states = new StatelessRef<Array<string>>([])
 

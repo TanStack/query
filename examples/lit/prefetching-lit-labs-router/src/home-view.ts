@@ -1,4 +1,4 @@
-import { createQueryController } from '@tanstack/lit-query'
+import { createQueryController, isError, isPending } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { charactersQueries } from './services/characters/queries'
 import './character-item'
@@ -31,8 +31,8 @@ class HomeView extends LitElement {
     const charactersQuery = this.characters()
     const characterQuery = this.character()
 
-    if (charactersQuery.isPending) return 'Loading...'
-    if (charactersQuery.isError) {
+    if (isPending(charactersQuery)) return 'Loading...'
+    if (isError(charactersQuery)) {
       return html`<span>Error: ${charactersQuery.error.message}</span>`
     }
 
@@ -51,9 +51,9 @@ class HomeView extends LitElement {
 
       <h3>Selected Character</h3>
       ${
-        characterQuery.isPending
+        isPending(characterQuery)
           ? 'Loading...'
-          : characterQuery.isError
+          : isError(characterQuery)
             ? html`<span>Error: ${characterQuery.error.message}</span>`
             : html`<pre>${JSON.stringify(characterQuery.data, null, 2)}</pre>`
       }

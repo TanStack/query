@@ -1,4 +1,6 @@
 import {
+  isPending,
+  isError,
   QueryClient,
   QueryClientProvider,
   createQueryController,
@@ -40,11 +42,11 @@ class LitQueryApp extends LitElement {
   render() {
     const query = this.query()
 
-    if (query.isPending) {
+    if (isPending(query)) {
       return html`<div>Loading...</div>`
     }
 
-    if (query.isError) {
+    if (isError(query)) {
       return html`<div>An error has occurred!</div>`
     }
 

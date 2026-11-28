@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+  import { isFetching, createQuery } from '@tanstack/svelte-query'
   import Message from './Message.svelte'
   import { messagesQueries } from './services/messages/queries'
 
@@ -19,7 +19,7 @@
   <div>
     <Message message={{ content: question, isQuestion: true }} />
     <Message
-      inProgress={query.isFetching}
+      inProgress={isFetching(query)}
       message={{ content: (query.data ?? []).join(' '), isQuestion: false }}
     />
   </div>

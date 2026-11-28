@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/preact-query'
+import { infiniteQueryOptions, select, useQuery } from '@tanstack/preact-query'
 import { productsQueries } from './services/products/queries'
 
 type Product = {
@@ -21,16 +21,18 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-  } = useInfiniteQuery({
-    ...productsQueries.search<Product>({
-      indexName: 'bestbuy',
-      query,
-      hitsPerPage: 5,
+  } = useQuery(
+    infiniteQueryOptions({
+      ...productsQueries.search<Product>({
+        indexName: 'bestbuy',
+        query,
+        hitsPerPage: 5,
+      }),
+      select: [select, (data) => data.pages.flatMap((page) => page.hits)],
+      staleTime: 30 * 1000, // 30s
+      gcTime: 15 * 60 * 1000, // 15m
     }),
-    select: (data) => data.pages.flatMap((page) => page.hits),
-    staleTime: 30 * 1000, // 30s
-    gcTime: 15 * 60 * 1000, // 15m
-  })
+  )
 
   if (!query) return null
 

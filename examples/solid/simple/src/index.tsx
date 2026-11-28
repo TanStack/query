@@ -1,9 +1,11 @@
-/* @refresh reload */
 import {
+  isPending,
+  isFetching,
   QueryClient,
   QueryClientProvider,
   useQuery,
 } from '@tanstack/solid-query'
+/* @refresh reload */
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { Match, Switch } from 'solid-js'
 import { render } from 'solid-js/web'
@@ -33,7 +35,7 @@ function Example() {
 
   return (
     <Switch>
-      <Match when={state.isPending}>Loading...</Match>
+      <Match when={isPending(state)}>Loading...</Match>
       <Match when={state.error}>
         {'An error has occurred: ' + (state.error as Error).message}
       </Match>
@@ -44,7 +46,7 @@ function Example() {
           <strong>👀 {state.data.subscribers_count}</strong>{' '}
           <strong>✨ {state.data.stargazers_count}</strong>{' '}
           <strong>🍴 {state.data.forks_count}</strong>
-          <div>{state.isFetching ? 'Updating...' : ''}</div>
+          <div>{isFetching(state) ? 'Updating...' : ''}</div>
         </div>
       </Match>
     </Switch>

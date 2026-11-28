@@ -1,6 +1,7 @@
 import {
   QueryClient,
   QueryClientProvider,
+  queryOptions,
   useQuery,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtoolsPanel } from '@tanstack/preact-query-devtools'
@@ -25,7 +26,9 @@ export default function App() {
 }
 
 function Example() {
-  const { isPending, error, data, isFetching } = useQuery(reposQueries.detail())
+  const { isPending, error, data, isFetching } = useQuery(
+    queryOptions(reposQueries.detail()),
+  )
 
   if (isPending) return 'Loading...'
 

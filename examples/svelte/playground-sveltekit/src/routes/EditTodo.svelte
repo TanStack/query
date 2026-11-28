@@ -1,5 +1,8 @@
 <script lang="ts">
   import {
+    isFetching,
+    invalidateQueries,
+    setQueryData,
     useQueryClient,
     createQuery,
     createMutation,
@@ -24,8 +27,8 @@
     ...todosMutations.update(),
     onSuccess: (data) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
-      queryClient.setQueryData(todosQueries.detail(id).queryKey, data)
+      invalidateQueries(queryClient, { queryKey: todosQueries.lists() })
+      setQueryData(queryClient, todosQueries.detail(id).queryKey, data)
       draft = {}
     },
   }))
@@ -84,7 +87,7 @@
             : null}
     </div>
     <div>
-      {#if query.isFetching}
+      {#if isFetching(query)}
         <span>
           Background Refreshing... (Attempt: {query.failureCount + 1})
         </span>

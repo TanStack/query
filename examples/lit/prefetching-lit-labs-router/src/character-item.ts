@@ -1,6 +1,7 @@
 import {
   createQueryController,
   noop,
+  query,
   useQueryClient,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
@@ -25,12 +26,10 @@ class CharacterItem extends LitElement {
   }
 
   private prefetch() {
-    useQueryClient()
-      .query({
-        ...charactersQueries.detail(this.characterId),
-        staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-      })
-      .catch(noop)
+    query(useQueryClient(), {
+      ...charactersQueries.detail(this.characterId),
+      staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+    }).catch(noop)
   }
 
   private selectCharacter() {

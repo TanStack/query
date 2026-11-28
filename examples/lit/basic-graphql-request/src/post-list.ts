@@ -1,4 +1,8 @@
-import { createQueryController, useQueryClient } from '@tanstack/lit-query'
+import {
+  createQueryController,
+  getQueryData,
+  useQueryClient,
+} from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { styleMap } from 'lit/directives/style-map.js'
 import { postsQueries } from './services/posts/queries'
@@ -35,7 +39,8 @@ class PostList extends LitElement {
                             <a
                               href="#${post.id}"
                               style=${styleMap(
-                                queryClient.getQueryData(
+                                getQueryData(
+                                  queryClient,
                                   postsQueries.detail(post.id).queryKey,
                                 )
                                   ? { fontWeight: 'bold', color: 'green' }

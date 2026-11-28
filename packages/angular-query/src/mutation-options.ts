@@ -71,7 +71,7 @@ export function mutationOptions<
  *   updatePost(id: number) {
  *     return mutationOptions({
  *       mutationFn: (post: Partial<Post>) => putPost(id, post),
- *       onSuccess: (newPost) => this.#queryClient.setQueryData(['posts', id], newPost),
+ *       onSuccess: (newPost) => this.#setQueryData(queryClient, ['posts', id], newPost),
  *     })
  *   }
  * }

@@ -1,4 +1,10 @@
-import { QueriesObserver, noop } from '@tanstack/query-core'
+import {
+  QueriesObserver,
+  defaultQueryOptions,
+  isFetching,
+  isLoading,
+  noop,
+} from '@tanstack/query-core'
 import {
   batch,
   createComputed,
@@ -18,11 +24,14 @@ import type {
   OmitKeyof,
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
+  QueryErrorBoundaryOption,
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
+  Select,
   ThrowOnError,
+  placeholderData,
 } from '@tanstack/query-core'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
@@ -39,7 +48,10 @@ type UseQueryOptionsForUseQueries<
   QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?: readonly [
+    typeof placeholderData,
+    TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>,
+  ]
 }
 
 // Avoid TS depth-limit error in case of large array literal
@@ -72,8 +84,10 @@ type GetOptions<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    select?: Select<any, infer TData>
+                    throwOnError?:
+                      | ThrowOnError<any, infer TError, any, any>
+                      | QueryErrorBoundaryOption<any, infer TError, any, any>
                   }
                 ? UseQueryOptionsForUseQueries<
                     TQueryFnData,
@@ -104,8 +118,10 @@ type GetResults<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    select?: Select<any, infer TData>
+                    throwOnError?:
+                      | ThrowOnError<any, infer TError, any, any>
+                      | QueryErrorBoundaryOption<any, infer TError, any, any>
                   }
                 ? UseQueryResult<
                     unknown extends TData ? TQueryFnData : TData,
@@ -281,7 +297,7 @@ export function useQueries<
   const defaultedQueries = createMemo(() =>
     queriesOptions().queries.map((options) =>
       mergeProps(
-        client().defaultQueryOptions(options as QueryObserverOptions),
+        defaultQueryOptions(client(), options as QueryObserverOptions),
         {
           get _optimisticResults() {
             return isRestoring() ? 'isRestoring' : 'optimistic'
@@ -322,7 +338,7 @@ export function useQueries<
         state.map((queryRes) => {
           const dataPromise = () =>
             new Promise((resolve) => {
-              if (queryRes.isFetching && queryRes.isLoading) return
+              if (isFetching(queryRes) && isLoading(queryRes)) return
               resolve(unwrap(queryRes.data))
             })
           return createResource(dataPromise)

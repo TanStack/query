@@ -1,3 +1,4 @@
+import { invalidateQueries } from '@tanstack/react-query'
 import { redirect } from 'react-router'
 import { contactsAPI } from '../services/contacts/api'
 import { contactsQueries } from '../services/contacts/queries'
@@ -11,7 +12,7 @@ export const action =
     const formData = await request.formData()
     const data = Object.fromEntries(formData)
     const contact = await contactsAPI.createContact(data as any)
-    queryClient.invalidateQueries({ queryKey: contactsQueries.lists() })
+    invalidateQueries(queryClient, { queryKey: contactsQueries.lists() })
     return redirect(`/contacts/${contact.id}`)
   }
 

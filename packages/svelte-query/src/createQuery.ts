@@ -27,7 +27,7 @@ import type {
  * resolves to `pending` in this overload's type, since `initialData` guarantees data upfront). `status` is
  * `error` if the query has an error from a fetch that failed after its retries or if `select` threw, and
  * `success` otherwise. `isSuccess`/`isError` are derived booleans for convenience.
- * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
+ * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `query`.
  * @example
  * ```svelte
  * <script lang="ts">
@@ -75,7 +75,7 @@ export function createQuery<
  * after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
  * `undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError`
  * are derived booleans for convenience.
- * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
+ * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `query`.
  * @example
  * ```svelte
  * <script lang="ts">
@@ -148,7 +148,7 @@ export function createQuery<
  * after its retries or if `select` threw, `success` if the query has cached data (even if `select` returns
  * `undefined`) or data from `placeholderData`, and `pending` otherwise. `isPending`/`isSuccess`/`isError`
  * are derived booleans for convenience.
- * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `queryClient.query`.
+ * @see {@link queryOptions} to share these options between `createQuery` and imperative APIs like `query`.
  * @example
  * `select` derives whatever `data` a component needs from the cached value, without changing what's
  * actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:

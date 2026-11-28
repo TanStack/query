@@ -1,4 +1,5 @@
 import {
+  query,
   QueryClient,
   QueryClientProvider,
   QueryErrorResetBoundary,
@@ -42,7 +43,7 @@ function Example() {
       <Button
         onClick={() => {
           if (!showProjects) {
-            queryClient.query(projectsQueries.list()).catch(noop)
+            query(queryClient, projectsQueries.list()).catch(noop)
           }
           setShowProjects((old) => !old)
         }}

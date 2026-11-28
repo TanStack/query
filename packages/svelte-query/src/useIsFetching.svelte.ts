@@ -1,3 +1,4 @@
+import { countFetchingQueries, getQueryCache } from '@tanstack/query-core'
 import { ReactiveValue } from './containers.svelte.js'
 import { useQueryClient } from './useQueryClient.js'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
@@ -42,10 +43,10 @@ export function useIsFetching(
   queryClient?: QueryClient,
 ): ReactiveValue<number> {
   const client = useQueryClient(queryClient)
-  const queryCache = client.getQueryCache()
+  const queryCache = getQueryCache(client)
 
   return new ReactiveValue(
-    () => client.isFetching(filters),
+    () => countFetchingQueries(client, filters),
     (update) => queryCache.subscribe(update),
   )
 }

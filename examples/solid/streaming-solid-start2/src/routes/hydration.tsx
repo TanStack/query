@@ -1,5 +1,14 @@
 import { Title } from '@solidjs/meta'
-import { useQuery } from '@tanstack/solid-query'
+import {
+  isFetching,
+  isFetched,
+  isPending,
+  isRefetching,
+  isLoading,
+  isSuccess,
+  isError,
+  useQuery,
+} from '@tanstack/solid-query'
 import { Suspense, createSignal } from 'solid-js'
 import { NoHydration } from 'solid-js/web'
 import { usersAPI } from '~/services/users/api'
@@ -83,14 +92,14 @@ const QueryStateRow = (props: { context: string; query: QueryState }) => {
     <tr>
       <td>{props.context}</td>
       <td>{props.query.data?.name}</td>
-      <td>{String(props.query.isFetching)}</td>
-      <td>{String(props.query.isFetched)}</td>
-      <td>{String(props.query.isPending)}</td>
-      <td>{String(props.query.isRefetching)}</td>
-      <td>{String(props.query.isLoading)}</td>
+      <td>{String(isFetching(props.query))}</td>
+      <td>{String(isFetched(props.query))}</td>
+      <td>{String(isPending(props.query))}</td>
+      <td>{String(isRefetching(props.query))}</td>
+      <td>{String(isLoading(props.query))}</td>
       <td>{String(props.query.isStale)}</td>
-      <td>{String(props.query.isSuccess)}</td>
-      <td>{String(props.query.isError)}</td>
+      <td>{String(isSuccess(props.query))}</td>
+      <td>{String(isError(props.query))}</td>
       <td>{String(props.query.error)}</td>
       <td>{String(props.query.fetchStatus)}</td>
       <td>{String(props.query.dataUpdatedAt)}</td>

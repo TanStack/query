@@ -1,4 +1,4 @@
-import { hydrate } from '@tanstack/query-core'
+import { getQueryCache, hydrate } from '@tanstack/query-core'
 import { Fragment } from 'preact'
 import { useEffect, useMemo, useRef } from 'preact/hooks'
 import { useQueryClient } from './QueryClientProvider'
@@ -98,7 +98,7 @@ export const HydrationBoundary = ({
   // Hydrate new queries during render so children can read their data.
   // Hydrate existing queries after commit so an aborted transition cannot update them.
   const hydrationQueue: DehydratedState['queries'] | undefined = useMemo(() => {
-    const queryCache = client.getQueryCache()
+    const queryCache = getQueryCache(client)
 
     const newQueries: DehydratedState['queries'] = []
     const existingQueries: DehydratedState['queries'] = []

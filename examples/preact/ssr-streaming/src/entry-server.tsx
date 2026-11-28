@@ -1,5 +1,11 @@
 import { Transform } from 'node:stream'
-import { QueryClientProvider, dehydrate, noop } from '@tanstack/preact-query'
+import {
+  query as queryQuery,
+  getQueryCache,
+  QueryClientProvider,
+  dehydrate,
+  noop,
+} from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { uneval } from 'devalue'
 import { renderToPipeableStream } from 'preact-render-to-string/stream-node'
@@ -18,12 +24,12 @@ export function render(callbacks: {
   // Start every query the page renders up front, so a Suspense boundary
   // never waits for another one to finish before its own fetch starts
   for (const wait of [...waits, ...combinedWaits]) {
-    void queryClient.query(waitQueries.detail(wait)).catch(noop)
+    void queryQuery(queryClient, waitQueries.detail(wait)).catch(noop)
   }
 
   // Collect each query's state as soon as it succeeds on the server
   const states: Array<DehydratedState> = []
-  const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
+  const unsubscribe = getQueryCache(queryClient).subscribe((event) => {
     if (event.type === 'updated' && event.action.type === 'success') {
       states.push(
         dehydrate(queryClient, {

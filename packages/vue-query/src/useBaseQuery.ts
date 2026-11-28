@@ -1,4 +1,10 @@
-import { shouldThrowError } from '@tanstack/query-core'
+import {
+  defaultQueryOptions,
+  fetchOptimistic,
+  isError,
+  isFetching,
+  shouldThrowError,
+} from '@tanstack/query-core'
 import {
   computed,
   getCurrentScope,
@@ -162,7 +168,7 @@ export function useBaseQuery<
       TData,
       TQueryData,
       TQueryKey
-    > = client.defaultQueryOptions(clonedOptions)
+    > = defaultQueryOptions(client, clonedOptions)
 
     defaulted._optimisticResults = client.isRestoring?.value
       ? 'isRestoring'
@@ -229,11 +235,11 @@ export function useBaseQuery<
           // noop
         }
         const run = () => {
-          const options = defaultedOptions.value
-          const reader = observer.createResultReader(options)
+          const resolved = defaultedOptions.value
+          const reader = observer.createResultReader(resolved)
           // Commit before resolving `enabled` so its callback sees the current query.
           reader.commit()
-          const { enabled } = options
+          const { enabled } = resolved
           if (
             (typeof enabled === 'function'
               ? enabled(observer.getCurrentQuery())
@@ -242,9 +248,9 @@ export function useBaseQuery<
             const optimisticResult = reader.getSnapshot()
             if (optimisticResult.isStale) {
               stopWatch()
-              observer
-                .fetchOptimistic(defaultedOptions.value)
-                .then(resolve, (error: TError) => {
+              fetchOptimistic(client, observer, defaultedOptions.value).then(
+                resolve,
+                (error: TError) => {
                   if (
                     shouldThrowError(defaultedOptions.value.throwOnError, [
                       error,
@@ -255,7 +261,8 @@ export function useBaseQuery<
                   } else {
                     resolve(observer.getCurrentResult())
                   }
-                })
+                },
+              )
             } else {
               stopWatch()
               resolve(optimisticResult)
@@ -275,8 +282,8 @@ export function useBaseQuery<
     () => state.error,
     (error) => {
       if (
-        state.isError &&
-        !state.isFetching &&
+        isError(state) &&
+        !isFetching(state) &&
         shouldThrowError(defaultedOptions.value.throwOnError, [
           error as TError,
           observer.getCurrentQuery(),

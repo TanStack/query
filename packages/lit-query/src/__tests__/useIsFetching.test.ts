@@ -1,4 +1,11 @@
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  clearQueryClient,
+  countFetchingQueries,
+  findCachedQuery,
+  getQueryCache,
+  isSuccess,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import {
@@ -35,7 +42,7 @@ describe('useIsFetching', () => {
 
   afterEach(() => {
     container.remove()
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -77,7 +84,7 @@ describe('useIsFetching', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(consumer.shadowRoot).toHaveTextContent('fetching: 1')
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.query().isSuccess).toBe(true)
+    expect(isSuccess(consumer.query())).toBe(true)
     expect(consumer.isFetching()).toBe(0)
     expect(consumer.shadowRoot).toHaveTextContent('fetching: 0')
 
@@ -130,14 +137,17 @@ describe('useIsFetching', () => {
     await vi.advanceTimersByTimeAsync(0)
     expect(consumer.shadowRoot).toHaveTextContent('fetching: 1')
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.query().isSuccess).toBe(true)
+    expect(isSuccess(consumer.query())).toBe(true)
     expect(consumer.shadowRoot).toHaveTextContent('fetching: 0')
     expect(
-      queryClient.getQueryCache().find({ queryKey: consumer.queryKey })?.state
-        .data,
+      findCachedQuery(getQueryCache(queryClient), {
+        queryKey: consumer.queryKey,
+      })?.state.data,
     ).toBe('query-ok')
     expect(
-      providerClient.getQueryCache().find({ queryKey: consumer.queryKey }),
+      findCachedQuery(getQueryCache(providerClient), {
+        queryKey: consumer.queryKey,
+      }),
     ).toBeUndefined()
 
     consumer.query.destroy()
@@ -180,7 +190,7 @@ describe('useIsFetching', () => {
     expect(isFetching()).toBe(1)
     expect(host.shadowRoot).toHaveTextContent('fetching: 1')
     await vi.advanceTimersByTimeAsync(10)
-    expect(query().isSuccess).toBe(true)
+    expect(isSuccess(query())).toBe(true)
     expect(isFetching()).toBe(0)
     expect(host.shadowRoot).toHaveTextContent('fetching: 0')
   })
@@ -429,7 +439,7 @@ describe('useIsFetching', () => {
 
     expect(consumer.isFetching()).toBe(1)
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.query().isSuccess).toBe(true)
+    expect(isSuccess(consumer.query())).toBe(true)
     expect(consumer.isFetching()).toBe(0)
 
     consumer.query.destroy()
@@ -457,7 +467,7 @@ describe('useIsFetching', () => {
     container.append(producer)
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryClient.isFetching()).toBe(1)
+    expect(countFetchingQueries(queryClient)).toBe(1)
 
     class Host extends LitElement {
       isFetching?: IsFetchingAccessor

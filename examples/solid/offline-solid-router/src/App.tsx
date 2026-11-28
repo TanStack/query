@@ -1,6 +1,12 @@
 import { Route, Router } from '@solidjs/router'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
-import { MutationCache, QueryClient } from '@tanstack/solid-query'
+import {
+  setMutationDefaults,
+  resumePausedMutations,
+  invalidateQueries,
+  MutationCache,
+  QueryClient,
+} from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/solid-query-persist-client'
 import Detail, { preload as detailPreload } from './routes/detail'
@@ -28,7 +34,7 @@ const queryClient = new QueryClient({
 })
 
 // we need a default mutation function so that paused mutations can resume after a page reload
-queryClient.setMutationDefaults(moviesQueries.all(), {
+setMutationDefaults(queryClient, moviesQueries.all(), {
   ...moviesMutations.update(),
   onSuccess: (data) => {
     showNotification(data.message, 'success')
@@ -58,8 +64,8 @@ export default function App() {
       onSuccess={() => {
         isRestoring = false
         // resume mutations after initial restore from localStorage was successful
-        queryClient.resumePausedMutations().then(() => {
-          queryClient.invalidateQueries()
+        resumePausedMutations(queryClient).then(() => {
+          invalidateQueries(queryClient)
         })
       }}
       onError={() => {

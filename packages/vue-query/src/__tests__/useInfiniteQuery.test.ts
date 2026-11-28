@@ -1,4 +1,4 @@
-import { skipToken } from '@tanstack/query-core'
+import { isError, skipToken } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { computed, ref } from 'vue'
@@ -104,7 +104,7 @@ describe('useInfiniteQuery', () => {
 
   it('should reflect hasNextPage becoming false once the last page is reached', async () => {
     const key = createKey()
-    const { hasNextPage, fetchNextPage, isFetching } = useInfiniteQuery({
+    const { hasNextPage, fetchNextPage, fetchStatus } = useInfiniteQuery({
       queryKey: key,
       queryFn: ({ pageParam }) =>
         sleep(10).then(() => 'data on page ' + pageParam),
@@ -119,12 +119,12 @@ describe('useInfiniteQuery', () => {
     fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     expect(hasNextPage.value).toBe(false)
-    expect(isFetching.value).toBe(false)
+    expect(fetchStatus.value).not.toBe('fetching')
   })
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
     const key = createKey()
-    const { data, status, isError } = useInfiniteQuery({
+    const { data, status, state } = useInfiniteQuery({
       queryKey: key,
       queryFn: () =>
         sleep(10).then(() => Promise.reject(new Error('Some error'))),
@@ -136,11 +136,11 @@ describe('useInfiniteQuery', () => {
 
     expect(data.value).toStrictEqual({ pages: [1], pageParams: [1] })
     expect(status.value).toBe('success')
-    expect(isError.value).toBe(false)
+    expect(isError(state)).toBe(false)
     await vi.advanceTimersByTimeAsync(10)
     expect(data.value).toStrictEqual({ pages: [1], pageParams: [1] })
     expect(status.value).toBe('error')
-    expect(isError.value).toBe(true)
+    expect(isError(state)).toBe(true)
   })
 
   it('should not fetch when queryFn is skipToken, and fetch once it is replaced', async () => {
@@ -151,17 +151,17 @@ describe('useInfiniteQuery', () => {
         sleep(10).then(() => `comments for ${postId.value} page ${pageParam}`),
     )
 
-    const { data, isFetching } = useInfiniteQuery(() => ({
+    const { data, fetchStatus } = useInfiniteQuery(() => ({
       queryKey: key,
       queryFn: postId.value != null ? queryFn : skipToken,
       initialPageParam: 0,
       getNextPageParam: () => 12,
     }))
 
-    expect(isFetching.value).toBe(false)
+    expect(fetchStatus.value).not.toBe('fetching')
     await vi.advanceTimersByTimeAsync(10)
     expect(queryFn).not.toHaveBeenCalled()
-    expect(isFetching.value).toBe(false)
+    expect(fetchStatus.value).not.toBe('fetching')
     expect(data.value).toBeUndefined()
 
     postId.value = '1'

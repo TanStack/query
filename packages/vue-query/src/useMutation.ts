@@ -1,4 +1,8 @@
-import { MutationObserver, shouldThrowError } from '@tanstack/query-core'
+import {
+  MutationObserver,
+  defaultMutationOptions,
+  shouldThrowError,
+} from '@tanstack/query-core'
 import {
   computed,
   getCurrentScope,
@@ -103,7 +107,7 @@ export type UseMutationReturnType<
  *
  * const addMutation = useMutation({
  *   mutationFn: addTodo,
- *   onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  * })
  *
  * function onAdd() {
@@ -127,7 +131,7 @@ export type UseMutationReturnType<
  *
  * const addMutation = useMutation({
  *   mutationFn: addTodo,
- *   onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  * })
  * </script>
  *
@@ -150,10 +154,10 @@ export type UseMutationReturnType<
  * const addMutation = useMutation({
  *   mutationFn: addTodo,
  *   onMutate: async (newTodo: string) => {
- *     await queryClient.cancelQueries({ queryKey: ['todos'] })
- *     const previousTodos = queryClient.getQueryData<Array<string>>(['todos'])
+ *     await cancelQueries(queryClient, { queryKey: ['todos'] })
+ *     const previousTodos = getQueryData<Array<string>>(['todos'])
  *
- *     queryClient.setQueryData<Array<string>>(['todos'], (old) => [
+ *     setQueryData<Array<string>>(['todos'], (old) => [
  *       ...(old ?? []),
  *       newTodo,
  *     ])
@@ -162,10 +166,10 @@ export type UseMutationReturnType<
  *     return { previousTodos }
  *   },
  *   onError: (_err, _newTodo, onMutateResult) => {
- *     queryClient.setQueryData(['todos'], onMutateResult?.previousTodos)
+ *     setQueryData(queryClient, ['todos'], onMutateResult?.previousTodos)
  *   },
  *   onSettled: () => {
- *     queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *     invalidateQueries(queryClient, { queryKey: ['todos'] })
  *   },
  * })
  * </script>
@@ -185,7 +189,7 @@ export type UseMutationReturnType<
  *
  * const addMutation = useMutation({
  *   mutationFn: addTodo,
- *   onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  * })
  *
  * async function handleAddAll(todos: Array<string>) {
@@ -213,7 +217,7 @@ export type UseMutationReturnType<
  *
  * const addMutation = useMutation({
  *   mutationFn: addTodo,
- *   onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *   onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  * })
  *
  * async function handleAddAll(todos: Array<string>) {
@@ -254,7 +258,7 @@ export function useMutation<
   const client = queryClient || useQueryClient()
   const defaultedOptions = computed(() => {
     const resolvedOptions = typeof options === 'function' ? options() : options
-    return client.defaultMutationOptions(cloneDeepUnref(resolvedOptions))
+    return defaultMutationOptions(client, cloneDeepUnref(resolvedOptions))
   })
   const observer = new MutationObserver(client, defaultedOptions.value)
   const state = defaultedOptions.value.shallow

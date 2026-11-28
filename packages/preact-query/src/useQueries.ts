@@ -1,14 +1,14 @@
-import { QueriesObserver, noop, notifyManager } from '@tanstack/query-core'
-import { useCallback, useEffect, useMemo, useState } from 'preact/hooks'
+import {
+  QueriesObserver,
+  defaultQueryOptions,
+  getQueryCache,
+} from '@tanstack/query-core'
+import { useEffect, useMemo, useState } from 'preact/hooks'
 import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
-import {
-  ensurePreventErrorBoundaryRetry,
-  getHasError,
-  useClearResetErrorBoundary,
-} from './errorBoundaryUtils'
-import { useSyncExternalStore } from './utils'
+import { getHasError, prepareErrorBoundary } from './errorBoundaryUtils'
+import { useObserverSnapshot } from './useObserverSnapshot'
 import type {
   DefaultError,
   OmitKeyof,
@@ -18,11 +18,14 @@ import type {
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
-  ThrowOnError,
+  Select,
+  placeholderData,
 } from '@tanstack/query-core'
 import type { suspenseQueriesPolicy } from './suspense'
 import type {
   DefinedUseQueryResult,
+  GroupThrowOnError,
+  TaggedQueryError,
   UseQueryOptions,
   UseQueryResult,
 } from './types'
@@ -36,9 +39,19 @@ type UseQueryOptionsForUseQueries<
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  'placeholderData' | 'subscribed'
+  'placeholderData' | 'subscribed' | 'throwOnError'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  throwOnError?: QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey
+  >['throwOnError']
+  placeholderData?: readonly [
+    typeof placeholderData,
+    TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>,
+  ]
 }
 
 // Avoid TS depth-limit error in case of large array literal
@@ -71,12 +84,15 @@ type GetUseQueryOptionsForUseQueries<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    select?: Select<any, infer TData>
+                    throwOnError?: GroupThrowOnError<infer TError>
                   }
                 ? UseQueryOptionsForUseQueries<
                     TQueryFnData,
-                    unknown extends TError ? DefaultError : TError,
+                    TaggedQueryError<
+                      T,
+                      unknown extends TError ? DefaultError : TError
+                    >,
                     unknown extends TData ? TQueryFnData : TData,
                     TQueryKey
                   >
@@ -120,13 +136,16 @@ type GetUseQueryResult<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForUseQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    select?: Select<any, infer TData>
+                    throwOnError?: GroupThrowOnError<infer TError>
                   }
                 ? GetDefinedOrUndefinedQueryResult<
                     T,
                     unknown extends TData ? TQueryFnData : TData,
-                    unknown extends TError ? DefaultError : TError
+                    TaggedQueryError<
+                      T,
+                      unknown extends TError ? DefaultError : TError
+                    >
                   >
                 : // Fallback
                   UseQueryResult
@@ -348,7 +367,7 @@ export function useBaseQueries<
   const defaultedQueries = useMemo(
     () =>
       queries.map((opts) => {
-        const defaultedOptions = client.defaultQueryOptions({
+        const defaultedOptions = defaultQueryOptions(client, {
           ...opts,
           suspense: !!suspense,
         } as QueryObserverOptions)
@@ -366,12 +385,12 @@ export function useBaseQueries<
   )
 
   defaultedQueries.forEach((queryOptions) => {
+    const query = getQueryCache(client).get(queryOptions.queryHash)
     suspense?.prepare(queryOptions)
-    const query = client.getQueryCache().get(queryOptions.queryHash)
-    ensurePreventErrorBoundaryRetry(queryOptions, errorResetBoundary, query)
+    prepareErrorBoundary(queryOptions, errorResetBoundary, query)
   })
 
-  useClearResetErrorBoundary(errorResetBoundary)
+  useEffect(() => errorResetBoundary.clearReset(), [errorResetBoundary])
 
   const [observer] = useState(
     () =>
@@ -388,41 +407,23 @@ export function useBaseQueries<
   )
   suspense?.readQueries(defaultedQueries, reader, client, errorResetBoundary)
 
-  // Commit the combine cache before subscription can start a fetch.
-  useEffect(() => {
-    reader.commit()
-  }, [reader])
-
-  const shouldSubscribe = !isRestoring && subscribed
-  const results = useSyncExternalStore(
-    useCallback(
-      (onStoreChange) => {
-        const unsubscribe = shouldSubscribe
-          ? observer.subscribe(notifyManager.batchCalls(onStoreChange))
-          : noop
-
-        // Include cache updates that occurred before subscription.
-        observer
-          .getObservers()
-          .forEach((queryObserver) => queryObserver.updateResult())
-        return unsubscribe
-      },
-      [observer, shouldSubscribe],
-    ),
-    reader.getSnapshot,
+  const results = useObserverSnapshot(
+    observer,
+    reader,
+    !isRestoring && subscribed,
+    refreshQueries,
   )
 
   const firstErrorResult = results.find((result, index) => {
     const query = defaultedQueries[index]
     return (
       query &&
-      getHasError({
+      getHasError(
         result,
+        query,
+        getQueryCache(client).get(query.queryHash),
         errorResetBoundary,
-        throwOnError: query.throwOnError,
-        query: client.getQueryCache().get(query.queryHash),
-        suspense: query.suspense,
-      })
+      )
     )
   })
 
@@ -431,4 +432,14 @@ export function useBaseQueries<
   }
 
   return reader.combineResult(results)
+}
+
+/**
+ * Refreshes each query after the group subscribes.
+ * @param observer - The observer that was subscribed.
+ */
+function refreshQueries(observer: Pick<QueriesObserver, 'getObservers'>): void {
+  observer
+    .getObservers()
+    .forEach((queryObserver) => queryObserver.updateResult())
 }

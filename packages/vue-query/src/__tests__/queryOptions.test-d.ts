@@ -1,9 +1,21 @@
-import { dataTagSymbol, skipToken } from '@tanstack/query-core'
+import {
+  dataTagSymbol,
+  isSuccess,
+  select,
+  skipToken,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { computed, reactive, ref } from 'vue'
 import { defaultQueryFn } from '..'
-import { QueryClient } from '../queryClient'
+import {
+  QueryClient,
+  getQueryData,
+  getQueryState,
+  invalidateQueries,
+  query as queryQuery,
+  setQueryData,
+} from '../queryClient'
 import { queryOptions } from '../queryOptions'
 import { useQueries } from '../useQueries'
 import { useQuery } from '../useQuery'
@@ -41,9 +53,12 @@ describe('queryOptions', () => {
       queryKey: key,
       queryFn: () => Promise.resolve(5),
       staleTime: 1000,
-      select: (data) => {
-        expectTypeOf(data).toEqualTypeOf<number>()
-      },
+      select: [
+        select,
+        (data) => {
+          expectTypeOf(data).toEqualTypeOf<number>()
+        },
+      ],
     })
   })
 
@@ -75,7 +90,7 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
-    const data = await new QueryClient().query(options)
+    const data = await queryQuery(new QueryClient(), options)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
@@ -83,10 +98,10 @@ describe('queryOptions', () => {
     const options = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
-      select: (data) => data.toString(),
+      select: [select, (data) => data.toString()],
     })
 
-    const data = await new QueryClient().query(options)
+    const data = await queryQuery(new QueryClient(), options)
     expectTypeOf(data).toEqualTypeOf<string | undefined>()
   })
 
@@ -97,7 +112,7 @@ describe('queryOptions', () => {
       enabled: false,
     })
 
-    const data = await new QueryClient().query(options)
+    const data = await queryQuery(new QueryClient(), options)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 
@@ -107,7 +122,7 @@ describe('queryOptions', () => {
       queryFn: skipToken,
     })
 
-    const data = await new QueryClient().query(options)
+    const data = await queryQuery(new QueryClient(), options)
     expectTypeOf(data).toEqualTypeOf<unknown>()
   })
 
@@ -146,7 +161,7 @@ describe('queryOptions', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: key,
       queryFn: () => Promise.resolve(5),
-      select: (data) => data.toString(),
+      select: [select, (data) => data.toString()],
     })
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()
@@ -160,7 +175,7 @@ describe('queryOptions', () => {
     })
 
     const queryClient = new QueryClient()
-    const data = queryClient.getQueryData(tagged)
+    const data = getQueryData(queryClient, tagged)
 
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
@@ -173,7 +188,7 @@ describe('queryOptions', () => {
     })
 
     const queryClient = new QueryClient()
-    const state = queryClient.getQueryState(tagged)
+    const state = getQueryState(queryClient, tagged)
 
     expectTypeOf(state?.data).toEqualTypeOf<number | undefined>()
   })
@@ -186,7 +201,7 @@ describe('queryOptions', () => {
     })
 
     const queryClient = new QueryClient()
-    const data = queryClient.setQueryData(tagged, (prev) => {
+    const data = setQueryData(queryClient, tagged, (prev) => {
       expectTypeOf(prev).toEqualTypeOf<number | undefined>()
       return prev
     })
@@ -210,7 +225,7 @@ describe('queryOptions', () => {
     })
 
     const queryClient = new QueryClient()
-    queryClient.setQueryData(tagged, (prev) => {
+    setQueryData(queryClient, tagged, (prev) => {
       if (!prev || prev.kind !== 'a') {
         return prev
       }
@@ -220,7 +235,7 @@ describe('queryOptions', () => {
     })
 
     // @ts-expect-error updater input should be inferred from the tagged query key
-    queryClient.setQueryData(tagged, (prev: string | undefined) => prev)
+    setQueryData(queryClient, tagged, (prev: string | undefined) => prev)
   })
 
   it('should properly type value when passed to setQueryData', () => {
@@ -233,11 +248,11 @@ describe('queryOptions', () => {
     const queryClient = new QueryClient()
 
     // @ts-expect-error value should be a number
-    queryClient.setQueryData(tagged, '5')
+    setQueryData(queryClient, tagged, '5')
     // @ts-expect-error value should be a number
-    queryClient.setQueryData(tagged, () => '5')
+    setQueryData(queryClient, tagged, () => '5')
 
-    const data = queryClient.setQueryData(tagged, 5)
+    const data = setQueryData(queryClient, tagged, 5)
 
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
@@ -250,7 +265,7 @@ describe('queryOptions', () => {
     })
 
     const queryClient = new QueryClient()
-    const data = queryClient.getQueryData(tagged)
+    const data = getQueryData(queryClient, tagged)
 
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
@@ -263,7 +278,7 @@ describe('queryOptions', () => {
     })
 
     const queryClient = new QueryClient()
-    const data = queryClient.getQueryData(tagged)
+    const data = getQueryData(queryClient, tagged)
 
     expectTypeOf(data).toEqualTypeOf<unknown>()
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<unknown>()
@@ -279,8 +294,8 @@ describe('queryOptions', () => {
 
     const queryClient = new QueryClient()
 
-    const data = queryClient.invalidateQueries(options)
-    const data2 = queryClient.query(options())
+    const data = invalidateQueries(queryClient, options)
+    const data2 = queryQuery(queryClient, options())
 
     expectTypeOf(data).toEqualTypeOf<Promise<void>>()
     expectTypeOf(data2).toEqualTypeOf<Promise<number | undefined>>()
@@ -346,7 +361,7 @@ describe('queryOptions', () => {
 
   it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
     const key = createKey()
-    const { data, isSuccess } = reactive(
+    const result = reactive(
       useQuery(
         queryOptions({
           queryKey: key,
@@ -360,8 +375,8 @@ describe('queryOptions', () => {
       ),
     )
 
-    if (isSuccess) {
-      expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+    if (isSuccess(result)) {
+      expectTypeOf(result.data).toEqualTypeOf<{ wow: boolean }>()
     }
   })
 

@@ -241,7 +241,7 @@ export type DefinedInitialQueryOptionsWithDataTag<
 
 /**
  * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
- * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
+ * be shared across hooks and imperative APIs such as `query`. `options.queryKey` is required and
  * is the query key to generate options for.
  *
  * This overload is selected when `initialData` is known to be defined, so the resulting `data` is never
@@ -279,7 +279,7 @@ export function queryOptions<
 /**
  * Same as the plain-object overload, but for options that close over reactive state (`ref`s read inside the
  * function body). Wrap them in a getter so `queryClient` methods like `invalidateQueries` always
- * read the current values. Call the getter before passing its options to `queryClient.query`.
+ * read the current values. Call the getter before passing its options to `query`.
  * @param options - A function returning the {@link DefinedInitialQueryOptions} to use, re-evaluated on demand.
  * @returns A function that returns the same options object, typed so that `queryKey` carries the inferred data
  * type.
@@ -323,7 +323,7 @@ export function queryOptions<
 
 /**
  * You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can
- * be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and
+ * be shared across hooks and imperative APIs such as `query`. `options.queryKey` is required and
  * is the query key to generate options for.
  * @param options - The {@link UndefinedInitialQueryOptions} to use — everything you can pass to `useQuery`.
  * @returns The same options object, typed so that `queryKey` carries the inferred data type.
@@ -363,7 +363,7 @@ export function queryOptions<
  * Same as the plain-object overload, but for options that close over reactive state (`ref`s read inside the
  * function body). Wrap them in a getter so the `queryKey` — and anything else derived from a `ref` — reacts
  * to changes, and so `queryClient` methods like `invalidateQueries` always read the current
- * values. Call the getter before passing its options to `queryClient.query`.
+ * values. Call the getter before passing its options to `query`.
  * @param options - A function returning the {@link UndefinedInitialQueryOptions} to use, re-evaluated on
  * demand.
  * @returns A function that returns the same options object, typed so that `queryKey` carries the inferred
@@ -385,7 +385,7 @@ export function queryOptions<
  * const { data } = useQuery(postOptions)
  * const queryClient = useQueryClient()
  * // Here, call `postOptions()` so `invalidateQueries` reads the current `queryKey` right away.
- * queryClient.invalidateQueries(postOptions())
+ * invalidateQueries(queryClient, postOptions())
  * </script>
  * ```
  * @example

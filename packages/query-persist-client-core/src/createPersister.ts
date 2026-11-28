@@ -1,4 +1,12 @@
-import { hashKey, matchQuery, partialMatchKey } from '@tanstack/query-core'
+import {
+  findCachedQuery,
+  getQueryCache,
+  hashKey,
+  isQueryStale,
+  matchQuery,
+  partialMatchKey,
+  setQueryData,
+} from '@tanstack/query-core'
 import type {
   Query,
   QueryClient,
@@ -116,13 +124,11 @@ export const PERSISTER_KEY_PREFIX = 'tanstack-query'
  * Simple add it as a `persister` parameter to `useQuery` or `defaultOptions` on `queryClient`.
  *
  * ```
- * useQuery({
+ * useQuery(queryOptions({
  *   queryKey: ['myKey'],
  *   queryFn: fetcher,
- *   persister: createPersister({
- *     storage: localStorage,
- *   }),
- * })
+ *   persister: createPersister({ storage: localStorage }).persisterFn,
+ * }))
  * ```
  * @param options - The storage to persist to, and the options for serializing, expiring, and
  * filtering persisted queries.
@@ -254,7 +260,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
     queryClient: QueryClient,
   ) {
     if (storage != null) {
-      const query = queryClient.getQueryCache().find({ queryKey })
+      const query = findCachedQuery(getQueryCache(queryClient), { queryKey })
       if (query) {
         await persistQuery(query)
       } else {
@@ -318,7 +324,7 @@ export function experimental_createQueryPersister<TStorageValue = string>({
 
           if (
             refetchOnRestore === 'always' ||
-            (refetchOnRestore === true && query.isStale())
+            (refetchOnRestore === true && isQueryStale(query))
           ) {
             query.fetch()
           }
@@ -420,7 +426,8 @@ export function experimental_createQueryPersister<TStorageValue = string>({
             }
           }
 
-          queryClient.setQueryData(
+          setQueryData(
+            queryClient,
             persistedQuery.queryKey,
             persistedQuery.state.data,
             {

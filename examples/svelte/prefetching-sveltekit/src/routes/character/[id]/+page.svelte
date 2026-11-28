@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+  import { isFetching, createQuery } from '@tanstack/svelte-query'
   import { resolve } from '$app/paths'
   import { charactersQueries } from '$lib/services/characters/queries'
   import type { PageProps } from './$types'
@@ -29,7 +29,7 @@
       <p>gender: {query.data.gender}</p>
       <p>origin: {query.data.origin.name}</p>
     </div>
-    <div>{query.isFetching ? 'Background Updating...' : ' '}</div>
+    <div>{isFetching(query) ? 'Background Updating...' : ' '}</div>
   {/if}
   <br />
   <br />

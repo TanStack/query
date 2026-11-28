@@ -4,9 +4,15 @@ import {
   CancelledError,
   InfiniteQueryObserver,
   QueryClient,
+  clearQueryClient,
   defaultQueryFn,
+  findCachedQuery,
+  getQueryCache,
+  infiniteQuery,
+  mountQueryClient,
 } from '..'
-import { infiniteQueryBehavior } from '../infiniteQueryBehavior'
+import { prepareInfiniteFetch } from '../infiniteQueryBehavior'
+import { resultForComparison } from './helpers/result'
 import type {
   InfiniteData,
   InfiniteQueryObserverResult,
@@ -22,12 +28,12 @@ describe('InfiniteQueryBehavior', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
-    queryCache = queryClient.getQueryCache()
-    queryClient.mount()
+    queryCache = getQueryCache(queryClient)
+    mountQueryClient(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -50,8 +56,8 @@ describe('InfiniteQueryBehavior', () => {
       observerResult = result
     })
     await vi.advanceTimersByTimeAsync(0)
-    const query = queryCache.find({ queryKey: key })!
-    expect(observerResult).toMatchObject({
+    const query = findCachedQuery(queryCache, { queryKey: key })!
+    expect(resultForComparison(observerResult)).toMatchObject({
       isError: true,
       error: new Error(`Missing queryFn: '${query.queryHash}'`),
     })
@@ -89,7 +95,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Wait for the first page to be fetched
     await vi.advanceTimersByTimeAsync(0)
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: false,
       data: { pages: [1], pageParams: [1] },
     })
@@ -114,7 +120,7 @@ describe('InfiniteQueryBehavior', () => {
       signal: abortSignal,
     })
 
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: false,
       data: { pages: [1, 2], pageParams: [1, 2] },
     })
@@ -132,7 +138,7 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     // Only first two pages should be in the data
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: false,
       data: { pages: [0, 1], pageParams: [0, 1] },
     })
@@ -149,7 +155,7 @@ describe('InfiniteQueryBehavior', () => {
       signal: abortSignal,
     })
 
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: false,
       data: { pages: [-1, 0], pageParams: [-1, 0] },
     })
@@ -166,7 +172,7 @@ describe('InfiniteQueryBehavior', () => {
       signal: abortSignal,
     })
 
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: false,
       data: { pages: [0, 1] },
     })
@@ -231,7 +237,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Wait for the first page to be cancelled
     await vi.advanceTimersByTimeAsync(0)
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: false,
       isError: true,
       error: new CancelledError(),
@@ -280,7 +286,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Wait for the first page to be fetched
     await vi.advanceTimersByTimeAsync(0)
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: false,
       data: { pages: [1], pageParams: [1] },
     })
@@ -289,7 +295,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Fetch the second page
     await observer.fetchNextPage()
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: false,
       data: { pages: [1, 2], pageParams: [1, 2] },
     })
@@ -314,7 +320,7 @@ describe('InfiniteQueryBehavior', () => {
 
     // Refetch the query
     observer.refetch()
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: true,
       isError: false,
     })
@@ -323,7 +329,7 @@ describe('InfiniteQueryBehavior', () => {
     const query = observer.getCurrentQuery()
     await query.cancel()
     vi.advanceTimersByTime(10)
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: false,
       isError: true,
       error: new CancelledError(),
@@ -351,7 +357,6 @@ describe('InfiniteQueryBehavior', () => {
         return pageParam
       })
 
-    const behavior = infiniteQueryBehavior<number, Error, number, number>()
     const context = {
       client: queryClient,
       queryKey: key,
@@ -372,9 +377,12 @@ describe('InfiniteQueryBehavior', () => {
       signal: abortController.signal,
     }
 
-    behavior.onFetch(context as any, {} as any)
+    const fetchPages = prepareInfiniteFetch<number, Error, number, number>(
+      context as any,
+      {} as any,
+    )
 
-    await expect(context.fetchFn()).rejects.toBe(abortController.signal.reason)
+    await expect(fetchPages()).rejects.toBe(abortController.signal.reason)
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
@@ -470,7 +478,7 @@ describe('InfiniteQueryBehavior', () => {
       observerResult = result
     })
     await vi.advanceTimersByTimeAsync(0)
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: false,
       data: { pages: ['data'], pageParams: [null] },
     })
@@ -486,13 +494,13 @@ describe('InfiniteQueryBehavior', () => {
       return String(pageParam)
     }
 
-    await queryClient.infiniteQuery({
+    await infiniteQuery(queryClient, {
       queryKey: key,
       queryFn,
       initialPageParam: null,
       getNextPageParam: () => undefined,
     })
-    await queryClient.infiniteQuery({
+    await infiniteQuery(queryClient, {
       queryKey: key,
       queryFn,
       initialPageParam: 'replacement',
@@ -520,13 +528,13 @@ describe('InfiniteQueryBehavior', () => {
       observerResult = result
     })
     await vi.advanceTimersByTimeAsync(0)
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: false,
       data: { pages: [1], pageParams: [1] },
     })
 
     await observer.fetchNextPage()
-    expect(observerResult).toMatchObject({
+    expect(resultForComparison(observerResult)).toMatchObject({
       isFetching: false,
       data: { pages: [1], pageParams: [1] },
     })

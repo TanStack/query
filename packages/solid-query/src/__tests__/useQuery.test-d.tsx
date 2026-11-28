@@ -1,3 +1,4 @@
+import { isLoadingError, isPending } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { defaultQueryFn, queryOptions, useQuery } from '..'
@@ -175,10 +176,10 @@ describe('useQuery', () => {
       queryFn: () => Promise.resolve('test'),
     }))
 
-    if (state.isPending) {
+    if (isPending(state)) {
       expectTypeOf(state.data).toEqualTypeOf<undefined>()
       expectTypeOf(state.error).toEqualTypeOf<null>()
-    } else if (state.isLoadingError) {
+    } else if (isLoadingError(state)) {
       expectTypeOf(state.data).toEqualTypeOf<undefined>()
       expectTypeOf(state.error).toEqualTypeOf<Error>()
     } else {

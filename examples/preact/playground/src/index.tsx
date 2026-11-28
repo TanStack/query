@@ -1,4 +1,8 @@
 import {
+  queryOptions,
+  setDefaultOptions,
+  invalidateQueries,
+  setQueryData,
   QueryClient,
   QueryClientProvider,
   useMutation,
@@ -53,7 +57,7 @@ function Root() {
   }, [localErrorRate, localFetchTimeMax, localFetchTimeMin])
 
   useEffect(() => {
-    queryClient.setDefaultOptions({
+    setDefaultOptions(queryClient, {
       queries: {
         staleTime,
         gcTime,
@@ -140,7 +144,7 @@ function App() {
   return (
     <div className="App">
       <div>
-        <button onClick={() => queryClient.invalidateQueries()}>
+        <button onClick={() => invalidateQueries(queryClient)}>
           Force Refetch All
         </button>
       </div>
@@ -185,7 +189,7 @@ function Todos({
   const [filter, setFilter] = useState(initialFilter)
 
   const { status, data, isFetching, error, failureCount, refetch } = useQuery(
-    todosQueries.list(filter),
+    queryOptions(todosQueries.list(filter)),
   )
 
   return (
@@ -242,7 +246,7 @@ function EditTodo({
   const queryClient = useQueryClient()
 
   const { status, data, isFetching, failureCount, refetch } = useQuery(
-    todosQueries.detail(editingIndex),
+    queryOptions(todosQueries.detail(editingIndex)),
   )
 
   const [draft, setDraft] = useState<Partial<Omit<Todo, 'id'>>>({})
@@ -251,8 +255,12 @@ function EditTodo({
     ...todosMutations.update(),
     onSuccess: (todo) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
-      queryClient.setQueryData(todosQueries.detail(editingIndex).queryKey, todo)
+      invalidateQueries(queryClient, { queryKey: todosQueries.lists() })
+      setQueryData(
+        queryClient,
+        todosQueries.detail(editingIndex).queryKey,
+        todo,
+      )
       setDraft({})
     },
   })
@@ -338,7 +346,7 @@ function AddTodo() {
   const addMutation = useMutation({
     ...todosMutations.create(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: todosQueries.lists() })
+      invalidateQueries(queryClient, { queryKey: todosQueries.lists() })
     },
   })
 

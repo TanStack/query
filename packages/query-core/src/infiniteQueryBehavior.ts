@@ -4,120 +4,144 @@ import {
   ensureQueryFn,
   fetchSignal,
 } from './utils'
-import type { QueryBehavior } from './query'
-import type { InfiniteData, InfiniteQueryPageParamsOptions } from './types'
+import type { FetchContext, FetchOptions, Query } from './query'
+import type { QueryClient } from './queryClient'
+import type {
+  DefaultError,
+  InfiniteData,
+  InfiniteQueryPageParamsOptions,
+} from './types'
 import type { FetchSignalContext } from './utils'
 
 /**
- * Creates the behavior that fetches the pages of an infinite query: the next or previous page for
- * `fetchNextPage`/`fetchPreviousPage`, or all pages again from the start on a refetch.
- * @param pages - The number of pages to fetch from the start when all pages are fetched again,
- * e.g. from the `pages` option of `queryClient.infiniteQuery`. Defaults to the number of cached
- * pages.
- * @returns The query behavior to set on an infinite query.
+ * Captures the options and cached pages for this fetch before the cache notifies listeners.
+ * @param client - Client that owns the query.
+ * @param query - The cached infinite query.
+ * @param fetchOptions - Options for the fetch in progress.
+ * @param addSignal - Attaches the query's cancellation signal without consuming it.
+ * @returns The fetcher to use for the first attempt and subsequent retries.
  */
-export function infiniteQueryBehavior<TQueryFnData, TError, TData, TPageParam>(
-  pages?: number,
-): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, TPageParam>> {
-  return {
-    onFetch: (context, query) => {
-      const options = context.options as InfiniteQueryPageParamsOptions<TData>
-      const direction = context.fetchOptions?.meta?.fetchMore?.direction
-      const oldPages = context.state.data?.pages || []
-      const oldPageParams = context.state.data?.pageParams || []
-      let result: InfiniteData<unknown> = { pages: [], pageParams: [] }
-      let currentPage = 0
+export function createInfiniteFetch(
+  client: QueryClient,
+  query: Query,
+  fetchOptions: FetchOptions | undefined,
+  addSignal: (context: object) => asserts context is { signal: AbortSignal },
+) {
+  const { queryKey, options, state } = query as Query<
+    unknown,
+    DefaultError,
+    InfiniteData<unknown>
+  >
+  const context = { client, queryKey, options, state, fetchOptions }
+  addSignal(context)
+  return prepareInfiniteFetch(context, query)
+}
 
-      const fetchFn = async () => {
-        let cancelled = false
-        const signalContext: FetchSignalContext = context
-        const queryFn = ensureQueryFn(context.options, context.fetchOptions)
-
-        // Create function to fetch a page
-        const fetchPage = async (
-          data: InfiniteData<unknown>,
-          param: unknown,
-          previous?: boolean,
-        ): Promise<InfiniteData<unknown>> => {
-          if (cancelled) {
-            return Promise.reject(context.signal.reason)
-          }
-
-          if (param == null && data.pages.length) {
-            return Promise.resolve(data)
-          }
-
-          const queryFnContext = addConsumeAwareSignal(
-            {
-              client: context.client,
-              queryKey: context.queryKey,
-              pageParam: param,
-              meta: context.options.meta,
-            },
-            () => context.signal,
-            () => (cancelled = true),
-            signalContext[fetchSignal],
-          )
-
-          const page = await queryFn(queryFnContext)
-
-          const { maxPages } = context.options
-          return {
-            pages: addToArray(data.pages, page, maxPages, previous),
-            pageParams: addToArray(data.pageParams, param, maxPages, previous),
-          }
-        }
-
-        // fetch next / previous page?
-        if (direction && oldPages.length) {
-          const previous = direction === 'backward'
-          const pageParamFn = previous ? getPreviousPageParam : getNextPageParam
-          const oldData = {
-            pages: oldPages,
-            pageParams: oldPageParams,
-          }
-          const param = pageParamFn(options, oldData)
-
-          result = await fetchPage(oldData, param, previous)
-        } else {
-          const remainingPages = pages ?? oldPages.length
-
-          // Fetch all pages
-          do {
-            const param =
-              currentPage === 0
-                ? oldPageParams[0] === undefined
-                  ? options.initialPageParam
-                  : oldPageParams[0]
-                : getNextPageParam(options, result)
-            if (currentPage > 0 && param == null) {
-              break
-            }
-            result = await fetchPage(result, param)
-            currentPage++
-          } while (currentPage < remainingPages)
-        }
-
-        return result
-      }
-      if (context.options.persister) {
-        context.fetchFn = () => {
-          return context.options.persister?.(
-            fetchFn as any,
-            {
-              client: context.client,
-              queryKey: context.queryKey,
-              meta: context.options.meta,
-              signal: context.signal,
-            },
-            query,
-          )
-        }
-      } else {
-        context.fetchFn = fetchFn
-      }
-    },
+/**
+ * Creates the page fetcher for an infinite query. A retry continues from the
+ * failed page. A new fetch starts with the most recently cached pages.
+ * @param context - The fetch in progress, including its options and cached pages.
+ * @param query - The query supplied to a custom persister.
+ * @returns A fetcher that resumes pagination at the failed page on retry.
+ */
+export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
+  context: Omit<
+    FetchContext<TQueryFnData, TError, InfiniteData<TData, TPageParam>>,
+    'fetchFn'
+  >,
+  query: Query,
+) {
+  const options = context.options as InfiniteQueryPageParamsOptions<TData> & {
+    pages?: number
   }
+  const direction = context.fetchOptions?.meta?.fetchMore?.direction
+  let result: InfiniteData<unknown> = { pages: [], pageParams: [] }
+  const previousData = context.state.data ?? result
+  let currentPage = 0
+
+  const fetchFn = async () => {
+    let cancelled = false
+    const signalContext: FetchSignalContext = context
+    const queryFn = ensureQueryFn(context.options, context.fetchOptions)
+
+    // Create function to fetch a page
+    const fetchPage = async (
+      data: InfiniteData<unknown>,
+      param: unknown,
+      previous?: boolean,
+    ): Promise<InfiniteData<unknown>> => {
+      if (cancelled) {
+        throw context.signal.reason
+      }
+
+      if (param == null && data.pages.length) {
+        return data
+      }
+
+      const queryFnContext = addConsumeAwareSignal(
+        {
+          client: context.client,
+          queryKey: context.queryKey,
+          pageParam: param,
+          meta: context.options.meta,
+        },
+        () => context.signal,
+        () => (cancelled = true),
+        signalContext[fetchSignal],
+      )
+
+      const page = await queryFn(queryFnContext)
+
+      const { maxPages } = context.options
+      return {
+        pages: addToArray(data.pages, page, maxPages, previous),
+        pageParams: addToArray(data.pageParams, param, maxPages, previous),
+      }
+    }
+
+    // fetch next / previous page?
+    if (direction && previousData.pages.length) {
+      const previous = direction === 'backward'
+      const pageParamFn = previous ? getPreviousPageParam : getNextPageParam
+      const param = pageParamFn(options, previousData)
+
+      result = await fetchPage(previousData, param, previous)
+    } else {
+      const remainingPages = options.pages ?? previousData.pages.length
+
+      // Fetch all pages
+      do {
+        const param =
+          currentPage === 0
+            ? previousData.pageParams[0] === undefined
+              ? options.initialPageParam
+              : previousData.pageParams[0]
+            : getNextPageParam(options, result)
+        if (currentPage > 0 && param == null) {
+          break
+        }
+        result = await fetchPage(result, param)
+        currentPage++
+      } while (currentPage < remainingPages)
+    }
+
+    return result
+  }
+  if (context.options.persister) {
+    return () => {
+      return context.options.persister?.(
+        fetchFn as any,
+        {
+          client: context.client,
+          queryKey: context.queryKey,
+          meta: context.options.meta,
+          signal: context.signal,
+        },
+        query,
+      )
+    }
+  }
+  return fetchFn
 }
 
 /**
@@ -184,4 +208,19 @@ export function hasPreviousPage(
 ): boolean {
   if (!data || !options.getPreviousPageParam) return false
   return getPreviousPageParam(options, data) != null
+}
+
+/**
+ * Attaches paging to the options that create or restore an infinite query.
+ * @param options - Options accepted by an infinite query or observer.
+ * @returns Options that install the page fetcher on the cached query.
+ */
+export function infiniteFetchOptions<TOptions extends object>(
+  options: TOptions,
+) {
+  return {
+    ...options,
+    _type: 'infinite' as const,
+    _prepareInfiniteFetch: createInfiniteFetch,
+  }
 }

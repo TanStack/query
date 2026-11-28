@@ -1,3 +1,4 @@
+import { getMutationCache, isMutating } from '@tanstack/query-core'
 import { ReactiveValue } from './containers.svelte.js'
 import { useQueryClient } from './useQueryClient.js'
 import type { MutationFilters, QueryClient } from '@tanstack/query-core'
@@ -28,10 +29,10 @@ export function useIsMutating(
   queryClient?: QueryClient,
 ): ReactiveValue<number> {
   const client = useQueryClient(queryClient)
-  const cache = client.getMutationCache()
+  const cache = getMutationCache(client)
 
   return new ReactiveValue(
-    () => client.isMutating(filters),
+    () => isMutating(client, filters),
     (update) => cache.subscribe(update),
   )
 }

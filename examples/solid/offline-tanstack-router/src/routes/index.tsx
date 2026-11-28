@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/solid-query'
+import { isLoading, isFetching, isError, useQuery } from '@tanstack/solid-query'
 import { Link, createFileRoute } from '@tanstack/solid-router'
 import { For, Match, Show, Switch } from 'solid-js'
 import { moviesQueries } from '../services/movies/queries'
@@ -12,7 +12,7 @@ function List() {
 
   return (
     <Switch>
-      <Match when={moviesQuery.isLoading}>Loading...</Match>
+      <Match when={isLoading(moviesQuery)}>Loading...</Match>
       <Match when={moviesQuery.data}>
         <div>
           <h1>Movies</h1>
@@ -35,12 +35,12 @@ function List() {
           <div>
             Updated at: {new Date(moviesQuery.data!.ts).toLocaleTimeString()}
           </div>
-          <Show when={moviesQuery.isFetching}>
+          <Show when={isFetching(moviesQuery)}>
             <div>fetching...</div>
           </Show>
         </div>
       </Match>
-      <Match when={moviesQuery.isError}>
+      <Match when={isError(moviesQuery)}>
         <div>
           <h1>Couldn't load movies!</h1>
           <div>{moviesQuery.error?.message}</div>

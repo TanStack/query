@@ -1,4 +1,5 @@
 import { notifyManager } from './notifyManager'
+import { defaultQueryOptions } from './queryClient'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
 import {
@@ -15,6 +16,25 @@ import type {
   DefaultedQueryObserverOptions,
   QueryObserverResult,
 } from './types'
+
+type CombineContext<TCombinedResult> = {
+  result?: Array<QueryObserverResult>
+  combine?: CombineFn<TCombinedResult>
+  value?: TCombinedResult
+  queryHashes?: Array<string>
+}
+
+type CombineFn<TCombinedResult> = (
+  result: Array<QueryObserverResult>,
+) => TCombinedResult
+
+type QueriesObserverListener = (result: Array<QueryObserverResult>) => void
+
+type QueryObserverMatch = {
+  defaultedQueryOptions: DefaultedQueryObserverOptions
+  observer: QueryObserver
+  reader?: QueryObserverResultReader<QueryObserverResult>
+}
 
 /**
  * Returns the items of `array1` that are not in `array2`.
@@ -42,44 +62,6 @@ function equalResults(
     result.length === previous.length &&
     result.every((value, index) => shallowEqualObjects(value, previous[index]))
   )
-}
-
-type QueriesObserverListener = (result: Array<QueryObserverResult>) => void
-
-type CombineFn<TCombinedResult> = (
-  result: Array<QueryObserverResult>,
-) => TCombinedResult
-
-/** A cached reader for multiple query results and their combined value. */
-export interface QueriesObserverResultReader<
-  TCombinedResult,
-> extends QueryObserverResultReader<Array<QueryObserverResult>> {
-  /** Track result properties and combine the results with this reader's options. */
-  combineResult: (result: Array<QueryObserverResult>) => TCombinedResult
-}
-
-type CombineContext<TCombinedResult> = {
-  result?: Array<QueryObserverResult>
-  combine?: CombineFn<TCombinedResult>
-  value?: TCombinedResult
-  queryHashes?: Array<string>
-}
-
-/**
- * Options for a `QueriesObserver` that apply to all of its queries at once.
- */
-export interface QueriesObserverOptions<
-  TCombinedResult = Array<QueryObserverResult>,
-> {
-  /**
-   * A function that combines the array of `QueryObserverResult`s (one per
-   * observed query) into a single value. The combined value is memoized and
-   * only recomputed when one of the underlying results, the query hashes, or
-   * the `combine` function itself changes.
-   *
-   * Defaults to returning the array of `QueryObserverResult`s unchanged.
-   */
-  combine?: CombineFn<TCombinedResult>
 }
 
 /**
@@ -212,10 +194,7 @@ export class QueriesObserver<
       )
 
       const hasStructuralChange =
-        prevObservers.length !== newObservers.length ||
-        newObservers.some(
-          (observer, index) => observer !== prevObservers[index],
-        )
+        !shallowEqualObjects(newObservers, prevObservers)
 
       if (!hasStructuralChange && equalResults(newResult, this.#result)) return
 
@@ -259,15 +238,6 @@ export class QueriesObserver<
    */
   getCurrentResult(): Array<QueryObserverResult> {
     return this.#result
-  }
-
-  /**
-   * Returns the underlying `Query` instances currently being observed, in
-   * the same order as the queries passed to the constructor or `setQueries`.
-   * @returns The observed queries.
-   */
-  getQueries() {
-    return this.#observers.map((observer) => observer.getCurrentQuery())
   }
 
   /**
@@ -369,13 +339,12 @@ export class QueriesObserver<
   #combineResult(
     input: Array<QueryObserverResult>,
     combine: CombineFn<TCombinedResult> | undefined,
-    queryHashes?: Array<string>,
+    queryHashes: Array<string>,
     context = this.#combineContext,
     result = this.#result,
   ): TCombinedResult {
     if (combine) {
       const queryHashesChanged =
-        queryHashes !== undefined &&
         context.queryHashes !== undefined &&
         !shallowEqualObjects(queryHashes, context.queryHashes)
 
@@ -387,9 +356,7 @@ export class QueriesObserver<
         context.value = replaceEqualDeep(context.value, combine(input))
         context.combine = combine
         context.result = result
-        if (queryHashes !== undefined) {
-          context.queryHashes = queryHashes
-        }
+        context.queryHashes = queryHashes
       }
 
       return context.value as TCombinedResult
@@ -402,11 +369,12 @@ export class QueriesObserver<
       !this.#options?.combine ||
       this.#observers.some((observer, index) => {
         const result = this.#result[index]
+        const rule = observer.options.throwOnError
         return (
           (observer.options.suspense && result?.data === undefined) ||
-          (!!result?.isError &&
-            !result.isFetching &&
-            shouldThrowError(observer.options.throwOnError, [
+          (result?.status === 'error' &&
+            result.fetchStatus !== 'fetching' &&
+            shouldThrowError(rule, [
               result.error,
               observer.getCurrentQuery(),
             ]))
@@ -433,21 +401,14 @@ export class QueriesObserver<
       }
     })
 
-    const observers: Array<QueryObserverMatch> = []
-
-    queries.forEach((options) => {
-      const defaultedOptions = this.#client.defaultQueryOptions(options)
+    return queries.map((options) => {
+      const defaultedOptions = defaultQueryOptions(this.#client, options)
       const match = prevObserversMap.get(defaultedOptions.queryHash)?.shift()
       const observer =
         match ?? new QueryObserver(this.#client, defaultedOptions)
 
-      observers.push({
-        defaultedQueryOptions: defaultedOptions,
-        observer,
-      })
+      return { defaultedQueryOptions: defaultedOptions, observer }
     })
-
-    return observers
   }
 
   #subscribeTo(observer: QueryObserver): void {
@@ -495,8 +456,27 @@ export class QueriesObserver<
   }
 }
 
-type QueryObserverMatch = {
-  defaultedQueryOptions: DefaultedQueryObserverOptions
-  observer: QueryObserver
-  reader?: QueryObserverResultReader<QueryObserverResult>
+/**
+ * Options for a `QueriesObserver` that apply to all of its queries at once.
+ */
+export interface QueriesObserverOptions<
+  TCombinedResult = Array<QueryObserverResult>,
+> {
+  /**
+   * A function that combines the array of `QueryObserverResult`s (one per
+   * observed query) into a single value. The combined value is memoized and
+   * only recomputed when one of the underlying results, the query hashes, or
+   * the `combine` function itself changes.
+   *
+   * Defaults to returning the array of `QueryObserverResult`s unchanged.
+   */
+  combine?: CombineFn<TCombinedResult>
+}
+
+/** A cached reader for multiple query results and their combined value. */
+export interface QueriesObserverResultReader<
+  TCombinedResult,
+> extends QueryObserverResultReader<Array<QueryObserverResult>> {
+  /** Track result properties and combine the results with this reader's options. */
+  combineResult: (result: Array<QueryObserverResult>) => TCombinedResult
 }

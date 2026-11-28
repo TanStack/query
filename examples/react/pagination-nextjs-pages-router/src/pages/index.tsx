@@ -1,6 +1,10 @@
 import {
+  isFetching,
   keepPreviousData,
   noop,
+  placeholderData,
+  query,
+  queryOptions,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
@@ -12,15 +16,19 @@ export default function Example() {
   const queryClient = useQueryClient()
   const [page, setPage] = React.useState(0)
 
-  const { status, data, error, isFetching, isPlaceholderData } = useQuery({
-    ...projectsQueries.list(page),
-    placeholderData: keepPreviousData,
-  })
+  const queryResult = useQuery(
+    queryOptions({
+      ...projectsQueries.list(page),
+      placeholderData: placeholderData(keepPreviousData),
+    }),
+  )
+  const { status, data, error, isPlaceholderData } = queryResult
+  const fetching = isFetching(queryResult)
 
   // Prefetch the next page!
   React.useEffect(() => {
     if (!isPlaceholderData && data?.hasMore) {
-      queryClient.query(projectsQueries.list(page + 1)).catch(noop)
+      query(queryClient, projectsQueries.list(page + 1)).catch(noop)
     }
   }, [data, isPlaceholderData, page, queryClient])
 
@@ -66,7 +74,7 @@ export default function Example() {
         // Since the last page's data potentially sticks around between page requests,
         // we can use `isFetching` to show a background loading
         // indicator since our `status === 'pending'` state won't be triggered
-        isFetching ? <span> Loading...</span> : null
+        fetching ? <span> Loading...</span> : null
       }{' '}
       <ReactQueryDevtools initialIsOpen />
     </div>

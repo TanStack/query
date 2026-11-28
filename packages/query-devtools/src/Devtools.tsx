@@ -2,6 +2,18 @@ import { DropdownMenu, RadioGroup } from '@kobalte/core'
 import { createResizeObserver } from '@solid-primitives/resize-observer'
 import { rankItem } from '@tanstack/match-sorter-utils'
 import {
+  clearQueryCache,
+  getMutationCache,
+  getQueryCache,
+  getQueryObserverCount,
+  invalidateQueries,
+  isQueryDisabled,
+  isQueryStale,
+  isQueryStatic,
+  removeQueries,
+  resetQueries,
+} from '@tanstack/query-core'
+import {
   For,
   Show,
   batch,
@@ -670,11 +682,11 @@ export const ContentView: Component<ContentViewProps> = (props) => {
   )
 
   const query_cache = createMemo(() => {
-    return useQueryDevtoolsContext().client.getQueryCache()
+    return getQueryCache(useQueryDevtoolsContext().client)
   })
 
   const mutation_cache = createMemo(() => {
-    return useQueryDevtoolsContext().client.getMutationCache()
+    return getMutationCache(useQueryDevtoolsContext().client)
   })
 
   const queryCount = createSubscribeToQueryCacheBatcher((queryCache) => {
@@ -752,7 +764,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
 
         // Filter out disabled queries if hideDisabledQueries is enabled
         if (hideDisabledQueries()) {
-          filtered = filtered.filter((item) => !item.isDisabled())
+          filtered = filtered.filter((item) => !isQueryDisabled(item))
         }
 
         const sorted = sortFn()
@@ -1058,7 +1070,7 @@ export const ContentView: Component<ContentViewProps> = (props) => {
               onClick={() => {
                 if (selectedView() === 'queries') {
                   sendDevToolsEvent({ type: 'CLEAR_QUERY_CACHE' })
-                  batch(() => query_cache().clear())
+                  batch(() => clearQueryCache(query_cache()))
                 } else {
                   sendDevToolsEvent({ type: 'CLEAR_MUTATION_CACHE' })
                   mutation_cache().clear()
@@ -1355,28 +1367,37 @@ const QueryRow: Component<{ query: Query }> = (props) => {
   )
 
   const isDisabled = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache().get(props.query.queryHash)?.isDisabled() ?? false,
+    (queryCache) => {
+      const entry = queryCache().get(props.query.queryHash)
+      return entry ? isQueryDisabled(entry) : false
+    },
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const isStatic = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache().get(props.query.queryHash)?.isStatic() ?? false,
+    (queryCache) => {
+      const entry = queryCache().get(props.query.queryHash)
+      return entry ? isQueryStatic(entry) : false
+    },
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const isStale = createSubscribeToQueryCacheBatcher(
-    (queryCache) => queryCache().get(props.query.queryHash)?.isStale() ?? false,
+    (queryCache) => {
+      const entry = queryCache().get(props.query.queryHash)
+      return entry ? isQueryStale(entry) : false
+    },
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
 
   const observers = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache().get(props.query.queryHash)?.getObserversCount() ?? 0,
+    (queryCache) => {
+      const entry = queryCache().get(props.query.queryHash)
+      return entry ? getQueryObserverCount(entry) : 0
+    },
     true,
     (e) => e.query.queryHash === props.query.queryHash,
   )
@@ -1648,12 +1669,10 @@ const QueryDetails = (props: { initialSearch?: string }) => {
     return query.state.status
   })
 
-  const observerCount = createSubscribeToQueryCacheBatcher(
-    (queryCache) =>
-      queryCache()
-        .get(selectedQueryHash() ?? '')
-        ?.getObserversCount() ?? 0,
-  )
+  const observerCount = createSubscribeToQueryCacheBatcher((queryCache) => {
+    const entry = queryCache().get(selectedQueryHash() ?? '')
+    return entry ? getQueryObserverCount(entry) : 0
+  })
 
   const color = createMemo(() => getQueryStatusColorByLabel(statusLabel()))
 
@@ -1783,7 +1802,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
                 type: 'INVALIDATE',
                 queryHash: activeQuery()?.queryHash,
               })
-              queryClient.invalidateQueries({
+              invalidateQueries(queryClient, {
                 queryKey: activeQuery()?.queryKey,
                 exact: true,
               })
@@ -1803,7 +1822,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
                 type: 'RESET',
                 queryHash: activeQuery()?.queryHash,
               })
-              queryClient.resetQueries({
+              resetQueries(queryClient, {
                 queryKey: activeQuery()?.queryKey,
                 exact: true,
               })
@@ -1823,7 +1842,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
                 type: 'REMOVE',
                 queryHash: activeQuery()?.queryHash,
               })
-              queryClient.removeQueries({
+              removeQueries(queryClient, {
                 queryKey: activeQuery()?.queryKey,
                 exact: true,
               })
@@ -1890,7 +1909,7 @@ const QueryDetails = (props: { initialSearch?: string }) => {
                     type: 'RESTORE_ERROR',
                     queryHash: activeQuery()?.queryHash,
                   })
-                  queryClient.resetQueries({
+                  resetQueries(queryClient, {
                     queryKey: activeQuery()?.queryKey,
                   })
                 }
@@ -2210,7 +2229,7 @@ const setupQueryCacheSubscription = () => {
   const { queryCacheSubscriptions } = useDevtoolsSubscriptions()
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
-    return client.getQueryCache()
+    return getQueryCache(client)
   })
 
   createEffect(() => {
@@ -2235,7 +2254,7 @@ const createSubscribeToQueryCacheBatcher = <T,>(
   const { queryCacheSubscriptions } = useDevtoolsSubscriptions()
   const queryCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
-    return client.getQueryCache()
+    return getQueryCache(client)
   })
 
   const [value, setValue] = createSignal<T>(
@@ -2256,7 +2275,7 @@ const setupMutationCacheSubscription = () => {
   const { mutationCacheSubscriptions } = useDevtoolsSubscriptions()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
-    return client.getMutationCache()
+    return getMutationCache(client)
   })
 
   createEffect(() => {
@@ -2291,7 +2310,7 @@ const createSubscribeToMutationCacheBatcher = <T,>(
   const { mutationCacheSubscriptions } = useDevtoolsSubscriptions()
   const mutationCache = createMemo(() => {
     const client = useQueryDevtoolsContext().client
-    return client.getMutationCache()
+    return getMutationCache(client)
   })
 
   const [value, setValue] = createSignal<T>(

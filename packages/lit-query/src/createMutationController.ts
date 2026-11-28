@@ -1,4 +1,4 @@
-import { MutationObserver } from '@tanstack/query-core'
+import { MutationObserver, defaultMutationOptions } from '@tanstack/query-core'
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
@@ -279,7 +279,7 @@ class MutationController<
       throw createMissingQueryClientError()
     }
 
-    return client.defaultMutationOptions(readAccessor(this.options))
+    return defaultMutationOptions(client, readAccessor(this.options))
   }
 }
 

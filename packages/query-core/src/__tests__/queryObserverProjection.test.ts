@@ -1,6 +1,19 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryClient, QueryObserver, defaultQueryFn, noop } from '..'
+import {
+  QueryClient,
+  QueryObserver,
+  clearQueryClient,
+  defaultQueryFn,
+  defaultQueryOptions,
+  getQueryData,
+  getQueryState,
+  noop,
+  resetQueries,
+  select as selectData,
+  setQueryData,
+} from '..'
+import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 
 describe('observer data outcome after reset', () => {
   let queryClient: QueryClient
@@ -10,22 +23,25 @@ describe('observer data outcome after reset', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   it('should not restore removed data when select throws for placeholderData after reset', async () => {
     const key = createKey()
-    queryClient.setQueryData(key, { label: 'first' })
+    setQueryData(queryClient, key, { label: 'first' })
     const placeholder: { label: string | null } = { label: null }
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => new Promise<{ label: string | null }>(() => {}),
       enabled: false,
-      placeholderData: placeholder,
-      select: (row) => {
-        if (row.label === null) throw new Error('label not ready')
-        return row.label
-      },
+      placeholderData: optionalPlaceholderData(placeholder),
+      select: [
+        selectData,
+        (row) => {
+          if (row.label === null) throw new Error('label not ready')
+          return row.label
+        },
+      ],
     })
     const unsubscribe = observer.subscribe(() => {})
 
@@ -35,9 +51,9 @@ describe('observer data outcome after reset', () => {
       isPlaceholderData: false,
     })
 
-    await queryClient.resetQueries({ queryKey: key })
+    await resetQueries(queryClient, { queryKey: key })
 
-    expect(queryClient.getQueryData(key)).toBeUndefined()
+    expect(getQueryData(queryClient, key)).toBeUndefined()
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'error',
       data: undefined,
@@ -57,15 +73,15 @@ describe('observer data outcome after reset', () => {
       queryKey: key,
       queryFn: defaultQueryFn,
       enabled: false,
-      placeholderData: { label: null },
-      select,
+      placeholderData: optionalPlaceholderData({ label: null }),
+      select: optionalSelect(select),
     } as const
-    queryClient.setQueryData(key, { label: 'first' })
+    setQueryData(queryClient, key, { label: 'first' })
     const observer = new QueryObserver(queryClient, options)
     const unsubscribe = observer.subscribe(noop)
     try {
       const reader = observer.createResultReader(
-        queryClient.defaultQueryOptions({ ...options, queryKey: createKey() }),
+        defaultQueryOptions(queryClient, { ...options, queryKey: createKey() }),
       )
       expect(reader.getSnapshot()).toMatchObject({
         status: 'error',
@@ -74,9 +90,9 @@ describe('observer data outcome after reset', () => {
       })
       expect(select).toHaveBeenCalledTimes(2)
 
-      await queryClient.resetQueries({ queryKey: key })
+      await resetQueries(queryClient, { queryKey: key })
 
-      expect(queryClient.getQueryData(key)).toBeUndefined()
+      expect(getQueryData(queryClient, key)).toBeUndefined()
       const callsAfterReset = select.mock.calls.length
       const afterReset = reader.getSnapshot()
       expect(afterReset.error).toBe(error)
@@ -96,7 +112,7 @@ describe('observer callback errors', () => {
   it('should keep a factory error stable through repeated reads and commit', () => {
     const client = new QueryClient()
     const queryKey = createKey()
-    const options = client.defaultQueryOptions<number>({
+    const options = defaultQueryOptions<number>(client, {
       queryKey,
       enabled: false,
     })
@@ -104,7 +120,10 @@ describe('observer callback errors', () => {
     const placeholderData = vi.fn<() => never>(() => {
       throw new Error('placeholder failed')
     })
-    const reader = observer.createResultReader({ ...options, placeholderData })
+    const reader = observer.createResultReader({
+      ...options,
+      placeholderData: optionalPlaceholderData(placeholderData),
+    })
 
     try {
       const result = reader.getSnapshot()
@@ -120,16 +139,16 @@ describe('observer callback errors', () => {
         undefined,
         undefined,
       )
-      expect(client.getQueryState(queryKey)?.status).toBe('pending')
+      expect(getQueryState(client, queryKey)?.status).toBe('pending')
 
-      client.setQueryData(queryKey, 1)
+      setQueryData(client, queryKey, 1)
       expect(reader.getSnapshot()).toMatchObject({
         status: 'success',
         error: null,
         data: 1,
       })
     } finally {
-      client.clear()
+      clearQueryClient(client)
     }
   })
 
@@ -143,9 +162,9 @@ describe('observer callback errors', () => {
     } as const
     const observer = new QueryObserver(client, {
       ...options,
-      select: () => {
+      select: optionalSelect(() => {
         throw undefined
-      },
+      }),
     })
     try {
       expect(observer.getCurrentResult()).toMatchObject({
@@ -160,17 +179,17 @@ describe('observer callback errors', () => {
         data: 1,
       })
     } finally {
-      client.clear()
+      clearQueryClient(client)
     }
   })
 
   it('should recompute a selection when structural sharing changes', () => {
     const client = new QueryClient()
-    const options = client.defaultQueryOptions({
+    const options = defaultQueryOptions(client, {
       queryKey: createKey(),
       initialData: 1,
       enabled: false,
-      select: (value: number) => value * 2,
+      select: optionalSelect((value: number) => value * 2),
     })
     const observer = new QueryObserver(client, options)
     const reader = observer.createResultReader({
@@ -186,17 +205,17 @@ describe('observer callback errors', () => {
       reader.commit()
       expect(observer.getCurrentResult().data).toBe(3)
     } finally {
-      client.clear()
+      clearQueryClient(client)
     }
   })
 
   it('should reuse the placeholder across readers until the factory changes', () => {
     const client = new QueryClient()
     const placeholderData = vi.fn<() => { value: number }>(() => ({ value: 1 }))
-    const options = client.defaultQueryOptions<{ value: number }>({
+    const options = defaultQueryOptions<{ value: number }>(client, {
       queryKey: createKey(),
       enabled: false,
-      placeholderData,
+      placeholderData: optionalPlaceholderData(placeholderData),
       structuralSharing: false,
     })
     const observer = new QueryObserver(client, options)
@@ -213,7 +232,7 @@ describe('observer callback errors', () => {
 
       const secondReader = observer.createResultReader({
         ...options,
-        placeholderData: () => placeholderData(),
+        placeholderData: optionalPlaceholderData(() => placeholderData()),
       })
       const second = secondReader.getSnapshot()
       expect(secondReader.getSnapshot()).toBe(second)
@@ -226,7 +245,7 @@ describe('observer callback errors', () => {
       expect(observer.getCurrentResult().data).toBe(second.data)
       expect(placeholderData).toHaveBeenCalledTimes(2)
     } finally {
-      client.clear()
+      clearQueryClient(client)
     }
   })
 })

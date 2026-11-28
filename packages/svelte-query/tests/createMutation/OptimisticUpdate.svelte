@@ -1,4 +1,9 @@
 <script lang="ts">
+  import {
+    cancelQueries,
+    getQueryData,
+    setQueryData,
+  } from '@tanstack/query-core'
   import { sleep } from '@tanstack/query-test-utils'
   import { createMutation, setQueryClientContext } from '../../src/index.js'
   import type { QueryClient } from '@tanstack/query-core'
@@ -19,10 +24,10 @@
         ? sleep(10).then(() => newTodo)
         : sleep(10).then(() => Promise.reject(new Error('Some error'))),
     onMutate: async (newTodo: string) => {
-      await queryClient.cancelQueries({ queryKey })
-      const previousTodos = queryClient.getQueryData<Array<string>>(queryKey)
+      await cancelQueries(queryClient, { queryKey })
+      const previousTodos = getQueryData<Array<string>>(queryClient, queryKey)
 
-      queryClient.setQueryData<Array<string>>(queryKey, (old) => [
+      setQueryData<Array<string>>(queryClient, queryKey, (old) => [
         ...(old ?? []),
         newTodo,
       ])
@@ -30,7 +35,7 @@
       return { previousTodos }
     },
     onError: (_err, _newTodo, onMutateResult) => {
-      queryClient.setQueryData(queryKey, onMutateResult?.previousTodos)
+      setQueryData(queryClient, queryKey, onMutateResult?.previousTodos)
     },
   }))
 </script>

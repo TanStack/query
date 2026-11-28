@@ -1,9 +1,10 @@
 'use client'
 
 import {
+  invalidateQueries,
   useMutation,
+  useQuery,
   useQueryClient,
-  useSuspenseQuery,
 } from '@tanstack/react-query'
 import React, { useState } from 'react'
 import { todosMutations, todosQueries } from '../services/todos/queries'
@@ -12,12 +13,14 @@ export default function TodoListUI() {
   const queryClient = useQueryClient()
   const [inputValue, setInputValue] = useState('')
 
-  const { data: todos } = useSuspenseQuery(todosQueries.list())
+  const { data: todos } = useQuery(todosQueries.list())
 
   const addTodoMutation = useMutation({
     ...todosMutations.create(),
     onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
+      invalidateQueries(queryClient, {
+        queryKey: todosQueries.list().queryKey,
+      }),
   })
 
   function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {

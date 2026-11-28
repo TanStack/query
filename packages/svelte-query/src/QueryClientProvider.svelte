@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { QueryClient } from '@tanstack/query-core'
+  import {
+    QueryClient,
+    mountQueryClient,
+    unmountQueryClient,
+  } from '@tanstack/query-core'
   import { onDestroy, onMount } from 'svelte'
   import { setQueryClientContext } from './context.js'
   import type { QueryClientProviderProps } from './types.js'
@@ -8,13 +12,13 @@
     $props()
 
   onMount(() => {
-    client.mount()
+    mountQueryClient(client)
   })
 
   setQueryClientContext(client)
 
   onDestroy(() => {
-    client.unmount()
+    unmountQueryClient(client)
   })
 </script>
 

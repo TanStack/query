@@ -1,4 +1,5 @@
 import { ContextProvider } from '@lit/context'
+import { mountQueryClient, unmountQueryClient } from '@tanstack/query-core'
 import { LitElement, html } from 'lit'
 import {
   createMissingQueryClientError,
@@ -164,7 +165,7 @@ export class QueryClientProvider extends LitElement {
       this.unmountClient(this.mountedClient)
     }
 
-    client.mount()
+    mountQueryClient(client)
     registerDefaultQueryClient(client)
     this.mountedClient = client
   }
@@ -174,7 +175,7 @@ export class QueryClientProvider extends LitElement {
       return
     }
 
-    client.unmount()
+    unmountQueryClient(client)
     unregisterDefaultQueryClient(client)
 
     if (this.mountedClient === client) {

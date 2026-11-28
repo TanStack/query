@@ -1,10 +1,17 @@
-import { skipToken } from '@tanstack/query-core'
-import { createKey, sleep } from '@tanstack/query-test-utils'
+import * as queryPredicates from '@tanstack/query-core'
+import { isFetching, skipToken } from '@tanstack/query-core'
+import {
+  createKey,
+  createQueryResultSnapshot,
+  sleep,
+} from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { computed, isReadonly, onScopeDispose, ref } from 'vue'
-import { QueryClient } from '../queryClient'
+import { QueryClient, getQueryData } from '../queryClient'
 import { useQueries } from '../useQueries'
 import { useQueryClient } from '../useQueryClient'
+
+const snapshot = createQueryResultSnapshot(queryPredicates)
 
 vi.mock(import('../useQueryClient'))
 
@@ -33,7 +40,7 @@ describe('useQueries', () => {
     ]
     const queriesState = useQueries({ queries })
 
-    expect(queriesState.value).toMatchObject([
+    expect(snapshot(queriesState.value)).toMatchObject([
       {
         status: 'pending',
         isPending: true,
@@ -65,7 +72,7 @@ describe('useQueries', () => {
     const queriesState = useQueries({ queries })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(queriesState.value).toMatchObject([
+    expect(snapshot(queriesState.value)).toMatchObject([
       {
         status: 'success',
         isPending: false,
@@ -98,7 +105,7 @@ describe('useQueries', () => {
     const queriesState = useQueries({ queries })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(queriesState.value).toMatchObject([
+    expect(snapshot(queriesState.value)).toMatchObject([
       {
         status: 'error',
         isPending: false,
@@ -152,7 +159,7 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(0)
     await vi.advanceTimersByTimeAsync(0)
     expect(queriesState.value).toHaveLength(2)
-    expect(queriesState.value).toMatchObject([
+    expect(snapshot(queriesState.value)).toMatchObject([
       {
         data: 'value31',
         status: 'success',
@@ -190,9 +197,9 @@ describe('useQueries', () => {
     const queriesState = useQueries({ queries })
 
     await vi.advanceTimersByTimeAsync(0)
-    expect(queryClient.getQueryData(key1)).toBe('Some data')
-    expect(queryClient.getQueryData(key2)).toBe('Some data')
-    expect(queriesState.value).toMatchObject([
+    expect(getQueryData(queryClient, key1)).toBe('Some data')
+    expect(getQueryData(queryClient, key2)).toBe('Some data')
+    expect(snapshot(queriesState.value)).toMatchObject([
       {
         status: 'pending',
         isPending: true,
@@ -515,7 +522,7 @@ describe('useQueries', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(queriesState.value[0].data).toBe('users-2')
     expect(queriesState.value[1].data).toBe('posts-1')
-    expect(queriesState.value[1].isFetching).toBe(false)
+    expect(isFetching(queriesState.value[1])).toBe(false)
   })
 
   it('should warn when used outside of setup function in development mode', () => {

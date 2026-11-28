@@ -1,5 +1,7 @@
 import { Mutation, getDefaultState } from './mutation'
+import { getMutationCache } from './mutationCache'
 import { notifyManager } from './notifyManager'
+import { defaultMutationOptions } from './queryClient'
 import { Subscribable } from './subscribable'
 import { hashKeyByOptions, shallowEqualObjects } from './utils'
 import type { Action } from './mutation'
@@ -11,8 +13,6 @@ import type {
   MutationObserverOptions,
   MutationObserverResult,
 } from './types'
-
-// TYPES
 
 type MutationObserverListener<TData, TError, TVariables, TOnMutateResult> = (
   result: MutationObserverResult<TData, TError, TVariables, TOnMutateResult>,
@@ -88,7 +88,7 @@ export class MutationObserver<
    * observing. Otherwise, if the currently observed mutation is still
    * `pending`, its options are updated in place as well.
    * @param options - The new mutation observer options. They are defaulted with {@link
-   * QueryClient#defaultMutationOptions} before being applied.
+   * defaultMutationOptions} before being applied.
    * @example
    * ```ts
    * observer.setOptions({
@@ -108,9 +108,10 @@ export class MutationObserver<
     const prevOptions = this.options as
       | MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>
       | undefined
-    this.options = this.#client.defaultMutationOptions(options)
+    this.options = defaultMutationOptions(this.#client, options)
+    const mutationCache = getMutationCache(this.#client)
     if (!shallowEqualObjects(this.options, prevOptions)) {
-      this.#client.getMutationCache().notify({
+      mutationCache.notify({
         type: 'observerOptionsUpdated',
         mutation: this.#currentMutation,
         observer: this,
@@ -122,11 +123,11 @@ export class MutationObserver<
       this.options.mutationKey &&
       hashKeyByOptions(
         prevOptions.mutationKey,
-        this.#client.getMutationCache().config.mutationKey,
+        mutationCache.config.mutationKey,
       ) !==
         hashKeyByOptions(
           this.options.mutationKey,
-          this.#client.getMutationCache().config.mutationKey,
+          mutationCache.config.mutationKey,
         )
     ) {
       this.reset()
@@ -270,49 +271,22 @@ export class MutationObserver<
           mutationKey: this.options.mutationKey,
         } satisfies MutationFunctionContext
 
-        if (action?.type === 'success') {
+        if (action?.type === 'success' || action?.type === 'error') {
+          const data = action.type === 'success' ? action.data : undefined
+          const error = action.type === 'error' ? action.error : null
           try {
-            mutateOptions.onSuccess?.(
-              action.data,
-              variables,
-              onMutateResult,
-              context,
-            )
-          } catch (e) {
-            void Promise.reject(e)
+            if (action.type === 'success') {
+              mutateOptions.onSuccess?.(action.data, variables, onMutateResult, context)
+            } else {
+              mutateOptions.onError?.(action.error, variables, onMutateResult, context)
+            }
+          } catch (callbackError) {
+            void Promise.reject(callbackError)
           }
           try {
-            mutateOptions.onSettled?.(
-              action.data,
-              null,
-              variables,
-              onMutateResult,
-              context,
-            )
-          } catch (e) {
-            void Promise.reject(e)
-          }
-        } else if (action?.type === 'error') {
-          try {
-            mutateOptions.onError?.(
-              action.error,
-              variables,
-              onMutateResult,
-              context,
-            )
-          } catch (e) {
-            void Promise.reject(e)
-          }
-          try {
-            mutateOptions.onSettled?.(
-              undefined,
-              action.error,
-              variables,
-              onMutateResult,
-              context,
-            )
-          } catch (e) {
-            void Promise.reject(e)
+            mutateOptions.onSettled?.(data, error, variables, onMutateResult, context)
+          } catch (callbackError) {
+            void Promise.reject(callbackError)
           }
         }
       }

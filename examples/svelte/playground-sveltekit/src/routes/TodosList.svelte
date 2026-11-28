@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+  import { isFetching, createQuery } from '@tanstack/svelte-query'
   import { todosQueries } from '$lib/services/todos/queries'
   import { editingIndex } from '$lib/stores.svelte'
 
@@ -39,7 +39,7 @@
     {/if}
   </ul>
   <div>
-    {#if query.isFetching}
+    {#if isFetching(query)}
       <span>
         Background Refreshing... (Attempt: {query.failureCount + 1})
       </span>

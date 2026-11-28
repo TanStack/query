@@ -3,6 +3,7 @@ import {
   QueryClientProvider,
   createMutationController,
   createQueryController,
+  setQueryData,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { resetTodoApi } from './services/todos/api'
@@ -43,7 +44,8 @@ class MutationExample extends LitElement {
   private readonly addTodo = createMutationController(this, {
     ...todosMutations.create(),
     onSuccess: (created) => {
-      queryClient.setQueryData<TodosResponse>(
+      setQueryData<TodosResponse>(
+        queryClient,
         todosQueries.list().queryKey,
         (existing) => {
           if (!existing) {

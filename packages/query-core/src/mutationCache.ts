@@ -1,8 +1,10 @@
 import { notifyManager } from './notifyManager'
+import { mutationCacheKey } from './queryClient'
 import { Subscribable } from './subscribable'
 import { matchMutation, noop } from './utils'
-import type { Action, Mutation } from './mutation'
+import type { Mutation, Action as MutationAction } from './mutation'
 import type { MutationObserver } from './mutationObserver'
+import type { QueryClient } from './queryClient'
 import type {
   CacheKeyConfig,
   DefaultError,
@@ -11,8 +13,6 @@ import type {
   NotifyEvent,
 } from './types'
 import type { MutationFilters } from './utils'
-
-// TYPES
 
 /**
  * Global callbacks that fire for every mutation handled by a `MutationCache`, regardless of which
@@ -62,10 +62,26 @@ export interface MutationCacheConfig {
   ) => Promise<unknown> | unknown
 }
 
+/**
+ * The event passed to a `MutationCache` subscriber. Fired whenever a mutation is added or removed
+ * from the cache, its state is updated, or one of its observers is added, removed, or has its
+ * options updated.
+ */
+export type MutationCacheNotifyEvent =
+  | NotifyEventMutationAdded
+  | NotifyEventMutationRemoved
+  | NotifyEventMutationObserverAdded
+  | NotifyEventMutationObserverRemoved
+  | NotifyEventMutationObserverOptionsUpdated
+  | NotifyEventMutationUpdated
+
+type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
+
 interface NotifyEventMutationAdded extends NotifyEvent {
   type: 'added'
   mutation: Mutation<any, any, any, any>
 }
+
 interface NotifyEventMutationRemoved extends NotifyEvent {
   type: 'removed'
   mutation: Mutation<any, any, any, any>
@@ -92,32 +108,29 @@ interface NotifyEventMutationObserverOptionsUpdated extends NotifyEvent {
 interface NotifyEventMutationUpdated extends NotifyEvent {
   type: 'updated'
   mutation: Mutation<any, any, any, any>
-  action: Action<any, any, any, any>
+  action: MutationAction<any, any, any, any>
 }
 
 /**
- * The event passed to a `MutationCache` subscriber. Fired whenever a mutation is added or removed
- * from the cache, its state is updated, or one of its observers is added, removed, or has its
- * options updated.
+ * Returns the client's configured mutation cache, creating a default cache on
+ * first use. Mutation hooks and hydration share this cache.
+ * @param client - The client whose mutations you want to access.
+ * @returns The same mutation cache on every call for this client.
+ * @example
+ * ```ts
+ * import { getMutationCache } from '@tanstack/query-core'
+ *
+ * const pending = getMutationCache(queryClient).findAll({ status: 'pending' })
+ * ```
  */
-export type MutationCacheNotifyEvent =
-  | NotifyEventMutationAdded
-  | NotifyEventMutationRemoved
-  | NotifyEventMutationObserverAdded
-  | NotifyEventMutationObserverRemoved
-  | NotifyEventMutationObserverOptionsUpdated
-  | NotifyEventMutationUpdated
-
-type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
-
-// CLASS
+export function getMutationCache(client: QueryClient): MutationCache {
+  return (client[mutationCacheKey] ??= new MutationCache())
+}
 
 /**
- * The `MutationCache` is the storage for mutations.
- *
- * Normally, you will not interact with the `MutationCache` directly and instead use a
- * `QueryClient`. You can subscribe to it (inherited from `Subscribable`) to be informed of
- * safe/known updates to the cache, such as mutations being added, removed, or updated.
+ * Stores the mutations executed through a client. Use {@link getMutationCache} to
+ * access the cache that mutation hooks use. Subscribe to it to receive updates
+ * when a mutation is added, removed, or changes state.
  * @example
  * ```ts
  * const unsubscribe = mutationCache.subscribe((event) => {
@@ -127,13 +140,11 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
  */
 export class MutationCache extends Subscribable<MutationCacheListener> {
   #mutations: Set<Mutation<any, any, any, any>>
-  #scopes: Map<string | undefined, Array<Mutation<any, any, any, any>>>
   #mutationId: number
 
   constructor(public config: MutationCacheConfig = {}) {
     super()
     this.#mutations = new Set()
-    this.#scopes = new Map()
     this.#mutationId = 0
   }
 
@@ -158,15 +169,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    */
   add(mutation: Mutation<any, any, any, any>): void {
     this.#mutations.add(mutation)
-    const scope = scopeFor(mutation)
-    if (typeof scope === 'string') {
-      const scopedMutations = this.#scopes.get(scope)
-      if (scopedMutations) {
-        scopedMutations.push(mutation)
-      } else {
-        this.#scopes.set(scope, [mutation])
-      }
-    }
+    mutation.options.scope?.add(this, mutation)
     this.notify({ type: 'added', mutation })
   }
 
@@ -178,17 +181,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   remove(mutation: Mutation<any, any, any, any>): void {
     if (this.#mutations.delete(mutation)) {
       mutation.destroy()
-      const scope = scopeFor(mutation)
-      const scopedMutations = this.#scopes.get(scope)
-      if (scopedMutations) {
-        const index = scopedMutations.indexOf(mutation)
-        if (index !== -1) {
-          scopedMutations.splice(index, 1)
-          if (!scopedMutations.length) {
-            this.#scopes.delete(scope)
-          }
-        }
-      }
+      mutation.options.scope?.remove(this, mutation)
     }
 
     // Currently we notify the removal even if the mutation was already removed.
@@ -214,10 +207,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * ahead of it.
    */
   canRun(mutation: Mutation<any, any, any, any>): boolean {
-    const firstPendingMutation = this.#scopes
-      .get(scopeFor(mutation))
-      ?.find((mutation) => mutation.state.status === 'pending')
-    return !firstPendingMutation || firstPendingMutation === mutation
+    return mutation.options.scope?.canRun(this, mutation) ?? true
   }
 
   /**
@@ -228,11 +218,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * or immediately if there is none.
    */
   runNext(mutation: Mutation<any, any, any, any>): Promise<unknown> {
-    const next = this.#scopes
-      .get(scopeFor(mutation))
-      ?.find((entry) => entry !== mutation && entry.state.isPaused)
-
-    return next?.continue() ?? Promise.resolve()
+    return mutation.options.scope?.runNext(this, mutation) ?? Promise.resolve()
   }
 
   /**
@@ -240,7 +226,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * Mutations that are already running continue to execute.
    * @example
    * ```ts
-   * const mutationCache = queryClient.getMutationCache()
+   * const mutationCache = getMutationCache(queryClient)
    *
    * mutationCache.clear()
    * ```
@@ -249,8 +235,10 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     notifyManager.batch(() => {
       const mutations = this.getAll()
       this.#mutations.clear()
-      this.#scopes.clear()
-      mutations.forEach((mutation) => mutation.destroy())
+      mutations.forEach((mutation) => {
+        mutation.options.scope?.remove(this, mutation)
+        mutation.destroy()
+      })
       mutations.forEach((mutation) => {
         this.notify({ type: 'removed', mutation })
       })
@@ -265,7 +253,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * @returns Every mutation in the cache.
    * @example
    * ```ts
-   * const mutationCache = queryClient.getMutationCache()
+   * const mutationCache = getMutationCache(queryClient)
    *
    * const mutations = mutationCache.getAll()
    * ```
@@ -285,7 +273,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * @see {@link MutationCache#findAll}
    * @example
    * ```ts
-   * const mutationCache = queryClient.getMutationCache()
+   * const mutationCache = getMutationCache(queryClient)
    *
    * const mutation = mutationCache.find({ mutationKey: ['addPost'] })
    * ```
@@ -316,7 +304,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
    * @see {@link MutationCache#find}
    * @example
    * ```ts
-   * const mutationCache = queryClient.getMutationCache()
+   * const mutationCache = getMutationCache(queryClient)
    *
    * const mutations = mutationCache.findAll({ mutationKey: ['addPost'] })
    * ```
@@ -354,13 +342,4 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       ),
     )
   }
-}
-
-/**
- * Returns the scope id of a mutation, used to run mutations with the same scope one after another.
- * @param mutation - The mutation to read the scope of.
- * @returns The mutation's `scope.id`, or `undefined` if it has no scope.
- */
-function scopeFor(mutation: Mutation<any, any, any, any>) {
-  return mutation.options.scope?.id
 }

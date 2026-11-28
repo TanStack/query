@@ -10,6 +10,7 @@ import {
   provideEnvironmentInitializer,
 } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
+import { query, setQueryData } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { render } from '@testing-library/angular'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -40,7 +41,7 @@ describe('TransferState', () => {
     it('browser hydrates from default key', async () => {
       const key = createKey()
       const sourceClient = new QueryClient()
-      sourceClient.setQueryData(key, 'from-server')
+      setQueryData(sourceClient, key, 'from-server')
       const dehydrated = dehydrate(sourceClient)
       const appClient = new QueryClient()
 
@@ -81,7 +82,7 @@ describe('TransferState', () => {
       const customKey = makeStateKey<DehydratedState>(customKeyName)
       const key = createKey()
       const sourceClient = new QueryClient()
-      sourceClient.setQueryData(key, 'from-custom-key')
+      setQueryData(sourceClient, key, 'from-custom-key')
       const dehydrated = dehydrate(sourceClient)
       const appClient = new QueryClient()
 
@@ -121,7 +122,7 @@ describe('TransferState', () => {
     it('browser does not re-fetch when hydrated state is fresh', async () => {
       const key = createKey()
       const sourceClient = new QueryClient()
-      sourceClient.setQueryData(key, 'cached')
+      setQueryData(sourceClient, key, 'cached')
       const dehydrated = dehydrate(sourceClient)
       const appClient = new QueryClient()
       let queryFnCalls = 0
@@ -164,7 +165,7 @@ describe('TransferState', () => {
     it('withNoQueryHydration disables browser hydration', async () => {
       const key = createKey()
       const sourceClient = new QueryClient()
-      sourceClient.setQueryData(key, 'from-server')
+      setQueryData(sourceClient, key, 'from-server')
       const dehydrated = dehydrate(sourceClient)
       const appClient = new QueryClient()
 
@@ -228,12 +229,10 @@ describe('TransferState', () => {
       const queryClient = new QueryClient()
       const injector = createQueryInjector(queryClient, 'server')
 
-      void queryClient
-        .query({
-          queryKey: key,
-          queryFn: () => Promise.resolve('ssr-data'),
-        })
-        .catch(noop)
+      void query(queryClient, {
+        queryKey: key,
+        queryFn: () => Promise.resolve('ssr-data'),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(0)
 
       injector.get(TransferState).toJson()
@@ -251,12 +250,10 @@ describe('TransferState', () => {
       const queryClient = new QueryClient()
       const injector = createQueryInjector(queryClient, 'browser')
 
-      void queryClient
-        .query({
-          queryKey: key,
-          queryFn: () => Promise.resolve('data'),
-        })
-        .catch(noop)
+      void query(queryClient, {
+        queryKey: key,
+        queryFn: () => Promise.resolve('data'),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(0)
 
       injector.get(TransferState).toJson()
@@ -277,12 +274,10 @@ describe('TransferState', () => {
         withNoQueryHydration(),
       )
 
-      void queryClient
-        .query({
-          queryKey: key,
-          queryFn: () => Promise.resolve('data'),
-        })
-        .catch(noop)
+      void query(queryClient, {
+        queryKey: key,
+        queryFn: () => Promise.resolve('data'),
+      }).catch(noop)
       await vi.advanceTimersByTimeAsync(0)
 
       injector.get(TransferState).toJson()
@@ -316,8 +311,8 @@ describe('TransferState', () => {
         TestBed.inject(EnvironmentInjector),
       )
 
-      clientA.setQueryData(keyA, 'a')
-      clientB.setQueryData(keyB, 'b')
+      setQueryData(clientA, keyA, 'a')
+      setQueryData(clientB, keyB, 'b')
 
       const transferState = TestBed.inject(TransferState)
       transferState.toJson()

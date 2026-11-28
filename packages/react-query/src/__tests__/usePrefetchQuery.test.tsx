@@ -1,3 +1,4 @@
+import { clearQueryClient, getQueryState, query } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
@@ -7,9 +8,10 @@ import {
   QueryCache,
   QueryClient,
   noop,
+  suspenseQueryOptions,
   usePrefetchQuery,
+  useQuery,
   useQueryErrorResetBoundary,
-  useSuspenseQuery,
 } from '..'
 import { renderWithClient, renderWithSuspense } from './utils'
 
@@ -24,7 +26,7 @@ describe('usePrefetchQuery', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -42,7 +44,7 @@ describe('usePrefetchQuery', () => {
     }
 
     function Page() {
-      const state = useSuspenseQuery(componentQueryOpts)
+      const state = useQuery(suspenseQueryOptions(componentQueryOpts))
       return <div>data: {String(state.data)}</div>
     }
 
@@ -73,7 +75,7 @@ describe('usePrefetchQuery', () => {
     }
 
     function Page() {
-      const state = useSuspenseQuery(queryOpts)
+      const state = useQuery(suspenseQueryOptions(queryOpts))
       return <div>data: {String(state.data)}</div>
     }
 
@@ -87,7 +89,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    queryClient.query(queryOpts)
+    query(queryClient, queryOpts)
     await vi.advanceTimersByTimeAsync(10)
     queryOpts.queryFn.mockClear()
     const rendered = await renderWithSuspense(queryClient, <App />)
@@ -119,7 +121,7 @@ describe('usePrefetchQuery', () => {
     )
 
     function Page() {
-      const state = useSuspenseQuery(queryOpts)
+      const state = useQuery(suspenseQueryOptions(queryOpts))
       return <div>data: {String(state.data)}</div>
     }
 
@@ -135,7 +137,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    void queryClient.query(queryOpts).catch(noop)
+    void query(queryClient, queryOpts).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
     const rendered = await renderWithSuspense(queryClient, <App />)
@@ -161,7 +163,7 @@ describe('usePrefetchQuery', () => {
     }
 
     function Page() {
-      const state = useSuspenseQuery(queryOpts)
+      const state = useQuery(suspenseQueryOptions(queryOpts))
       return <div>data: {String(state.data)}</div>
     }
 
@@ -201,7 +203,7 @@ describe('usePrefetchQuery', () => {
     )
 
     function Page() {
-      const state = useSuspenseQuery(queryOpts)
+      const state = useQuery(suspenseQueryOptions(queryOpts))
       return <div>data: {String(state.data)}</div>
     }
 
@@ -226,7 +228,7 @@ describe('usePrefetchQuery', () => {
       )
     }
 
-    void queryClient.query(queryOpts).catch(noop)
+    void query(queryClient, queryOpts).catch(noop)
     await vi.advanceTimersByTimeAsync(10)
     queryFn.mockClear()
 
@@ -270,7 +272,7 @@ describe('usePrefetchQuery', () => {
       .mockReturnValue(<div>Loading...</div>)
 
     function FirstQuery({ children }: { children?: React.ReactNode }) {
-      const state = useSuspenseQuery(firstQueryOpts)
+      const state = useQuery(suspenseQueryOptions(firstQueryOpts))
       return (
         <div>
           <div>data: {String(state.data)}</div>
@@ -280,7 +282,7 @@ describe('usePrefetchQuery', () => {
     }
 
     function SecondQuery({ children }: { children?: React.ReactNode }) {
-      const state = useSuspenseQuery(secondQueryOpts)
+      const state = useQuery(suspenseQueryOptions(secondQueryOpts))
       return (
         <div>
           <div>data: {String(state.data)}</div>
@@ -290,7 +292,7 @@ describe('usePrefetchQuery', () => {
     }
 
     function ThirdQuery() {
-      const state = useSuspenseQuery(thirdQueryOpts)
+      const state = useQuery(suspenseQueryOptions(thirdQueryOpts))
       return <div>data: {String(state.data)}</div>
     }
 
@@ -312,13 +314,13 @@ describe('usePrefetchQuery', () => {
 
     const rendered = await renderWithSuspense(queryClient, <App />)
     expect(
-      queryClient.getQueryState(firstQueryOpts.queryKey)?.fetchStatus,
+      getQueryState(queryClient, firstQueryOpts.queryKey)?.fetchStatus,
     ).toBe('fetching')
     expect(
-      queryClient.getQueryState(secondQueryOpts.queryKey)?.fetchStatus,
+      getQueryState(queryClient, secondQueryOpts.queryKey)?.fetchStatus,
     ).toBe('fetching')
     expect(
-      queryClient.getQueryState(thirdQueryOpts.queryKey)?.fetchStatus,
+      getQueryState(queryClient, thirdQueryOpts.queryKey)?.fetchStatus,
     ).toBe('fetching')
     expect(rendered.getByText('Loading...')).toBeInTheDocument()
     await act(() => vi.advanceTimersByTimeAsync(10))

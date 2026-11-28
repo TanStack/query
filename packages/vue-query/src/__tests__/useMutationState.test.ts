@@ -1,3 +1,4 @@
+import { clearQueryClient } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
@@ -37,7 +38,7 @@ describe('useMutationState', () => {
 
   it('should return variables after calling mutate 2', () => {
     const queryClient = useQueryClient()
-    queryClient.clear()
+    clearQueryClient(queryClient)
     const key = createKey()
     const variables = 'bar234'
 

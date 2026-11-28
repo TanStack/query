@@ -3,7 +3,11 @@ import {
   Mutation,
   QueryClient,
   QueryObserver,
+  clearQueryClient,
   defaultQueryFn,
+  findCachedQuery,
+  getQueryCache,
+  isQueryStale,
 } from '@tanstack/query-core'
 import { createRoot } from 'solid-js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -1043,7 +1047,7 @@ describe('Utils tests', () => {
       queryKey: ReadonlyArray<unknown>,
       state?: Partial<Query['state']>,
     ): Query {
-      const query = queryClient.getQueryCache().build(queryClient, { queryKey })
+      const query = getQueryCache(queryClient).build(queryClient, { queryKey })
       if (state) {
         query.setState(state)
       }
@@ -1055,7 +1059,7 @@ describe('Utils tests', () => {
     })
 
     afterEach(() => {
-      queryClient.clear()
+      clearQueryClient(queryClient)
     })
 
     describe("'last updated'", () => {
@@ -1153,7 +1157,9 @@ describe('Utils tests', () => {
           staleTime: 0,
         })
         const staleUnsubscribe = staleObserver.subscribe(() => {})
-        const stale = queryClient.getQueryCache().find({ queryKey: ['stale'] })!
+        const stale = findCachedQuery(getQueryCache(queryClient), {
+          queryKey: ['stale'],
+        })!
         stale.setState({
           ...stale.state,
           fetchStatus: 'idle',
@@ -1169,7 +1175,7 @@ describe('Utils tests', () => {
         const freshUnsubscribe = addObserver(fresh)
 
         try {
-          expect(stale.isStale()).toBe(true)
+          expect(isQueryStale(stale)).toBe(true)
           expect(statusSort(fresh, stale)).toBe(-1)
           expect(statusSort(stale, fresh)).toBe(1)
         } finally {
@@ -1216,7 +1222,7 @@ describe('Utils tests', () => {
     })
 
     afterEach(() => {
-      queryClient.clear()
+      clearQueryClient(queryClient)
     })
 
     describe("'last updated'", () => {
@@ -1418,7 +1424,7 @@ describe('Utils tests', () => {
       queryKey: QueryKey,
       state?: Partial<Query['state']>,
     ): Query {
-      const query = queryClient.getQueryCache().build(queryClient, { queryKey })
+      const query = getQueryCache(queryClient).build(queryClient, { queryKey })
       if (state) {
         query.setState(state)
       }
@@ -1439,7 +1445,7 @@ describe('Utils tests', () => {
     })
 
     afterEach(() => {
-      queryClient.clear()
+      clearQueryClient(queryClient)
     })
 
     it('should return "fetching" when fetchStatus is "fetching"', () => {
@@ -1472,7 +1478,7 @@ describe('Utils tests', () => {
         staleTime: 0,
       })
       const unsubscribe = observer.subscribe(() => {})
-      const query = queryClient.getQueryCache().find({
+      const query = findCachedQuery(getQueryCache(queryClient), {
         queryKey: ['paused-stale'],
       })!
       query.setState({
@@ -1483,7 +1489,7 @@ describe('Utils tests', () => {
       })
 
       try {
-        expect(query.isStale()).toBe(true)
+        expect(isQueryStale(query)).toBe(true)
         expect(getQueryStatusLabel(query)).toBe('paused')
       } finally {
         unsubscribe()
@@ -1497,7 +1503,9 @@ describe('Utils tests', () => {
         staleTime: 0,
       })
       const unsubscribe = observer.subscribe(() => {})
-      const query = queryClient.getQueryCache().find({ queryKey: ['stale'] })!
+      const query = findCachedQuery(getQueryCache(queryClient), {
+        queryKey: ['stale'],
+      })!
       query.setState({
         ...query.state,
         fetchStatus: 'idle',
@@ -1506,7 +1514,7 @@ describe('Utils tests', () => {
       })
 
       try {
-        expect(query.isStale()).toBe(true)
+        expect(isQueryStale(query)).toBe(true)
         expect(getQueryStatusLabel(query)).toBe('stale')
       } finally {
         unsubscribe()
@@ -1533,7 +1541,7 @@ describe('Utils tests', () => {
     let queryClient: QueryClient
 
     function makeState(fetchStatus: FetchStatus): Query['state'] {
-      const query = queryClient.getQueryCache().build(queryClient, {
+      const query = getQueryCache(queryClient).build(queryClient, {
         queryKey: [fetchStatus],
       })
       query.setState({ fetchStatus })
@@ -1545,7 +1553,7 @@ describe('Utils tests', () => {
     })
 
     afterEach(() => {
-      queryClient.clear()
+      clearQueryClient(queryClient)
     })
 
     it('should return "blue" when fetchStatus is "fetching"', () => {

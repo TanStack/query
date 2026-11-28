@@ -1,7 +1,12 @@
 import {
+  useQuery,
+  suspenseQueryOptions,
+  cancelQueries,
+  getQueryData,
+  setQueryData,
+  invalidateQueries,
   useMutation,
   useQueryClient,
-  useSuspenseQuery,
 } from '@tanstack/preact-query'
 import { useState } from 'preact/hooks'
 import { todosMutations, todosQueries } from '../services/todos/queries'
@@ -17,17 +22,18 @@ export default function TodoListCache() {
   const [inputValue, setInputValue] = useState('')
   const [lastError, setLastError] = useState<string | null>(null)
 
-  const { data: todos } = useSuspenseQuery(todosQueries.list())
+  const { data: todos } = useQuery(suspenseQueryOptions(todosQueries.list()))
 
   const addTodoMutation = useMutation<Todo, Error, string, MutationContext>({
     ...todosMutations.create(),
     onMutate: async (text) => {
       setLastError(null)
-      await queryClient.cancelQueries({
+      await cancelQueries(queryClient, {
         queryKey: todosQueries.list().queryKey,
       })
 
-      const previousTodos = queryClient.getQueryData(
+      const previousTodos = getQueryData(
+        queryClient,
         todosQueries.list().queryKey,
       )
 
@@ -38,7 +44,7 @@ export default function TodoListCache() {
         createdAt: Date.now(),
       }
 
-      queryClient.setQueryData(todosQueries.list().queryKey, (old = []) => [
+      setQueryData(queryClient, todosQueries.list().queryKey, (old = []) => [
         ...old,
         optimisticTodo,
       ])
@@ -48,18 +54,21 @@ export default function TodoListCache() {
     onError: (_err, _text, context) => {
       setLastError(_err.message)
       if (context?.previousTodos !== undefined) {
-        queryClient.setQueryData(
+        setQueryData(
+          queryClient,
           todosQueries.list().queryKey,
           context.previousTodos,
         )
       } else if (context?.optimisticId) {
-        queryClient.setQueryData(todosQueries.list().queryKey, (old = []) =>
+        setQueryData(queryClient, todosQueries.list().queryKey, (old = []) =>
           old.filter((todo) => todo.id !== context.optimisticId),
         )
       }
     },
     onSettled: () =>
-      queryClient.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
+      invalidateQueries(queryClient, {
+        queryKey: todosQueries.list().queryKey,
+      }),
   })
 
   function handleSubmit(e: SubmitEvent) {

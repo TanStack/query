@@ -1,3 +1,4 @@
+import { query } from '@tanstack/lit-query'
 import { readFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
 import { dirname, extname, resolve, sep } from 'node:path'
@@ -185,7 +186,7 @@ async function renderPage(res) {
   const queryClient = createBrowserQueryClient()
   resetSsrQueryControllerCreationCount(queryClient)
   const dataQueryOptions = dataQueries.detail(SSR_PUBLIC_ORIGIN)
-  await queryClient.query(dataQueryOptions).catch((error) => {
+  await query(queryClient, dataQueryOptions).catch((error) => {
     throw new Error(
       'SSR prefetch did not complete successfully. Refusing to render loading HTML.',
       { cause: error },

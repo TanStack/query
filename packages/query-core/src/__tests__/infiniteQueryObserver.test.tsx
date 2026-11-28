@@ -1,6 +1,17 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { InfiniteQueryObserver, QueryClient } from '..'
+import {
+  InfiniteQueryObserver,
+  QueryClient,
+  clearQueryClient,
+  fetchOptimistic,
+  getQueryCache,
+  mountQueryClient,
+  removeQueries,
+  select,
+  setQueryData,
+} from '..'
+import { resultForComparison } from './helpers/result'
 import type {
   DefaultedInfiniteQueryObserverOptions,
   GetNextPageParamFunction,
@@ -14,11 +25,11 @@ describe('InfiniteQueryObserver', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     queryClient = new QueryClient()
-    queryClient.mount()
+    mountQueryClient(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -27,10 +38,13 @@ describe('InfiniteQueryObserver', () => {
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 1),
-      select: (data) => ({
-        pages: data.pages.map((x) => `${x}`),
-        pageParams: data.pageParams,
-      }),
+      select: [
+        select,
+        (data) => ({
+          pages: data.pages.map((x) => `${x}`),
+          pageParams: data.pageParams,
+        }),
+      ],
       initialPageParam: 1,
       getNextPageParam: () => 2,
     })
@@ -56,10 +70,13 @@ describe('InfiniteQueryObserver', () => {
       meta,
       queryKey: key,
       queryFn,
-      select: (data) => ({
-        pages: data.pages.map((x) => `${x}`),
-        pageParams: data.pageParams,
-      }),
+      select: [
+        select,
+        (data) => ({
+          pages: data.pages.map((x) => `${x}`),
+          pageParams: data.pageParams,
+        }),
+      ],
       initialPageParam: 1,
       getNextPageParam: () => 2,
     })
@@ -137,7 +154,7 @@ describe('InfiniteQueryObserver', () => {
     getNextPageParam.mockClear()
     getPreviousPageParam.mockClear()
 
-    queryClient.setQueryData(key, { pages: [], pageParams: [] })
+    setQueryData(queryClient, key, { pages: [], pageParams: [] })
     expect(getNextPageParam).toHaveBeenCalledTimes(0)
     expect(getPreviousPageParam).toHaveBeenCalledTimes(0)
 
@@ -233,10 +250,10 @@ describe('InfiniteQueryObserver', () => {
 
     expect(options._type).toBeUndefined()
     expect(
-      queryClient.getQueryCache().get(options.queryHash)?.options._type,
+      getQueryCache(queryClient).get(options.queryHash)?.options._type,
     ).toBe('infinite')
 
-    expect(result).toMatchObject({
+    expect(resultForComparison(result)).toMatchObject({
       data: undefined,
       hasNextPage: false,
       hasPreviousPage: false,
@@ -261,13 +278,13 @@ describe('InfiniteQueryObserver', () => {
     const unsubscribe = observer.subscribe(() => {})
     await vi.advanceTimersByTimeAsync(10)
 
-    queryClient.removeQueries({ queryKey: key })
-    queryClient.getQueryCache().build(queryClient, {
+    removeQueries(queryClient, { queryKey: key })
+    getQueryCache(queryClient).build(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'recreated-page'),
     })
 
-    const promise = observer.fetchOptimistic(observer.options)
+    const promise = fetchOptimistic(queryClient, observer, observer.options)
     await vi.advanceTimersByTimeAsync(10)
     const result = await promise
 

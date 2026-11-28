@@ -1,3 +1,4 @@
+import { clearQueryClient } from '@tanstack/query-core'
 import {
   PERSISTER_KEY_PREFIX,
   experimental_createQueryPersister,
@@ -5,7 +6,7 @@ import {
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { QueryCache, QueryClient, hashKey, useQuery } from '..'
+import { QueryCache, QueryClient, hashKey, queryOptions, useQuery } from '..'
 import { renderWithClient } from './utils'
 
 describe('fine grained persister', () => {
@@ -19,7 +20,7 @@ describe('fine grained persister', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -59,14 +60,16 @@ describe('fine grained persister', () => {
     function Test() {
       const [_ref, setRef] = React.useState<HTMLDivElement | null>()
 
-      const { data } = useQuery({
-        queryKey: key,
-        queryFn: spy,
-        persister: experimental_createQueryPersister({
-          storage,
-        }).persisterFn,
-        staleTime: 5000,
-      })
+      const { data } = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: spy,
+          persister: experimental_createQueryPersister({
+            storage,
+          }).persisterFn,
+          staleTime: 5000,
+        }),
+      )
 
       return <div ref={(value) => setRef(value)}>{data}</div>
     }
@@ -114,13 +117,15 @@ describe('fine grained persister', () => {
     function Test() {
       const [_ref, setRef] = React.useState<HTMLDivElement | null>()
 
-      const { data } = useQuery({
-        queryKey: key,
-        queryFn: spy,
-        persister: experimental_createQueryPersister({
-          storage,
-        }).persisterFn,
-      })
+      const { data } = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: spy,
+          persister: experimental_createQueryPersister({
+            storage,
+          }).persisterFn,
+        }),
+      )
 
       return <div ref={(value) => setRef(value)}>{data}</div>
     }
@@ -157,13 +162,15 @@ describe('fine grained persister', () => {
     function Test() {
       const [_ref, setRef] = React.useState<HTMLDivElement | null>()
 
-      const { data } = useQuery({
-        queryKey: key,
-        queryFn: spy,
-        persister: experimental_createQueryPersister({
-          storage,
-        }).persisterFn,
-      })
+      const { data } = useQuery(
+        queryOptions({
+          queryKey: key,
+          queryFn: spy,
+          persister: experimental_createQueryPersister({
+            storage,
+          }).persisterFn,
+        }),
+      )
 
       return <div ref={(value) => setRef(value)}>{data}</div>
     }

@@ -1,4 +1,11 @@
 <script lang="ts">
+  import {
+    isFetched,
+    isFetching,
+    isSuccess,
+    mountQueryClient,
+    unmountQueryClient,
+  } from '@tanstack/query-core'
   import { onDestroy, onMount } from 'svelte'
   import { createQuery, setQueryClientContext } from '../../src/index.js'
   import type { QueryClient } from '@tanstack/query-core'
@@ -15,8 +22,8 @@
 
   // QueryClientProvider normally mounts/unmounts the client; since this fixture
   // sets the context directly, do it manually so focus/online refetching works
-  onMount(() => queryClient.mount())
-  onDestroy(() => queryClient.unmount())
+  onMount(() => mountQueryClient(queryClient))
+  onDestroy(() => unmountQueryClient(queryClient))
 
   const query = createQuery(options)
 </script>
@@ -33,9 +40,9 @@
 <div data-testid="error">
   {(query.error as Error | null)?.message ?? 'null'}
 </div>
-<div data-testid="isFetched">{query.isFetched}</div>
+<div data-testid="isFetched">{isFetched(query)}</div>
 <div data-testid="isFetchedAfterMount">{query.isFetchedAfterMount}</div>
 <div data-testid="isStale">{query.isStale}</div>
-<div data-testid="isFetching">{query.isFetching}</div>
-<div data-testid="isSuccess">{query.isSuccess}</div>
+<div data-testid="isFetching">{isFetching(query)}</div>
+<div data-testid="isSuccess">{isSuccess(query)}</div>
 <div data-testid="isPlaceholderData">{query.isPlaceholderData}</div>

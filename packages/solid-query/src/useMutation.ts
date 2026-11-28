@@ -32,7 +32,7 @@ import type {
  *   const deleteTodoMutation = useMutation(() => ({
  *     mutationFn: deleteTodo,
  *     onSuccess: () => {
- *       queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *       invalidateQueries(queryClient, { queryKey: ['todos'] })
  *     },
  *   }))
  *
@@ -54,7 +54,7 @@ import type {
  *
  *   const addMutation = useMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  *
  *   return (
@@ -79,10 +79,10 @@ import type {
  *   const addMutation = useMutation(() => ({
  *     mutationFn: addTodo,
  *     onMutate: async (newTodo) => {
- *       await queryClient.cancelQueries({ queryKey: ['todos'] })
- *       const previousTodos = queryClient.getQueryData<Array<string>>(['todos'])
+ *       await cancelQueries(queryClient, { queryKey: ['todos'] })
+ *       const previousTodos = getQueryData<Array<string>>(['todos'])
  *
- *       queryClient.setQueryData<Array<string>>(['todos'], (old) => [
+ *       setQueryData<Array<string>>(['todos'], (old) => [
  *         ...(old ?? []),
  *         newTodo,
  *       ])
@@ -91,10 +91,10 @@ import type {
  *       return { previousTodos }
  *     },
  *     onError: (_err, _newTodo, onMutateResult) => {
- *       queryClient.setQueryData(['todos'], onMutateResult?.previousTodos)
+ *       setQueryData(queryClient, ['todos'], onMutateResult?.previousTodos)
  *     },
  *     onSettled: () => {
- *       queryClient.invalidateQueries({ queryKey: ['todos'] })
+ *       invalidateQueries(queryClient, { queryKey: ['todos'] })
  *     },
  *   }))
  *
@@ -114,7 +114,7 @@ import type {
  *
  *   const addMutation = useMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  *
  *   async function handleAddAll(todos: Array<string>) {
@@ -144,7 +144,7 @@ import type {
  *
  *   const addMutation = useMutation(() => ({
  *     mutationFn: addTodo,
- *     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+ *     onSuccess: () => invalidateQueries(queryClient, { queryKey: ['todos'] }),
  *   }))
  *
  *   async function handleAddAll(todos: Array<string>) {

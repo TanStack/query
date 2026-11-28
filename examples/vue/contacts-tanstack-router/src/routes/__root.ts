@@ -1,3 +1,4 @@
+import { query } from '@tanstack/vue-query'
 import { createRootRouteWithContext } from '@tanstack/vue-router'
 import { contactsQueries } from '../services/contacts/queries'
 import type { QueryClient } from '@tanstack/vue-query'
@@ -9,6 +10,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     }),
     loaderDeps: ({ search: { q } }) => ({ q }),
     loader: ({ context: { queryClient }, deps: { q } }) =>
-      queryClient.query({ ...contactsQueries.list(q), staleTime: 'static' }),
+      query(queryClient, { ...contactsQueries.list(q), staleTime: 'static' }),
   },
 )

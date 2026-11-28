@@ -1,5 +1,10 @@
+import {
+  QueryClient,
+  hydrate,
+  mountQueryClient,
+  unmountQueryClient,
+} from '@tanstack/lit-query'
 import '@lit-labs/ssr-client/lit-element-hydrate-support.js'
-import { QueryClient, hydrate } from '@tanstack/lit-query'
 import { QUERY_STALE_TIME } from './services/data/queries.js'
 import type { DehydratedState } from '@tanstack/lit-query'
 
@@ -45,14 +50,14 @@ async function bootstrap() {
   }
 
   const queryClient = createQueryClient()
-  queryClient.mount()
+  mountQueryClient(queryClient)
   hydrate(queryClient, readDehydratedState())
   appElement.queryClient = queryClient
 
   window.addEventListener(
     'pagehide',
     () => {
-      queryClient.unmount()
+      unmountQueryClient(queryClient)
     },
     { once: true },
   )

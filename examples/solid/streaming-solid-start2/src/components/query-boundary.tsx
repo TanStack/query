@@ -1,3 +1,4 @@
+import { isFetching } from '@tanstack/solid-query'
 import {
   ErrorBoundary,
   Match,
@@ -75,7 +76,7 @@ export function QueryBoundary<T>(props: QueryBoundaryProps<T>) {
             )}
           </Match> */}
 
-          <Match when={!props.query.isFetching && !props.query.data}>
+          <Match when={!isFetching(props.query) && !props.query.data}>
             {props.notFoundFallback ? (
               props.notFoundFallback
             ) : (

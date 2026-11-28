@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { useQuery } from '@tanstack/vue-query'
+import { isFetching as queryIsFetching, useQuery } from '@tanstack/vue-query'
+import { computed } from 'vue'
 import MessageBubble from './MessageBubble.vue'
 import { messagesQueries } from './services/messages/queries'
 
 const props = defineProps<{ id: string; question: string }>()
 
-const { error, data, isFetching } = useQuery(() =>
-  messagesQueries.detail(props.id, props.question),
-)
+const {
+  state: queryState,
+  error,
+  data,
+} = useQuery(() => messagesQueries.detail(props.id, props.question))
+const isFetching = computed(() => queryIsFetching(queryState))
 </script>
 
 <template>

@@ -1,6 +1,15 @@
 import { createKey } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
-import { QueryCache, QueryClient } from '..'
+import {
+  QueryCache,
+  QueryClient,
+  clearQueryCache,
+  clearQueryClient,
+  findCachedQueries,
+  findCachedQuery,
+  getQueryCache,
+  mountQueryClient,
+} from '..'
 import type {
   CacheKeyConfig,
   DefaultError,
@@ -17,6 +26,11 @@ import type {
 import type { Action } from '../query'
 import type { QueryStore } from '../queryCache'
 
+type OperationArgs<
+  TOperation extends (...args: Array<never>) => unknown,
+  TClient,
+> = Parameters<TOperation> extends [TClient, ...infer TArgs] ? TArgs : never
+
 class CustomError extends Error {
   override name = 'CustomError' as const
 }
@@ -27,12 +41,12 @@ describe('queryCache', () => {
 
   beforeEach(() => {
     queryClient = new QueryClient()
-    queryClient.mount()
-    queryCache = queryClient.getQueryCache()
+    mountQueryClient(queryClient)
+    queryCache = getQueryCache(queryClient)
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
   })
 
   describe('QueryCache', () => {
@@ -44,11 +58,8 @@ describe('queryCache', () => {
         | 'build'
         | 'add'
         | 'remove'
-        | 'clear'
         | 'get'
         | 'getAll'
-        | 'find'
-        | 'findAll'
         | 'notify'
         | 'onFocus'
         | 'onOnline'
@@ -402,7 +413,7 @@ describe('queryCache', () => {
   describe('find', () => {
     it('should carry its type parameters into the query it returns', () => {
       expectTypeOf(
-        queryCache.find<{ value: string }, CustomError>({
+        findCachedQuery<{ value: string }, CustomError>(queryCache, {
           queryKey: createKey(),
         }),
       ).toEqualTypeOf<
@@ -413,16 +424,18 @@ describe('queryCache', () => {
 
     it('should require a queryKey in the filters it is given', () => {
       // @ts-expect-error a queryKey is required
-      queryCache.find({})
+      findCachedQuery(queryCache, {})
 
-      expectTypeOf(queryCache.find)
-        .parameter(0)
+      expectTypeOf(findCachedQuery)
+        .parameter(1)
         .toHaveProperty('queryKey')
         .toEqualTypeOf<ReadonlyArray<unknown>>()
     })
 
     it('should default its type parameters', () => {
-      expectTypeOf(queryCache.find({ queryKey: createKey() })).toEqualTypeOf<
+      expectTypeOf(
+        findCachedQuery(queryCache, { queryKey: createKey() }),
+      ).toEqualTypeOf<
         Query<unknown, DefaultError, unknown, QueryKey> | undefined
       >()
     })
@@ -430,21 +443,21 @@ describe('queryCache', () => {
 
   describe('findAll', () => {
     it('should return an array of fully defaulted queries', () => {
-      expectTypeOf(queryCache.findAll({ queryKey: createKey() })).toEqualTypeOf<
-        Array<Query<unknown, DefaultError, unknown, QueryKey>>
-      >()
+      expectTypeOf(
+        findCachedQueries(queryCache, { queryKey: createKey() }),
+      ).toEqualTypeOf<Array<Query<unknown, DefaultError, unknown, QueryKey>>>()
     })
 
     it('should accept filters or nothing', () => {
-      queryCache.findAll()
-      queryCache.findAll({ queryKey: createKey() })
-      queryCache.findAll({ stale: true })
+      findCachedQueries(queryCache)
+      findCachedQueries(queryCache, { queryKey: createKey() })
+      findCachedQueries(queryCache, { stale: true })
       // @ts-expect-error stale must be a boolean
-      queryCache.findAll({ stale: 'yes' })
+      findCachedQueries(queryCache, { stale: 'yes' })
 
-      expectTypeOf(queryCache.findAll).parameters.toEqualTypeOf<
-        [filters?: QueryFilters<any>]
-      >()
+      expectTypeOf<
+        OperationArgs<typeof findCachedQueries, typeof queryCache>
+      >().toEqualTypeOf<[filters?: QueryFilters<any>]>()
     })
   })
 
@@ -468,8 +481,10 @@ describe('queryCache', () => {
 
   describe('clear', () => {
     it('should take no arguments and return void', () => {
-      expectTypeOf(queryCache.clear).parameters.toEqualTypeOf<[]>()
-      expectTypeOf(queryCache.clear).returns.toEqualTypeOf<void>()
+      expectTypeOf<
+        OperationArgs<typeof clearQueryCache, typeof queryCache>
+      >().toEqualTypeOf<[]>()
+      expectTypeOf(clearQueryCache).returns.toEqualTypeOf<void>()
     })
   })
 

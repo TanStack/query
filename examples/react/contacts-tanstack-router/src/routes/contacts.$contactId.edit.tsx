@@ -1,7 +1,8 @@
 import {
+  invalidateQueries,
   useMutation,
+  useQuery,
   useQueryClient,
-  useSuspenseQuery,
 } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import ContactForm from '../contact-form'
@@ -17,13 +18,13 @@ export const Route = createFileRoute('/contacts/$contactId/edit')({
 function Edit() {
   const { contactId } = Route.useParams()
   const { q } = Route.useSearch()
-  const { data: contact } = useSuspenseQuery(contactsQueries.detail(contactId))
+  const { data: contact } = useQuery(contactsQueries.detail(contactId))
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const updateContact = useMutation({
     ...contactsMutations.update(),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: contactsQueries.all() })
+      await invalidateQueries(queryClient, { queryKey: contactsQueries.all() })
       await navigate({
         to: '/contacts/$contactId',
         params: { contactId },

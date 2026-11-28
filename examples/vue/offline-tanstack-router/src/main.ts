@@ -1,6 +1,10 @@
-import 'vue-sonner/style.css'
 import { persistQueryClient } from '@tanstack/query-persist-client-core'
-import { VueQueryPlugin } from '@tanstack/vue-query'
+import 'vue-sonner/style.css'
+import {
+  resumePausedMutations,
+  invalidateQueries,
+  VueQueryPlugin,
+} from '@tanstack/vue-query'
 import { createApp } from 'vue'
 import App from './App.vue'
 import { worker } from './mocks'
@@ -14,8 +18,8 @@ worker.start().then(() => {
         persistQueryClient({ queryClient: client, persister }),
       clientPersisterOnSuccess: (client) => {
         // resume mutations after initial restore from localStorage was successful
-        client.resumePausedMutations().then(() => {
-          client.invalidateQueries()
+        resumePausedMutations(client).then(() => {
+          invalidateQueries(client)
         })
       },
     })

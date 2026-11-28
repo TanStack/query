@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { createQuery, useQueryClient } from '@tanstack/svelte-query'
+  import {
+    invalidateQueries,
+    createQuery,
+    useQueryClient,
+  } from '@tanstack/svelte-query'
   import { enhance } from '$app/forms'
   import { resolve } from '$app/paths'
   import { contactsQueries } from '$lib/services/contacts/queries'
@@ -34,7 +38,7 @@
           use:enhance={({ formData }) => {
             pendingFavorite = formData.get('favorite') === 'true'
             return async ({ update }) => {
-              await queryClient.invalidateQueries({
+              await invalidateQueries(queryClient, {
                 queryKey: contactsQueries.all(),
               })
               await update()
@@ -81,7 +85,7 @@
               cancel()
             }
             return async ({ update }) => {
-              void queryClient.invalidateQueries({
+              void invalidateQueries(queryClient, {
                 queryKey: contactsQueries.all(),
               })
               await update()

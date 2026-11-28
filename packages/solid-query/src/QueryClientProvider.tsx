@@ -1,3 +1,4 @@
+import { mountQueryClient, unmountQueryClient } from '@tanstack/query-core'
 import {
   createContext,
   createRenderEffect,
@@ -102,10 +103,11 @@ export const QueryClientProvider = (
 ): JSX.Element => {
   createRenderEffect<() => void>((unmount) => {
     unmount?.()
-    props.client.mount()
-    return props.client.unmount.bind(props.client)
+    const client = props.client
+    mountQueryClient(client)
+    return () => unmountQueryClient(client)
   })
-  onCleanup(() => props.client.unmount())
+  onCleanup(() => unmountQueryClient(props.client))
 
   return (
     <QueryClientContext.Provider value={() => props.client}>

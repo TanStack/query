@@ -1,5 +1,8 @@
+import * as core from '@tanstack/query-core'
 import {
-  QueryClient as QueryClientOrigin,
+  getMutationCache,
+  getQueryCache,
+  select as querySelect,
   skipToken,
 } from '@tanstack/query-core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -7,19 +10,29 @@ import { ref, unref } from 'vue'
 import { infiniteQueryOptions } from '../infiniteQueryOptions'
 import { MutationCache } from '../mutationCache'
 import { QueryCache } from '../queryCache'
-import { QueryClient } from '../queryClient'
+import {
+  QueryClient,
+  cancelQueries,
+  countFetchingQueries,
+  getMutationDefaults,
+  getQueriesData,
+  getQueryData,
+  getQueryDefaults,
+  getQueryState,
+  infiniteQuery,
+  isMutating,
+  query,
+  invalidateQueries as queryInvalidateQueries,
+  refetchQueries as queryRefetchQueries,
+  removeQueries,
+  resetQueries,
+  setDefaultOptions,
+  setMutationDefaults,
+  setQueriesData,
+  setQueryData,
+  setQueryDefaults,
+} from '../queryClient'
 import { queryOptions } from '../queryOptions'
-
-// Get the prototype methods dynamically
-const prototypeMethods = Object.getOwnPropertyNames(
-  QueryClientOrigin.prototype,
-).filter((prop): prop is keyof typeof QueryClientOrigin.prototype => {
-  const descriptor = Object.getOwnPropertyDescriptor(
-    QueryClientOrigin.prototype,
-    prop,
-  )
-  return typeof descriptor?.value === 'function' && prop !== 'constructor'
-})
 
 const queryKeyRef = ['foo', ref('bar')]
 const queryKeyUnref = ['foo', 'bar']
@@ -29,10 +42,28 @@ const fn = () => 'mock'
 describe('QueryCache', () => {
   beforeEach(() => {
     vi.useFakeTimers()
-    // Spy on all methods in the prototype
-    prototypeMethods.forEach((method) => {
-      vi.spyOn(QueryClientOrigin.prototype, method)
-    })
+    for (const operation of [
+      'countFetchingQueries',
+      'isMutating',
+      'getQueryData',
+      'getQueriesData',
+      'setQueryData',
+      'setQueriesData',
+      'getQueryState',
+      'removeQueries',
+      'resetQueries',
+      'cancelQueries',
+      'invalidateQueries',
+      'refetchQueries',
+      'query',
+      'infiniteQuery',
+      'setDefaultOptions',
+      'setQueryDefaults',
+      'getQueryDefaults',
+      'setMutationDefaults',
+      'getMutationDefaults',
+    ] as const)
+      vi.spyOn(core, operation)
   })
 
   afterEach(() => {
@@ -45,8 +76,8 @@ describe('QueryCache', () => {
       const mutationCache = new MutationCache()
       const queryClient = new QueryClient({ queryCache, mutationCache })
 
-      expect(queryClient.getQueryCache()).toBe(queryCache)
-      expect(queryClient.getMutationCache()).toBe(mutationCache)
+      expect(getQueryCache(queryClient)).toBe(queryCache)
+      expect(getMutationCache(queryClient)).toBe(mutationCache)
     })
   })
 
@@ -54,11 +85,11 @@ describe('QueryCache', () => {
     it('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
-      queryClient.isFetching({
+      countFetchingQueries(queryClient, {
         queryKey: queryKeyRef,
       })
 
-      expect(QueryClientOrigin.prototype.isFetching).toHaveBeenCalledWith({
+      expect(core.countFetchingQueries).toHaveBeenCalledWith(queryClient, {
         queryKey: queryKeyUnref,
       })
     })
@@ -68,11 +99,11 @@ describe('QueryCache', () => {
     it('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
-      queryClient.isMutating({
+      isMutating(queryClient, {
         mutationKey: queryKeyRef,
       })
 
-      expect(QueryClientOrigin.prototype.isMutating).toHaveBeenCalledWith({
+      expect(core.isMutating).toHaveBeenCalledWith(queryClient, {
         mutationKey: queryKeyUnref,
       })
     })
@@ -82,11 +113,9 @@ describe('QueryCache', () => {
     it('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
-      queryClient.getQueryData(queryKeyRef)
+      getQueryData(queryClient, queryKeyRef)
 
-      expect(QueryClientOrigin.prototype.getQueryData).toHaveBeenCalledWith(
-        queryKeyUnref,
-      )
+      expect(core.getQueryData).toHaveBeenCalledWith(queryClient, queryKeyUnref)
     })
   })
 
@@ -94,9 +123,9 @@ describe('QueryCache', () => {
     it('should properly unwrap queryKey param', () => {
       const queryClient = new QueryClient()
 
-      queryClient.getQueriesData({ queryKey: queryKeyRef })
+      getQueriesData(queryClient, { queryKey: queryKeyRef })
 
-      expect(QueryClientOrigin.prototype.getQueriesData).toHaveBeenCalledWith({
+      expect(core.getQueriesData).toHaveBeenCalledWith(queryClient, {
         queryKey: queryKeyUnref,
       })
     })
@@ -104,9 +133,9 @@ describe('QueryCache', () => {
     it('should properly unwrap filters param', () => {
       const queryClient = new QueryClient()
 
-      queryClient.getQueriesData({ queryKey: queryKeyRef })
+      getQueriesData(queryClient, { queryKey: queryKeyRef })
 
-      expect(QueryClientOrigin.prototype.getQueriesData).toHaveBeenCalledWith({
+      expect(core.getQueriesData).toHaveBeenCalledWith(queryClient, {
         queryKey: queryKeyUnref,
       })
     })
@@ -116,11 +145,12 @@ describe('QueryCache', () => {
     it('should properly unwrap 3 parameter', () => {
       const queryClient = new QueryClient()
 
-      queryClient.setQueryData(queryKeyRef, fn, {
+      setQueryData(queryClient, queryKeyRef, fn, {
         updatedAt: ref(3),
       })
 
-      expect(QueryClientOrigin.prototype.setQueryData).toHaveBeenCalledWith(
+      expect(core.setQueryData).toHaveBeenCalledWith(
+        queryClient,
         queryKeyUnref,
         fn,
         { updatedAt: 3 },
@@ -132,11 +162,12 @@ describe('QueryCache', () => {
     it('should properly unwrap params with queryKey', () => {
       const queryClient = new QueryClient()
 
-      queryClient.setQueriesData({ queryKey: queryKeyRef }, fn, {
+      setQueriesData(queryClient, { queryKey: queryKeyRef }, fn, {
         updatedAt: ref(3),
       })
 
-      expect(QueryClientOrigin.prototype.setQueriesData).toHaveBeenCalledWith(
+      expect(core.setQueriesData).toHaveBeenCalledWith(
+        queryClient,
         { queryKey: queryKeyUnref },
         fn,
         { updatedAt: 3 },
@@ -146,11 +177,12 @@ describe('QueryCache', () => {
     it('should properly unwrap params with filters', () => {
       const queryClient = new QueryClient()
 
-      queryClient.setQueriesData({ queryKey: queryKeyRef }, fn, {
+      setQueriesData(queryClient, { queryKey: queryKeyRef }, fn, {
         updatedAt: ref(3),
       })
 
-      expect(QueryClientOrigin.prototype.setQueriesData).toHaveBeenCalledWith(
+      expect(core.setQueriesData).toHaveBeenCalledWith(
+        queryClient,
         { queryKey: queryKeyUnref },
         fn,
         { updatedAt: 3 },
@@ -162,9 +194,10 @@ describe('QueryCache', () => {
     it('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
-      queryClient.getQueryState(queryKeyRef)
+      getQueryState(queryClient, queryKeyRef)
 
-      expect(QueryClientOrigin.prototype.getQueryState).toHaveBeenCalledWith(
+      expect(core.getQueryState).toHaveBeenCalledWith(
+        queryClient,
         queryKeyUnref,
       )
     })
@@ -174,11 +207,11 @@ describe('QueryCache', () => {
     it('should properly unwrap 1 parameter', () => {
       const queryClient = new QueryClient()
 
-      queryClient.removeQueries({
+      removeQueries(queryClient, {
         queryKey: queryKeyRef,
       })
 
-      expect(QueryClientOrigin.prototype.removeQueries).toHaveBeenCalledWith({
+      expect(core.removeQueries).toHaveBeenCalledWith(queryClient, {
         queryKey: queryKeyUnref,
       })
     })
@@ -188,14 +221,16 @@ describe('QueryCache', () => {
     it('should properly unwrap 2 parameter', () => {
       const queryClient = new QueryClient()
 
-      queryClient.resetQueries(
+      resetQueries(
+        queryClient,
         {
           queryKey: queryKeyRef,
         },
         { cancelRefetch: ref(false) },
       )
 
-      expect(QueryClientOrigin.prototype.resetQueries).toHaveBeenCalledWith(
+      expect(core.resetQueries).toHaveBeenCalledWith(
+        queryClient,
         {
           queryKey: queryKeyUnref,
         },
@@ -208,14 +243,16 @@ describe('QueryCache', () => {
     it('should properly unwrap 2 parameter', () => {
       const queryClient = new QueryClient()
 
-      queryClient.cancelQueries(
+      cancelQueries(
+        queryClient,
         {
           queryKey: queryKeyRef,
         },
         { revert: ref(false) },
       )
 
-      expect(QueryClientOrigin.prototype.cancelQueries).toHaveBeenCalledWith(
+      expect(core.cancelQueries).toHaveBeenCalledWith(
+        queryClient,
         {
           queryKey: queryKeyUnref,
         },
@@ -228,16 +265,16 @@ describe('QueryCache', () => {
     it('should properly unwrap 2 parameter', () => {
       const queryClient = new QueryClient()
 
-      queryClient.invalidateQueries(
+      queryInvalidateQueries(
+        queryClient,
         {
           queryKey: queryKeyRef,
         },
         { cancelRefetch: ref(false) },
       )
 
-      expect(
-        QueryClientOrigin.prototype.invalidateQueries,
-      ).toHaveBeenCalledWith(
+      expect(core.invalidateQueries).toHaveBeenCalledWith(
+        queryClient,
         {
           queryKey: queryKeyUnref,
           refetchType: 'none',
@@ -248,71 +285,61 @@ describe('QueryCache', () => {
 
     // #7694
     it('should call invalidateQueries immediately and refetchQueries after sleep', async () => {
-      const invalidateQueries = vi.spyOn(
-        QueryClientOrigin.prototype,
-        'invalidateQueries',
-      )
-      const refetchQueries = vi.spyOn(
-        QueryClientOrigin.prototype,
-        'refetchQueries',
-      )
+      const invalidateQueries = vi.spyOn(core, 'invalidateQueries')
+      const refetchQueries = vi.spyOn(core, 'refetchQueries')
 
       const queryClient = new QueryClient()
 
-      queryClient.invalidateQueries({
+      queryInvalidateQueries(queryClient, {
         queryKey: queryKeyRef,
       })
 
       expect(invalidateQueries).toHaveBeenCalledWith(
+        queryClient,
         { queryKey: queryKeyUnref, refetchType: 'none' },
         {},
       )
       expect(refetchQueries).not.toHaveBeenCalled()
       await vi.advanceTimersByTimeAsync(0)
       expect(refetchQueries).toHaveBeenCalledWith(
+        queryClient,
         { queryKey: queryKeyUnref, type: 'active' },
         {},
       )
     })
 
     it('should pass refetchType as type and the options to refetchQueries', async () => {
-      const refetchQueries = vi.spyOn(
-        QueryClientOrigin.prototype,
-        'refetchQueries',
-      )
+      const refetchQueries = vi.spyOn(core, 'refetchQueries')
 
       const queryClient = new QueryClient()
 
-      queryClient.invalidateQueries(
+      queryInvalidateQueries(
+        queryClient,
         { queryKey: queryKeyRef, refetchType: 'all', type: 'inactive' },
         { cancelRefetch: ref(false) },
       )
 
       await vi.advanceTimersByTimeAsync(0)
       expect(refetchQueries).toHaveBeenCalledWith(
+        queryClient,
         { queryKey: queryKeyUnref, refetchType: 'all', type: 'all' },
         { cancelRefetch: false },
       )
     })
 
     it('should call invalidateQueries immediately and not call refetchQueries', async () => {
-      const invalidateQueries = vi.spyOn(
-        QueryClientOrigin.prototype,
-        'invalidateQueries',
-      )
-      const refetchQueries = vi.spyOn(
-        QueryClientOrigin.prototype,
-        'refetchQueries',
-      )
+      const invalidateQueries = vi.spyOn(core, 'invalidateQueries')
+      const refetchQueries = vi.spyOn(core, 'refetchQueries')
 
       const queryClient = new QueryClient()
 
-      queryClient.invalidateQueries({
+      queryInvalidateQueries(queryClient, {
         queryKey: queryKeyRef,
         refetchType: 'none',
       })
 
       expect(invalidateQueries).toHaveBeenCalledWith(
+        queryClient,
         { queryKey: queryKeyUnref, refetchType: 'none' },
         {},
       )
@@ -326,14 +353,16 @@ describe('QueryCache', () => {
     it('should properly unwrap 2 parameter', () => {
       const queryClient = new QueryClient()
 
-      queryClient.refetchQueries(
+      queryRefetchQueries(
+        queryClient,
         {
           queryKey: queryKeyRef,
         },
         { cancelRefetch: ref(false) },
       )
 
-      expect(QueryClientOrigin.prototype.refetchQueries).toHaveBeenCalledWith(
+      expect(core.refetchQueries).toHaveBeenCalledWith(
+        queryClient,
         {
           queryKey: queryKeyUnref,
         },
@@ -348,20 +377,20 @@ describe('QueryCache', () => {
       const queryKey = ['skipped', ref('key')]
       const options = { queryKey, queryFn: ref(skipToken) }
 
-      await expect(client.query(options)).resolves.toBeUndefined()
+      await expect(query(client, options)).resolves.toBeUndefined()
 
-      client.setQueryData(['skipped', 'key'], 'cached')
-      await expect(client.query(options)).resolves.toBe('cached')
+      setQueryData(client, ['skipped', 'key'], 'cached')
+      await expect(query(client, options)).resolves.toBe('cached')
     })
 
     it('should properly unwrap queryKey', () => {
       const queryClient = new QueryClient()
 
-      queryClient.query({
+      query(queryClient, {
         queryKey: queryKeyRef,
       })
 
-      expect(QueryClientOrigin.prototype.query).toHaveBeenCalledWith({
+      expect(core.query).toHaveBeenCalledWith(queryClient, {
         queryKey: queryKeyUnref,
       })
     })
@@ -371,16 +400,16 @@ describe('QueryCache', () => {
       const staleTime = () => 1000
       const select = (data: string) => data.length
 
-      queryClient.query({
+      query(queryClient, {
         queryKey: queryKeyRef,
         staleTime: ref(staleTime),
-        select: ref(select),
+        select: [querySelect, ref(select)],
       })
 
-      expect(QueryClientOrigin.prototype.query).toHaveBeenCalledWith({
+      expect(core.query).toHaveBeenCalledWith(queryClient, {
         queryKey: queryKeyUnref,
         staleTime,
-        select,
+        select: querySelect(select),
       })
     })
 
@@ -391,9 +420,9 @@ describe('QueryCache', () => {
         queryFn: fn,
       }))
 
-      queryClient.query(options())
+      query(queryClient, options())
 
-      expect(QueryClientOrigin.prototype.query).toHaveBeenCalledWith({
+      expect(core.query).toHaveBeenCalledWith(queryClient, {
         queryKey: queryKeyUnref,
         queryFn: fn,
       })
@@ -406,21 +435,22 @@ describe('QueryCache', () => {
       const getNextPageParam = () => 1
       const select = (data: { pages: Array<string> }) => data.pages.length
 
-      queryClient.infiniteQuery({
+      infiniteQuery(queryClient, {
         queryKey: queryKeyRef,
         initialPageParam: ref(0),
         pages: ref(2),
         getNextPageParam: ref(getNextPageParam),
-        select: ref(select),
+        select: [querySelect, ref(select)],
       })
 
-      expect(QueryClientOrigin.prototype.infiniteQuery).toHaveBeenCalledWith(
+      expect(core.infiniteQuery).toHaveBeenCalledWith(
+        queryClient,
         expect.objectContaining({
           queryKey: queryKeyUnref,
           initialPageParam: 0,
           pages: 2,
           getNextPageParam,
-          select,
+          select: querySelect(select),
         }),
       )
     })
@@ -436,13 +466,14 @@ describe('QueryCache', () => {
         getNextPageParam: ref(getNextPageParam),
       })
 
-      queryClient.infiniteQuery({
+      infiniteQuery(queryClient, {
         ...unref(options),
         staleTime: 0,
         pages: 1,
       })
 
-      expect(QueryClientOrigin.prototype.infiniteQuery).toHaveBeenCalledWith(
+      expect(core.infiniteQuery).toHaveBeenCalledWith(
+        queryClient,
         expect.objectContaining({
           queryKey: queryKeyUnref,
           initialPageParam: 0,
@@ -457,15 +488,13 @@ describe('QueryCache', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
-      queryClient.setDefaultOptions({
+      setDefaultOptions(queryClient, {
         queries: {
           enabled: ref(false),
         },
       })
 
-      expect(
-        QueryClientOrigin.prototype.setDefaultOptions,
-      ).toHaveBeenCalledWith({
+      expect(core.setDefaultOptions).toHaveBeenCalledWith(queryClient, {
         queries: {
           enabled: false,
         },
@@ -477,11 +506,12 @@ describe('QueryCache', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
-      queryClient.setQueryDefaults(queryKeyRef, {
+      setQueryDefaults(queryClient, queryKeyRef, {
         enabled: ref(false),
       })
 
-      expect(QueryClientOrigin.prototype.setQueryDefaults).toHaveBeenCalledWith(
+      expect(core.setQueryDefaults).toHaveBeenCalledWith(
+        queryClient,
         queryKeyUnref,
         {
           enabled: false,
@@ -494,9 +524,10 @@ describe('QueryCache', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
-      queryClient.getQueryDefaults(queryKeyRef)
+      getQueryDefaults(queryClient, queryKeyRef)
 
-      expect(QueryClientOrigin.prototype.getQueryDefaults).toHaveBeenCalledWith(
+      expect(core.getQueryDefaults).toHaveBeenCalledWith(
+        queryClient,
         queryKeyUnref,
       )
     })
@@ -506,15 +537,17 @@ describe('QueryCache', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
-      queryClient.setMutationDefaults(queryKeyRef, {
+      setMutationDefaults(queryClient, queryKeyRef, {
         mutationKey: queryKeyRef,
       })
 
-      expect(
-        QueryClientOrigin.prototype.setMutationDefaults,
-      ).toHaveBeenCalledWith(queryKeyUnref, {
-        mutationKey: queryKeyUnref,
-      })
+      expect(core.setMutationDefaults).toHaveBeenCalledWith(
+        queryClient,
+        queryKeyUnref,
+        {
+          mutationKey: queryKeyUnref,
+        },
+      )
     })
   })
 
@@ -522,11 +555,12 @@ describe('QueryCache', () => {
     it('should properly unwrap parameters', () => {
       const queryClient = new QueryClient()
 
-      queryClient.getMutationDefaults(queryKeyRef)
+      getMutationDefaults(queryClient, queryKeyRef)
 
-      expect(
-        QueryClientOrigin.prototype.getMutationDefaults,
-      ).toHaveBeenCalledWith(queryKeyUnref)
+      expect(core.getMutationDefaults).toHaveBeenCalledWith(
+        queryClient,
+        queryKeyUnref,
+      )
     })
   })
 })

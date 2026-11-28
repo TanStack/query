@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/preact-query'
+import { useQuery, suspenseQueryOptions } from '@tanstack/preact-query'
 import { projectsQueries } from '../services/projects/queries'
 import Button from './Button'
 import Spinner from './Spinner'
@@ -10,8 +10,8 @@ export default function Project({
   activeProject: string
   setActiveProject: (activeProject: string | null) => void
 }) {
-  const { data, isFetching } = useSuspenseQuery(
-    projectsQueries.detail(activeProject),
+  const { data, isFetching } = useQuery(
+    suspenseQueryOptions(projectsQueries.detail(activeProject)),
   )
 
   return (

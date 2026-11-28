@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { useQueryClient } from '@tanstack/vue-query'
+import {
+  invalidateQueries,
+  setDefaultOptions,
+  useQueryClient,
+} from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import { ref, watchEffect } from 'vue'
 import AddTodo from './AddTodo.vue'
@@ -22,7 +26,7 @@ watchEffect(() => {
 })
 
 watchEffect(() => {
-  queryClient.setDefaultOptions({
+  setDefaultOptions(queryClient, {
     queries: {
       staleTime: staleTime.value,
       gcTime: gcTime.value,
@@ -110,7 +114,7 @@ const setEditingIndex = (index: number | null) => {
   <br />
   <div class="App">
     <div>
-      <button type="button" @click="queryClient.invalidateQueries()">
+      <button type="button" @click="invalidateQueries(queryClient)">
         Force Refetch All
       </button>
     </div>

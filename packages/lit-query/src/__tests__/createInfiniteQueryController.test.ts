@@ -1,4 +1,16 @@
-import { QueryClient, skipToken } from '@tanstack/query-core'
+import {
+  QueryClient,
+  clearQueryClient,
+  findCachedQueries,
+  findCachedQuery,
+  getQueryCache,
+  getQueryObserverCount,
+  isFetchNextPageError,
+  isFetching,
+  isSuccess,
+  setQueryData,
+  skipToken,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement, html } from 'lit'
 import {
@@ -36,7 +48,7 @@ describe('createInfiniteQueryController', () => {
 
   afterEach(() => {
     container.remove()
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -86,7 +98,7 @@ describe('createInfiniteQueryController', () => {
     await consumer.updateComplete
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.infinite().isSuccess).toBe(true)
+    expect(isSuccess(consumer.infinite())).toBe(true)
     expect(consumer.infinite().data?.pages).toStrictEqual([0])
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
 
@@ -134,15 +146,18 @@ describe('createInfiniteQueryController', () => {
     await consumer.updateComplete
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.infinite().isSuccess).toBe(true)
+    expect(isSuccess(consumer.infinite())).toBe(true)
     expect(consumer.infinite().data?.pages).toStrictEqual([0])
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
     expect(
-      queryClient.getQueryCache().find({ queryKey: consumer.queryKey })?.state
-        .data,
+      findCachedQuery(getQueryCache(queryClient), {
+        queryKey: consumer.queryKey,
+      })?.state.data,
     ).toStrictEqual({ pages: [0], pageParams: [0] })
     expect(
-      providerClient.getQueryCache().find({ queryKey: consumer.queryKey }),
+      findCachedQuery(getQueryCache(providerClient), {
+        queryKey: consumer.queryKey,
+      }),
     ).toBeUndefined()
 
     consumer.infinite.destroy()
@@ -180,7 +195,7 @@ describe('createInfiniteQueryController', () => {
 
     expect(host.shadowRoot).toHaveTextContent('pages: none')
     await vi.advanceTimersByTimeAsync(10)
-    expect(infinite().isSuccess).toBe(true)
+    expect(isSuccess(infinite())).toBe(true)
     expect(infinite().data?.pages).toStrictEqual([0])
     expect(host.shadowRoot).toHaveTextContent('pages: 0')
   })
@@ -370,7 +385,7 @@ describe('createInfiniteQueryController', () => {
     try {
       container.append(host)
       await vi.advanceTimersByTimeAsync(10)
-      expect(infinite().isSuccess).toBe(true)
+      expect(isSuccess(infinite())).toBe(true)
 
       host.updatesRequested = 0
 
@@ -488,7 +503,7 @@ describe('createInfiniteQueryController', () => {
 
       host.updatesRequested = 0
 
-      queryClient.setQueryData(key, {
+      setQueryData(queryClient, key, {
         pages: ['updated-page'],
         pageParams: [0],
       })
@@ -563,16 +578,16 @@ describe('createInfiniteQueryController', () => {
     const infinite = host.infinite
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(infinite().isSuccess).toBe(true)
+    expect(isSuccess(infinite())).toBe(true)
     expect(infinite().data?.pages).toStrictEqual([0])
     expect(host.shadowRoot).toHaveTextContent('pages: 0, error: none')
 
     const nextPagePromise = infinite.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
     const nextPageResult = await nextPagePromise
-    expect(nextPageResult.isFetchNextPageError).toBe(true)
+    expect(isFetchNextPageError(nextPageResult)).toBe(true)
     expect(nextPageResult.error).toStrictEqual(new Error('next-page-failed'))
-    expect(infinite().isFetchNextPageError).toBe(true)
+    expect(isFetchNextPageError(infinite())).toBe(true)
     expect(infinite().data?.pages).toStrictEqual([0])
     expect(host.shadowRoot).toHaveTextContent(
       'pages: 0, error: next-page-failed',
@@ -649,7 +664,7 @@ describe('createInfiniteQueryController', () => {
       override render() {
         const infinite = this.infinite()
         const pages = infinite.data?.pages.join(', ') ?? 'none'
-        return html`isFetching: ${String(infinite.isFetching)}, pages: ${pages}`
+        return html`isFetching: ${String(isFetching(infinite))}, pages: ${pages}`
       }
     }
 
@@ -725,7 +740,7 @@ describe('createInfiniteQueryController', () => {
     const key = createKey()
     let queryFnCalls = 0
 
-    queryClient.setQueryData(key, { pages: [0], pageParams: [0] })
+    setQueryData(queryClient, key, { pages: [0], pageParams: [0] })
 
     class Host extends LitElement {
       infinite?: InfiniteQueryResultAccessor<InfiniteData<number>, Error>
@@ -765,7 +780,7 @@ describe('createInfiniteQueryController', () => {
 
   it('should not throw for an infinite query controller on an already-connected host with an explicit client', async () => {
     const key = createKey()
-    queryClient.setQueryData(key, {
+    setQueryData(queryClient, key, {
       pages: [0],
       pageParams: [0],
     })
@@ -796,7 +811,7 @@ describe('createInfiniteQueryController', () => {
       queryClient,
     )
     const infinite = host.infinite
-    expect(infinite().isSuccess).toBe(true)
+    expect(isSuccess(infinite())).toBe(true)
     expect(infinite().data?.pages).toStrictEqual([0])
     await vi.advanceTimersByTimeAsync(10)
     expect(infinite().data?.pages).toStrictEqual([0])
@@ -837,10 +852,9 @@ describe('createInfiniteQueryController', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(host.infinite().data?.pages).toStrictEqual([0])
     expect(
-      queryClient
-        .getQueryCache()
-        .findAll({ queryKey: key })
-        .map((query) => query.queryKey),
+      findCachedQueries(getQueryCache(queryClient), { queryKey: key }).map(
+        (query) => query.queryKey,
+      ),
     ).toStrictEqual([[...key, 'alpha']])
 
     host.infinite.destroy()
@@ -884,13 +898,13 @@ describe('createInfiniteQueryController', () => {
     provider.append(consumer)
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.infinite().isSuccess).toBe(true)
+    expect(isSuccess(consumer.infinite())).toBe(true)
     expect(consumer.infinite().data?.pages).toStrictEqual([0])
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
-    const cacheAEntryBeforeSwitch = clientA
-      .getQueryCache()
-      .find({ queryKey: consumer.queryKey })
-    expect(cacheAEntryBeforeSwitch?.getObserversCount()).toBe(1)
+    const cacheAEntryBeforeSwitch = findCachedQuery(getQueryCache(clientA), {
+      queryKey: consumer.queryKey,
+    })
+    expect(getQueryObserverCount(cacheAEntryBeforeSwitch!)).toBe(1)
 
     provider.client = clientB
     await provider.updateComplete
@@ -899,19 +913,20 @@ describe('createInfiniteQueryController', () => {
     expect(consumer.shadowRoot).toHaveTextContent('pages: none')
     await vi.advanceTimersByTimeAsync(10)
     expect(
-      clientB
-        .getQueryCache()
-        .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(clientB), {
+          queryKey: consumer.queryKey,
+        })!,
+      ),
     ).toBe(1)
-    expect(consumer.infinite().isSuccess).toBe(true)
+    expect(isSuccess(consumer.infinite())).toBe(true)
     expect(consumer.infinite().data?.pages).toStrictEqual([0])
     expect(consumer.infinite().hasNextPage).toBe(true)
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
-    const cacheAEntryAfterSwitch = clientA
-      .getQueryCache()
-      .find({ queryKey: consumer.queryKey })
-    expect(cacheAEntryAfterSwitch?.getObserversCount()).toBe(0)
+    const cacheAEntryAfterSwitch = findCachedQuery(getQueryCache(clientA), {
+      queryKey: consumer.queryKey,
+    })
+    expect(getQueryObserverCount(cacheAEntryAfterSwitch!)).toBe(0)
 
     void consumer.infinite.fetchNextPage()
     await vi.advanceTimersByTimeAsync(10)
@@ -964,15 +979,16 @@ describe('createInfiniteQueryController', () => {
     await providerA.updateComplete
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.infinite().isSuccess).toBe(true)
+    expect(isSuccess(consumer.infinite())).toBe(true)
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
 
     consumer.remove()
     expect(
-      clientA
-        .getQueryCache()
-        .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(clientA), {
+          queryKey: consumer.queryKey,
+        })!,
+      ),
     ).toBe(0)
 
     providerA.remove()
@@ -982,21 +998,23 @@ describe('createInfiniteQueryController', () => {
     await providerB.updateComplete
     expect(consumer.shadowRoot).toHaveTextContent('pages: none')
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.infinite().isSuccess).toBe(true)
+    expect(isSuccess(consumer.infinite())).toBe(true)
     expect(consumer.infinite().data?.pages).toStrictEqual([0])
     expect(consumer.shadowRoot).toHaveTextContent('pages: 0')
     expect(consumer.pageCalls).toBe(2)
     expect(
-      clientA
-        .getQueryCache()
-        .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(clientA), {
+          queryKey: consumer.queryKey,
+        })!,
+      ),
     ).toBe(0)
     expect(
-      clientB
-        .getQueryCache()
-        .find({ queryKey: consumer.queryKey })
-        ?.getObserversCount(),
+      getQueryObserverCount(
+        findCachedQuery(getQueryCache(clientB), {
+          queryKey: consumer.queryKey,
+        })!,
+      ),
     ).toBe(1)
 
     consumer.infinite.destroy()

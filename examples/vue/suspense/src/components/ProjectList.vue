@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { noop, useQuery, useQueryClient } from '@tanstack/vue-query'
+import {
+  isFetching as queryIsFetching,
+  query,
+  noop,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/vue-query'
+import { computed } from 'vue'
 import { projectsQueries } from '../services/projects/queries'
 import BaseButton from './BaseButton.vue'
 import BaseSpinner from './BaseSpinner.vue'
@@ -7,16 +14,21 @@ import BaseSpinner from './BaseSpinner.vue'
 const emit = defineEmits<{ setActiveProject: [project: string] }>()
 
 const queryClient = useQueryClient()
-const { data, isFetching, suspense } = useQuery({
+const {
+  state: queryState,
+  data,
+  suspense,
+} = useQuery({
   ...projectsQueries.list(),
   throwOnError: true,
 })
+const isFetching = computed(() => queryIsFetching(queryState))
 
 await suspense()
 
 const loadProject = (project: string) => {
   // Prefetch the project query
-  queryClient.query(projectsQueries.detail(project)).catch(noop)
+  query(queryClient, projectsQueries.detail(project)).catch(noop)
   emit('setActiveProject', project)
 }
 </script>

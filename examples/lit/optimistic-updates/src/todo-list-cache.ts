@@ -1,6 +1,10 @@
 import {
+  cancelQueries,
   createMutationController,
   createQueryController,
+  getQueryData,
+  invalidateQueries,
+  setQueryData,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { todosMutations, todosQueries } from './services/todos/queries'
@@ -31,11 +35,11 @@ class TodoListCache extends LitElement {
     ...todosMutations.create(),
     onMutate: async (text, { client }) => {
       this.lastError = null
-      await client.cancelQueries({
+      await cancelQueries(client, {
         queryKey: todosQueries.list().queryKey,
       })
 
-      const previousTodos = client.getQueryData(todosQueries.list().queryKey)
+      const previousTodos = getQueryData(client, todosQueries.list().queryKey)
 
       const optimisticId = `optimistic-${Date.now()}`
       const optimisticTodo: Todo = {
@@ -44,7 +48,7 @@ class TodoListCache extends LitElement {
         createdAt: Date.now(),
       }
 
-      client.setQueryData(todosQueries.list().queryKey, (old = []) => [
+      setQueryData(client, todosQueries.list().queryKey, (old = []) => [
         ...old,
         optimisticTodo,
       ])
@@ -54,15 +58,19 @@ class TodoListCache extends LitElement {
     onError: (_err, _text, context, { client }) => {
       this.lastError = _err.message
       if (context?.previousTodos !== undefined) {
-        client.setQueryData(todosQueries.list().queryKey, context.previousTodos)
+        setQueryData(
+          client,
+          todosQueries.list().queryKey,
+          context.previousTodos,
+        )
       } else if (context?.optimisticId) {
-        client.setQueryData(todosQueries.list().queryKey, (old = []) =>
+        setQueryData(client, todosQueries.list().queryKey, (old = []) =>
           old.filter((todo) => todo.id !== context.optimisticId),
         )
       }
     },
     onSettled: (_data, _error, _variables, _context, { client }) =>
-      client.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
+      invalidateQueries(client, { queryKey: todosQueries.list().queryKey }),
   }))
 
   protected override createRenderRoot(): HTMLElement | DocumentFragment {

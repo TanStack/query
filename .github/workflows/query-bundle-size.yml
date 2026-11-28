@@ -1,0 +1,113 @@
+name: TanStack Query bundle size
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/query-bundle-size.yml'
+      - 'integrations/react/bundle-size/**'
+      - 'packages/query-core/**'
+      - 'packages/*-query/**'
+      - 'integrations/query/treeshaking/**'
+      - 'scripts/getTsdownConfig.js'
+      - '.nvmrc'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      report: ${{ steps.measure.outputs.report }}
+      analyzer_url: ${{ steps.analyzer.outputs.artifact-url }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: TanStack/config/.github/setup@e4b48f16568324f76f467aa4c2aac2f05db632c3
+      - name: Check out the v6 comparison baseline
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          # The v6 fixtures use the API from before the treeshakable changes.
+          ref: dc33f10cc5d7334a3b473fdf576b5d2aeb57ef4b
+          path: .cache/query-bundle-base
+          persist-credentials: false
+      - name: Install and build the baseline adapter
+        working-directory: .cache/query-bundle-base
+        run: |
+          pnpm --filter root --filter '@tanstack/react-query...' install --frozen-lockfile
+          pnpm --filter '@tanstack/react-query...' run build
+      - name: Build workspace dependencies
+        run: pnpm --filter '@tanstack/query-integration-treeshaking^...' run build
+      - name: Verify read-only imports across framework adapters
+        working-directory: integrations/query/treeshaking
+        run: |
+          pnpm run test:types
+          node check.ts > "$RUNNER_TEMP/query-readers.md"
+      - name: Type-check the benchmark and both adapters' screens
+        working-directory: integrations/react/bundle-size
+        run: |
+          pnpm run test:types
+          pnpm run check:baseline
+      - name: Build and measure production apps
+        id: measure
+        env:
+          QUERY_BASE_CHECKOUT: ${{ github.workspace }}/.cache/query-bundle-base
+        working-directory: integrations/react/bundle-size
+        run: |
+          pnpm run measure
+          echo >> dist/report.md
+          cat "$RUNNER_TEMP/query-readers.md" >> dist/report.md
+          cat dist/report.md >> "$GITHUB_STEP_SUMMARY"
+          jq -Rsr '"report=" + tojson' dist/report.md >> "$GITHUB_OUTPUT"
+      - name: Install Chromium
+        working-directory: integrations/react/bundle-size
+        run: pnpm run browser:install
+      - name: Exercise production apps in Chromium
+        working-directory: integrations/react/bundle-size
+        run: pnpm run test:browser
+      - name: Upload interactive bundle treemaps
+        id: analyzer
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: react-query-bundle-analyzer
+          path: integrations/react/bundle-size/dist/analyzer/
+          if-no-files-found: error
+          retention-days: 30
+  comment:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    needs: measure
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Update bundle size comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.number }}
+          REPORT: ${{ needs.measure.outputs.report }}
+          ANALYZER_URL: ${{ needs.measure.outputs.analyzer_url }}
+        run: |
+          comments="repos/$REPO/issues/$PR_NUMBER/comments"
+          marker='<!-- tanstack-query-bundle-size -->'
+          id=$(gh api --paginate --slurp "$comments?per_page=100" |
+            jq -r --arg marker "$marker" '[.[][] | select(.user.login == "github-actions[bot]" and (.body | startswith($marker)))][0].id // empty')
+          endpoint="$comments"
+          method=POST
+          if [[ -n "$id" ]]; then
+            endpoint="repos/$REPO/issues/comments/$id"
+            method=PATCH
+          fi
+          jq -n --arg marker "$marker" --argjson report "$REPORT" --arg analyzer "$ANALYZER_URL" \
+            '{body: ($marker + "\n" + $report + "\n[Download the interactive bundle treemaps](" + $analyzer + ")")}' |
+            gh api --silent --method "$method" "$endpoint" --input -

@@ -2,7 +2,10 @@ import { assertInInjectionContext, untracked } from '@angular/core'
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { injectBaseQuery } from './inject-base-query'
 import { injectQueryZone } from './utils/inject-query-zone'
-import { infiniteQueryResultFields } from './utils/result-fields'
+import {
+  infiniteQueryResultFields,
+  infiniteQueryStatusSignals,
+} from './utils/result-fields'
 import { signalProxy } from './utils/signal-proxy'
 import type { Signal } from '@angular/core'
 import type {
@@ -46,7 +49,7 @@ import type {
  * actions, or add conditions like `hasNextPage() && !isFetching()`.
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
  * @see {@link infiniteQueryOptions} to share these options between `injectInfiniteQuery` and imperative APIs
- * like `queryClient.infiniteQuery`.
+ * like `infiniteQuery`.
  * @example
  * ```angular-ts
  * @Component({
@@ -107,7 +110,7 @@ export function injectInfiniteQuery<
  * shown below.
  * @see https://tanstack.com/query/latest/docs/framework/angular/guides/infinite-queries
  * @see {@link infiniteQueryOptions} to share these options between `injectInfiniteQuery` and imperative APIs
- * like `queryClient.infiniteQuery`.
+ * like `infiniteQuery`.
  * @example
  * Fetching the next page from a button click:
  * ```angular-ts
@@ -312,6 +315,9 @@ export function injectInfiniteQuery<
     signalProxy(
       resultSignal as Signal<InfiniteQueryObserverResult<TData, TError>>,
       infiniteQueryResultFields,
+    ),
+    infiniteQueryStatusSignals(
+      resultSignal as Signal<InfiniteQueryObserverResult<TData, TError>>,
     ),
     {
       refetch: (options?: RefetchOptions) =>

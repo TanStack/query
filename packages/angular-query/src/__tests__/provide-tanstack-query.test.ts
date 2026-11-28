@@ -1,6 +1,6 @@
 import { InjectionToken, PLATFORM_ID, inject } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
-import { QueryClient } from '@tanstack/query-core'
+import { QueryClient, getDefaultOptions } from '@tanstack/query-core'
 import { describe, expect, it } from 'vitest'
 import { provideTanStackQuery } from '../providers'
 import { provideAngularQueryChangeDetection } from './test-utils'
@@ -48,11 +48,11 @@ describe('server client defaults', () => {
         provideTanStackQuery(() => new QueryClient()),
       ],
     })
-    expect(TestBed.inject(QueryClient).getDefaultOptions()).toStrictEqual({
+    expect(getDefaultOptions(TestBed.inject(QueryClient))).toStrictEqual({
       queries: { gcTime: Infinity, retry: false },
       mutations: { gcTime: Infinity },
     })
-    expect(unrelated.getDefaultOptions()).toStrictEqual({})
+    expect(getDefaultOptions(unrelated)).toStrictEqual({})
   })
 
   it('preserves explicit server client defaults', () => {
@@ -71,7 +71,7 @@ describe('server client defaults', () => {
         ),
       ],
     })
-    expect(TestBed.inject(QueryClient).getDefaultOptions()).toStrictEqual({
+    expect(getDefaultOptions(TestBed.inject(QueryClient))).toStrictEqual({
       queries: { gcTime: 1000, retry: 1, staleTime: 30000 },
       mutations: { gcTime: 2000 },
     })

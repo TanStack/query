@@ -1,4 +1,10 @@
-import { QueryClient } from '@tanstack/query-core'
+import {
+  QueryClient,
+  isLoadingError,
+  isPending,
+  isSuccess,
+  select,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
@@ -200,13 +206,13 @@ describe('createQueryController', () => {
     )
     const state = query()
 
-    if (state.isPending) {
+    if (isPending(state)) {
       expectTypeOf(state.data).toEqualTypeOf<undefined>()
       expectTypeOf(state.error).toEqualTypeOf<null>()
       return
     }
 
-    if (state.isLoadingError) {
+    if (isLoadingError(state)) {
       expectTypeOf(state.data).toEqualTypeOf<undefined>()
       expectTypeOf(state.error).toEqualTypeOf<Error>()
       return
@@ -249,7 +255,7 @@ describe('createQueryController', () => {
         })
         const query = createQueryController(
           new Host(),
-          { ...options, select: (data) => data > 1 },
+          { ...options, select: [select, (data) => data > 1] },
           new QueryClient(),
         )
 
@@ -290,10 +296,10 @@ describe('createQueryController', () => {
           },
           new QueryClient(),
         )
-        const { data, isSuccess } = query()
+        const result = query()
 
-        if (isSuccess) {
-          expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
+        if (isSuccess(result)) {
+          expectTypeOf(result.data).toEqualTypeOf<{ wow: boolean }>()
         }
       })
 

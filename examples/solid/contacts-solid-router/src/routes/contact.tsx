@@ -1,5 +1,5 @@
 import { A, action, useParams, useSubmission } from '@solidjs/router'
-import { noop, useQuery } from '@tanstack/solid-query'
+import { query, invalidateQueries, noop, useQuery } from '@tanstack/solid-query'
 import { Show } from 'solid-js'
 import { queryClient } from '../queryClient'
 import { contactsAPI } from '../services/contacts/api'
@@ -10,7 +10,7 @@ import type { Contact } from '../services/contacts/types'
 
 export const preload = ({ params }: RoutePreloadFuncArgs) => {
   if (!params.contactId) return
-  queryClient.query(contactsQueries.detail(params.contactId)).catch(noop)
+  query(queryClient, contactsQueries.detail(params.contactId)).catch(noop)
 }
 
 export const toggleFavorite = action(
@@ -18,7 +18,7 @@ export const toggleFavorite = action(
     await contactsAPI.updateContact(contactId, {
       favorite: formData.get('favorite') === 'true',
     })
-    await queryClient.invalidateQueries({ queryKey: contactsQueries.all() })
+    await invalidateQueries(queryClient, { queryKey: contactsQueries.all() })
   },
   'toggleFavorite',
 )

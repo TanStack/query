@@ -1,11 +1,11 @@
-import { useQuery } from '@tanstack/react-query'
+import { isError, isFetching, isLoading, useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router'
 import { moviesQueries } from '../services/movies/queries'
 
 export default function List() {
   const moviesQuery = useQuery(moviesQueries.list())
 
-  if (moviesQuery.isLoading) {
+  if (isLoading(moviesQuery)) {
     return 'Loading...'
   }
 
@@ -28,12 +28,12 @@ export default function List() {
         <div>
           Updated at: {new Date(moviesQuery.data.ts).toLocaleTimeString()}
         </div>
-        <div>{moviesQuery.isFetching && 'fetching...'}</div>
+        <div>{isFetching(moviesQuery) && 'fetching...'}</div>
       </div>
     )
   }
 
-  if (moviesQuery.isError) {
+  if (isError(moviesQuery)) {
     return (
       <div>
         <h1>Couldn't load movies!</h1>

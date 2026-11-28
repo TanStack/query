@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { invalidateQueries } from '@tanstack/query-core'
   import { sleep } from '@tanstack/query-test-utils'
   import { createMutation, setQueryClientContext } from '../../src/index.js'
   import type { QueryClient, QueryKey } from '@tanstack/query-core'
@@ -15,7 +16,7 @@
   const mutation = createMutation(() => ({
     mutationFn: () => sleep(10).then(() => 'mutated'),
     onSuccess: (_data, _variables, _onMutateResult, context) => {
-      context.client.invalidateQueries({ queryKey })
+      invalidateQueries(context.client, { queryKey })
     },
   }))
 </script>

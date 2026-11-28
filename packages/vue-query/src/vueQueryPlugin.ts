@@ -1,4 +1,8 @@
-import { environmentManager } from '@tanstack/query-core'
+import {
+  environmentManager,
+  mountQueryClient,
+  unmountQueryClient,
+} from '@tanstack/query-core'
 import { setupDevtools } from './devtools/devtools'
 import { QueryClient } from './queryClient'
 import { getClientKey } from './utils'
@@ -84,7 +88,7 @@ export const VueQueryPlugin = {
     }
 
     if (!environmentManager.isServer()) {
-      client.mount()
+      mountQueryClient(client)
     }
 
     let persisterUnmount = () => {
@@ -113,7 +117,7 @@ export const VueQueryPlugin = {
     }
 
     const cleanup = () => {
-      client.unmount()
+      unmountQueryClient(client)
       persisterUnmount()
     }
 

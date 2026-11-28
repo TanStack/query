@@ -1,4 +1,5 @@
 import { Key } from '@solid-primitives/keyed'
+import { setQueryData } from '@tanstack/query-core'
 import {
   Index,
   Match,
@@ -153,7 +154,7 @@ const ClearArrayButton = (props: {
       onClick={() => {
         const oldData = props.activeQuery.state.data
         const newData = updateNestedDataByPath(oldData, props.dataPath, [])
-        queryClient.setQueryData(props.activeQuery.queryKey, newData)
+        setQueryData(queryClient, props.activeQuery.queryKey, newData)
       }}
     >
       <List />
@@ -177,7 +178,7 @@ const DeleteItemButton = (props: {
       onClick={() => {
         const oldData = props.activeQuery.state.data
         const newData = deleteNestedDataByPath(oldData, props.dataPath)
-        queryClient.setQueryData(props.activeQuery.queryKey, newData)
+        setQueryData(queryClient, props.activeQuery.queryKey, newData)
       }}
     >
       <Trash />
@@ -207,7 +208,7 @@ const ToggleValueButton = (props: {
           props.dataPath,
           !props.value,
         )
-        queryClient.setQueryData(props.activeQuery.queryKey, newData)
+        setQueryData(queryClient, props.activeQuery.queryKey, newData)
       }}
     >
       <Check theme={theme()} checked={props.value} />
@@ -772,7 +773,11 @@ export default function Explorer(props: ExplorerProps) {
                       : changeEvent.target.value,
                   )
 
-                  queryClient.setQueryData(props.activeQuery!.queryKey, newData)
+                  setQueryData(
+                    queryClient,
+                    props.activeQuery!.queryKey,
+                    newData,
+                  )
                 }}
               />
             </Show>

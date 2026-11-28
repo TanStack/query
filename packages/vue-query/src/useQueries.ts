@@ -1,4 +1,4 @@
-import { QueriesObserver } from '@tanstack/query-core'
+import { QueriesObserver, defaultQueryOptions } from '@tanstack/query-core'
 import {
   computed,
   getCurrentScope,
@@ -15,9 +15,11 @@ import type {
   DefaultError,
   DefinedQueryObserverResult,
   QueriesObserverOptions,
+  QueryErrorBoundaryOption,
   QueryFunction,
   QueryKey,
   QueryObserverResult,
+  Select,
   ThrowOnError,
 } from '@tanstack/query-core'
 import type { Ref } from 'vue'
@@ -67,8 +69,10 @@ type GetUseQueryOptionsForUseQueries<T> =
                       queryFn?:
                         | QueryFunction<infer TQueryFnData, infer TQueryKey>
                         | SkipTokenForUseQueries
-                      select?: (data: any) => infer TData
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
+                      select?: Select<any, infer TData>
+                      throwOnError?:
+                        | ThrowOnError<any, infer TError, any, any>
+                        | QueryErrorBoundaryOption<any, infer TError, any, any>
                     }
                   ? UseQueryOptionsForUseQueries<
                       TQueryFnData,
@@ -80,7 +84,14 @@ type GetUseQueryOptionsForUseQueries<T> =
                         queryFn?:
                           | QueryFunction<infer TQueryFnData, infer TQueryKey>
                           | SkipTokenForUseQueries
-                        throwOnError?: ThrowOnError<any, infer TError, any, any>
+                        throwOnError?:
+                          | ThrowOnError<any, infer TError, any, any>
+                          | QueryErrorBoundaryOption<
+                              any,
+                              infer TError,
+                              any,
+                              any
+                            >
                       }
                     ? UseQueryOptionsForUseQueries<
                         TQueryFnData,
@@ -141,8 +152,10 @@ type GetUseQueryResult<T> =
                       queryFn?:
                         | QueryFunction<infer TQueryFnData, any>
                         | SkipTokenForUseQueries
-                      select?: (data: any) => infer TData
-                      throwOnError?: ThrowOnError<any, infer TError, any, any>
+                      select?: Select<any, infer TData>
+                      throwOnError?:
+                        | ThrowOnError<any, infer TError, any, any>
+                        | QueryErrorBoundaryOption<any, infer TError, any, any>
                     }
                   ? GetDefinedOrUndefinedQueryResult<
                       T,
@@ -153,7 +166,14 @@ type GetUseQueryResult<T> =
                         queryFn?:
                           | QueryFunction<infer TQueryFnData, any>
                           | SkipTokenForUseQueries
-                        throwOnError?: ThrowOnError<any, infer TError, any, any>
+                        throwOnError?:
+                          | ThrowOnError<any, infer TError, any, any>
+                          | QueryErrorBoundaryOption<
+                              any,
+                              infer TError,
+                              any,
+                              any
+                            >
                       }
                     ? GetDefinedOrUndefinedQueryResult<
                         T,
@@ -401,7 +421,7 @@ export function useQueries<
         clonedOptions.enabled = clonedOptions.enabled()
       }
 
-      const defaulted = client.defaultQueryOptions(clonedOptions)
+      const defaulted = defaultQueryOptions(client, clonedOptions)
       defaulted._optimisticResults = client.isRestoring?.value
         ? 'isRestoring'
         : 'optimistic'

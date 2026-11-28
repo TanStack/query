@@ -1,5 +1,27 @@
 import { fireEvent, render } from '@solidjs/testing-library'
-import { createKey, sleep } from '@tanstack/query-test-utils'
+import * as queryPredicates from '@tanstack/query-core'
+import {
+  clearQueryClient,
+  getQueryState,
+  invalidateQueries,
+  isError,
+  isFetchNextPageError,
+  isFetchPreviousPageError,
+  isFetching,
+  isFetchingNextPage,
+  isFetchingPreviousPage,
+  isRefetchError,
+  isRefetching,
+  isSuccess,
+  placeholderData,
+  select,
+  setQueryData,
+} from '@tanstack/query-core'
+import {
+  createKey,
+  createQueryResultSnapshot,
+  sleep,
+} from '@tanstack/query-test-utils'
 import {
   For,
   Index,
@@ -27,6 +49,8 @@ import type {
   UseInfiniteQueryResult,
 } from '..'
 
+const snapshot = createQueryResultSnapshot(queryPredicates)
+
 interface Result {
   items: Array<number>
   nextId?: number
@@ -34,6 +58,22 @@ interface Result {
   ts: number
 }
 
+type RecordedPage<T> = Partial<UseInfiniteQueryResult<InfiniteData<T>>> &
+  Partial<
+    Record<
+      | 'isSuccess'
+      | 'isFetching'
+      | 'isFetchingNextPage'
+      | 'isRefetching'
+      | 'isError'
+      | 'isFetchNextPageError'
+      | 'isFetchPreviousPageError'
+      | 'isRefetchError'
+      | 'isFetchingPreviousPage'
+      | 'isLoadingError',
+      boolean
+    >
+  >
 const pageSize = 10
 
 describe('useInfiniteQuery', () => {
@@ -47,7 +87,7 @@ describe('useInfiniteQuery', () => {
   })
 
   afterEach(() => {
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -74,7 +114,7 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toStrictEqual({
+    expect(snapshot(states[0])).toStrictEqual({
       data: undefined,
       dataUpdatedAt: 0,
       error: null,
@@ -108,7 +148,7 @@ describe('useInfiniteQuery', () => {
       status: 'pending',
       fetchStatus: 'fetching',
     })
-    expect(states[1]).toStrictEqual({
+    expect(snapshot(states[1])).toStrictEqual({
       data: { pages: [0], pageParams: [0] },
       dataUpdatedAt: expect.any(Number),
       error: null,
@@ -185,8 +225,7 @@ describe('useInfiniteQuery', () => {
 
   it('should keep the previous data when placeholderData is set', async () => {
     const key = createKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<string>>>> =
-      []
+    const states: Array<RecordedPage<string>> = []
 
     function Page() {
       const [order, setOrder] = createSignal('desc')
@@ -197,7 +236,7 @@ describe('useInfiniteQuery', () => {
           sleep(10).then(() => `${pageParam}-${order()}`),
         getNextPageParam: () => 1,
         initialPageParam: 0,
-        placeholderData: keepPreviousData,
+        placeholderData: placeholderData(keepPreviousData),
         notifyOnChangeProps: 'all',
       }))
 
@@ -213,7 +252,7 @@ describe('useInfiniteQuery', () => {
           <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
           <button onClick={() => setOrder('asc')}>order</button>
           <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {String(state.isFetching)}</div>
+          <div>isFetching: {String(isFetching(state))}</div>
         </div>
       )
     }
@@ -233,28 +272,28 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('isFetching: false')).toBeInTheDocument()
 
     expect(states).toHaveLength(6)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       isFetching: true,
       isFetchingNextPage: false,
       isSuccess: false,
       isPlaceholderData: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: ['0-desc'] },
       isFetching: false,
       isFetchingNextPage: false,
       isSuccess: true,
       isPlaceholderData: false,
     })
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: { pages: ['0-desc'] },
       isFetching: true,
       isFetchingNextPage: true,
       isSuccess: true,
       isPlaceholderData: false,
     })
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: { pages: ['0-desc', '1-desc'] },
       isFetching: false,
       isFetchingNextPage: false,
@@ -262,14 +301,14 @@ describe('useInfiniteQuery', () => {
       isPlaceholderData: false,
     })
     // Set state
-    expect(states[4]).toMatchObject({
+    expect(snapshot(states[4])).toMatchObject({
       data: { pages: ['0-desc', '1-desc'] },
       isFetching: true,
       isFetchingNextPage: false,
       isSuccess: true,
       isPlaceholderData: true,
     })
-    expect(states[5]).toMatchObject({
+    expect(snapshot(states[5])).toMatchObject({
       data: { pages: ['0-asc'] },
       isFetching: false,
       isFetchingNextPage: false,
@@ -286,10 +325,13 @@ describe('useInfiniteQuery', () => {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => ({ count: 1 })),
-        select: (data) => ({
-          pages: data.pages.map((x) => `count: ${x.count}`),
-          pageParams: data.pageParams,
-        }),
+        select: [
+          select,
+          (data) => ({
+            pages: data.pages.map((x) => `count: ${x.count}`),
+            pageParams: data.pageParams,
+          }),
+        ],
         getNextPageParam: () => undefined,
         initialPageParam: 0,
       }))
@@ -305,11 +347,11 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       isSuccess: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: ['count: 1'] },
       isSuccess: true,
     })
@@ -326,13 +368,16 @@ describe('useInfiniteQuery', () => {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
         queryFn: () => sleep(10).then(() => ({ count: 1 })),
-        select: (data) => {
-          selectCalled++
-          return {
-            pages: data.pages.map((x) => ({ ...x, id: Math.random() })),
-            pageParams: data.pageParams,
-          }
-        },
+        select: [
+          select,
+          (data) => {
+            selectCalled++
+            return {
+              pages: data.pages.map((x) => ({ ...x, id: Math.random() })),
+              pageParams: data.pageParams,
+            }
+          },
+        ],
         getNextPageParam: () => undefined,
         initialPageParam: 0,
       }))
@@ -349,11 +394,11 @@ describe('useInfiniteQuery', () => {
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
     expect(selectCalled).toBe(1)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       isSuccess: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: [{ count: 1 }] },
       isSuccess: true,
     })
@@ -361,17 +406,19 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to reverse the data', async () => {
     const key = createKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<RecordedPage<number>> = []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
         queryKey: key,
         queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
-        select: (data) => ({
-          pages: [...data.pages].reverse(),
-          pageParams: [...data.pageParams].reverse(),
-        }),
+        select: [
+          select,
+          (data) => ({
+            pages: [...data.pages].reverse(),
+            pageParams: [...data.pageParams].reverse(),
+          }),
+        ],
         notifyOnChangeProps: 'all',
         getNextPageParam: () => 1,
         initialPageParam: 0,
@@ -385,7 +432,7 @@ describe('useInfiniteQuery', () => {
               data: state.data
                 ? JSON.parse(JSON.stringify(state.data))
                 : undefined,
-              isSuccess: state.isSuccess,
+              isSuccess: isSuccess(state),
             })
           },
         ),
@@ -395,7 +442,7 @@ describe('useInfiniteQuery', () => {
         <div>
           <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
           <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {state.isFetching}</div>
+          <div>isFetching: {isFetching(state)}</div>
         </div>
       )
     }
@@ -410,19 +457,19 @@ describe('useInfiniteQuery', () => {
     expect(rendered.getByText('data: 1,0')).toBeInTheDocument()
 
     expect(states).toHaveLength(4)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       isSuccess: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: [0] },
       isSuccess: true,
     })
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: { pages: [0] },
       isSuccess: true,
     })
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: { pages: [1, 0] },
       isSuccess: true,
     })
@@ -430,8 +477,7 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to fetch a previous page', async () => {
     const key = createKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<RecordedPage<number>> = []
 
     function Page() {
       const start = 10
@@ -449,10 +495,10 @@ describe('useInfiniteQuery', () => {
           data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
           hasNextPage: state.hasNextPage,
           hasPreviousPage: state.hasPreviousPage,
-          isFetching: state.isFetching,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isSuccess: state.isSuccess,
+          isFetching: isFetching(state),
+          isFetchingNextPage: isFetchingNextPage(state),
+          isFetchingPreviousPage: isFetchingPreviousPage(state),
+          isSuccess: isSuccess(state),
         })
       })
 
@@ -470,7 +516,7 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(30)
     expect(states).toHaveLength(4)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       hasNextPage: false,
       hasPreviousPage: false,
@@ -479,7 +525,7 @@ describe('useInfiniteQuery', () => {
       isFetchingPreviousPage: false,
       isSuccess: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: [10] },
       hasNextPage: true,
       hasPreviousPage: true,
@@ -488,7 +534,7 @@ describe('useInfiniteQuery', () => {
       isFetchingPreviousPage: false,
       isSuccess: true,
     })
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: { pages: [10] },
       hasNextPage: true,
       hasPreviousPage: true,
@@ -497,7 +543,7 @@ describe('useInfiniteQuery', () => {
       isFetchingPreviousPage: true,
       isSuccess: true,
     })
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: { pages: [9, 10] },
       hasNextPage: true,
       hasPreviousPage: true,
@@ -510,8 +556,7 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to refetch when providing page params automatically', async () => {
     const key = createKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<RecordedPage<number>> = []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -526,10 +571,10 @@ describe('useInfiniteQuery', () => {
       createRenderEffect(() => {
         states.push({
           data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
-          isFetching: state.isFetching,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isRefetching: state.isRefetching,
-          isFetchingPreviousPage: state.isFetchingPreviousPage,
+          isFetching: isFetching(state),
+          isFetchingNextPage: isFetchingNextPage(state),
+          isRefetching: isRefetching(state),
+          isFetchingPreviousPage: isFetchingPreviousPage(state),
         })
       })
 
@@ -541,7 +586,7 @@ describe('useInfiniteQuery', () => {
           </button>
           <button onClick={() => state.refetch()}>refetch</button>
           <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {String(state.isFetching)}</div>
+          <div>isFetching: {String(isFetching(state))}</div>
         </div>
       )
     }
@@ -567,35 +612,35 @@ describe('useInfiniteQuery', () => {
 
     expect(states).toHaveLength(8)
     // Initial fetch
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       isFetching: true,
       isFetchingNextPage: false,
       isRefetching: false,
     })
     // Initial fetch done
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: [10] },
       isFetching: false,
       isFetchingNextPage: false,
       isRefetching: false,
     })
     // Fetch next page
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: { pages: [10] },
       isFetching: true,
       isFetchingNextPage: true,
       isRefetching: false,
     })
     // Fetch next page done
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: { pages: [10, 11] },
       isFetching: false,
       isFetchingNextPage: false,
       isRefetching: false,
     })
     // Fetch previous page
-    expect(states[4]).toMatchObject({
+    expect(snapshot(states[4])).toMatchObject({
       data: { pages: [10, 11] },
       isFetching: true,
       isFetchingNextPage: false,
@@ -603,7 +648,7 @@ describe('useInfiniteQuery', () => {
       isRefetching: false,
     })
     // Fetch previous page done
-    expect(states[5]).toMatchObject({
+    expect(snapshot(states[5])).toMatchObject({
       data: { pages: [9, 10, 11] },
       isFetching: false,
       isFetchingNextPage: false,
@@ -611,7 +656,7 @@ describe('useInfiniteQuery', () => {
       isRefetching: false,
     })
     // Refetch
-    expect(states[6]).toMatchObject({
+    expect(snapshot(states[6])).toMatchObject({
       data: { pages: [9, 10, 11] },
       isFetching: true,
       isFetchingNextPage: false,
@@ -619,7 +664,7 @@ describe('useInfiniteQuery', () => {
       isRefetching: true,
     })
     // Refetch done
-    expect(states[7]).toMatchObject({
+    expect(snapshot(states[7])).toMatchObject({
       data: { pages: [9, 10, 11] },
       isFetching: false,
       isFetchingNextPage: false,
@@ -630,8 +675,7 @@ describe('useInfiniteQuery', () => {
 
   it('should return the correct states when refetch fails', async () => {
     const key = createKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<RecordedPage<number>> = []
 
     let isRefetch = false
 
@@ -653,13 +697,13 @@ describe('useInfiniteQuery', () => {
       createRenderEffect(() => {
         states.push({
           data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
-          isFetching: state.isFetching,
-          isFetchNextPageError: state.isFetchNextPageError,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isFetchPreviousPageError: state.isFetchPreviousPageError,
-          isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isRefetchError: state.isRefetchError as true,
-          isRefetching: state.isRefetching,
+          isFetching: isFetching(state),
+          isFetchNextPageError: isFetchNextPageError(state),
+          isFetchingNextPage: isFetchingNextPage(state),
+          isFetchPreviousPageError: isFetchPreviousPageError(state),
+          isFetchingPreviousPage: isFetchingPreviousPage(state),
+          isRefetchError: isRefetchError(state) as true,
+          isRefetching: isRefetching(state),
         })
       })
 
@@ -674,7 +718,7 @@ describe('useInfiniteQuery', () => {
             refetch
           </button>
           <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {String(state.isFetching)}</div>
+          <div>isFetching: {String(isFetching(state))}</div>
         </div>
       )
     }
@@ -690,7 +734,7 @@ describe('useInfiniteQuery', () => {
 
     expect(states).toHaveLength(4)
     // Initial fetch
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       isFetching: true,
       isFetchNextPageError: false,
@@ -701,7 +745,7 @@ describe('useInfiniteQuery', () => {
       isRefetching: false,
     })
     // Initial fetch done
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: [10] },
       isFetching: false,
       isFetchNextPageError: false,
@@ -712,7 +756,7 @@ describe('useInfiniteQuery', () => {
       isRefetching: false,
     })
     // Refetch
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: { pages: [10] },
       isFetching: true,
       isFetchNextPageError: false,
@@ -723,7 +767,7 @@ describe('useInfiniteQuery', () => {
       isRefetching: true,
     })
     // Refetch failed
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: { pages: [10] },
       isFetching: false,
       isFetchNextPageError: false,
@@ -737,8 +781,7 @@ describe('useInfiniteQuery', () => {
 
   it('should return the correct states when fetchNextPage fails', async () => {
     const key = createKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<RecordedPage<number>> = []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -758,13 +801,13 @@ describe('useInfiniteQuery', () => {
       createRenderEffect(() => {
         states.push({
           data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
-          isFetching: state.isFetching,
-          isFetchNextPageError: state.isFetchNextPageError,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isFetchPreviousPageError: state.isFetchPreviousPageError,
-          isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isRefetchError: state.isRefetchError as true,
-          isRefetching: state.isRefetching,
+          isFetching: isFetching(state),
+          isFetchNextPageError: isFetchNextPageError(state),
+          isFetchingNextPage: isFetchingNextPage(state),
+          isFetchPreviousPageError: isFetchPreviousPageError(state),
+          isFetchingPreviousPage: isFetchingPreviousPage(state),
+          isRefetchError: isRefetchError(state) as true,
+          isRefetching: isRefetching(state),
         })
       })
 
@@ -772,7 +815,7 @@ describe('useInfiniteQuery', () => {
         <div>
           <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
           <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {String(state.isFetching)}</div>
+          <div>isFetching: {String(isFetching(state))}</div>
         </div>
       )
     }
@@ -788,7 +831,7 @@ describe('useInfiniteQuery', () => {
 
     expect(states).toHaveLength(4)
     // Initial fetch
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       isFetching: true,
       isFetchNextPageError: false,
@@ -799,7 +842,7 @@ describe('useInfiniteQuery', () => {
       isRefetching: false,
     })
     // Initial fetch done
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: [10] },
       isFetching: false,
       isFetchNextPageError: false,
@@ -810,7 +853,7 @@ describe('useInfiniteQuery', () => {
       isRefetching: false,
     })
     // Fetch next page
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: { pages: [10] },
       isFetching: true,
       isFetchNextPageError: false,
@@ -821,7 +864,7 @@ describe('useInfiniteQuery', () => {
       isRefetching: false,
     })
     // Fetch next page failed
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: { pages: [10] },
       isFetching: false,
       isFetchNextPageError: true,
@@ -835,8 +878,7 @@ describe('useInfiniteQuery', () => {
 
   it('should return the correct states when fetchPreviousPage fails', async () => {
     const key = createKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<RecordedPage<number>> = []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -856,13 +898,13 @@ describe('useInfiniteQuery', () => {
       createRenderEffect(() => {
         states.push({
           data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
-          isFetching: state.isFetching,
-          isFetchNextPageError: state.isFetchNextPageError,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isFetchPreviousPageError: state.isFetchPreviousPageError,
-          isFetchingPreviousPage: state.isFetchingPreviousPage,
-          isRefetchError: state.isRefetchError as true,
-          isRefetching: state.isRefetching,
+          isFetching: isFetching(state),
+          isFetchNextPageError: isFetchNextPageError(state),
+          isFetchingNextPage: isFetchingNextPage(state),
+          isFetchPreviousPageError: isFetchPreviousPageError(state),
+          isFetchingPreviousPage: isFetchingPreviousPage(state),
+          isRefetchError: isRefetchError(state) as true,
+          isRefetching: isRefetching(state),
         })
       })
 
@@ -872,7 +914,7 @@ describe('useInfiniteQuery', () => {
             fetchPreviousPage
           </button>
           <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
-          <div>isFetching: {String(state.isFetching)}</div>
+          <div>isFetching: {String(isFetching(state))}</div>
         </div>
       )
     }
@@ -890,7 +932,7 @@ describe('useInfiniteQuery', () => {
 
     expect(states).toHaveLength(4)
     // Initial fetch
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       isFetching: true,
       isFetchNextPageError: false,
@@ -901,7 +943,7 @@ describe('useInfiniteQuery', () => {
       isRefetching: false,
     })
     // Initial fetch done
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: [10] },
       isFetching: false,
       isFetchNextPageError: false,
@@ -912,7 +954,7 @@ describe('useInfiniteQuery', () => {
       isRefetching: false,
     })
     // Fetch previous page
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: { pages: [10] },
       isFetching: true,
       isFetchNextPageError: false,
@@ -923,7 +965,7 @@ describe('useInfiniteQuery', () => {
       isRefetching: false,
     })
     // Fetch previous page failed
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: { pages: [10] },
       isFetching: false,
       isFetchNextPageError: false,
@@ -937,8 +979,7 @@ describe('useInfiniteQuery', () => {
 
   it('should silently cancel any ongoing fetch when fetching more', async () => {
     const key = createKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<RecordedPage<number>> = []
 
     function Page() {
       const start = 10
@@ -954,9 +995,9 @@ describe('useInfiniteQuery', () => {
         states.push({
           hasNextPage: state.hasNextPage,
           data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
-          isFetching: state.isFetching,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isSuccess: state.isSuccess,
+          isFetching: isFetching(state),
+          isFetchingNextPage: isFetchingNextPage(state),
+          isSuccess: isSuccess(state),
         })
       })
 
@@ -976,35 +1017,35 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(160)
     expect(states).toHaveLength(5)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       hasNextPage: false,
       data: undefined,
       isFetching: true,
       isFetchingNextPage: false,
       isSuccess: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       hasNextPage: true,
       data: { pages: [10] },
       isFetching: false,
       isFetchingNextPage: false,
       isSuccess: true,
     })
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       hasNextPage: true,
       data: { pages: [10] },
       isFetching: true,
       isFetchingNextPage: false,
       isSuccess: true,
     })
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       hasNextPage: true,
       data: { pages: [10] },
       isFetching: true,
       isFetchingNextPage: true,
       isSuccess: true,
     })
-    expect(states[4]).toMatchObject({
+    expect(snapshot(states[4])).toMatchObject({
       hasNextPage: true,
       data: { pages: [10, 11] },
       isFetching: false,
@@ -1187,14 +1228,14 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(60)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       hasNextPage: false,
       data: undefined,
       isFetching: true,
       isFetchingNextPage: false,
       isSuccess: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       hasNextPage: true,
       data: { pages: [10] },
       isFetching: false,
@@ -1243,7 +1284,7 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(125)
     expect(fetches).toBe(2)
-    expect(queryClient.getQueryState(key)).toMatchObject({
+    expect(getQueryState(queryClient, key)).toMatchObject({
       data: initialData,
       status: 'success',
       error: null,
@@ -1252,8 +1293,7 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to set new pages with the query client', async () => {
     const key = createKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<RecordedPage<number>> = []
 
     function Page() {
       const [firstPage, setFirstPage] = createSignal(0)
@@ -1270,15 +1310,15 @@ describe('useInfiniteQuery', () => {
         states.push({
           hasNextPage: state.hasNextPage,
           data: state.data ? JSON.parse(JSON.stringify(state.data)) : undefined,
-          isFetching: state.isFetching,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isSuccess: state.isSuccess,
+          isFetching: isFetching(state),
+          isFetchingNextPage: isFetchingNextPage(state),
+          isSuccess: isSuccess(state),
         })
       })
 
       createEffect(() => {
         setActTimeout(() => {
-          queryClient.setQueryData(key, { pages: [7, 8], pageParams: [7, 8] })
+          setQueryData(queryClient, key, { pages: [7, 8], pageParams: [7, 8] })
           setFirstPage(7)
         }, 20)
 
@@ -1294,7 +1334,7 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(70)
     expect(states).toHaveLength(5)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       hasNextPage: false,
       data: undefined,
       isFetching: true,
@@ -1302,7 +1342,7 @@ describe('useInfiniteQuery', () => {
       isSuccess: false,
     })
     // After first fetch
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       hasNextPage: true,
       data: { pages: [0] },
       isFetching: false,
@@ -1310,7 +1350,7 @@ describe('useInfiniteQuery', () => {
       isSuccess: true,
     })
     // Set state
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       hasNextPage: true,
       data: { pages: [7, 8] },
       isFetching: false,
@@ -1318,7 +1358,7 @@ describe('useInfiniteQuery', () => {
       isSuccess: true,
     })
     // Refetch
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       hasNextPage: true,
       data: { pages: [7, 8] },
       isFetching: true,
@@ -1326,7 +1366,7 @@ describe('useInfiniteQuery', () => {
       isSuccess: true,
     })
     // Refetch done
-    expect(states[4]).toMatchObject({
+    expect(snapshot(states[4])).toMatchObject({
       hasNextPage: true,
       data: { pages: [7, 8] },
       isFetching: false,
@@ -1337,8 +1377,7 @@ describe('useInfiniteQuery', () => {
 
   it('should keep initialData visible alongside the error when a refetch fails', async () => {
     const key = createKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<RecordedPage<number>> = []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -1354,7 +1393,7 @@ describe('useInfiniteQuery', () => {
       createRenderEffect(() => {
         states.push({
           data: JSON.parse(JSON.stringify(state.data)),
-          isError: state.isError,
+          isError: isError(state),
         })
       })
 
@@ -1365,11 +1404,11 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: { pages: [1] },
       isError: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: [1] },
       isError: true,
     })
@@ -1394,7 +1433,7 @@ describe('useInfiniteQuery', () => {
 
       return (
         <div>
-          <div>isFetching: {String(state.isFetching)}</div>
+          <div>isFetching: {String(isFetching(state))}</div>
           <div>pages: {state.data?.pages.join(', ') ?? 'none'}</div>
           <button onClick={() => setPostId('1')}>set postId</button>
         </div>
@@ -1419,8 +1458,7 @@ describe('useInfiniteQuery', () => {
 
   it('should only refetch the first page when initialData is provided', async () => {
     const key = createKey()
-    const states: Array<Partial<UseInfiniteQueryResult<InfiniteData<number>>>> =
-      []
+    const states: Array<RecordedPage<number>> = []
 
     function Page() {
       const state = useInfiniteQuery(() => ({
@@ -1436,9 +1474,9 @@ describe('useInfiniteQuery', () => {
         states.push({
           data: JSON.parse(JSON.stringify(state.data)),
           hasNextPage: state.hasNextPage,
-          isFetching: state.isFetching,
-          isFetchingNextPage: state.isFetchingNextPage,
-          isSuccess: state.isSuccess,
+          isFetching: isFetching(state),
+          isFetchingNextPage: isFetchingNextPage(state),
+          isSuccess: isSuccess(state),
         })
       })
 
@@ -1455,28 +1493,28 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(30)
     expect(states).toHaveLength(4)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: { pages: [1] },
       hasNextPage: true,
       isFetching: true,
       isFetchingNextPage: false,
       isSuccess: true,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: [1] },
       hasNextPage: true,
       isFetching: false,
       isFetchingNextPage: false,
       isSuccess: true,
     })
-    expect(states[2]).toMatchObject({
+    expect(snapshot(states[2])).toMatchObject({
       data: { pages: [1] },
       hasNextPage: true,
       isFetching: true,
       isFetchingNextPage: true,
       isSuccess: true,
     })
-    expect(states[3]).toMatchObject({
+    expect(snapshot(states[3])).toMatchObject({
       data: { pages: [1, 2] },
       hasNextPage: true,
       isFetching: false,
@@ -1508,14 +1546,14 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       hasNextPage: false,
       isFetching: true,
       isFetchingNextPage: false,
       isSuccess: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: [1] },
       hasNextPage: false,
       isFetching: false,
@@ -1548,14 +1586,14 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: { pages: [10] },
       hasNextPage: true,
       isFetching: true,
       isFetchingNextPage: false,
       isSuccess: true,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: [10] },
       hasNextPage: true,
       isFetching: false,
@@ -1588,14 +1626,14 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: { pages: [10] },
       hasNextPage: false,
       isFetching: true,
       isFetchingNextPage: false,
       isSuccess: true,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: [10] },
       hasNextPage: false,
       isFetching: false,
@@ -1614,10 +1652,13 @@ describe('useInfiniteQuery', () => {
         queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         initialPageParam: 1,
         getNextPageParam: (lastPage) => (lastPage === 1 ? 2 : undefined),
-        select: (data) => ({
-          pages: data.pages.map((x) => x.toString()),
-          pageParams: data.pageParams,
-        }),
+        select: [
+          select,
+          (data) => ({
+            pages: data.pages.map((x) => x.toString()),
+            pageParams: data.pageParams,
+          }),
+        ],
       }))
 
       createRenderEffect(() => {
@@ -1631,14 +1672,14 @@ describe('useInfiniteQuery', () => {
 
     await vi.advanceTimersByTimeAsync(10)
     expect(states).toHaveLength(2)
-    expect(states[0]).toMatchObject({
+    expect(snapshot(states[0])).toMatchObject({
       data: undefined,
       hasNextPage: false,
       isFetching: true,
       isFetchingNextPage: false,
       isSuccess: false,
     })
-    expect(states[1]).toMatchObject({
+    expect(snapshot(states[1])).toMatchObject({
       data: { pages: ['1'] },
       hasNextPage: true,
       isFetching: false,
@@ -1697,11 +1738,11 @@ describe('useInfiniteQuery', () => {
                   <button
                     onClick={() => state.fetchNextPage()}
                     disabled={
-                      !state.hasNextPage || Boolean(state.isFetchingNextPage)
+                      !state.hasNextPage || Boolean(isFetchingNextPage(state))
                     }
                   >
                     <Switch fallback={<>Nothing more to load</>}>
-                      <Match when={state.isFetchingNextPage}>
+                      <Match when={isFetchingNextPage(state)}>
                         Loading more...
                       </Match>
                       <Match when={state.hasNextPage}>Load More</Match>
@@ -1714,14 +1755,14 @@ describe('useInfiniteQuery', () => {
                       // makes an actual network request
                       // and calls invalidateQueries in an onSuccess
                       items.splice(4, 1)
-                      queryClient.invalidateQueries({ queryKey: key })
+                      invalidateQueries(queryClient, { queryKey: key })
                     }}
                   >
                     Remove item
                   </button>
                 </div>
                 <div>
-                  {!state.isFetchingNextPage ? 'Background Updating...' : null}
+                  {!isFetchingNextPage(state) ? 'Background Updating...' : null}
                 </div>
               </>
             }
@@ -1838,10 +1879,10 @@ describe('useInfiniteQuery', () => {
                   <button
                     onClick={() => state.fetchNextPage()}
                     disabled={
-                      !state.hasNextPage || Boolean(state.isFetchingNextPage)
+                      !state.hasNextPage || Boolean(isFetchingNextPage(state))
                     }
                   >
-                    {state.isFetchingNextPage
+                    {isFetchingNextPage(state)
                       ? 'Loading more...'
                       : state.hasNextPage
                         ? 'Load More'
@@ -1853,7 +1894,7 @@ describe('useInfiniteQuery', () => {
                   </button>
                 </div>
                 <div>
-                  {state.isFetching && !state.isFetchingNextPage
+                  {isFetching(state) && !isFetchingNextPage(state)
                     ? 'Background Updating...'
                     : null}
                 </div>

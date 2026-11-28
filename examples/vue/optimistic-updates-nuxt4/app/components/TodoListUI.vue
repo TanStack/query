@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import {
+  invalidateQueries,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/vue-query'
 import { ref } from 'vue'
 import { todosMutations, todosQueries } from '../services/todos/queries'
 
@@ -11,7 +16,7 @@ const { data: todos, suspense } = useQuery(todosQueries.list())
 const { mutate, isPending, isError, error, variables } = useMutation({
   ...todosMutations.create(),
   onSettled: () =>
-    queryClient.invalidateQueries({ queryKey: todosQueries.list().queryKey }),
+    invalidateQueries(queryClient, { queryKey: todosQueries.list().queryKey }),
 })
 
 await suspense()

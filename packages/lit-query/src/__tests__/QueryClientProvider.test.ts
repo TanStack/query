@@ -1,4 +1,5 @@
-import { QueryClient } from '@tanstack/query-core'
+import * as core from '@tanstack/query-core'
+import { QueryClient, clearQueryClient, isSuccess } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { LitElement } from 'lit'
 import {
@@ -38,7 +39,7 @@ describe('QueryClientProvider/context', () => {
 
   afterEach(() => {
     container.remove()
-    queryClient.clear()
+    clearQueryClient(queryClient)
     vi.useRealTimers()
   })
 
@@ -116,52 +117,74 @@ describe('QueryClientProvider/context', () => {
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
-    const mountA = vi.spyOn(clientA, 'mount')
-    const unmountA = vi.spyOn(clientA, 'unmount')
-    const mountB = vi.spyOn(clientB, 'mount')
-    const unmountB = vi.spyOn(clientB, 'unmount')
+    const mountSpy = vi.spyOn(core, 'mountQueryClient')
+    const unmountSpy = vi.spyOn(core, 'unmountQueryClient')
 
     const provider = document.createElement(tagName) as QueryClientProvider
     provider.client = clientA
     container.append(provider)
     await provider.updateComplete
 
-    expect(mountA).toHaveBeenCalledTimes(1)
-    expect(unmountA).toHaveBeenCalledTimes(0)
-    expect(mountB).toHaveBeenCalledTimes(0)
-    expect(unmountB).toHaveBeenCalledTimes(0)
+    expect(
+      mountSpy.mock.calls.filter(([client]) => client === clientA),
+    ).toHaveLength(1)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === clientA),
+    ).toHaveLength(0)
+    expect(
+      mountSpy.mock.calls.filter(([client]) => client === clientB),
+    ).toHaveLength(0)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === clientB),
+    ).toHaveLength(0)
 
     provider.remove()
     await vi.advanceTimersByTimeAsync(0)
-    expect(unmountA).toHaveBeenCalledTimes(1)
-    expect(mountB).toHaveBeenCalledTimes(0)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === clientA),
+    ).toHaveLength(1)
+    expect(
+      mountSpy.mock.calls.filter(([client]) => client === clientB),
+    ).toHaveLength(0)
 
     provider.client = clientB
     await provider.updateComplete
 
-    expect(unmountA).toHaveBeenCalledTimes(1)
-    expect(mountB).toHaveBeenCalledTimes(0)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === clientA),
+    ).toHaveLength(1)
+    expect(
+      mountSpy.mock.calls.filter(([client]) => client === clientB),
+    ).toHaveLength(0)
 
     container.append(provider)
     await provider.updateComplete
-    expect(mountA).toHaveBeenCalledTimes(1)
-    expect(unmountA).toHaveBeenCalledTimes(1)
-    expect(mountB).toHaveBeenCalledTimes(1)
-    expect(unmountB).toHaveBeenCalledTimes(0)
+    expect(
+      mountSpy.mock.calls.filter(([client]) => client === clientA),
+    ).toHaveLength(1)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === clientA),
+    ).toHaveLength(1)
+    expect(
+      mountSpy.mock.calls.filter(([client]) => client === clientB),
+    ).toHaveLength(1)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === clientB),
+    ).toHaveLength(0)
 
     provider.remove()
     await vi.advanceTimersByTimeAsync(0)
-    expect(unmountB).toHaveBeenCalledTimes(1)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === clientB),
+    ).toHaveLength(1)
   })
 
   it('should unmount the initial client when the client is replaced before the first update', async () => {
     const clientA = new QueryClient()
     const clientB = new QueryClient()
 
-    const mountA = vi.spyOn(clientA, 'mount')
-    const unmountA = vi.spyOn(clientA, 'unmount')
-    const mountB = vi.spyOn(clientB, 'mount')
-    const unmountB = vi.spyOn(clientB, 'unmount')
+    const mountSpy = vi.spyOn(core, 'mountQueryClient')
+    const unmountSpy = vi.spyOn(core, 'unmountQueryClient')
 
     const provider = document.createElement(tagName) as QueryClientProvider
     provider.client = clientA
@@ -170,14 +193,24 @@ describe('QueryClientProvider/context', () => {
     provider.client = clientB
     await provider.updateComplete
 
-    expect(mountA).toHaveBeenCalledTimes(1)
-    expect(unmountA).toHaveBeenCalledTimes(1)
-    expect(mountB).toHaveBeenCalledTimes(1)
-    expect(unmountB).toHaveBeenCalledTimes(0)
+    expect(
+      mountSpy.mock.calls.filter(([client]) => client === clientA),
+    ).toHaveLength(1)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === clientA),
+    ).toHaveLength(1)
+    expect(
+      mountSpy.mock.calls.filter(([client]) => client === clientB),
+    ).toHaveLength(1)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === clientB),
+    ).toHaveLength(0)
     expect(useQueryClient()).toBe(clientB)
 
     provider.remove()
-    expect(unmountB).toHaveBeenCalledTimes(1)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === clientB),
+    ).toHaveLength(1)
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
   })
 
@@ -196,8 +229,8 @@ describe('QueryClientProvider/context', () => {
 
   it('should tear down the mounted client before surfacing the error when a connected client is updated to an invalid value', async () => {
     const key = createKey()
-    const mount = vi.spyOn(queryClient, 'mount')
-    const unmount = vi.spyOn(queryClient, 'unmount')
+    const mountSpy = vi.spyOn(core, 'mountQueryClient')
+    const unmountSpy = vi.spyOn(core, 'unmountQueryClient')
 
     class Consumer extends LitElement {
       readonly query = createQueryController(this, {
@@ -218,9 +251,13 @@ describe('QueryClientProvider/context', () => {
     await consumer.updateComplete
 
     await vi.advanceTimersByTimeAsync(10)
-    expect(consumer.query().isSuccess).toBe(true)
-    expect(mount).toHaveBeenCalledTimes(1)
-    expect(unmount).toHaveBeenCalledTimes(0)
+    expect(isSuccess(consumer.query())).toBe(true)
+    expect(
+      mountSpy.mock.calls.filter(([client]) => client === queryClient),
+    ).toHaveLength(1)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === queryClient),
+    ).toHaveLength(0)
     expect(consumer.query().data).toBe('ok')
 
     provider.client = undefined as unknown as QueryClient
@@ -228,7 +265,9 @@ describe('QueryClientProvider/context', () => {
     await expect(provider.updateComplete).rejects.toThrow(
       /No QueryClient available/,
     )
-    expect(unmount).toHaveBeenCalledTimes(1)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === queryClient),
+    ).toHaveLength(1)
     expect(getDefaultQueryClient()).toBeUndefined()
     expect(() => useQueryClient()).toThrow(/No QueryClient available/)
     expect(() => consumer.query()).toThrow(/No QueryClient available/)
@@ -239,6 +278,8 @@ describe('QueryClientProvider/context', () => {
     consumer.query.destroy()
     provider.remove()
     await vi.advanceTimersByTimeAsync(0)
-    expect(unmount).toHaveBeenCalledTimes(1)
+    expect(
+      unmountSpy.mock.calls.filter(([client]) => client === queryClient),
+    ).toHaveLength(1)
   })
 })

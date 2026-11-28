@@ -71,7 +71,7 @@ export const defaultTimeoutProvider: TimeoutProvider = {
 /**
  * Allows customization of how timeouts are created.
  *
- * `@tanstack/query-core` makes liberal use of timeouts to implement `staleTime`
+ * The query runtime uses timeouts to implement `staleTime`
  * and `gcTime`. The default TimeoutManager provider uses the platform's global
  * `setTimeout` implementation, which is known to have scalability issues with
  * thousands of timeouts on the event loop.

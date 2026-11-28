@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { isFetching, useQuery } from '@tanstack/react-query'
 import React from 'react'
 import { projectsQueries } from '../services/projects/queries'
 import Button from './Button'
@@ -11,15 +11,15 @@ export default function Project({
   activeProject: string
   setActiveProject: React.Dispatch<React.SetStateAction<string | null>>
 }) {
-  const { data, isFetching } = useSuspenseQuery(
-    projectsQueries.detail(activeProject),
-  )
+  const queryResult = useQuery(projectsQueries.detail(activeProject))
+  const { data } = queryResult
+  const fetching = isFetching(queryResult)
 
   return (
     <div>
       <Button onClick={() => setActiveProject(null)}>Back</Button>
       <h1>
-        {activeProject} {isFetching ? <Spinner /> : null}
+        {activeProject} {fetching ? <Spinner /> : null}
       </h1>
       <div>
         <p>forks: {data.forks_count}</p>

@@ -1,4 +1,8 @@
-import { QueryObserver } from '@tanstack/query-core'
+import {
+  QueryObserver,
+  defaultQueryOptions,
+  fetchOptimistic,
+} from '@tanstack/query-core'
 import { createValueAccessor, readAccessor } from './accessor.js'
 import { createMissingQueryClientError } from './context.js'
 import { BaseController } from './controllers/BaseController.js'
@@ -62,21 +66,12 @@ function createPendingQueryResult<TData, TError>(): QueryObserverResult<
     errorUpdatedAt: 0,
     failureCount: 0,
     failureReason: null,
+    dataUpdateCount: 0,
     errorUpdateCount: 0,
-    isError: false,
-    isFetched: false,
     isFetchedAfterMount: false,
-    isFetching: false,
-    isLoading: false,
-    isLoadingError: false,
-    isPaused: false,
-    isPending: true,
     isPlaceholderData: false,
-    isRefetchError: false,
-    isRefetching: false,
     isStale: true,
     isEnabled: true,
-    isSuccess: false,
     fetchStatus: 'idle',
     status: 'pending',
     refetch: (() =>
@@ -193,7 +188,7 @@ class QueryController<
     const optimistic = reader.getSnapshot()
     reader.commit()
     if (options.enabled !== false && optimistic.isStale) {
-      return this.observer.fetchOptimistic(options)
+      return fetchOptimistic(this.queryClient, this.observer, options)
     }
 
     return optimistic
@@ -301,7 +296,8 @@ class QueryController<
     }
 
     this.queryClient = resolvedClient
-    const defaulted = resolvedClient.defaultQueryOptions(
+    const defaulted = defaultQueryOptions(
+      resolvedClient,
       readAccessor(this.options),
     )
     ;(defaulted as { _optimisticResults?: 'optimistic' })._optimisticResults =

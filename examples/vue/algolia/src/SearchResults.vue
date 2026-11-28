@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { useInfiniteQuery } from '@tanstack/vue-query'
+import {
+  isLoading as queryIsLoading,
+  isFetching as queryIsFetching,
+  isFetchingNextPage as queryIsFetchingNextPage,
+  useInfiniteQuery,
+} from '@tanstack/vue-query'
 import { computed } from 'vue'
 import { productsQueries } from './services/products/queries'
 
@@ -12,14 +17,12 @@ type Product = {
 const props = withDefaults(defineProps<{ query?: string }>(), { query: '' })
 
 const {
-  isLoading,
+  state: queryState,
   status,
   error,
-  isFetching,
   data,
   hasNextPage,
   fetchNextPage,
-  isFetchingNextPage,
 } = useInfiniteQuery(() => ({
   ...productsQueries.search<Product>({
     indexName: 'bestbuy',
@@ -29,6 +32,9 @@ const {
   staleTime: 30 * 1000, // 30s
   gcTime: 15 * 60 * 1000, // 15m
 }))
+const isLoading = computed(() => queryIsLoading(queryState))
+const isFetching = computed(() => queryIsFetching(queryState))
+const isFetchingNextPage = computed(() => queryIsFetchingNextPage(queryState))
 
 const products = computed(() => data.value?.pages.flatMap((page) => page.hits))
 </script>

@@ -1,4 +1,10 @@
-import { noop, useQueryClient, useSuspenseQuery } from '@tanstack/preact-query'
+import {
+  useQuery,
+  suspenseQueryOptions,
+  query,
+  noop,
+  useQueryClient,
+} from '@tanstack/preact-query'
 import { projectsQueries } from '../services/projects/queries'
 import Button from './Button'
 import Spinner from './Spinner'
@@ -9,7 +15,9 @@ export default function Projects({
   setActiveProject: (activeProject: string | null) => void
 }) {
   const queryClient = useQueryClient()
-  const { data, isFetching } = useSuspenseQuery(projectsQueries.list())
+  const { data, isFetching } = useQuery(
+    suspenseQueryOptions(projectsQueries.list()),
+  )
 
   return (
     <div>
@@ -19,9 +27,10 @@ export default function Projects({
           <Button
             onClick={() => {
               // Prefetch the project query
-              queryClient
-                .query(projectsQueries.detail(project.full_name))
-                .catch(noop)
+              query(
+                queryClient,
+                projectsQueries.detail(project.full_name),
+              ).catch(noop)
               setActiveProject(project.full_name)
             }}
           >

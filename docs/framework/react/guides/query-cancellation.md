@@ -18,26 +18,28 @@ However, if you consume the `AbortSignal`, the Promise will be cancelled (e.g. a
 [//]: # 'Example'
 
 ```tsx
-const query = useQuery({
-  queryKey: ['todos'],
-  queryFn: async ({ signal }) => {
-    const todosResponse = await fetch('/todos', {
-      // Pass the signal to one fetch
-      signal,
-    })
-    const todos = await todosResponse.json()
-
-    const todoDetails = todos.map(async ({ details }) => {
-      const response = await fetch(details, {
-        // Or pass it to several
+const query = useQuery(
+  queryOptions({
+    queryKey: ['todos'],
+    queryFn: async ({ signal }) => {
+      const todosResponse = await fetch('/todos', {
+        // Pass the signal to one fetch
         signal,
       })
-      return response.json()
-    })
+      const todos = await todosResponse.json()
 
-    return Promise.all(todoDetails)
-  },
-})
+      const todoDetails = todos.map(async ({ details }) => {
+        const response = await fetch(details, {
+          // Or pass it to several
+          signal,
+        })
+        return response.json()
+      })
+
+      return Promise.all(todoDetails)
+    },
+  }),
+)
 ```
 
 [//]: # 'Example'
@@ -49,14 +51,16 @@ const query = useQuery({
 ```tsx
 import axios from 'axios'
 
-const query = useQuery({
-  queryKey: ['todos'],
-  queryFn: ({ signal }) =>
-    axios.get('/todos', {
-      // Pass the signal to `axios`
-      signal,
-    }),
-})
+const query = useQuery(
+  queryOptions({
+    queryKey: ['todos'],
+    queryFn: ({ signal }) =>
+      axios.get('/todos', {
+        // Pass the signal to `axios`
+        signal,
+      }),
+  }),
+)
 ```
 
 [//]: # 'Example2'
@@ -68,26 +72,28 @@ const query = useQuery({
 ```tsx
 import axios from 'axios'
 
-const query = useQuery({
-  queryKey: ['todos'],
-  queryFn: ({ signal }) => {
-    // Create a new CancelToken source for this request
-    const CancelToken = axios.CancelToken
-    const source = CancelToken.source()
+const query = useQuery(
+  queryOptions({
+    queryKey: ['todos'],
+    queryFn: ({ signal }) => {
+      // Create a new CancelToken source for this request
+      const CancelToken = axios.CancelToken
+      const source = CancelToken.source()
 
-    const promise = axios.get('/todos', {
-      // Pass the source token to your request
-      cancelToken: source.token,
-    })
+      const promise = axios.get('/todos', {
+        // Pass the source token to your request
+        cancelToken: source.token,
+      })
 
-    // Cancel the request if TanStack Query signals to abort
-    signal?.addEventListener('abort', () => {
-      source.cancel('Query was cancelled by TanStack Query')
-    })
+      // Cancel the request if TanStack Query signals to abort
+      signal?.addEventListener('abort', () => {
+        source.cancel('Query was cancelled by TanStack Query')
+      })
 
-    return promise
-  },
-})
+      return promise
+    },
+  }),
+)
 ```
 
 [//]: # 'Example3'
@@ -97,23 +103,25 @@ const query = useQuery({
 [//]: # 'Example4'
 
 ```tsx
-const query = useQuery({
-  queryKey: ['todos'],
-  queryFn: ({ signal }) => {
-    return new Promise((resolve, reject) => {
-      var oReq = new XMLHttpRequest()
-      oReq.addEventListener('load', () => {
-        resolve(JSON.parse(oReq.responseText))
+const query = useQuery(
+  queryOptions({
+    queryKey: ['todos'],
+    queryFn: ({ signal }) => {
+      return new Promise((resolve, reject) => {
+        var oReq = new XMLHttpRequest()
+        oReq.addEventListener('load', () => {
+          resolve(JSON.parse(oReq.responseText))
+        })
+        signal?.addEventListener('abort', () => {
+          oReq.abort()
+          reject()
+        })
+        oReq.open('GET', '/todos')
+        oReq.send()
       })
-      signal?.addEventListener('abort', () => {
-        oReq.abort()
-        reject()
-      })
-      oReq.open('GET', '/todos')
-      oReq.send()
-    })
-  },
-})
+    },
+  }),
+)
 ```
 
 [//]: # 'Example4'
@@ -127,12 +135,14 @@ An `AbortSignal` can be set in the client `request` method.
 ```tsx
 const client = new GraphQLClient(endpoint)
 
-const query = useQuery({
-  queryKey: ['todos'],
-  queryFn: ({ signal }) => {
-    client.request({ document: query, signal })
-  },
-})
+const query = useQuery(
+  queryOptions({
+    queryKey: ['todos'],
+    queryFn: ({ signal }) => {
+      client.request({ document: query, signal })
+    },
+  }),
+)
 ```
 
 [//]: # 'Example5'
@@ -144,33 +154,37 @@ An `AbortSignal` can be set in the `GraphQLClient` constructor.
 [//]: # 'Example6'
 
 ```tsx
-const query = useQuery({
-  queryKey: ['todos'],
-  queryFn: ({ signal }) => {
-    const client = new GraphQLClient(endpoint, {
-      signal,
-    })
-    return client.request(query, variables)
-  },
-})
+const query = useQuery(
+  queryOptions({
+    queryKey: ['todos'],
+    queryFn: ({ signal }) => {
+      const client = new GraphQLClient(endpoint, {
+        signal,
+      })
+      return client.request(query, variables)
+    },
+  }),
+)
 ```
 
 [//]: # 'Example6'
 
 ## Manual Cancellation
 
-You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries({ queryKey })`, which will cancel the query and revert it back to its previous state. If you have consumed the `signal` passed to the query function, TanStack Query will additionally also cancel the Promise.
+You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `cancelQueries(queryClient, { queryKey })`, which will cancel the query and revert it back to its previous state. If you have consumed the `signal` passed to the query function, TanStack Query will additionally also cancel the Promise.
 
 [//]: # 'Example7'
 
 ```tsx
-const query = useQuery({
-  queryKey: ['todos'],
-  queryFn: async ({ signal }) => {
-    const resp = await fetch('/todos', { signal })
-    return resp.json()
-  },
-})
+const query = useQuery(
+  queryOptions({
+    queryKey: ['todos'],
+    queryFn: async ({ signal }) => {
+      const resp = await fetch('/todos', { signal })
+      return resp.json()
+    },
+  }),
+)
 
 const queryClient = useQueryClient()
 
@@ -178,7 +192,7 @@ return (
   <button
     onClick={(e) => {
       e.preventDefault()
-      queryClient.cancelQueries({ queryKey: ['todos'] })
+      cancelQueries(queryClient, { queryKey: ['todos'] })
     }}
   >
     Cancel
@@ -194,7 +208,7 @@ Cancel options are used to control the behavior of query cancellation operations
 
 ```tsx
 // Cancel specific queries silently
-await queryClient.cancelQueries({ queryKey: ['posts'] }, { silent: true })
+await cancelQueries(queryClient, { queryKey: ['posts'] }, { silent: true })
 ```
 
 A cancel options object supports the following properties:
@@ -210,6 +224,6 @@ A cancel options object supports the following properties:
 
 [//]: # 'Limitations'
 
-Cancellation does not work when working with `Suspense` hooks: `useSuspenseQuery`, `useSuspenseQueries` and `useSuspenseInfiniteQuery`.
+Cancellation does not work when working with `Suspense` hooks: `suspenseQueryOptions`, `useSuspenseQueries` and `suspenseInfiniteQueryOptions`.
 
 [//]: # 'Limitations'

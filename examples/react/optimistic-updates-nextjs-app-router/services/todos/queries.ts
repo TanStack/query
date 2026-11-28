@@ -1,10 +1,10 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query'
+import { mutationOptions, suspenseQueryOptions } from '@tanstack/react-query'
 import { todosAPI } from './api'
 
 export const todosQueries = {
   all: () => ['todos'] as const,
   list: () =>
-    queryOptions({
+    suspenseQueryOptions({
       queryKey: [...todosQueries.all(), 'list'] as const,
       queryFn: () => todosAPI.getTodos(),
     }),

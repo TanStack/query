@@ -4,8 +4,29 @@ export * from '@tanstack/query-core'
 export { useQueryClient } from './useQueryClient'
 export { VueQueryPlugin } from './vueQueryPlugin'
 
-export { QueryClient } from './queryClient'
-export { QueryCache } from './queryCache'
+export {
+  QueryClient,
+  countFetchingQueries,
+  isMutating,
+  getQueryData,
+  getQueriesData,
+  setQueryData,
+  setQueriesData,
+  getQueryState,
+  removeQueries,
+  resetQueries,
+  cancelQueries,
+  invalidateQueries,
+  refetchQueries,
+  query,
+  infiniteQuery,
+  setDefaultOptions,
+  setQueryDefaults,
+  getQueryDefaults,
+  setMutationDefaults,
+  getMutationDefaults,
+} from './queryClient'
+export { QueryCache, findCachedQuery, findCachedQueries } from './queryCache'
 export { queryOptions } from './queryOptions'
 export type {
   QueryOptions,

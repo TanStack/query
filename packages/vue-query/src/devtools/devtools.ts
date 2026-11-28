@@ -1,6 +1,12 @@
 import { rankItem } from '@tanstack/match-sorter-utils'
-import { onlineManager } from '@tanstack/query-core'
+import {
+  getQueryCache,
+  getQueryObserverCount,
+  onlineManager,
+  resetCachedQuery,
+} from '@tanstack/query-core'
 import { setupDevtoolsPlugin } from '@vue/devtools-api'
+import { invalidateQueries } from '../queryClient'
 import {
   getQueryStateLabel,
   getQueryStatusBg,
@@ -77,7 +83,7 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
       const initialSettings = api.getSettings()
       onlineManager.setOnline(Boolean(initialSettings.onlineMode.valueOf()))
 
-      const queryCache = queryClient.getQueryCache()
+      const queryCache = getQueryCache(queryClient)
 
       api.addInspector({
         id: pluginId,
@@ -96,7 +102,7 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
             tooltip: 'Invalidate',
             action: (queryHash: string) => {
               const query = queryCache.get(queryHash) as Query
-              queryClient.invalidateQueries({
+              invalidateQueries(queryClient, {
                 queryKey: query.queryKey,
                 exact: true,
               })
@@ -106,7 +112,8 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
             icon: 'settings_backup_restore',
             tooltip: 'Reset',
             action: (queryHash: string) => {
-              queryCache.get(queryHash)?.reset()
+              const query = queryCache.get(queryHash)
+              if (query) resetCachedQuery(query)
             },
           },
           {
@@ -206,7 +213,7 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
               label: query.queryHash,
               tags: [
                 {
-                  label: `${stateLabel} [${query.getObserversCount()}]`,
+                  label: `${stateLabel} [${getQueryObserverCount(query)}]`,
                   textColor: getQueryStatusFg(query),
                   backgroundColor: getQueryStatusBg(query),
                 },
@@ -237,7 +244,7 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
               },
               {
                 key: 'Observers',
-                value: query.getObserversCount(),
+                value: getQueryObserverCount(query),
               },
               {
                 key: 'Last Updated',

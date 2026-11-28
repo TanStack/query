@@ -1,4 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/solid-query'
+import {
+  cancelQueries,
+  getQueryData,
+  setQueryData,
+  invalidateQueries,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/solid-query'
 import { For, Show, createSignal } from 'solid-js'
 import { todosMutations, todosQueries } from '~/services/todos/queries'
 import type { JSX } from 'solid-js'
@@ -24,11 +32,12 @@ export default function TodoListCache() {
       ...todosMutations.create(),
       onMutate: async (text) => {
         setLastError(null)
-        await queryClient.cancelQueries({
+        await cancelQueries(queryClient, {
           queryKey: todosQueries.list().queryKey,
         })
 
-        const previousTodos = queryClient.getQueryData(
+        const previousTodos = getQueryData(
+          queryClient,
           todosQueries.list().queryKey,
         )
 
@@ -39,7 +48,7 @@ export default function TodoListCache() {
           createdAt: Date.now(),
         }
 
-        queryClient.setQueryData(todosQueries.list().queryKey, (old = []) => [
+        setQueryData(queryClient, todosQueries.list().queryKey, (old = []) => [
           ...old,
           optimisticTodo,
         ])
@@ -49,18 +58,19 @@ export default function TodoListCache() {
       onError: (_err, _text, context) => {
         setLastError(_err.message)
         if (context?.previousTodos !== undefined) {
-          queryClient.setQueryData(
+          setQueryData(
+            queryClient,
             todosQueries.list().queryKey,
             context.previousTodos,
           )
         } else if (context?.optimisticId) {
-          queryClient.setQueryData(todosQueries.list().queryKey, (old = []) =>
+          setQueryData(queryClient, todosQueries.list().queryKey, (old = []) =>
             old.filter((todo) => todo.id !== context.optimisticId),
           )
         }
       },
       onSettled: () =>
-        queryClient.invalidateQueries({
+        invalidateQueries(queryClient, {
           queryKey: todosQueries.list().queryKey,
         }),
     }),

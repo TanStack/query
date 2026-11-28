@@ -1,4 +1,4 @@
-import { QueriesObserver } from '@tanstack/query-core'
+import { QueriesObserver, defaultQueryOptions } from '@tanstack/query-core'
 import { untrack } from 'svelte'
 import { createRawRef } from './containers.svelte.js'
 import { useIsRestoring } from './useIsRestoring.js'
@@ -9,9 +9,12 @@ import type {
   QueriesObserverOptions,
   QueriesPlaceholderDataFunction,
   QueryClient,
+  QueryErrorBoundaryOption,
   QueryFunction,
   QueryKey,
+  Select,
   ThrowOnError,
+  placeholderData,
 } from '@tanstack/query-core'
 import type {
   Accessor,
@@ -31,7 +34,10 @@ type CreateQueryOptionsForCreateQueries<
   CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'placeholderData'
 > & {
-  placeholderData?: TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>
+  placeholderData?: readonly [
+    typeof placeholderData,
+    TQueryFnData | QueriesPlaceholderDataFunction<TQueryFnData>,
+  ]
 }
 
 // Avoid TS depth-limit error in case of large array literal
@@ -64,8 +70,10 @@ type GetCreateQueryOptionsForCreateQueries<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, infer TQueryKey>
                       | SkipTokenForCreateQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    select?: Select<any, infer TData>
+                    throwOnError?:
+                      | ThrowOnError<any, infer TError, any, any>
+                      | QueryErrorBoundaryOption<any, infer TError, any, any>
                   }
                 ? CreateQueryOptionsForCreateQueries<
                     TQueryFnData,
@@ -113,8 +121,10 @@ type GetCreateQueryResult<T> =
                     queryFn?:
                       | QueryFunction<infer TQueryFnData, any>
                       | SkipTokenForCreateQueries
-                    select?: (data: any) => infer TData
-                    throwOnError?: ThrowOnError<any, infer TError, any, any>
+                    select?: Select<any, infer TData>
+                    throwOnError?:
+                      | ThrowOnError<any, infer TError, any, any>
+                      | QueryErrorBoundaryOption<any, infer TError, any, any>
                   }
                 ? GetDefinedOrUndefinedQueryResult<
                     T,
@@ -277,7 +287,7 @@ export function createQueries<
   const { queries, combine } = $derived.by(createQueriesOptions)
   const resolvedQueryOptions = $derived(
     queries.map((opts) => {
-      const resolvedOptions = client.defaultQueryOptions(opts)
+      const resolvedOptions = defaultQueryOptions(client, opts)
       // Make sure the results are already in fetching state before subscribing or updating options
       resolvedOptions._optimisticResults = isRestoring.current
         ? 'isRestoring'

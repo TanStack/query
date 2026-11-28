@@ -1,17 +1,22 @@
 <script lang="ts">
-  import { createInfiniteQuery } from '@tanstack/svelte-query'
+  import {
+    isPending,
+    isSuccess,
+    isFetchingNextPage,
+    createInfiniteQuery,
+  } from '@tanstack/svelte-query'
   import { planetsQueries } from './services/planets/queries'
 
   const query = createInfiniteQuery(() => planetsQueries.list())
 </script>
 
-{#if query.isPending}
+{#if isPending(query)}
   Loading...
 {/if}
 {#if query.error}
   <span>Error: {query.error.message}</span>
 {/if}
-{#if query.isSuccess}
+{#if isSuccess(query)}
   <div>
     {#each query.data.pages as { next, results } (next)}
       {#each results as planet (planet.url)}
@@ -27,9 +32,9 @@
   <div>
     <button
       onclick={() => query.fetchNextPage()}
-      disabled={!query.hasNextPage || query.isFetchingNextPage}
+      disabled={!query.hasNextPage || isFetchingNextPage(query)}
     >
-      {#if query.isFetchingNextPage}
+      {#if isFetchingNextPage(query)}
         Loading more...
       {:else if query.hasNextPage}
         Load More

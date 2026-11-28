@@ -1,4 +1,9 @@
-import { useInfiniteQuery } from '@tanstack/react-query'
+import {
+  isFetching,
+  isFetchingNextPage,
+  isLoading,
+  useQuery,
+} from '@tanstack/react-query'
 import { productsQueries } from './services/products/queries'
 
 type Product = {
@@ -12,36 +17,28 @@ type SearchResultsProps = {
 }
 
 export default function SearchResults({ query = '' }: SearchResultsProps) {
-  const {
-    data: hits,
-    error,
-    isLoading,
-    isFetching,
-    status,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  } = useInfiniteQuery({
-    ...productsQueries.search<Product>({
+  const queryResult = useQuery(
+    productsQueries.search<Product>({
       indexName: 'bestbuy',
       query,
       hitsPerPage: 5,
     }),
-    select: (data) => data.pages.flatMap((page) => page.hits),
-    staleTime: 30 * 1000, // 30s
-    gcTime: 15 * 60 * 1000, // 15m
-  })
+  )
+  const { data: hits, error, status, hasNextPage, fetchNextPage } = queryResult
+  const loading = isLoading(queryResult)
+  const fetching = isFetching(queryResult)
+  const fetchingNextPage = isFetchingNextPage(queryResult)
 
   if (!query) return null
 
-  if (isLoading) return <div className="loading">Loading...</div>
+  if (loading) return <div className="loading">Loading...</div>
 
   if (status === 'error') return <div>Error: {error.message}</div>
 
   return (
     <div>
       <div className="search-status">
-        Status: {status} {isFetching && <span>fetching...</span>}
+        Status: {status} {fetching && <span>fetching...</span>}
       </div>
       <div>
         <div className="search-result">
@@ -70,12 +67,12 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
             type="button"
             className="search-more"
             onClick={() => fetchNextPage()}
-            disabled={isFetching}
+            disabled={fetching}
           >
             more
           </button>
         )}
-        {isFetchingNextPage && (
+        {fetchingNextPage && (
           <div className="search-status">Fetching next page...</div>
         )}
       </div>
