@@ -1,3 +1,4 @@
+import { queryOptions as coreQueryOptions } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import {
@@ -20,6 +21,18 @@ export const exportedQueryOptions = queryOptions({
 })
 
 describe('queryOptions', () => {
+  it('should work when core queryOptions are passed to injectQuery', () => {
+    const options = coreQueryOptions({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve({ id: '1', title: 'Do Laundry' }),
+    })
+
+    const { data } = injectQuery(() => options)
+    expectTypeOf(data).toEqualTypeOf<
+      Signal<{ id: string; title: string } | undefined>
+    >()
+  })
+
   it('should not allow excess properties', () => {
     expectTypeOf(queryOptions).parameter(0).not.toHaveProperty('stallTime')
   })

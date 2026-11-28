@@ -1,8 +1,21 @@
+import { queryOptions as coreQueryOptions } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 import { createQuery, queryOptions } from '../../src/index.js'
 
 describe('createQuery', () => {
+  it('should infer data from core queryOptions', () => {
+    const options = coreQueryOptions({
+      queryKey: createKey(),
+      queryFn: () => Promise.resolve({ id: '1', title: 'Do Laundry' }),
+    })
+
+    const { data } = createQuery(() => options)
+    expectTypeOf(data).toEqualTypeOf<
+      { id: string; title: string } | undefined
+    >()
+  })
+
   it('should return the correct states for a successful query', () => {
     const key = createKey()
     const query = createQuery<string, Error>(() => ({
