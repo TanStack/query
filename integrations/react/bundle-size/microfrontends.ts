@@ -96,6 +96,11 @@ async function buildRemotes({
     logLevel: 'warn',
     resolve: {
       alias: {
+        '#catalog-hooks': path.join(
+          root,
+          'src',
+          packageName === pluggable ? 'pluggable-catalog.ts' : 'v6-catalog.ts',
+        ),
         '#query-hooks': path.join(
           root,
           'src',

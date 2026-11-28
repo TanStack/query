@@ -3,6 +3,7 @@
   "compilerOptions": {
     "paths": {
       "#adapter": ["./node_modules/@tanstack/react-query-pluggable"],
+      "#catalog-hooks": ["./src/pluggable-catalog.ts"],
       "#query-hooks": ["./src/pluggable-query.ts"],
       "#feature-options": ["./src/pluggable-options.ts"],
       "#polling-option": ["./src/pluggable-interval.ts"],

@@ -5,6 +5,7 @@ import path from 'node:path'
 import { brotliCompressSync, constants, gzipSync } from 'node:zlib'
 import { build, normalizePath } from 'vite'
 import { adapterTreemap } from './analyze.ts'
+import { measureLazyRoutes } from './lazyRoutes.ts'
 import { measureMicrofrontends } from './microfrontends.ts'
 import type { Rolldown } from 'vite'
 
@@ -103,6 +104,11 @@ async function buildApp(
     resolve: {
       dedupe: ['react', 'react-dom'],
       alias: {
+        '#catalog-hooks': path.join(
+          root,
+          'src',
+          packageName === pluggable ? 'pluggable-catalog.ts' : 'v6-catalog.ts',
+        ),
         '#query-hooks': path.join(
           root,
           'src',
@@ -921,6 +927,15 @@ for (const { title, rows } of results) {
     lines.push(`| ${title} | \`${row.name}\` | ${cells.join(' | ')} |`)
   }
 }
+const comparison = {
+  root,
+  checkout,
+  baseCheckout,
+  baseline,
+  pluggable,
+  runtimeOwners,
+  formatChange,
+} as const
 const readOnly = results.find(({ screen }) => screen === 'query')?.rows[1]
 assert(readOnly, 'Expected a read-only pluggable workload')
 lines.push(
@@ -929,15 +944,9 @@ lines.push(
   '',
   '</details>',
   '',
-  await measureMicrofrontends({
-    root,
-    checkout,
-    baseCheckout,
-    baseline,
-    pluggable,
-    runtimeOwners,
-    formatChange,
-  }),
+  await measureLazyRoutes(comparison),
+  '',
+  await measureMicrofrontends(comparison),
   '',
 )
 const report = lines.join('\n')

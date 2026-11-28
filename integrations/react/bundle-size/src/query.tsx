@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { isError, isPending, useBookQuery } from '#query-hooks'
+import { isError, isPending, useBookQuery } from '#catalog-hooks'
 import { fetchBooks } from './books.ts'
 
 export function ReadingList() {

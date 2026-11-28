@@ -18,6 +18,23 @@ For each app, the benchmark verifies that the isolated Query chunk contains the 
 
 The PR comment links to the workflow artifact containing an interactive HTML bundle analyzer for each package and workload. Open `dist/analyzer/<workload>/<adapter>.html` locally after running the benchmark. Select the `query-runtime` chunk to explore its constituent sources. The treemap shows module contributions from source maps. The tables use actual compressed chunk bytes.
 
+## Lazy route navigation
+
+Open the catalog, visit Bookmarks, load a second page, then return to the catalog. One React root and one `QueryClientProvider` stay mounted for the whole visit. The shell imports the catalog at startup. `React.lazy` loads the bookmarks screen on its first render, and a React `Suspense` boundary shows a fallback while that JavaScript arrives. The catalog uses an ordinary data query.
+
+For the above-the-fold (ATF) and below-the-fold (BTF) layout, open the same app with `?layout=scroll`. The catalog renders immediately. An `IntersectionObserver` mounts the bookmarks component the first time its shelf intersects the viewport. Merely placing a mounted `React.lazy` component below the fold would request its module on the initial render. The navigation and scroll examples share the same dynamic import and emitted files. [React shell and viewport trigger](./src/lazy/main.tsx)
+
+The catalog imports its ordinary-query helper from a dedicated module. Keeping pagination and mutation imports on the bookmarks side gives the bundler a route boundary to follow. In stock v6 the shared client constructs a mutation cache, and its core fetch path references infinite-page behavior. The pluggable pair can defer both implementations until the bookmarks component loads. [v6 client](../../../packages/query-core/src/queryClient.ts) · [v6 fetch path](../../../packages/query-core/src/query.ts) · [Catalog hook](./src/pluggable-catalog.ts) · [Paginated hook](./src/pluggable-query.ts)
+
+The lazy-route table reports Query bytes for the cold catalog, the first trip to Bookmarks, both screens together, and the return trip. Each URL is counted once in the cumulative total. A larger incremental download on the second route can go along with a smaller first load when more of the feature's code can wait for the click. Read the phase rows alongside the total. [Measurement](./lazyRoutes.ts) · [Chromium navigation test](./browser/lazyRoutes.test.ts)
+
+| To explore                                                                  | Example code                                                                                                      |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Reading a list and handling pending and error states                        | [Catalog](./src/query.tsx)                                                                                        |
+| Fetching another page and saving a bookmark                                 | [Paginated list and mutation](./src/paginated.tsx)                                                                |
+| Selecting titles, showing placeholders and invalidating after queued writes | [Screen](./src/options.tsx) · [v6 options](./src/v6-options.ts) · [Pluggable options](./src/pluggable-options.ts) |
+| Polling regular, infinite and Suspense queries                              | [Polling screen](./src/polling.tsx) · [Pluggable interval](./src/pluggable-interval.ts)                           |
+
 ## Microfrontend navigation
 
 A shell loads the catalog first and the paginated bookmarks screen on navigation. Both remotes use the host’s React and React DOM and create a client when mounted. In the independent deployment, each remote is built on its own and has a separate Query URL. In the shared deployment, the shell serves one ESM Query chunk containing both routes’ imports. The table reports the gzip bytes of the Query URLs needed for the catalog alone and for the complete journey. Chromium verifies the requests on both visits and on returning to the catalog. The measured bytes describe JavaScript transfer. They do not measure cross-client data caching.
@@ -45,7 +62,9 @@ QUERY_BASE_CHECKOUT="$PWD/../query-bundle-base" pnpm --filter @tanstack/query-in
 
 Read the summary and detailed tables in `integrations/react/bundle-size/dist/report.md`. Serve a directory under `dist/<workload>/<adapter>` to try the built app.
 
-Run the eight production app scenarios and four microfrontend navigation cases in Chromium after measuring:
+To try the lazy routes, run `pnpm exec vite preview --outDir dist` from this directory after measuring. Open `/lazy-routes/react-query/` or `/lazy-routes/react-query-pluggable/` on the printed URL. Append `?layout=scroll` to try scrolling to the shelf. The Network panel shows which JavaScript each visit requests.
+
+Run the production apps, lazy routes and microfrontend journeys in Chromium after measuring.
 
 ```sh
 cd integrations/react/bundle-size

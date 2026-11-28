@@ -1,25 +1,15 @@
 import {
   infiniteQueryOptions,
-  queryOptions,
   suspenseQueryOptions,
   suspenseInfiniteQueryOptions,
   useQuery,
 } from '#adapter'
-import type {
-  UndefinedInitialDataOptions,
-  UseSuspenseQueryOptions,
-} from '#adapter'
+import type { UseSuspenseQueryOptions } from '#adapter'
 import type {
   BookPage,
   BookPagesOptions,
   SuspenseBookPagesOptions,
 } from './books.ts'
-
-export function useBookQuery<TQueryData, TData = TQueryData>(
-  options: UndefinedInitialDataOptions<TQueryData, Error, TData>,
-) {
-  return useQuery(queryOptions(options))
-}
 
 export function useSuspenseBookQuery(
   options: UseSuspenseQueryOptions<BookPage>,
@@ -35,4 +25,5 @@ export function useSuspenseBookPages(options: SuspenseBookPagesOptions) {
   return useQuery(suspenseInfiniteQueryOptions(options))
 }
 
-export { isPending, isError, isFetching } from '#adapter'
+export { isError, isPending, useBookQuery } from './pluggable-catalog.ts'
+export { isFetching } from '#adapter'
