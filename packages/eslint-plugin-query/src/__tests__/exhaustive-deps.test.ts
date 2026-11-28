@@ -709,6 +709,20 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
+      name: 'should pass in Svelte file when deps are correctly included',
+      filename: 'Component.svelte',
+      code: normalizeIndent`
+        import { createQuery } from '@tanstack/svelte-query'
+        import { fetchEntity } from './api'
+
+        let id = $state(1)
+        const query = createQuery(() => ({
+          queryKey: ['entity', id],
+          queryFn: () => fetchEntity(id),
+        }))
+      `,
+    },
+    {
       name: 'should pass when dep used in then/catch is listed in queryKey',
       code: normalizeIndent`
         function Component() {
@@ -1539,6 +1553,42 @@ ruleTester.run('exhaustive-deps', rule, {
                   queryKey: ['users', userId, orgId],
                   queryFn: () => fetchUser(userId, orgId),
                 })
+              `,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'should fail in Svelte file when deps are missing',
+      filename: 'Component.svelte',
+      code: normalizeIndent`
+        import { createQuery } from '@tanstack/svelte-query'
+        import { fetchEntity } from './api'
+
+        let id = $state(1)
+        const query = createQuery(() => ({
+          queryKey: ['entity'],
+          queryFn: () => fetchEntity(id),
+        }))
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'id' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              data: { result: "['entity', id]" },
+              output: normalizeIndent`
+                import { createQuery } from '@tanstack/svelte-query'
+                import { fetchEntity } from './api'
+
+                let id = $state(1)
+                const query = createQuery(() => ({
+                  queryKey: ['entity', id],
+                  queryFn: () => fetchEntity(id),
+                }))
               `,
             },
           ],
