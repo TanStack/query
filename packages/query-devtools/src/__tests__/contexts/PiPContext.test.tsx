@@ -93,7 +93,31 @@ describe('PiPContext', () => {
 
       expect(open).toHaveBeenCalledWith(
         '',
-        'TSQD-Devtools-Panel',
+        'TSQD-Devtools-Panel-http://localhost:3000',
+        'width=640,height=480,popup',
+      )
+    })
+
+    it('should give each origin a popup of its own', () => {
+      const { open } = stubPipWindow()
+
+      for (const origin of ['http://localhost:3001', 'http://localhost:3002']) {
+        // Each origin has its own storage, so no persisted "pip_open" carries over.
+        localStorage.clear()
+        vi.stubGlobal('location', { ...window.location, origin })
+        renderAndAct((pip) => pip().requestPipWindow(640, 480))
+      }
+
+      expect(open).toHaveBeenNthCalledWith(
+        1,
+        '',
+        'TSQD-Devtools-Panel-http://localhost:3001',
+        'width=640,height=480,popup',
+      )
+      expect(open).toHaveBeenNthCalledWith(
+        2,
+        '',
+        'TSQD-Devtools-Panel-http://localhost:3002',
         'width=640,height=480,popup',
       )
     })
@@ -327,7 +351,7 @@ describe('PiPContext', () => {
 
       expect(open).toHaveBeenCalledWith(
         '',
-        'TSQD-Devtools-Panel',
+        'TSQD-Devtools-Panel-http://localhost:3000',
         'width=1024,height=500,popup',
       )
     })

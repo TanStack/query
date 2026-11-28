@@ -60,9 +60,12 @@ export const PiPProvider = (props: PiPProviderProps) => {
       return
     }
 
+    // Named per origin: `window.open` returns any window the tab can reach by
+    // this name, even one another origin opened, and touching that popup
+    // throws a `SecurityError`.
     const pip = window.open(
       '',
-      'TSQD-Devtools-Panel',
+      `TSQD-Devtools-Panel-${window.location.origin}`,
       `width=${width},height=${height},popup`,
     )
 
