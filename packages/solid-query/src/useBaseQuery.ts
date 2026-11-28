@@ -20,6 +20,7 @@ import type { QueryClient } from './QueryClient'
 import type {
   DefaultedQueryObserverOptions,
   Query,
+  QueryCacheNotifyEvent,
   QueryKey,
   QueryObserver,
   QueryObserverResult,
@@ -227,14 +228,56 @@ export function useBaseQueryLayer<
   const [primed, setPrimed] = createSignal(!hydratedMount, {
     ownedWrite: true,
   })
-  const onCacheEvent = (event: { query: { queryHash: string } }) => {
+  const [staleVersion, setStaleVersion] = createSignal(0, { ownedWrite: true })
+  let lastStale: boolean | undefined
+  const resolveStale = (
+    q: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+    opts: DefaultedQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+  ) => {
+    const staleTime =
+      typeof opts.staleTime === 'function'
+        ? (opts.staleTime as (query: any) => number | 'static')(q)
+        : opts.staleTime
+    return q.isStaleByTime(staleTime)
+  }
+  const onCacheEvent = (event: QueryCacheNotifyEvent) => {
     // Match the last hash applied by the render effect OR the latest
     // computed one without reading a potentially held memo.
     if (
-      event.query.queryHash === lastAppliedHash ||
-      event.query.queryHash === latestHash
+      event.query.queryHash !== lastAppliedHash &&
+      event.query.queryHash !== latestHash
+    ) {
+      return
+    }
+    if (
+      event.type === 'added' ||
+      event.type === 'removed' ||
+      event.type === 'updated'
     ) {
       setVersion((v) => v + 1)
+      return
+    }
+    // `QueryObserver`'s stale timer does not mutate `QueryState` — it notifies
+    // the cache with `observerResultsUpdated` when `staleTime` elapses. Only
+    // wake `isStale` readers when this hook's own staleness actually flipped,
+    // leaving `version` (and `data` / `meta` projections) untouched across all
+    // `observer*` notifications.
+    if (
+      event.type === 'observerResultsUpdated' &&
+      lastStale !== undefined &&
+      latestOptions &&
+      resolveStale(
+        event.query as Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+        latestOptions,
+      ) !== lastStale
+    ) {
+      setStaleVersion((v) => v + 1)
     }
   }
 
@@ -290,6 +333,7 @@ export function useBaseQueryLayer<
     if (isServer || c === activeClient) return
     activeClient = c
     lastQuery = undefined
+    lastStale = undefined
     cacheSub?.()
     cacheSub = c.getQueryCache().subscribe(onCacheEvent)
     observerSub?.()
@@ -735,12 +779,11 @@ export function useBaseQueryLayer<
   const isStale = () => {
     const opts = defaultedOptions()
     const q = untrack(query)
-    const staleTime =
-      typeof opts.staleTime === 'function'
-        ? (opts.staleTime as (q: any) => number | 'static')(q)
-        : opts.staleTime
     version()
-    return q.isStaleByTime(staleTime)
+    staleVersion()
+    const stale = resolveStale(q, opts)
+    lastStale = stale
+    return stale
   }
 
   const result = {
