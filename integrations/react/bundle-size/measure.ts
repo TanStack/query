@@ -401,7 +401,7 @@ function checkApp(chunks: Array<Chunk>, adapter: Adapter, screen: Screen) {
     const pageFetcher = retained.some(
       ([id, module]) =>
         rendersFeature(id, 'infiniteQueryBehavior') &&
-        module.renderedExports.includes('createInfiniteFetch'),
+        module.renderedExports.includes('prepareInfiniteFetch'),
     )
     assert.equal(pageFetcher, usesPages, `${screen} infinite page fetcher`)
     const utilities = retained
