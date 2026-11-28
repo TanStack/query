@@ -1,4 +1,3 @@
-import { timeoutManager } from './timeoutManager'
 import type { Mutation } from './mutation'
 import type { FetchOptions, Query } from './query'
 import type {
@@ -570,17 +569,6 @@ export function isPlainObject(o: any): o is Record<PropertyKey, unknown> {
  */
 function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
-}
-
-/**
- * Waits for the given time, using the configured {@link timeoutManager}.
- * @param timeout - The time to wait, in milliseconds.
- * @returns A promise that resolves after `timeout` milliseconds.
- */
-export function sleep(timeout: number): Promise<void> {
-  return new Promise((resolve) => {
-    timeoutManager.setTimeout(resolve, timeout)
-  })
 }
 
 /**

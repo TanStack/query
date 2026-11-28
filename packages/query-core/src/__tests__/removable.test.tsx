@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { Removable } from '../removable'
 import { defaultTimeoutProvider, timeoutManager } from '../timeoutManager'
-import { setIsServer } from './utils'
 import type { TimeoutCallback, TimeoutProvider } from '../timeoutManager'
 
 class RemovableTest extends Removable {
@@ -83,19 +82,6 @@ describe('Removable', () => {
       removable.callUpdateGcTime(1000)
 
       expect(removable.gcTime).toBe(10 * 60 * 1000)
-    })
-
-    it('should default to Infinity on the server', () => {
-      const resetIsServer = setIsServer(true)
-      try {
-        const removable = new RemovableTest()
-
-        removable.callUpdateGcTime(undefined)
-
-        expect(removable.gcTime).toBe(Infinity)
-      } finally {
-        resetIsServer()
-      }
     })
   })
 

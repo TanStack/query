@@ -1,3 +1,4 @@
+import { environmentManager } from '@tanstack/query-core'
 import { sleep } from '@tanstack/query-test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { asyncThrottle } from '../asyncThrottle'
@@ -9,6 +10,26 @@ describe('asyncThrottle', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  it('finishes queued writes on the server', async () => {
+    const wasServer = environmentManager.isServer()
+    environmentManager.setIsServer(() => true)
+    try {
+      const write = vi
+        .fn<(value: string) => Promise<void>>()
+        .mockResolvedValue(undefined)
+      const save = asyncThrottle(write, { interval: 10 })
+
+      await save('first')
+      const nextWrite = save('second')
+      await vi.advanceTimersByTimeAsync(10)
+      await nextWrite
+
+      expect(write.mock.calls).toStrictEqual([['first'], ['second']])
+    } finally {
+      environmentManager.setIsServer(() => wasServer)
+    }
   })
 
   it('should throttle calls to run at most once per interval with the latest arguments', async () => {

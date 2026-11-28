@@ -1,4 +1,3 @@
-import { isServer as isServerEnvironment } from './environmentManager'
 import { focusManager } from './focusManager'
 import { notifyManager } from './notifyManager'
 import { fetchState } from './query'
@@ -610,7 +609,6 @@ export class QueryObserver<
 
   #shouldScheduleTimer(timeout: unknown): timeout is number {
     return (
-      !isServerEnvironment() &&
       resolveQueryValue(this.options.enabled, this.#currentQuery) !== false &&
       isValidTimeout(timeout)
     )

@@ -14,7 +14,7 @@ You can configure retries both on a global level and an individual query level.
 
 [//]: # 'Info'
 
-> On the server, retries default to `0` to make server rendering as fast as possible.
+> The default timeout provider skips retry delays on the server. A custom provider that schedules timers enables up to three retries by default for observed queries.
 
 [//]: # 'Info'
 [//]: # 'Example'

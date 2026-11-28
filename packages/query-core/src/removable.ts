@@ -1,4 +1,3 @@
-import { isServer as isServerEnvironment } from './environmentManager'
 import { timeoutManager } from './timeoutManager'
 import { isValidTimeout } from './utils'
 import type { ManagedTimerId } from './timeoutManager'
@@ -22,7 +21,7 @@ export abstract class Removable {
 
   /**
    * Schedules the entry to be removed from its cache after `gcTime`, replacing any timeout scheduled
-   * before. Nothing is scheduled if `gcTime` is `Infinity`.
+   * before. Scheduling requires a finite `gcTime` and an enabled timer provider.
    */
   protected scheduleGc(): void {
     this.clearGcTimeout()
@@ -35,16 +34,11 @@ export abstract class Removable {
   }
 
   /**
-   * Updates `gcTime`, keeping the longest one seen so far. Without a value, it defaults to 5 minutes
-   * on the client and `Infinity` on the server.
+   * Updates `gcTime`, keeping the longest one seen so far. Without a value, it defaults to 5 minutes.
    * @param newGcTime - The `gcTime` from the latest options, if any.
    */
   protected updateGcTime(newGcTime: number | undefined): void {
-    // Default to 5 minutes (Infinity for server-side) if no gcTime is set
-    this.gcTime = Math.max(
-      this.gcTime || 0,
-      newGcTime ?? (isServerEnvironment() ? Infinity : 5 * 60 * 1000),
-    )
+    this.gcTime = Math.max(this.gcTime || 0, newGcTime ?? 5 * 60 * 1000)
   }
 
   /**

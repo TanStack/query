@@ -1,3 +1,5 @@
+import { isServer } from './environmentManager'
+
 /**
  * {@link TimeoutManager} does not support passing arguments to the callback.
  *
@@ -29,8 +31,12 @@ export type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> =
   {
     /**
      * Schedules `callback` to run once after `delay` milliseconds, like the global `setTimeout`.
+     * Returns `undefined` if the provider skips scheduling.
      */
-    readonly setTimeout: (callback: TimeoutCallback, delay: number) => TTimerId
+    readonly setTimeout: (
+      callback: TimeoutCallback,
+      delay: number,
+    ) => TTimerId | undefined
     /**
      * Cancels a timeout scheduled with `setTimeout`.
      */
@@ -38,8 +44,12 @@ export type TimeoutProvider<TTimerId extends ManagedTimerId = ManagedTimerId> =
 
     /**
      * Schedules `callback` to run every `delay` milliseconds, like the global `setInterval`.
+     * Returns `undefined` if the provider skips scheduling.
      */
-    readonly setInterval: (callback: TimeoutCallback, delay: number) => TTimerId
+    readonly setInterval: (
+      callback: TimeoutCallback,
+      delay: number,
+    ) => TTimerId | undefined
     /**
      * Cancels an interval scheduled with `setInterval`.
      */
@@ -59,11 +69,13 @@ export const defaultTimeoutProvider: TimeoutProvider = {
   // replace the global setTimeout (like tests) won't work since we'll already
   // have a hard reference to the original implementation at the time when this
   // file was imported.
-  setTimeout: (callback, delay) => setTimeout(callback, delay),
+  setTimeout: (callback, delay) =>
+    isServer() ? undefined : setTimeout(callback, delay),
   clearTimeout: (timeoutId) =>
     clearTimeout(timeoutId as SystemTimerId | undefined),
 
-  setInterval: (callback, delay) => setInterval(callback, delay),
+  setInterval: (callback, delay) =>
+    isServer() ? undefined : setInterval(callback, delay),
   clearInterval: (intervalId) =>
     clearInterval(intervalId as SystemTimerId | undefined),
 }
@@ -94,6 +106,9 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * `setTimeoutProvider` can be used to set a custom implementation of the
    * `setTimeout`, `clearTimeout`, `setInterval`, `clearInterval` functions,
    * called a `TimeoutProvider`.
+   *
+   * The default provider skips timers on the server. A custom provider decides
+   * which timers to schedule in each environment.
    *
    * This may be useful if you notice event loop performance issues with
    * thousands of queries. A custom TimeoutProvider could also support timer
@@ -153,7 +168,7 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * coerced to a number via `Symbol.toPrimitive`.
    * @param callback - The function to call when the timeout elapses.
    * @param delay - The time to wait before calling `callback`, in milliseconds.
-   * @returns The timer ID, to pass to {@link TimeoutManager#clearTimeout}.
+   * @returns A timer ID, or `undefined` if the provider skipped the timer.
    * @example
    * ```ts
    * import { timeoutManager } from '@tanstack/query-core'
@@ -166,7 +181,10 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * const timeoutIdNumber: number = Number(timeoutId)
    * ```
    */
-  setTimeout(callback: TimeoutCallback, delay: number): ManagedTimerId {
+  setTimeout(
+    callback: TimeoutCallback,
+    delay: number,
+  ): ManagedTimerId | undefined {
     if (process.env.NODE_ENV !== 'production') {
       this.#providerCalled = true
     }
@@ -202,7 +220,7 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * object that can be coerced to a number via `Symbol.toPrimitive`.
    * @param callback - The function to call on every interval.
    * @param delay - The time between calls, in milliseconds.
-   * @returns The timer ID, to pass to {@link TimeoutManager#clearInterval}.
+   * @returns A timer ID, or `undefined` if the provider skipped the timer.
    * @example
    * ```ts
    * import { timeoutManager } from '@tanstack/query-core'
@@ -213,7 +231,10 @@ export class TimeoutManager implements Omit<TimeoutProvider, 'name'> {
    * )
    * ```
    */
-  setInterval(callback: TimeoutCallback, delay: number): ManagedTimerId {
+  setInterval(
+    callback: TimeoutCallback,
+    delay: number,
+  ): ManagedTimerId | undefined {
     if (process.env.NODE_ENV !== 'production') {
       this.#providerCalled = true
     }

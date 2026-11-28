@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { TimeoutManager, timeoutManager } from '../timeoutManager'
+import { setIsServer } from './utils'
 import type { MockInstance } from 'vitest'
 import type { TimeoutCallback, TimeoutProvider } from '../timeoutManager'
 
@@ -29,6 +30,17 @@ describe('timeoutManager', () => {
 
     beforeEach(() => {
       manager = new TimeoutManager()
+    })
+
+    it('returns no timer handle with the default provider on the server', () => {
+      const reset = setIsServer(true)
+      try {
+        const callback = vi.fn<TimeoutCallback>()
+        expect(manager.setTimeout(callback, 100)).toBeUndefined()
+        expect(manager.setInterval(callback, 100)).toBeUndefined()
+      } finally {
+        reset()
+      }
     })
 
     it('should proxy calls to globalThis setTimeout/clearTimeout by default', () => {
