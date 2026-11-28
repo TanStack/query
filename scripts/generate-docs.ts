@@ -167,6 +167,7 @@ async function generatePackageReferenceDocs(pkg: PackageReferenceDocsConfig) {
     // Without this, a function property renders as `(data) => TData` — the table and list formats
     // both omit the parameter types otherwise.
     expandParameters: true,
+    expandObjects: true,
     excludePrivate: true,
     excludeProtected: true,
     excludeInternal: true,

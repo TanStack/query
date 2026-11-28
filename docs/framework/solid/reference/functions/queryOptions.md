@@ -10,8 +10,16 @@ redirect_from:
 ## Overview
 
 ```ts
-function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
-function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData:   | NonUndefinedGuard<TQueryFnData>
+     | (() => NonUndefinedGuard<TQueryFnData>);
+}): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData?:   | NonUndefinedGuard<TQueryFnData>
+     | (() => 
+     | NonUndefinedGuard<TQueryFnData>
+     | undefined);
+}): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 - [`ReturnType<DefinedInitialDataOptions>` → `ReturnType<DefinedInitialDataOptions> & QueryKeyWithDataTag`](#call-signature-1): You can generally pass everything to `queryOptions` that you can also pass to `useQuery`. These options can be shared across hooks and imperative APIs such as `queryClient.query`. `options.queryKey` is required and is the query key to generate options for.
@@ -24,7 +32,10 @@ See also: [Parameters](#parameters-summary) · [Returns](#returns-summary)
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData:   | NonUndefinedGuard<TQueryFnData>
+     | (() => NonUndefinedGuard<TQueryFnData>);
+}): ReturnType<DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [packages/solid-query/src/queryOptions.ts:94](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L94)
@@ -58,7 +69,10 @@ This overload is selected when `initialData` is known to be defined, so the resu
 
 #### options
 
-[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object`
+[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
+  `initialData`:   \| [`NonUndefinedGuard`](../type-aliases/NonUndefinedGuard.md)\<`TQueryFnData`\>
+     \| (() => [`NonUndefinedGuard`](../type-aliases/NonUndefinedGuard.md)\<`TQueryFnData`\>);
+\}
 
 The [DefinedInitialDataOptions](../type-aliases/DefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`, with `initialData` known to be defined.
 
@@ -105,7 +119,12 @@ function Posts() {
 ## Call Signature
 
 ```ts
-function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & object): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
+function queryOptions<TQueryFnData = unknown, TError = Error, TData = TQueryFnData, TQueryKey extends readonly unknown[] = readonly unknown[]>(options: QueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData?:   | NonUndefinedGuard<TQueryFnData>
+     | (() => 
+     | NonUndefinedGuard<TQueryFnData>
+     | undefined);
+}): ReturnType<UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>> & QueryKeyWithDataTag<TQueryKey, TQueryFnData, TError>;
 ```
 
 Defined in: [packages/solid-query/src/queryOptions.ts:142](https://github.com/TanStack/query/blob/main/packages/solid-query/src/queryOptions.ts#L142)
@@ -136,7 +155,12 @@ is the query key to generate options for.
 
 #### options
 
-[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object`
+[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
+  `initialData?`:   \| [`NonUndefinedGuard`](../type-aliases/NonUndefinedGuard.md)\<`TQueryFnData`\>
+     \| (() => 
+     \| [`NonUndefinedGuard`](../type-aliases/NonUndefinedGuard.md)\<`TQueryFnData`\>
+     \| `undefined`);
+\}
 
 The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
 
@@ -184,7 +208,12 @@ function Post(props: { id: string }) {
 
 ### options
 
-[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & `object`
+[`QueryOptions`](../interfaces/QueryOptions.md)\<`TQueryFnData`, `TError`, `TData`, `TQueryKey`\> & \{
+  `initialData?`:   \| [`NonUndefinedGuard`](../type-aliases/NonUndefinedGuard.md)\<`TQueryFnData`\>
+     \| (() => 
+     \| [`NonUndefinedGuard`](../type-aliases/NonUndefinedGuard.md)\<`TQueryFnData`\>
+     \| `undefined`);
+\}
 
 The [UndefinedInitialDataOptions](../type-aliases/UndefinedInitialDataOptions.md) to use — everything you can pass to `useQuery`.
 
