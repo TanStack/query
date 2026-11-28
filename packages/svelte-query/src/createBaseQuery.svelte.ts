@@ -98,6 +98,15 @@ export function createBaseQuery<
       return unsubscribe
     },
   )
+  // ...and because the above only returns a cleanup from its second run onwards, tear the initial
+  // subscription down with an effect of its own, so disposing an `$effect.root` unsubscribes it.
+  // (in a try-catch because it theoretically can be called in a non-component context - that should not happen
+  // but it would be a breaking change technically to error out here. In a component this is redundant
+  // with `onDestroy`, and unsubscribing twice is a no-op. During SSR the effect does not run and
+  // `onDestroy` still handles cleanup.)
+  try {
+    $effect.pre(() => () => unsubscribe())
+  } catch (e) {}
   // ...and finally also cleanup via onDestroy because that one runs on the server whereas $effect.pre does not.
   // (in a try-catch because it theoretically can be called in a non-component context - that should not happen
   // but it would be a breaking change technically to error out here. SSR-safe because this wouldn't be called during SSR if it was not in a component)
