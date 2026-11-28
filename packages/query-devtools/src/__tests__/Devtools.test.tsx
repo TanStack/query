@@ -1122,7 +1122,7 @@ describe('Devtools', () => {
       )
       expect(open).toHaveBeenCalledWith(
         '',
-        'TSQD-Devtools-Panel',
+        `TSQD-Devtools-Panel-${window.location.origin}`,
         expect.stringMatching(/^width=\d+,height=\d+,popup$/),
       )
       expect(localStorage.getItem('TanstackQueryDevtools.pip_open')).toBe(
