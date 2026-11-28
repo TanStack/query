@@ -90,6 +90,18 @@ describe('garbage collection after cache removal', () => {
     expect(vi.getTimerCount()).toBe(0)
   })
 
+  it('keeps garbage collecting an unobserved query that is reset', async () => {
+    const queryKey = ['reset']
+    await client.query({ queryKey, queryFn: () => Promise.resolve('data') })
+    expect(vi.getTimerCount()).toBe(1)
+
+    await client.resetQueries({ queryKey })
+
+    expect(vi.getTimerCount()).toBe(1)
+    vi.advanceTimersByTime(1000)
+    expect(client.getQueryCache().getAll()).toHaveLength(0)
+  })
+
   it('clears a timer scheduled by an abort listener during removal', async () => {
     const observer = new QueryObserver(client, {
       queryKey: ['aborted'],
