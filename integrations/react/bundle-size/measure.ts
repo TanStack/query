@@ -28,7 +28,7 @@ type Adapter = typeof baseline | typeof treeshakable
 type Chunk = Rolldown.OutputChunk
 type ModuleEntry = [id: string, module: Chunk['modules'][string]]
 const workloads = [
-  { screen: 'query', title: 'Read-only list' },
+  { screen: 'query', title: 'Read-only book list' },
   { screen: 'paginated', title: 'Paginated bookmarks' },
   {
     screen: 'options',
@@ -103,12 +103,12 @@ async function buildApp(
     resolve: {
       dedupe: ['react', 'react-dom'],
       alias: {
-        '#catalog-hooks': path.join(
+        '#book-list-hooks': path.join(
           root,
           'src',
           adapter === treeshakable
-            ? 'treeshakable-catalog.ts'
-            : 'v6-catalog.ts',
+            ? 'treeshakable-book-list.ts'
+            : 'v6-book-list.ts',
         ),
         '#query-hooks': path.join(
           root,
@@ -415,11 +415,11 @@ function checkApp(chunks: Array<Chunk>, adapter: Adapter, screen: Screen) {
     if (screen === 'query') {
       assert(
         !modules.some((id) => rendersFeature(id, 'throwOnError')),
-        'Read-only list retained the optional throwOnError implementation',
+        'Read-only book list retained the optional throwOnError implementation',
       )
       assert(
         !utilities.includes('shouldThrowError'),
-        'Read-only list retained the error boundary predicate',
+        'Read-only book list retained the error boundary predicate',
       )
     }
     const selectedStatus = screen === 'polling' ? [] : ['isPending', 'isError']
@@ -924,10 +924,10 @@ const comparison = {
   formatChange,
 } as const
 const readOnly = results.find(({ screen }) => screen === 'query')?.rows[1]
-assert(readOnly, 'Expected a read-only treeshakable workload')
+assert(readOnly, 'Expected the read-only book list workload')
 lines.push(
   '',
-  `Largest modules in the read-only treeshakable chunk, by rendered size before minification: ${readOnly.largestModules.map((name) => `\`${name}\``).join(', ')}.`,
+  `Largest modules in the treeshakable read-only book list chunk, by rendered size before minification: ${readOnly.largestModules.map((name) => `\`${name}\``).join(', ')}.`,
   '',
   '</details>',
   '',

@@ -58,12 +58,12 @@ function routeDirectory(deployment: Deployment, screen: Screen) {
 }
 
 function shell(deployment: Deployment) {
-  const catalog = routeDirectory(deployment, 'query') + '/query.js'
+  const bookList = routeDirectory(deployment, 'query') + '/query.js'
   const bookmarks = routeDirectory(deployment, 'paginated') + '/paginated.js'
   return `<!doctype html>
-<html lang="en"><meta charset="utf-8"><title>Reading list</title>
+<html lang="en"><meta charset="utf-8"><title>Book list</title>
 <script type="importmap">{"imports":{"react":"../../host/react.js","react-dom/client":"../../host/dom.js","react/jsx-runtime":"../../host/jsx.js"}}</script>
-<nav><button id="catalog" data-entry="${catalog}">Catalog</button><button id="bookmarks" data-entry="${bookmarks}">Bookmarks</button></nav><main></main>
+<nav><button id="book-list" data-entry="${bookList}">Book list</button><button id="bookmarks" data-entry="${bookmarks}">Bookmarks</button></nav><main></main>
 <script type="module" src="../../host/navigation.js"></script></html>`
 }
 
@@ -96,12 +96,12 @@ async function buildRemotes({
     logLevel: 'warn',
     resolve: {
       alias: {
-        '#catalog-hooks': path.join(
+        '#book-list-hooks': path.join(
           root,
           'src',
           packageName === treeshakable
-            ? 'treeshakable-catalog.ts'
-            : 'v6-catalog.ts',
+            ? 'treeshakable-book-list.ts'
+            : 'v6-book-list.ts',
         ),
         '#query-hooks': path.join(
           root,
@@ -206,7 +206,7 @@ export async function measureMicrofrontends({
         deployment === 'shared'
           ? [screens]
           : screens.map((screen) => [screen] as const)
-      let catalog = 0
+      let bookList = 0
       let journey = 0
       for (const included of groups) {
         const prefix = routeDirectory(deployment, included[0])
@@ -219,19 +219,19 @@ export async function measureMicrofrontends({
           packageScope: path.join(source, 'packages/react-query/package.json'),
           owners: runtimeOwners(source),
         })
-        if (included.includes('query')) catalog = size
+        if (included.includes('query')) bookList = size
         journey += size
       }
       await mkdir(dir, { recursive: true })
       await cp(path.join(root, 'public'), dir, { recursive: true })
       await writeFile(path.join(dir, 'index.html'), shell(deployment))
-      return { catalog, journey }
+      return { bookList, journey }
     }
     const stock = await measureAdapter(baseline)
     const experimental = await measureAdapter(treeshakable)
     for (const [key, journey] of [
-      ['catalog', 'Catalog only'],
-      ['journey', 'Catalog then bookmarks'],
+      ['bookList', 'Book list only'],
+      ['journey', 'Book list then bookmarks'],
     ] as const) {
       const base = stock[key]
       const experiment = experimental[key]
@@ -245,7 +245,7 @@ export async function measureMicrofrontends({
   return [
     '### Microfrontend navigation',
     '',
-    'Cumulative Query JavaScript (gzip) from a cold catalog visit through the first visit to bookmarks. Both remotes share host React and React DOM. The independent builds serve distinct Query URLs. The shared build serves one Query chunk containing the features used across both routes. Chromium checks the requested Query URLs on each visit and revisit.',
+    'Cumulative Query JavaScript (gzip) from the initial visit to the book list through the first visit to bookmarks. Both remotes share host React and React DOM. The independent builds serve distinct Query URLs. The shared build serves one Query chunk containing the features used across both routes. Chromium checks the requested Query URLs on each visit and revisit.',
     '',
     '| Deployment | Journey | React Query v6 | React Query Treeshakable | Change vs v6 |',
     '| --- | --- | ---: | ---: | ---: |',

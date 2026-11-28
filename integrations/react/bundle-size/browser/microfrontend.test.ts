@@ -35,7 +35,7 @@ describe.each(['v6', 'treeshakable'])('%s microfrontends', (adapter) => {
       if (deployment === 'independent')
         expected.push(prefix + 'paginated/query-runtime.js')
       expect(queryUrls()).toEqual(expected)
-      navigate('#catalog')
+      navigate('#book-list')
       await expect.poll(list).toBe('Middlemarch')
       expect(queryUrls()).toEqual(expected)
     },

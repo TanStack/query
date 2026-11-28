@@ -1,12 +1,12 @@
 import { afterEach, assert, describe, expect, it, vi } from 'vitest'
 
 interface RequestManifest {
-  catalog: Array<string>
+  bookList: Array<string>
   bookmarks: Array<string>
-  routeEntries: { catalog: string; bookmarks: string }
+  routeEntries: { bookList: string; bookmarks: string }
 }
 
-async function openCatalog(adapter: string, layout: 'routes' | 'scroll') {
+async function openBookList(adapter: string, layout: 'routes' | 'scroll') {
   const prefix = '/lazy-routes/' + adapter + '/'
   const response = await fetch(prefix + 'query-requests.json')
   assert(response.ok, 'Missing measured Query requests for ' + adapter)
@@ -35,16 +35,16 @@ async function openCatalog(adapter: string, layout: 'routes' | 'scroll') {
   const queryFiles = () =>
     resources()
       .map(({ file }) => file)
-      .filter((file) => /^assets\/query-(catalog|bookmarks)-/.test(file))
+      .filter((file) => /^assets\/query-(book-list|bookmarks)-/.test(file))
       .sort()
   const copiesOf = (file: string) =>
     resources().filter((entry) => entry.file === file).length
-  await expect.poll(queryFiles).toEqual([...manifest.catalog].sort())
-  await expect.poll(() => copiesOf(manifest.routeEntries.catalog)).toBe(1)
+  await expect.poll(queryFiles).toEqual([...manifest.bookList].sort())
+  await expect.poll(() => copiesOf(manifest.routeEntries.bookList)).toBe(1)
   expect(copiesOf(manifest.routeEntries.bookmarks)).toBe(0)
   await expect.poll(() => copiesOf('books-1.json')).toBe(1)
 
-  const allQueryFiles = [...manifest.catalog, ...manifest.bookmarks].sort()
+  const allQueryFiles = [...manifest.bookList, ...manifest.bookmarks].sort()
   async function expectDeferredRequests(start: number) {
     await expect.poll(queryFiles).toEqual(allQueryFiles)
     for (const file of [
@@ -59,7 +59,7 @@ async function openCatalog(adapter: string, layout: 'routes' | 'scroll') {
   }
   function expectReusedFiles() {
     expect(queryFiles()).toEqual(allQueryFiles)
-    expect(copiesOf(manifest.routeEntries.catalog)).toBe(1)
+    expect(copiesOf(manifest.routeEntries.bookList)).toBe(1)
     expect(copiesOf(manifest.routeEntries.bookmarks)).toBe(1)
   }
   return { app, view, copiesOf, expectDeferredRequests, expectReusedFiles }
@@ -81,7 +81,7 @@ afterEach(() => {
 describe.each(['v6', 'treeshakable'])('%s lazy bookmarks', (adapter) => {
   it('downloads bookmarks on navigation and reuses its code and cached pages on revisit', async () => {
     const { app, view, copiesOf, expectDeferredRequests, expectReusedFiles } =
-      await openCatalog(adapter, 'routes')
+      await openBookList(adapter, 'routes')
     const beforeNavigation = view.performance.now()
     click(app, 'Bookmarks')
     await expect
@@ -102,7 +102,7 @@ describe.each(['v6', 'treeshakable'])('%s lazy bookmarks', (adapter) => {
     await expect.poll(() => copiesOf('books-2.json')).toBe(1)
 
     const revisitFetch = vi.spyOn(view, 'fetch')
-    click(app, 'Catalog')
+    click(app, 'Book list')
     await expect
       .poll(() => app.querySelector('li')?.textContent)
       .toBe('Middlemarch')
@@ -117,7 +117,7 @@ describe.each(['v6', 'treeshakable'])('%s lazy bookmarks', (adapter) => {
 
   it('downloads the below-fold shelf when scrolled into view and reuses its code on a second scroll', async () => {
     const { app, view, expectDeferredRequests, expectReusedFiles } =
-      await openCatalog(adapter, 'scroll')
+      await openBookList(adapter, 'scroll')
     const shelf = app.querySelector<HTMLElement>('#bookmarks-shelf')
     assert(shelf, 'Missing bookmarks shelf')
     const top = () => shelf.getBoundingClientRect().top

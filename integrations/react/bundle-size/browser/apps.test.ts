@@ -30,7 +30,7 @@ afterEach(() => {
 })
 
 describe.each(adapters)('React Query %s', (adapter) => {
-  it('renders a fetched reading list', async () => {
+  it('renders a fetched book list', async () => {
     const app = await openApp('query', adapter)
     expect(
       Array.from(app.querySelectorAll('li'), (row) => row.textContent),

@@ -8,8 +8,11 @@ import type { Rolldown } from 'vite'
 
 type Chunk = Rolldown.OutputChunk
 type Adapter = 'v6' | 'treeshakable'
-type Phase = 'catalog' | 'bookmarks'
-const phases = ['catalog', 'bookmarks'] as const
+const phases = [
+  ['bookList', 'query-book-list'],
+  ['bookmarks', 'query-bookmarks'],
+] as const
+type Phase = (typeof phases)[number][0]
 const queryPackage =
   /\/(?:packages|node_modules\/@tanstack)\/(?:query-core|react-query)\//
 
@@ -33,16 +36,16 @@ function routeGraph(chunks: Array<Chunk>) {
   }
   const entries = chunks.filter((chunk) => chunk.isEntry)
   assert.equal(entries.length, 1, 'Expected one application entry')
-  const [catalog] = entries
+  const [bookList] = entries
   const bookmarks = chunks.find((chunk) =>
     chunk.facadeModuleId?.endsWith('/src/paginated.tsx'),
   )
   assert(
-    catalog && bookmarks && bookmarks.isDynamicEntry,
+    bookList && bookmarks && bookmarks.isDynamicEntry,
     'Missing lazy route entries',
   )
-  const initial = dependencies(catalog)
-  assert(!initial.has(bookmarks), 'Bookmarks was loaded with the catalog')
+  const initial = dependencies(bookList)
+  assert(!initial.has(bookmarks), 'Bookmarks was loaded with the book list')
   assert(
     [...initial].some((chunk) =>
       chunk.dynamicImports.includes(bookmarks.fileName),
@@ -58,9 +61,9 @@ function routeGraph(chunks: Array<Chunk>) {
     'Unmeasured application chunk',
   )
   return {
-    catalog: initial,
+    bookList: initial,
     bookmarks: deferred,
-    entries: { catalog: catalog.fileName, bookmarks: bookmarks.fileName },
+    entries: { bookList: bookList.fileName, bookmarks: bookmarks.fileName },
   }
 }
 
@@ -138,10 +141,10 @@ async function measureAdapter(
       resolve: {
         dedupe: ['react', 'react-dom'],
         alias: {
-          '#catalog-hooks': path.join(
+          '#book-list-hooks': path.join(
             root,
             'src',
-            treeshakable ? 'treeshakable-catalog.ts' : 'v6-catalog.ts',
+            treeshakable ? 'treeshakable-book-list.ts' : 'v6-book-list.ts',
           ),
           '#query-hooks': path.join(
             root,
@@ -185,8 +188,8 @@ async function measureAdapter(
                       ) || id.includes('rolldown/runtime'),
                     includeDependenciesRecursively: true,
                   },
-                  ...phases.map((phase) => ({
-                    name: `query-${phase}`,
+                  ...phases.map(([phase, name]) => ({
+                    name,
                     test: (id: string) => groups[phase].has(id),
                     includeDependenciesRecursively: false,
                   })),
@@ -202,26 +205,26 @@ async function measureAdapter(
   }
   const ordinary = routeGraph(await routeBuild())
   const groups = {
-    catalog: queryExports(ordinary.catalog, owns),
+    bookList: queryExports(ordinary.bookList, owns),
     bookmarks: queryExports(ordinary.bookmarks, owns),
   }
   assert(
-    [...groups.catalog.keys()].every((id) => !groups.bookmarks.has(id)),
+    [...groups.bookList.keys()].every((id) => !groups.bookmarks.has(id)),
     'A Query module was assigned to both routes',
   )
   for (const dir of owners)
     assert(
-      [...groups.catalog.keys()].some((id) => id.startsWith(dir)),
+      [...groups.bookList.keys()].some((id) => id.startsWith(dir)),
       `Missing eager runtime from ${dir}`,
     )
   const published = routeGraph(await routeBuild(groups))
   const requests = {
-    catalog: [] as Array<string>,
+    bookList: [] as Array<string>,
     bookmarks: [] as Array<string>,
     routeEntries: published.entries,
   }
-  const bytes = { catalog: 0, bookmarks: 0 }
-  for (const phase of phases) {
+  const bytes = { bookList: 0, bookmarks: 0 }
+  for (const [phase, chunkName] of phases) {
     const chunks = published[phase]
     assert.deepEqual(
       queryExports(chunks, owns),
@@ -237,8 +240,8 @@ async function measureAdapter(
     // v6 constructs a mutation cache on startup and includes its infinite fetch behavior.
     // The treeshakable pair first needs both when the bookmarks route opens.
     const firstVisit: Record<string, Phase> = {
-      mutationCache: treeshakable ? 'bookmarks' : 'catalog',
-      infiniteQueryBehavior: treeshakable ? 'bookmarks' : 'catalog',
+      mutationCache: treeshakable ? 'bookmarks' : 'bookList',
+      infiniteQueryBehavior: treeshakable ? 'bookmarks' : 'bookList',
       mutationObserver: 'bookmarks',
       useMutation: 'bookmarks',
       infiniteQueryObserver: 'bookmarks',
@@ -255,11 +258,11 @@ async function measureAdapter(
         .filter(([, module]) => module.renderedLength > 0)
         .map(([id]) => id)
       if (!ids.some(owns)) continue
-      assert.equal(chunk.name, `query-${phase}`)
+      assert.equal(chunk.name, chunkName)
       assert(
         !chunk.imports.some(
           (file) =>
-            file === published.entries.catalog ||
+            file === published.entries.bookList ||
             file === published.entries.bookmarks,
         ),
         `Query runtime imports an application entry: ${chunk.fileName}`,
@@ -314,25 +317,25 @@ export async function measureLazyRoutes({
     runtimeOwners(checkout),
   )
   const rows = [
-    ['Cold catalog', stock.catalog, experiment.catalog],
+    ['Initial book list load', stock.bookList, experiment.bookList],
     [
       'First bookmarks render (additional)',
       stock.bookmarks,
       experiment.bookmarks,
     ],
     [
-      'Catalog and bookmarks (cumulative)',
-      stock.catalog + stock.bookmarks,
-      experiment.catalog + experiment.bookmarks,
+      'Book list and bookmarks (cumulative)',
+      stock.bookList + stock.bookmarks,
+      experiment.bookList + experiment.bookmarks,
     ],
-    ['Return to catalog (additional, checked in Chromium)', 0, 0],
+    ['Return to the book list (additional, checked in Chromium)', 0, 0],
   ] as const
   return [
     '### Lazy bookmarks on navigation or scroll',
     '',
-    'One React app keeps its QueryClient mounted. The catalog loads at startup. React.lazy imports the same bookmarks module when the user opens the route or scrolls the shelf into view. Each Query-only file is gzipped individually at level 9. The benchmark checks module and export placement against Vite’s default production build. The cumulative row counts each URL once.',
+    'One React app keeps its QueryClient mounted. The book list loads at startup. React.lazy imports the same bookmarks module when the user opens the route or scrolls the shelf into view. Each Query-only file is gzipped individually at level 9. The benchmark checks module and export placement against Vite’s default production build. The cumulative row counts each URL once.',
     '',
-    'The v6 catalog includes the mutation cache and infinite fetch behavior. Treeshakable downloads those with bookmarks. Both apps defer the mutation hook and infinite observer until bookmarks are first rendered.',
+    'The v6 book list includes the mutation cache and infinite fetch behavior. Treeshakable downloads those with bookmarks. Both apps defer the mutation hook and infinite observer until bookmarks are first rendered.',
     '',
     '| User action | React Query v6 | React Query Treeshakable | Change vs v6 |',
     '| --- | ---: | ---: | ---: |',

@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '#adapter'
-import { ReadingList as Catalog } from '../query.tsx'
+import { ReadingList as BookList } from '../query.tsx'
 
 const LazyBookmarks = React.lazy(() =>
   import('../paginated.tsx').then(({ ReadingList }) => ({
@@ -21,19 +21,21 @@ function Bookmarks() {
 }
 
 function Library() {
-  const [route, setRoute] = React.useState<'catalog' | 'bookmarks'>('catalog')
+  const [route, setRoute] = React.useState<'book-list' | 'bookmarks'>(
+    'book-list',
+  )
   return (
     <>
       <nav aria-label="Library">
-        <button id="catalog" onClick={() => setRoute('catalog')}>
-          Catalog
+        <button id="book-list" onClick={() => setRoute('book-list')}>
+          Book list
         </button>
         <button id="bookmarks" onClick={() => setRoute('bookmarks')}>
           Bookmarks
         </button>
       </nav>
-      <h1>{route === 'catalog' ? 'Catalog' : 'Bookmarks'}</h1>
-      {route === 'catalog' ? <Catalog /> : <Bookmarks />}
+      <h1>{route === 'book-list' ? 'Book list' : 'Bookmarks'}</h1>
+      {route === 'book-list' ? <BookList /> : <Bookmarks />}
     </>
   )
 }
@@ -54,9 +56,9 @@ function ScrollingLibrary() {
 
   return (
     <>
-      <section id="catalog-section" style={{ minHeight: '110vh' }}>
-        <h1>Catalog</h1>
-        <Catalog />
+      <section id="book-list-section" style={{ minHeight: '110vh' }}>
+        <h1>Book list</h1>
+        <BookList />
       </section>
       <section
         id="bookmarks-shelf"

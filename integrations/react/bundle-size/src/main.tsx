@@ -7,7 +7,7 @@ const client = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={client}>
-    <h1>Reading list</h1>
+    <h1>Book list</h1>
     <ReadingList />
   </QueryClientProvider>,
 )

@@ -1,10 +1,10 @@
 export type MountRemote = (container: Element) => () => void
 
 const container = document.querySelector('main')
-const catalog = document.querySelector<HTMLButtonElement>('#catalog')
+const bookList = document.querySelector<HTMLButtonElement>('#book-list')
 const bookmarks = document.querySelector<HTMLButtonElement>('#bookmarks')
-if (!container || !catalog || !bookmarks)
-  throw new Error('Missing reading list shell')
+if (!container || !bookList || !bookmarks)
+  throw new Error('Missing book list shell')
 
 let unmount: ReturnType<MountRemote> | undefined
 
@@ -19,6 +19,6 @@ async function openRoute(button: HTMLButtonElement, main: HTMLElement) {
   unmount = remote.mount(main)
 }
 
-catalog.onclick = () => openRoute(catalog, container)
+bookList.onclick = () => openRoute(bookList, container)
 bookmarks.onclick = () => openRoute(bookmarks, container)
-await openRoute(catalog, container)
+await openRoute(bookList, container)

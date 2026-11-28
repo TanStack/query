@@ -10,5 +10,5 @@ export function useBookPages(options: BookPagesOptions) {
   return useInfiniteQuery(infiniteQueryOptions(options))
 }
 
-export { isError, isPending, useBookQuery } from './v6-catalog.ts'
+export { isError, isPending, useBookQuery } from './v6-book-list.ts'
 export const isFetching = (result: { isFetching: boolean }) => result.isFetching

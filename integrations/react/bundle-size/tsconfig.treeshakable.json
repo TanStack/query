@@ -3,7 +3,7 @@
   "compilerOptions": {
     "paths": {
       "#adapter": ["./node_modules/@tanstack/react-query"],
-      "#catalog-hooks": ["./src/treeshakable-catalog.ts"],
+      "#book-list-hooks": ["./src/treeshakable-book-list.ts"],
       "#query-hooks": ["./src/treeshakable-query.ts"],
       "#feature-options": ["./src/treeshakable-options.ts"],
       "#polling-option": ["./src/treeshakable-interval.ts"],

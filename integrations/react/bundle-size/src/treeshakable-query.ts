@@ -25,5 +25,5 @@ export function useSuspenseBookPages(options: SuspenseBookPagesOptions) {
   return useQuery(suspenseInfiniteQueryOptions(options))
 }
 
-export { isError, isPending, useBookQuery } from './treeshakable-catalog.ts'
+export { isError, isPending, useBookQuery } from './treeshakable-book-list.ts'
 export { isFetching } from '#adapter'

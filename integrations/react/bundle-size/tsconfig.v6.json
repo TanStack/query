@@ -5,7 +5,7 @@
       "#adapter": [
         "../../../.cache/query-bundle-base/packages/react-query/build/index.d.ts"
       ],
-      "#catalog-hooks": ["./src/v6-catalog.ts"],
+      "#book-list-hooks": ["./src/v6-book-list.ts"],
       "#query-hooks": ["./src/v6-query.ts"],
       "#feature-options": ["./src/v6-options.ts"],
       "#polling-option": ["./src/numeric-interval.ts"],
