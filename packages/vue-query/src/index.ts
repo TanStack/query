@@ -46,7 +46,12 @@ export type {
   UseMutationOptions,
   UseMutationReturnType,
 } from './useMutation'
-export type { MutationOptions } from './types'
+export type {
+  DefaultOptions,
+  MutationOptions,
+  QueryClientConfig,
+  ThrowOnError,
+} from './types'
 export type { UseQueriesOptions, UseQueriesResults } from './useQueries'
 export type {
   MutationStateOptions,

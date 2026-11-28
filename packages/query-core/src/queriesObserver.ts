@@ -1,13 +1,10 @@
 import { notifyManager } from './notifyManager'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
-import {
-  replaceEqualDeep,
-  shallowEqualObjects,
-  shouldThrowError,
-} from './utils'
+import { replaceEqualDeep, shallowEqualObjects } from './utils'
 import type { QueryClient } from './queryClient'
 import type {
+  CanFetchOnQueryChange,
   ObserverOptionsInput,
   QueryObserverResultReader,
 } from './queryObserver'
@@ -83,6 +80,17 @@ export interface QueriesObserverOptions<
 }
 
 /**
+ * Controls automatic fetches and combining for a group of queries.
+ * @internal
+ */
+export interface QueriesObserverReaderPolicy {
+  /** Controls automatic fetches when switching or enabling a query. */
+  canFetchOnQueryChange?: CanFetchOnQueryChange
+  /** Return false to notify with raw results and keep the last combined value. */
+  canCombine?: (results: Array<QueryObserverResult>) => boolean
+}
+
+/**
  * A `QueriesObserver` watches an array of queries at once, exposing them as
  * a single array of `QueryObserverResult`s (or, when a `combine` option is
  * given, as a combined value derived from that array). It manages one
@@ -111,6 +119,7 @@ export class QueriesObserver<
   #combineContext: CombineContext<TCombinedResult> = {}
   #observerMatches: Array<QueryObserverMatch> = []
   #updatingQueries = false
+  #canCombine?: QueriesObserverReaderPolicy['canCombine']
 
   constructor(
     client: QueryClient,
@@ -175,8 +184,10 @@ export class QueriesObserver<
   #setQueries(
     newObserverMatches: Array<QueryObserverMatch>,
     options?: QueriesObserverOptions<TCombinedResult>,
+    canCombine?: QueriesObserverReaderPolicy['canCombine'],
   ): void {
     this.#options = options
+    this.#canCombine = canCombine
 
     if (process.env.NODE_ENV !== 'production') {
       const queryHashes = newObserverMatches.map(
@@ -286,20 +297,26 @@ export class QueriesObserver<
    * their computation state. Abandoned readers do not change active observers.
    * @param queries - The options of the queries to read and commit.
    * @param options - The combine function used for this reader.
+   * @param policy - The fetch and combine policy for this read and commit.
    * @returns A reader with local snapshot and combine caches.
    */
   createResultReader(
     queries: Array<ObserverOptionsInput<any, any, any, any, any>>,
     options?: QueriesObserverOptions<TCombinedResult>,
+    policy?: QueriesObserverReaderPolicy,
   ): QueriesObserverResultReader<TCombinedResult> {
     const matches = this.#findMatchingObservers(queries).map((match) => ({
       ...match,
-      reader: match.observer.createResultReader(match.defaultedQueryOptions),
+      reader: match.observer.createResultReader(
+        match.defaultedQueryOptions,
+        policy?.canFetchOnQueryChange,
+      ),
     }))
     const queryHashes = matches.map(
       (match) => match.defaultedQueryOptions.queryHash,
     )
     const combine = options?.combine
+    const canCombine = policy?.canCombine
     const context = { ...this.#combineContext }
     let result = this.#result
 
@@ -333,7 +350,7 @@ export class QueriesObserver<
       },
       commit: () => {
         this.#combineContext = { ...context }
-        this.#setQueries(matches, { combine })
+        this.#setQueries(matches, { combine }, canCombine)
         if (
           this.#options?.combine === combine &&
           equalResults(this.#result, context.result)
@@ -398,21 +415,7 @@ export class QueriesObserver<
   }
 
   #shouldSkipCombine(): boolean {
-    return (
-      !this.#options?.combine ||
-      this.#observers.some((observer, index) => {
-        const result = this.#result[index]
-        return (
-          (observer.options.suspense && result?.data === undefined) ||
-          (!!result?.isError &&
-            !result.isFetching &&
-            shouldThrowError(observer.options.throwOnError, [
-              result.error,
-              observer.getCurrentQuery(),
-            ]))
-        )
-      })
-    )
+    return !this.#options?.combine || this.#canCombine?.(this.#result) === false
   }
 
   #findMatchingObservers(

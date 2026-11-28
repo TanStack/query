@@ -4,8 +4,8 @@ import { useIsRestoring } from './IsRestoringProvider'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import {
-  ensurePreventErrorBoundaryRetry,
   getHasError,
+  prepareErrorBoundaryOptions,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
 import { useSyncExternalStore } from './utils'
@@ -16,7 +16,7 @@ import type {
   QueryObserverResult,
 } from '@tanstack/query-core'
 import type { suspenseQueryPolicy } from './suspense'
-import type { UseBaseQueryOptions } from './types'
+import type { DefaultedQueryOptions, UseBaseQueryOptions } from './types'
 
 /**
  * Base implementation shared by `useQuery`, `useInfiniteQuery`, `useSuspenseQuery`, and
@@ -61,10 +61,13 @@ export function useBaseQuery<
   const isRestoring = useIsRestoring()
   const errorResetBoundary = useQueryErrorResetBoundary()
   const client = useQueryClient(queryClient)
-  const defaultedOptions = client.defaultQueryOptions({
-    ...options,
-    suspense: !!suspense,
-  })
+  const defaultedOptions: DefaultedQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  > = client.defaultQueryOptions({ ...options })
 
   const query = client
     .getQueryCache()
@@ -90,7 +93,12 @@ export function useBaseQuery<
       : undefined
 
   suspense?.prepare(defaultedOptions)
-  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary, query)
+  prepareErrorBoundaryOptions(
+    defaultedOptions,
+    errorResetBoundary,
+    query,
+    !!suspense,
+  )
 
   useClearResetErrorBoundary(errorResetBoundary)
 
@@ -102,7 +110,10 @@ export function useBaseQuery<
       ),
   )
 
-  const reader = observer.createResultReader(defaultedOptions)
+  const reader = observer.createResultReader(
+    defaultedOptions,
+    suspense?.canFetchOnQueryChange,
+  )
 
   suspense?.readQuery(
     defaultedOptions,
@@ -142,7 +153,7 @@ export function useBaseQuery<
       errorResetBoundary,
       throwOnError: defaultedOptions.throwOnError,
       query,
-      suspense: defaultedOptions.suspense,
+      suspense: !!suspense,
     })
   ) {
     throw result.error

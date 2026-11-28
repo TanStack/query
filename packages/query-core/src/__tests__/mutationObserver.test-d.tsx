@@ -231,16 +231,6 @@ describe('mutationObserver', () => {
       })
     })
 
-    describe('throwOnError', () => {
-      it('should be a boolean or a predicate taking the error', () => {
-        expectTypeOf<
-          MutationObserverOptions<Data, CustomError, Variables>['throwOnError']
-        >().toEqualTypeOf<
-          boolean | ((error: CustomError) => boolean) | undefined
-        >()
-      })
-    })
-
     describe('meta', () => {
       it('should be optional mutation meta', () => {
         expectTypeOf<

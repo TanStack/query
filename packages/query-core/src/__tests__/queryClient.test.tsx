@@ -200,14 +200,14 @@ describe('queryClient', () => {
     it('should merge defaultOptions', () => {
       const key = createKey()
 
-      queryClient.setQueryDefaults([...key, 'todo'], { suspense: true })
+      queryClient.setQueryDefaults([...key, 'todo'], { retry: false })
       queryClient.setQueryDefaults([...key, 'todo', 'detail'], {
         staleTime: 5000,
       })
 
       expect(
         queryClient.getQueryDefaults([...key, 'todo', 'detail']),
-      ).toMatchObject({ suspense: true, staleTime: 5000 })
+      ).toMatchObject({ retry: false, staleTime: 5000 })
     })
   })
 

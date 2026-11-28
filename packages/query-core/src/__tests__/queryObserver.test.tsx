@@ -1013,13 +1013,15 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
-  it('notifies listeners of errors with notifyOnChangeProps set to none and throwOnError enabled', async () => {
+  it('suppresses notifications when an error appears or clears with notifyOnChangeProps set to none', async () => {
     const error = new Error('fetch failed')
     const observer = new QueryObserver(queryClient, {
       queryKey: createKey(),
-      queryFn: () => Promise.reject(error),
+      queryFn: vi
+        .fn<() => Promise<string>>()
+        .mockRejectedValueOnce(error)
+        .mockResolvedValueOnce('data'),
       notifyOnChangeProps: 'none',
-      throwOnError: true,
       retry: false,
     })
     const listener = vi.fn<(result: QueryObserverResult) => void>()
@@ -1027,9 +1029,13 @@ describe('queryObserver', () => {
 
     await vi.advanceTimersByTimeAsync(0)
 
-    expect(listener).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ error }),
-    )
+    expect(observer.getCurrentResult().error).toBe(error)
+    expect(listener).not.toHaveBeenCalled()
+
+    await observer.refetch()
+
+    expect(observer.getCurrentResult().error).toBeNull()
+    expect(listener).not.toHaveBeenCalled()
 
     unsubscribe()
   })
@@ -1724,45 +1730,7 @@ describe('queryObserver', () => {
     expect(queryClient.getQueryState(key)?.fetchStatus).toBe('idle')
   })
 
-  it('should track error prop when throwOnError is true', async () => {
-    const key = createKey()
-    const results: Array<QueryObserverResult> = []
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => Promise.reject('error'),
-      retry: false,
-      throwOnError: true,
-    })
-
-    const trackedResult = observer.trackResult(
-      observer.getCurrentResult(),
-      (prop) => {
-        if (prop === 'data' || prop === 'status') {
-          observer.trackProp(prop)
-        }
-      },
-    )
-
-    trackedResult.data
-    trackedResult.status
-
-    const unsubscribe = observer.subscribe((result) => {
-      results.push(result)
-    })
-    await vi.advanceTimersByTimeAsync(0)
-    const lastResult = results[results.length - 1]
-    expect(lastResult?.status).toBe('error')
-
-    expect(results).toHaveLength(1)
-    expect(results[0]).toMatchObject({
-      status: 'error',
-      error: 'error',
-    })
-
-    unsubscribe()
-  })
-
-  it('should not track error prop when throwOnError is not set', async () => {
+  it('notifies listeners of errors when only data is tracked', async () => {
     const key = createKey()
     const results: Array<QueryObserverResult> = []
     const observer = new QueryObserver(queryClient, {
@@ -1786,11 +1754,14 @@ describe('queryObserver', () => {
       results.push(result)
     })
     await vi.advanceTimersByTimeAsync(0)
+    const lastResult = results[results.length - 1]
+    expect(lastResult?.status).toBe('error')
 
-    // Without throwOnError, `error` is not auto-added to trackedProps.
-    // Since only `data` is tracked and it did not change (stayed undefined),
-    // the listener is not invoked even though `error` prop changed.
-    expect(results).toHaveLength(0)
+    expect(results).toHaveLength(1)
+    expect(results[0]).toMatchObject({
+      status: 'error',
+      error: 'error',
+    })
 
     unsubscribe()
   })

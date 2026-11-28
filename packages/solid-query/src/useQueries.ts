@@ -22,11 +22,10 @@ import type {
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  ThrowOnError,
 } from '@tanstack/query-core'
 import type { Accessor } from 'solid-js'
 import type { QueryClient } from './QueryClient'
-import type { QueryOptions, UseQueryResult } from './types'
+import type { QueryOptions, ThrowOnError, UseQueryResult } from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter

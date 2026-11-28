@@ -562,7 +562,7 @@ describe('createQueriesController', () => {
       const key5 = createKey()
 
       type BizError = { code: number }
-      const throwOnError = (_error: BizError) => true
+      const retry = (_failureCount: number, _error: BizError) => true
 
       // Array.map preserves TQueryFnData
       const result1 = createQueriesController(
@@ -589,7 +589,7 @@ describe('createQueriesController', () => {
           queries: Array(50).map((_, i) => ({
             queryKey: ['key', i] as const,
             queryFn: () => i + 10,
-            throwOnError,
+            retry,
           })),
         },
         new QueryClient(),
@@ -625,7 +625,7 @@ describe('createQueriesController', () => {
             queryKey: ['key', i] as const,
             queryFn: () => i + 10,
             select: (data: number) => data.toString(),
-            throwOnError,
+            retry,
           })),
         },
         new QueryClient(),
@@ -654,7 +654,7 @@ describe('createQueriesController', () => {
             {
               queryKey: key5,
               queryFn: () => 'string',
-              throwOnError,
+              retry,
             },
           ],
         },
@@ -674,7 +674,7 @@ describe('createQueriesController', () => {
       expectTypeOf(result3[3].data).toEqualTypeOf<string | undefined>()
       // select takes precedence over queryFn
       expectTypeOf(result3[2].data).toEqualTypeOf<number | undefined>()
-      // infer TError from throwOnError
+      // infer TError from retry
       expectTypeOf(result3[3].error).toEqualTypeOf<BizError | null>()
 
       // initialData/placeholderData are enforced
@@ -701,7 +701,7 @@ describe('createQueriesController', () => {
         new QueryClient(),
       )()
 
-      // select and throwOnError params are "indirectly" enforced
+      // select and retry params are "indirectly" enforced
       createQueriesController(
         new Host(),
         {
@@ -729,7 +729,7 @@ describe('createQueriesController', () => {
             {
               queryKey: key5,
               queryFn: () => 'string',
-              throwOnError,
+              retry,
             },
           ],
         },
@@ -782,7 +782,7 @@ describe('createQueriesController', () => {
               queryKey: key5,
               queryFn: () => 'string',
               select: (a: string) => parseInt(a),
-              throwOnError,
+              retry,
             },
           ],
         },
@@ -834,7 +834,7 @@ describe('createQueriesController', () => {
             {
               queryKey: key5,
               queryFn: () => 'string',
-              throwOnError,
+              retry,
             },
           ],
         } as const,

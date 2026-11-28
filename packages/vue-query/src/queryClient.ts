@@ -6,7 +6,6 @@ import { cloneDeepUnref } from './utils'
 import type {
   CancelOptions,
   DefaultError,
-  DefaultOptions,
   InferDataFromTag,
   InferErrorFromTag,
   InfiniteData,
@@ -15,7 +14,6 @@ import type {
   InvalidateQueryFilters,
   MutationFilters,
   MutationKey,
-  MutationObserverOptions,
   QueryExecuteOptions,
   QueryFilters,
   QueryKey,
@@ -30,9 +28,11 @@ import type {
 import type { Ref } from 'vue'
 import type { UseQueryOptions } from './queryOptions'
 import type {
+  DefaultOptions,
   MaybeRef,
   MaybeRefDeep,
   MaybeRefOrGetter,
+  MutationOptions,
   NoUnknown,
   QueryClientConfig,
 } from './types'
@@ -453,6 +453,8 @@ export class QueryClient extends QC {
     return super.infiniteQuery(cloneDeepUnref(options))
   }
 
+  declare getDefaultOptions: () => DefaultOptions
+
   override setDefaultOptions(options: MaybeRefDeep<DefaultOptions>): void {
     super.setDefaultOptions(cloneDeepUnref(options))
   }
@@ -478,7 +480,8 @@ export class QueryClient extends QC {
 
   override getQueryDefaults(
     queryKey: MaybeRefDeep<QueryKey>,
-  ): ReturnType<QC['getQueryDefaults']> {
+  ): ReturnType<QC['getQueryDefaults']> &
+    Pick<NonNullable<DefaultOptions<any>['queries']>, 'throwOnError'> {
     return super.getQueryDefaults(cloneDeepUnref(queryKey))
   }
 
@@ -490,7 +493,7 @@ export class QueryClient extends QC {
   >(
     mutationKey: MaybeRefDeep<MutationKey>,
     options: MaybeRefDeep<
-      MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>
+      MutationOptions<TData, TError, TVariables, TOnMutateResult>
     >,
   ): void {
     super.setMutationDefaults(
@@ -501,7 +504,7 @@ export class QueryClient extends QC {
 
   override getMutationDefaults(
     mutationKey: MaybeRefDeep<MutationKey>,
-  ): MutationObserverOptions<any, any, any, any> {
+  ): MutationOptions<any, any, any, any> {
     return super.getMutationDefaults(cloneDeepUnref(mutationKey))
   }
 }

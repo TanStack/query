@@ -50,7 +50,6 @@ describe('result reader types', () => {
       initialPageParam: 0,
       getNextPageParam: (last) => last + 1,
       queryHash: 'value',
-      throwOnError: false,
       refetchOnReconnect: true,
     }
     const observer = new InfiniteQueryObserver(new QueryClient(), options)

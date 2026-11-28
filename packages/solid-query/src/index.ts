@@ -18,6 +18,7 @@ export type {
   InfiniteQueryOptions,
   MutationOptions,
   QueryOptions,
+  ThrowOnError,
   UseBaseMutationResult,
   UseBaseQueryOptions,
   UseBaseQueryResult,

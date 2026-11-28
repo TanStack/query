@@ -27,9 +27,8 @@ type SignalFunction<T extends () => any> = T & Signal<ReturnType<T>>
 
 /**
  * The options accepted by `injectQuery`, with cache data projected through an optional `select`. Same as
- * {@link QueryObserverOptions} from `@tanstack/query-core`, minus `notifyOnChangeProps`, `suspense`, and
- * `throwOnError`: Angular owns result notifications and exposes errors through signals rather than error
- * boundaries.
+ * {@link QueryObserverOptions} from `@tanstack/query-core`, minus `notifyOnChangeProps`. Angular owns result
+ * notifications and exposes errors through signals.
  * @template TQueryFnData - The type your `queryFn` resolves to.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` when no
@@ -43,7 +42,7 @@ export type CreateQueryOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = OmitKeyof<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
-  'notifyOnChangeProps' | 'suspense' | 'throwOnError'
+  'notifyOnChangeProps'
 >
 
 type CreateStatusBasedQueryResult<
@@ -232,8 +231,7 @@ export interface DefinedInfiniteQueryNarrowing<
 /**
  * The options accepted by `injectInfiniteQuery`, including page parameters and pagination callbacks. Same as
  * {@link InfiniteQueryObserverOptions} from `@tanstack/query-core` — for the infinite-query-specific options
- * (`getNextPageParam`, `initialPageParam`, etc.) — minus `notifyOnChangeProps`, `suspense`, and
- * `throwOnError`, like {@link CreateQueryOptions}.
+ * (`getNextPageParam`, `initialPageParam`, etc.) — minus `notifyOnChangeProps`, like {@link CreateQueryOptions}.
  * @template TQueryFnData - The type of a single page, as your `queryFn` resolves it.
  * @template TError - The type of errors your `queryFn` may throw.
  * @template TData - The type `data` ends up as after `select` runs. Defaults to `TQueryFnData` here, though
@@ -256,7 +254,7 @@ export interface CreateInfiniteQueryOptions<
     TQueryKey,
     TPageParam
   >,
-  'notifyOnChangeProps' | 'suspense' | 'throwOnError'
+  'notifyOnChangeProps'
 > {}
 
 /**
@@ -359,7 +357,7 @@ export interface CreateMutationOptions<
   TOnMutateResult = unknown,
 > extends OmitKeyof<
   MutationObserverOptions<TData, TError, TVariables, TOnMutateResult>,
-  '_defaulted' | 'throwOnError'
+  '_defaulted'
 > {}
 
 /**

@@ -541,7 +541,7 @@ export class QueryClient {
    * The accepted options are `QueryObserverOptions` minus the fields that only make sense for a
    * reactive observer — `enabled`, `refetchInterval`, `refetchIntervalInBackground`,
    * `refetchOnWindowFocus`, `refetchOnReconnect`, `refetchOnMount`, `retryOnMount`,
-   * `notifyOnChangeProps`, `throwOnError`, `suspense`, and `placeholderData` are not part of this
+   * `notifyOnChangeProps` and `placeholderData` are not part of this
    * method's options.
    * Shared query options can contain `skipToken` as their `queryFn`. If the supplied options contain
    * the token, the call skips fetching and resolves with existing data regardless of freshness.
@@ -1042,9 +1042,6 @@ export class QueryClient {
     if (defaultedOptions.refetchOnReconnect === undefined) {
       defaultedOptions.refetchOnReconnect =
         defaultedOptions.networkMode !== 'always'
-    }
-    if (defaultedOptions.throwOnError === undefined) {
-      defaultedOptions.throwOnError = !!defaultedOptions.suspense
     }
 
     if (!defaultedOptions.networkMode && defaultedOptions.persister) {

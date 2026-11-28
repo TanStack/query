@@ -1,4 +1,4 @@
-import { MutationObserver, shouldThrowError } from '@tanstack/query-core'
+import { MutationObserver } from '@tanstack/query-core'
 import {
   computed,
   getCurrentScope,
@@ -11,7 +11,7 @@ import {
   watch,
 } from 'vue'
 import { useQueryClient } from './useQueryClient'
-import { cloneDeepUnref, updateState } from './utils'
+import { cloneDeepUnref, shouldThrowError, updateState } from './utils'
 import type {
   DefaultError,
   DistributiveOmit,

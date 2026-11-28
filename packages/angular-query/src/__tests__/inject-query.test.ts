@@ -66,7 +66,7 @@ describe('injectQuery', () => {
   it('should keep failed refetch state and cached data readable without global reporting', async () => {
     vi.useRealTimers()
     queryClient.setDefaultOptions({
-      queries: { retry: false, throwOnError: true },
+      queries: { retry: false },
     })
     const report = vi.spyOn(TestBed.inject(ErrorHandler), 'handleError')
     const error = new Error('query failed')

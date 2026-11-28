@@ -1,13 +1,8 @@
-import { shouldThrowError } from '@tanstack/query-core'
 import { useEffect } from 'preact/hooks'
-import type {
-  DefaultedQueryObserverOptions,
-  Query,
-  QueryKey,
-  QueryObserverResult,
-  ThrowOnError,
-} from '@tanstack/query-core'
+import { shouldThrowError } from './utils'
+import type { Query, QueryKey, QueryObserverResult } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
+import type { DefaultedQueryOptions, ThrowOnError } from './types'
 
 /**
  * Turns off `retryOnMount` for a query that throws its errors (with `suspense` or `throwOnError`),
@@ -16,15 +11,16 @@ import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
  * @param options - The defaulted query options to adjust.
  * @param errorResetBoundary - The value of the nearest `QueryErrorResetBoundary`.
  * @param query - The query, used to evaluate a `throwOnError` function against its error.
+ * @param suspense - Whether the hook uses Suspense.
  */
-export const ensurePreventErrorBoundaryRetry = <
+export const prepareErrorBoundaryOptions = <
   TQueryFnData,
   TError,
   TData,
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: DefaultedQueryObserverOptions<
+  options: DefaultedQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -33,7 +29,12 @@ export const ensurePreventErrorBoundaryRetry = <
   >,
   errorResetBoundary: QueryErrorResetBoundaryValue,
   query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
+  suspense: boolean,
 ) => {
+  if (options.notifyOnChangeProps === 'none') {
+    options.throwOnError = false
+  }
+
   const throwOnError =
     query?.state.status === 'error' &&
     typeof options.throwOnError === 'function'
@@ -43,7 +44,7 @@ export const ensurePreventErrorBoundaryRetry = <
         ])
       : options.throwOnError
 
-  if (options.suspense || throwOnError) {
+  if (suspense || throwOnError) {
     // Prevent retrying failed query if the error boundary has not been reset yet
     if (!errorResetBoundary.isReset()) {
       options.retryOnMount = false
@@ -87,7 +88,7 @@ export const getHasError = <
 }: {
   result: QueryObserverResult<TData, TError>
   errorResetBoundary: QueryErrorResetBoundaryValue
-  throwOnError: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
+  throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
   query: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined
   suspense: boolean | undefined
 }) => {

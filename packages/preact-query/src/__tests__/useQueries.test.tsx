@@ -473,48 +473,83 @@ describe('useQueries', () => {
     expect(rendered.getByText('error boundary')).toBeInTheDocument()
   })
 
-  it("should throw error if in one of queries' queryFn throws and throwOnError is in use while the combined result does not change", async () => {
+  it('sends an error to the boundary when combined data stays the same', async () => {
     vi.spyOn(console, 'error').mockReturnValue(undefined)
-    const key = createKey()
+    const queryKey = createKey()
 
     function Page() {
       const data = useQueries({
         queries: [
           {
-            queryKey: key,
+            queryKey,
             queryFn: () =>
-              sleep(10).then(() =>
-                Promise.reject(new Error('single query error')),
-              ),
-            throwOnError: true,
+              sleep(10).then(() => {
+                throw new Error('query failed')
+              }),
             retry: false,
+            throwOnError: true,
           },
         ],
         combine: (results) => results.map((result) => result.data),
       })
-
       return <div>data: {String(data[0])}</div>
     }
 
     const rendered = renderWithClient(
       queryClient,
-      <ErrorBoundary
-        fallbackRender={({ error }) => (
-          <div>
-            <div>error boundary</div>
-            <div>{error.message}</div>
-          </div>
-        )}
-      >
+      <ErrorBoundary fallbackRender={({ error }) => <div>{error.message}</div>}>
         <Page />
       </ErrorBoundary>,
     )
 
     expect(rendered.getByText('data: undefined')).toBeInTheDocument()
+    await vi.advanceTimersByTimeAsync(10)
+    expect(rendered.getByText('query failed')).toBeInTheDocument()
+  })
 
-    await vi.advanceTimersByTimeAsync(11)
-    expect(rendered.getByText('error boundary')).toBeInTheDocument()
-    expect(rendered.getByText('single query error')).toBeInTheDocument()
+  it('reports the query error before calling combine with a failed result', async () => {
+    vi.spyOn(console, 'error').mockReturnValue(undefined)
+    const queryKey = createKey()
+    const queryError = new Error('query failed')
+    const queryFn = () => Promise.reject(queryError)
+    const onError = vi.fn<(error: Error) => void>()
+    queryCache.config.onError = onError
+
+    function Page() {
+      const data = useQueries({
+        queries: [
+          {
+            queryKey,
+            queryFn,
+            enabled: false,
+            retry: false,
+            throwOnError: true,
+          },
+        ],
+        combine: ([result]) => {
+          if (result.isError) {
+            throw new Error('combine received a failed result')
+          }
+          return result.data
+        },
+      })
+      return <div>data: {String(data)}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={({ error }) => <div>{error.message}</div>}>
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    expect(rendered.getByText('data: undefined')).toBeInTheDocument()
+    await expect(
+      queryClient.query({ queryKey, queryFn, retry: false }),
+    ).rejects.toBe(queryError)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(onError).toHaveBeenCalledWith(queryError, expect.anything())
+    expect(rendered.getByText('query failed')).toBeInTheDocument()
   })
 
   it('should use provided custom queryClient', async () => {

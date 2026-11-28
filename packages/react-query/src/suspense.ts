@@ -43,31 +43,29 @@ export const defaultThrowOnError = <
  * collected. A `'static'` `staleTime` is kept as is. Mutates the options.
  * @param defaultedOptions - The defaulted query options to adjust.
  */
-export const ensureSuspenseTimers = (
+export const prepareSuspenseOptions = (
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
 ) => {
-  if (defaultedOptions.suspense) {
-    // Handle staleTime to ensure minimum 1000ms in Suspense mode
-    // This prevents unnecessary refetching when components remount after suspending
-    const MIN_SUSPENSE_TIME_MS = 1000
+  // Handle staleTime to ensure minimum 1000ms in Suspense mode
+  // This prevents unnecessary refetching when components remount after suspending
+  const MIN_SUSPENSE_TIME_MS = 1000
 
-    const clamp = (value: number | 'static' | undefined) =>
-      value === 'static'
-        ? value
-        : Math.max(value ?? MIN_SUSPENSE_TIME_MS, MIN_SUSPENSE_TIME_MS)
+  const clamp = (value: number | 'static' | undefined) =>
+    value === 'static'
+      ? value
+      : Math.max(value ?? MIN_SUSPENSE_TIME_MS, MIN_SUSPENSE_TIME_MS)
 
-    const originalStaleTime = defaultedOptions.staleTime
-    defaultedOptions.staleTime =
-      typeof originalStaleTime === 'function'
-        ? (...args) => clamp(originalStaleTime(...args))
-        : clamp(originalStaleTime)
+  const originalStaleTime = defaultedOptions.staleTime
+  defaultedOptions.staleTime =
+    typeof originalStaleTime === 'function'
+      ? (...args) => clamp(originalStaleTime(...args))
+      : clamp(originalStaleTime)
 
-    if (typeof defaultedOptions.gcTime === 'number') {
-      defaultedOptions.gcTime = Math.max(
-        defaultedOptions.gcTime,
-        MIN_SUSPENSE_TIME_MS,
-      )
-    }
+  if (typeof defaultedOptions.gcTime === 'number') {
+    defaultedOptions.gcTime = Math.max(
+      defaultedOptions.gcTime,
+      MIN_SUSPENSE_TIME_MS,
+    )
   }
 }
 
@@ -142,8 +140,6 @@ const useReadSuspenseQuery = (
   client: QueryClient,
   errorResetBoundary: QueryErrorResetBoundaryValue,
 ) => {
-  if (!defaultedOptions.suspense) return
-
   const snapshot = reader.getSnapshot()
   const query = client.getQueryCache().build(client, defaultedOptions)
   const suspend = shouldSuspend(snapshot, errorResetBoundary, query)
@@ -160,9 +156,13 @@ const useReadSuspenseQuery = (
   }
 }
 
+const canFetchOnQueryChange = (query: Query<any, any, any, any>) =>
+  query.state.status !== 'error'
+
 /** Supplies Suspense behavior for one query. */
 export const suspenseQueryPolicy = {
-  prepare: ensureSuspenseTimers,
+  prepare: prepareSuspenseOptions,
+  canFetchOnQueryChange,
   readQuery: useReadSuspenseQuery,
 }
 
@@ -177,7 +177,7 @@ const useReadSuspenseQueries = (
   const suspensePromises = snapshot.map((result, index) => {
     const opts = defaultedQueries[index]
 
-    if (!opts?.suspense) {
+    if (!opts) {
       return undefined
     }
 
@@ -209,6 +209,9 @@ const useReadSuspenseQueries = (
 
 /** Supplies Suspense behavior for parallel queries. */
 export const suspenseQueriesPolicy = {
-  prepare: ensureSuspenseTimers,
+  prepare: prepareSuspenseOptions,
+  canFetchOnQueryChange,
   readQueries: useReadSuspenseQueries,
+  canCombine: (results: Array<SuspenseResult>) =>
+    results.every((result) => result.data !== undefined),
 }

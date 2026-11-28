@@ -54,7 +54,6 @@ describe('Suspense Timer Tests', () => {
     const options = queryClient.defaultQueryOptions({
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
-      suspense: true,
     })
     const observer = new QueryObserver(queryClient, options)
     const errorResetBoundary = {
@@ -87,7 +86,6 @@ describe('Suspense Timer Tests', () => {
     const options = queryClient.defaultQueryOptions({
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'data'),
-      suspense: true,
     })
     const observer = new QueryObserver(queryClient, options)
     const errorResetBoundary = {

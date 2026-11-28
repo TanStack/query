@@ -18,12 +18,16 @@ import type {
   QueryFunction,
   QueryKey,
   QueryObserverResult,
-  ThrowOnError,
 } from '@tanstack/query-core'
 import type { Ref } from 'vue'
 import type { QueryClient } from './queryClient'
 import type { UseQueryOptions } from './queryOptions'
-import type { DeepUnwrapRef, MaybeRefDeep, ShallowOption } from './types'
+import type {
+  DeepUnwrapRef,
+  MaybeRefDeep,
+  ShallowOption,
+  ThrowOnError,
+} from './types'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // `placeholderData` function does not have a parameter

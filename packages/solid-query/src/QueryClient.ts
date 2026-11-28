@@ -2,12 +2,15 @@ import { QueryClient as QueryCoreClient } from '@tanstack/query-core'
 import type {
   DefaultOptions as CoreDefaultOptions,
   DefaultError,
+  InfiniteData,
+  MutationKey,
   OmitKeyof,
   QueryClientConfig as QueryCoreClientConfig,
   InfiniteQueryObserverOptions as QueryCoreInfiniteQueryObserverOptions,
   QueryObserverOptions as QueryCoreObserverOptions,
   QueryKey,
 } from '@tanstack/query-core'
+import type { MutationOptions, ThrowOnError } from './types'
 
 /**
  * The core `QueryObserverOptions`, with Solid's `reconcile` option added.
@@ -35,8 +38,14 @@ export interface QueryObserverOptions<
     TQueryKey,
     TPageParam
   >,
-  'structuralSharing' | 'suspense'
+  'structuralSharing'
 > {
+  /**
+   * A boolean or predicate that sends errors to the nearest error boundary.
+   * This option is ignored when `notifyOnChangeProps` is `'none'`.
+   * @defaultValue false
+   */
+  throwOnError?: ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * Set this to a reconciliation key to enable reconciliation between query results.
    * Set this to `false` to disable reconciliation between query results.
@@ -71,8 +80,20 @@ export interface InfiniteQueryObserverOptions<
     TQueryKey,
     TPageParam
   >,
-  'structuralSharing' | 'suspense'
+  'structuralSharing'
 > {
+  /**
+   * A boolean or predicate that sends errors to the nearest error boundary.
+   * This option is ignored when `notifyOnChangeProps` is `'none'`.
+   * @defaultValue false
+   */
+  throwOnError?: ThrowOnError<
+    TQueryFnData,
+    TError,
+    InfiniteData<TQueryFnData, TPageParam>,
+    TQueryKey
+  >
+
   /**
    * Set this to a reconciliation key to enable reconciliation between query results.
    * Set this to `false` to disable reconciliation between query results.
@@ -101,7 +122,10 @@ export interface DefaultOptions<
     NonNullable<CoreDefaultOptions<TError>['queries']>,
     'structuralSharing'
   > &
-    Pick<QueryObserverOptions<unknown, TError>, 'reconcile'>
+    Pick<QueryObserverOptions<unknown, TError>, 'reconcile' | 'throwOnError'>
+  /** Default mutation options, including whether to throw errors to an error boundary. */
+  mutations?: CoreDefaultOptions<TError>['mutations'] &
+    Pick<MutationOptions<unknown, TError, unknown>, 'throwOnError'>
 }
 
 /**
@@ -119,6 +143,43 @@ export interface QueryClientConfig extends QueryCoreClientConfig {
  * `reconcile` option.
  */
 export class QueryClient extends QueryCoreClient {
+  declare getDefaultOptions: () => DefaultOptions
+  declare setDefaultOptions: (options: DefaultOptions) => void
+  declare getQueryDefaults: (
+    queryKey: QueryKey,
+  ) => ReturnType<QueryCoreClient['getQueryDefaults']> &
+    Pick<QueryObserverOptions<any, any, any, any>, 'throwOnError'>
+  declare getMutationDefaults: (
+    mutationKey: MutationKey,
+  ) => ReturnType<QueryCoreClient['getMutationDefaults']> &
+    Pick<MutationOptions<any, any, any, any>, 'throwOnError'>
+  declare setQueryDefaults: <
+    TQueryFnData = unknown,
+    TError = DefaultError,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+  >(
+    queryKey: QueryKey,
+    options: Partial<
+      Omit<
+        QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>,
+        'queryKey' | 'reconcile'
+      >
+    >,
+  ) => void
+  declare setMutationDefaults: <
+    TData = unknown,
+    TError = DefaultError,
+    TVariables = void,
+    TOnMutateResult = unknown,
+  >(
+    mutationKey: MutationKey,
+    options: Omit<
+      MutationOptions<TData, TError, TVariables, TOnMutateResult>,
+      'mutationKey'
+    >,
+  ) => void
+
   constructor(config: QueryClientConfig = {}) {
     super(config)
   }

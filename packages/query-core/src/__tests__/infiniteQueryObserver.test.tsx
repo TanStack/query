@@ -224,7 +224,6 @@ describe('InfiniteQueryObserver', () => {
       queryFn: () => sleep(10).then(() => 1),
       initialPageParam: 1,
       getNextPageParam: () => 2,
-      throwOnError: true,
       refetchOnReconnect: false,
       queryHash: key.join(''),
     }

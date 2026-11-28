@@ -45,7 +45,6 @@ describe('injectMutation', () => {
 
   it('publishes mutation failures to observers and cache signals without global reporting', async () => {
     vi.useRealTimers()
-    queryClient.setDefaultOptions({ mutations: { throwOnError: true } })
     const cacheReport = vi.fn<(error: Error) => void>()
     queryClient.getMutationCache().config.onError = cacheReport
     const report = vi.spyOn(TestBed.inject(ErrorHandler), 'handleError')

@@ -345,44 +345,6 @@ describe('queryObserver', () => {
       })
     })
 
-    describe('throwOnError', () => {
-      it('should type the error given to a throwOnError callback', () => {
-        new QueryObserver<{ value: string }, CustomError>(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve({ value: 'data' }),
-          throwOnError: (error, query) => {
-            expectTypeOf(error).toEqualTypeOf<CustomError>()
-            expectTypeOf(query.state.data).toEqualTypeOf<
-              { value: string } | undefined
-            >()
-            return false
-          },
-        })
-      })
-
-      it('should only accept a boolean from a throwOnError callback', () => {
-        new QueryObserver(queryClient, {
-          queryKey: createKey(),
-          queryFn: () => Promise.resolve('data'),
-          // @ts-expect-error the callback must return a boolean
-          throwOnError: () => 'yes',
-        })
-
-        expectTypeOf<
-          Extract<
-            QueryObserverOptions['throwOnError'],
-            (...args: Array<any>) => any
-          >
-        >().returns.toEqualTypeOf<boolean>()
-        expectTypeOf<
-          Exclude<
-            QueryObserverOptions['throwOnError'],
-            (...args: Array<any>) => any
-          >
-        >().toEqualTypeOf<boolean | undefined>()
-      })
-    })
-
     describe('retry', () => {
       it('should type the error given to a retry callback', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
@@ -680,14 +642,6 @@ describe('queryObserver', () => {
 
         expectTypeOf<QueryObserverOptions['networkMode']>().toEqualTypeOf<
           'online' | 'always' | 'offlineFirst' | undefined
-        >()
-      })
-    })
-
-    describe('suspense', () => {
-      it('should type suspense as a boolean', () => {
-        expectTypeOf<QueryObserverOptions['suspense']>().toEqualTypeOf<
-          boolean | undefined
         >()
       })
     })
@@ -1465,14 +1419,6 @@ describe('queryObserver', () => {
         },
       )
 
-      expectTypeOf<
-        Extract<
-          typeof observer.options.throwOnError,
-          (...args: Array<any>) => any
-        >
-      >()
-        .parameter(0)
-        .toEqualTypeOf<CustomError>()
       expectTypeOf(observer.options.select).toEqualTypeOf<
         ((data: { value: string }) => { value: string }) | undefined
       >()
