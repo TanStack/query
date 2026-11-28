@@ -1,15 +1,6 @@
 import { createKey } from '@tanstack/query-test-utils'
-import {
-  projectionInput,
-  selectOption,
-} from '@tanstack/query-test-utils/projection'
 import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
 import { InfiniteQueryObserver, QueryClient } from '..'
-import type {
-  PageDirectionResultKeys,
-  PageFailureDuringFullRefetch,
-  PageFailureDuringLoad,
-} from '@tanstack/query-test-utils/descriptors'
 import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
@@ -307,7 +298,7 @@ describe('infiniteQueryObserver', () => {
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
-          [selectOption]: (data) => {
+          select: (data) => {
             expectTypeOf(data).toEqualTypeOf<
               InfiniteData<{ value: string }, number>
             >()
@@ -322,7 +313,7 @@ describe('infiniteQueryObserver', () => {
           queryFn: () => Promise.resolve({ count: 1 }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
-          [selectOption]: (data) => data.pages.length,
+          select: (data) => data.pages.length,
         })
 
         expectTypeOf(observer.getCurrentResult().data).toEqualTypeOf<
@@ -400,7 +391,10 @@ describe('infiniteQueryObserver', () => {
           | 'fetchPreviousPage'
           | 'hasNextPage'
           | 'hasPreviousPage'
-          | PageDirectionResultKeys
+          | 'isFetchNextPageError'
+          | 'isFetchPreviousPageError'
+          | 'isFetchingNextPage'
+          | 'isFetchingPreviousPage'
         >()
       })
 
@@ -717,12 +711,8 @@ describe('infiniteQueryObserver', () => {
           expectTypeOf(result.isLoading).toEqualTypeOf<false>()
           expectTypeOf(result.isLoadingError).toEqualTypeOf<true>()
           expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
-          expectTypeOf(
-            result.isFetchNextPageError,
-          ).toEqualTypeOf<PageFailureDuringLoad>()
-          expectTypeOf(
-            result.isFetchPreviousPageError,
-          ).toEqualTypeOf<PageFailureDuringLoad>()
+          expectTypeOf(result.isFetchNextPageError).toEqualTypeOf<false>()
+          expectTypeOf(result.isFetchPreviousPageError).toEqualTypeOf<false>()
           expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
           expectTypeOf(result.status).toEqualTypeOf<'error'>()
           expectTypeOf(result.isPlaceholderData).toEqualTypeOf<false>()
@@ -746,7 +736,7 @@ describe('infiniteQueryObserver', () => {
         expectTypeOf<RefetchError['isRefetchError']>().toEqualTypeOf<true>()
       })
 
-      it('should expose the page error types during a full refetch', () => {
+      it('should leave the page error flags unpinned', () => {
         type RefetchError = Extract<
           InfiniteQueryObserverResult<InfiniteData<{ value: string }, number>>,
           { isRefetchError: true }
@@ -754,10 +744,10 @@ describe('infiniteQueryObserver', () => {
 
         expectTypeOf<
           RefetchError['isFetchNextPageError']
-        >().toEqualTypeOf<PageFailureDuringFullRefetch>()
+        >().toEqualTypeOf<boolean>()
         expectTypeOf<
           RefetchError['isFetchPreviousPageError']
-        >().toEqualTypeOf<PageFailureDuringFullRefetch>()
+        >().toEqualTypeOf<boolean>()
       })
 
       it('should pin every flag along with its data and error types', () => {
@@ -961,7 +951,7 @@ describe('infiniteQueryObserver', () => {
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        [selectOption]: (data) => {
+        select: (data) => {
           expectTypeOf(data).toEqualTypeOf<
             InfiniteData<{ value: string }, number>
           >()
@@ -1014,7 +1004,7 @@ describe('infiniteQueryObserver', () => {
         getNextPageParam: () => 1,
       })
 
-      expectTypeOf(projectionInput(observer.options.select)).toEqualTypeOf<
+      expectTypeOf(observer.options.select).toEqualTypeOf<
         | ((
             data: InfiniteData<{ value: string }, number>,
           ) => InfiniteData<{ value: string }, unknown>)

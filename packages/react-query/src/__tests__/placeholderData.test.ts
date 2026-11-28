@@ -1,15 +1,7 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import {
-  placeholderOption,
-  selectOption,
-} from '@tanstack/query-test-utils/projection'
 import { renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, useQueries, useQuery } from '..'
-import type {
-  PlaceholderSetting,
-  SelectSetting,
-} from '@tanstack/query-test-utils/projection'
 
 class Placeholder {
   constructor(readonly value: number) {}
@@ -18,8 +10,8 @@ class Placeholder {
 type Options = {
   queryKey: ReadonlyArray<unknown>
   queryFn: () => Promise<Placeholder>
-  placeholderData: PlaceholderSetting<Placeholder>
-  select?: SelectSetting<(data: Placeholder) => Placeholder | Set<number>>
+  placeholderData: Placeholder
+  select?: (data: Placeholder) => Placeholder | Set<number>
 }
 
 function useMultiple(options: Options, client: QueryClient) {
@@ -86,8 +78,8 @@ describe('placeholder updates', () => {
           {
             queryKey: key,
             queryFn: () => new Promise<Placeholder>(() => {}),
-            [placeholderOption]: input,
-            [selectOption]: select,
+            placeholderData: input,
+            select,
           },
           client,
         )
@@ -116,16 +108,7 @@ describe('placeholder updates', () => {
     const queryFn = () => sleep(10).then(() => ({ value: 1 }))
     const { result, rerender } = renderHook(() => {
       const [{ data, error }] = useQueries(
-        {
-          queries: [
-            {
-              queryKey,
-              queryFn,
-              [placeholderOption]: placeholderData,
-              [selectOption]: select,
-            },
-          ],
-        },
+        { queries: [{ queryKey, queryFn, placeholderData, select }] },
         client,
       )
       return { data, error }

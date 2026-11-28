@@ -1,10 +1,4 @@
 import { createKey } from '@tanstack/query-test-utils'
-import { refetchInterval } from '@tanstack/query-test-utils/polling'
-import {
-  placeholderOption,
-  projectionInput,
-  selectOption,
-} from '@tanstack/query-test-utils/projection'
 import {
   afterEach,
   assertType,
@@ -14,9 +8,6 @@ import {
   it,
 } from 'vitest'
 import { QueryClient, QueryObserver, defaultQueryFn } from '..'
-import type { QueryBoundaryTuple } from '@tanstack/query-test-utils/descriptors'
-import type { IntervalInput } from '@tanstack/query-test-utils/polling'
-import type { ProjectionInput } from '@tanstack/query-test-utils/projection'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
@@ -78,7 +69,7 @@ describe('queryObserver', () => {
 
     it('should derive its remaining type parameters from the data type', () => {
       expectTypeOf<
-        ProjectionInput<QueryObserverOptions<{ value: string }>['select']>
+        QueryObserverOptions<{ value: string }>['select']
       >().toEqualTypeOf<
         ((data: { value: string }) => { value: string }) | undefined
       >()
@@ -200,7 +191,7 @@ describe('queryObserver', () => {
             expectTypeOf(query.state.data).toEqualTypeOf<
               { value: string } | undefined
             >()
-            return refetchInterval(false)
+            return false
           },
         })
       })
@@ -210,18 +201,18 @@ describe('queryObserver', () => {
           queryKey: createKey(),
           queryFn: () => Promise.resolve('data'),
           // @ts-expect-error a refetchInterval callback must return a number, false or undefined
-          refetchInterval: refetchInterval(() => 'often'),
+          refetchInterval: () => 'often',
         })
 
         expectTypeOf<
           Extract<
-            IntervalInput<QueryObserverOptions['refetchInterval']>,
+            QueryObserverOptions['refetchInterval'],
             (...args: Array<any>) => any
           >
         >().returns.toEqualTypeOf<number | false | undefined>()
         expectTypeOf<
           Exclude<
-            IntervalInput<QueryObserverOptions['refetchInterval']>,
+            QueryObserverOptions['refetchInterval'],
             (...args: Array<any>) => any
           >
         >().toEqualTypeOf<number | false | undefined>()
@@ -388,7 +379,7 @@ describe('queryObserver', () => {
             QueryObserverOptions['throwOnError'],
             (...args: Array<any>) => any
           >
-        >().toEqualTypeOf<boolean | undefined | QueryBoundaryTuple>()
+        >().toEqualTypeOf<boolean | undefined>()
       })
     })
 
@@ -483,7 +474,7 @@ describe('queryObserver', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => Promise.resolve({ count: 1 }),
-          [selectOption]: (data) => data.count,
+          select: (data) => data.count,
         })
 
         expectTypeOf(observer.getCurrentResult().data).toEqualTypeOf<
@@ -495,7 +486,7 @@ describe('queryObserver', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => ({ count: 1 }),
-          [selectOption]: (data) => ({ myCount: data.count }),
+          select: (data) => ({ myCount: data.count }),
         })
 
         observer.subscribe((result) => {
@@ -509,7 +500,7 @@ describe('queryObserver', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => ({ count: 1 }),
-          [selectOption]: (data) => ({ myCount: data.count }),
+          select: (data) => ({ myCount: data.count }),
         })
 
         const observerResult = await observer.refetch()
@@ -523,8 +514,8 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => Promise.resolve({ count: 1 }),
-          [selectOption]: (data) => data.count,
-          [placeholderOption]: (previousData) => {
+          select: (data) => data.count,
+          placeholderData: (previousData) => {
             expectTypeOf(previousData).toEqualTypeOf<
               { count: number } | undefined
             >()
@@ -539,14 +530,12 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          ProjectionInput<
-            QueryObserverOptions<
-              { count: number },
-              DefaultError,
-              number,
-              { count: number }
-            >['placeholderData']
-          >
+          QueryObserverOptions<
+            { count: number },
+            DefaultError,
+            number,
+            { count: number }
+          >['placeholderData']
         >()
           .extract<(...args: Array<any>) => any>()
           .parameter(0)
@@ -591,14 +580,12 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
-          [placeholderOption]: { value: 'placeholder' },
+          placeholderData: { value: 'placeholder' },
         })
 
         expectTypeOf<
           Exclude<
-            ProjectionInput<
-              QueryObserverOptions<{ value: string }>['placeholderData']
-            >,
+            QueryObserverOptions<{ value: string }>['placeholderData'],
             (...args: Array<any>) => any
           >
         >().toEqualTypeOf<{ value: string } | undefined>()
@@ -610,7 +597,7 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: testQueryKey,
           queryFn: defaultQueryFn,
-          [placeholderOption]: (_, previousQuery) => {
+          placeholderData: (_, previousQuery) => {
             if (previousQuery) {
               expectTypeOf(previousQuery.queryKey).toEqualTypeOf<
                 typeof testQueryKey
@@ -624,7 +611,7 @@ describe('queryObserver', () => {
         new QueryObserver<boolean, CustomError>(queryClient, {
           queryKey: createKey(),
           queryFn: defaultQueryFn,
-          [placeholderOption]: (_, previousQuery) => {
+          placeholderData: (_, previousQuery) => {
             if (previousQuery) {
               expectTypeOf(
                 previousQuery.state.error,
@@ -641,8 +628,8 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => queryData,
-          [selectOption]: (data) => data.foo,
-          [placeholderOption]: (previousData) => {
+          select: (data) => data.foo,
+          placeholderData: (previousData) => {
             expectTypeOf(previousData).toEqualTypeOf<
               typeof queryData | undefined
             >()
@@ -1454,7 +1441,7 @@ describe('queryObserver', () => {
       observer.setOptions({
         queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
-        [selectOption]: (data) => {
+        select: (data) => {
           expectTypeOf(data).toEqualTypeOf<{ value: string }>()
           return data
         },
@@ -1486,7 +1473,7 @@ describe('queryObserver', () => {
       >()
         .parameter(0)
         .toEqualTypeOf<CustomError>()
-      expectTypeOf(projectionInput(observer.options.select)).toEqualTypeOf<
+      expectTypeOf(observer.options.select).toEqualTypeOf<
         ((data: { value: string }) => { value: string }) | undefined
       >()
     })
@@ -1608,7 +1595,7 @@ describe('queryObserver', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: createKey(),
         queryFn: () => Promise.resolve({ count: 1 }),
-        [selectOption]: (data) => data.count,
+        select: (data) => data.count,
       })
 
       expectTypeOf(observer.getCurrentQuery().state.data).toEqualTypeOf<
@@ -1779,13 +1766,12 @@ describe('queryObserver', () => {
         Promise<QueryObserverResult<{ value: string }, CustomError>>
       >()
 
-      expectTypeOf<
-        ProjectionInput<
-          Parameters<typeof observer.fetchOptimistic>[0]['select']
-        >
-      >().toEqualTypeOf<
-        ((data: { value: string }) => { value: string }) | undefined
-      >()
+      expectTypeOf(observer.fetchOptimistic)
+        .parameter(0)
+        .toHaveProperty('select')
+        .toEqualTypeOf<
+          ((data: { value: string }) => { value: string }) | undefined
+        >()
     })
   })
 

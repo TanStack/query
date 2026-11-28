@@ -1,7 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest'
 import { Mutation } from '../mutation'
 import { QueryClient } from '../queryClient'
-import type { serialScope } from '@tanstack/query-test-utils/scope'
 import type { Action, MutationState } from '../mutation'
 import type { MutationObserver } from '../mutationObserver'
 import type {
@@ -491,7 +490,7 @@ describe('mutation', () => {
     describe('scope', () => {
       it('should be an optional scope carrying a string id', () => {
         expectTypeOf<Options['scope']>().toEqualTypeOf<
-          ReturnType<typeof serialScope> | undefined
+          { id: string } | undefined
         >()
       })
     })

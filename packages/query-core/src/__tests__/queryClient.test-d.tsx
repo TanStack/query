@@ -1,13 +1,12 @@
-import { selectOption } from '@tanstack/query-test-utils/projection'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
-import type { DataTag, UnsetMarker } from '..'
 import type { Mutation } from '../mutation'
 import type { MutationCache } from '../mutationCache'
 import type { Query, QueryState } from '../query'
 import type { QueryCache } from '../queryCache'
 import type {
+  DataTag,
   DefaultError,
   DefaultOptions,
   DefaultedQueryObserverOptions,
@@ -24,6 +23,7 @@ import type {
   QueryKey,
   QueryObserverOptionsBase,
   SetDataOptions,
+  UnsetMarker,
 } from '../types'
 import type { MutationFilters, QueryFilters, Updater } from '../utils'
 
@@ -361,7 +361,7 @@ describe('queryClient', () => {
       const result = new QueryClient().query({
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
-        [selectOption]: (data) => data.length,
+        select: (data) => data.length,
       })
 
       expectTypeOf(result).toEqualTypeOf<Promise<number>>()
@@ -371,7 +371,7 @@ describe('queryClient', () => {
       const result = new QueryClient().query({
         queryKey: ['key'],
         queryFn: skipToken,
-        [selectOption]: (data: string) => data.length,
+        select: (data: string) => data.length,
       })
 
       expectTypeOf(result).toEqualTypeOf<Promise<number | undefined>>()
@@ -410,7 +410,7 @@ describe('queryClient', () => {
         queryFn: () => Promise.resolve({ count: 1 }),
         initialPageParam: 1,
         getNextPageParam: () => 2,
-        [selectOption]: (data) => ({
+        select: (data) => ({
           pages: data.pages.map((x) => `count: ${x.count}`),
         }),
       })
@@ -810,9 +810,7 @@ describe('queryClient', () => {
 
     it('should infer the passed generic as the tuple data', () => {
       const queryClient = new QueryClient()
-      const data = queryClient.getQueriesData<number>({
-        queryKey: ['key'],
-      })
+      const data = queryClient.getQueriesData<number>({ queryKey: ['key'] })
 
       expectTypeOf(data).toEqualTypeOf<Array<[QueryKey, number | undefined]>>()
     })

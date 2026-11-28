@@ -3,11 +3,6 @@ import {
   mockVisibilityState,
   sleep,
 } from '@tanstack/query-test-utils'
-import { refetchInterval } from '@tanstack/query-test-utils/polling'
-import {
-  placeholderOption,
-  selectOption,
-} from '@tanstack/query-test-utils/projection'
 import { act, fireEvent, render, renderHook } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -94,7 +89,7 @@ describe('useQuery', () => {
         queryKey: [key, id],
         queryFn: () => Promise.resolve({ value: id }),
         staleTime: Infinity,
-        [selectOption]: select,
+        select,
       })
       results.push(data)
       return <div>{data?.selected}</div>
@@ -131,7 +126,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn: () => Promise.resolve(todos),
         staleTime: Infinity,
-        [selectOption]: React.useCallback(
+        select: React.useCallback(
           (items: typeof todos) =>
             items.filter((todo) => todo.completed === completed),
           [completed],
@@ -767,7 +762,7 @@ describe('useQuery', () => {
       const state = useQuery({
         queryKey: key,
         queryFn: () => ({ name: 'test' }),
-        [selectOption]: (data) => data.name,
+        select: (data) => data.name,
       })
       states.push(state)
 
@@ -792,7 +787,7 @@ describe('useQuery', () => {
       const state = useQuery({
         queryKey: key,
         queryFn: () => ({ name: 'test' }),
-        [selectOption]: (data) => data.name,
+        select: (data) => data.name,
       })
       states.push(state)
 
@@ -818,7 +813,7 @@ describe('useQuery', () => {
       const state = useQuery({
         queryKey: key,
         queryFn: () => ({ name: 'test' }),
-        [selectOption]: () => {
+        select: () => {
           throw error
         },
       })
@@ -849,7 +844,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn: () => (runs === 0 ? 'test' : 'test2'),
 
-        [selectOption]: React.useCallback(() => {
+        select: React.useCallback(() => {
           runs++
           throw error
         }, []),
@@ -1336,7 +1331,7 @@ describe('useQuery', () => {
       const state = useQuery({
         queryKey: [key, count],
         queryFn: () => sleep(10).then(() => count),
-        [placeholderOption]: keepPreviousData,
+        placeholderData: keepPreviousData,
       })
 
       states.push(state)
@@ -1398,10 +1393,10 @@ describe('useQuery', () => {
       const state = useQuery({
         queryKey: [key, count],
         queryFn: () => sleep(10).then(() => ({ count })),
-        [selectOption](data) {
+        select(data) {
           return data.count
         },
-        [placeholderOption]: keepPreviousData,
+        placeholderData: keepPreviousData,
       })
 
       states.push(state)
@@ -1464,10 +1459,10 @@ describe('useQuery', () => {
       const state = useQuery({
         queryKey: [key, count],
         queryFn: () => sleep(10).then(() => ({ count })),
-        [selectOption](data) {
+        select(data) {
           return data.count
         },
-        [placeholderOption]: (prevData, prevQuery) => {
+        placeholderData: (prevData, prevQuery) => {
           if (prevQuery) {
             keys.push(prevQuery.queryKey)
           }
@@ -1513,10 +1508,10 @@ describe('useQuery', () => {
       const state = useQuery({
         queryKey: [key, count],
         queryFn: () => sleep(10).then(() => ({ count })),
-        [selectOption](data) {
+        select(data) {
           return data.count
         },
-        [placeholderOption]: keepPreviousData,
+        placeholderData: keepPreviousData,
       })
 
       states.push(state)
@@ -1598,7 +1593,7 @@ describe('useQuery', () => {
             return Promise.resolve(count)
           }),
         retry: false,
-        [placeholderOption]: keepPreviousData,
+        placeholderData: keepPreviousData,
       })
 
       states.push(state)
@@ -1689,7 +1684,7 @@ describe('useQuery', () => {
         queryKey: [key, count],
         queryFn: () => sleep(10).then(() => count),
         initialData: 99,
-        [placeholderOption]: keepPreviousData,
+        placeholderData: keepPreviousData,
       })
 
       states.push(state)
@@ -1757,7 +1752,7 @@ describe('useQuery', () => {
         queryKey: [key, count],
         queryFn: () => sleep(10).then(() => count),
         enabled: false,
-        [placeholderOption]: keepPreviousData,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       })
 
@@ -1849,7 +1844,7 @@ describe('useQuery', () => {
         queryKey: [key, count],
         queryFn: () => sleep(10).then(() => count),
         enabled: false,
-        [placeholderOption]: keepPreviousData,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       })
 
@@ -2157,7 +2152,7 @@ describe('useQuery', () => {
         const state = useQuery({
           queryKey: key,
           queryFn: () => ({ name: 'test' }),
-          [selectOption]: (data) => data.name,
+          select: (data) => data.name,
         })
 
         states.push(state)
@@ -3801,7 +3796,7 @@ describe('useQuery', () => {
         initialData() {
           return filter === '' ? initialTodos : undefined
         },
-        [placeholderOption]: keepPreviousData,
+        placeholderData: keepPreviousData,
         staleTime: 5000,
       })
 
@@ -4044,7 +4039,7 @@ describe('useQuery', () => {
       const { data } = useQuery({
         queryKey: key,
         queryFn: () => count++,
-        refetchInterval: refetchInterval(int),
+        refetchInterval: int,
       })
 
       React.useEffect(() => {
@@ -4076,8 +4071,7 @@ describe('useQuery', () => {
       const queryInfo = useQuery({
         queryKey: key,
         queryFn: () => sleep(10).then(() => count++),
-        refetchInterval: ({ state: { data = 0 } }) =>
-          refetchInterval(data < 2 ? 10 : false),
+        refetchInterval: ({ state: { data = 0 } }) => (data < 2 ? 10 : false),
       })
 
       states.push(queryInfo)
@@ -4141,7 +4135,7 @@ describe('useQuery', () => {
       const queryInfo = useQuery({
         queryKey: key,
         queryFn,
-        refetchInterval: refetchInterval(0),
+        refetchInterval: 0,
       })
 
       return <div>count: {queryInfo.data}</div>
@@ -4228,7 +4222,7 @@ describe('useQuery', () => {
       const state = useQuery({
         queryKey: key1,
         queryFn: () => 'data',
-        [placeholderOption]: 'placeholder',
+        placeholderData: 'placeholder',
       })
 
       states.push(state)
@@ -4271,7 +4265,7 @@ describe('useQuery', () => {
       const state = useQuery({
         queryKey: key1,
         queryFn: () => 'data',
-        [placeholderOption]: 'placeholder',
+        placeholderData: 'placeholder',
         enabled: count === 0,
       })
 
@@ -4294,27 +4288,31 @@ describe('useQuery', () => {
     await vi.advanceTimersByTimeAsync(0)
     rendered.getByText('Data: data')
 
-    expect(
-      states.map(({ count, state }) => ({
-        count,
-        data: state.data,
-        isPlaceholderData: state.isPlaceholderData,
-        isSuccess: state.isSuccess,
-      })),
-    ).toStrictEqual([
+    expect(states).toMatchObject([
       {
+        state: {
+          isSuccess: true,
+          isPlaceholderData: true,
+          data: 'placeholder',
+        },
         count: 0,
-        data: 'placeholder',
-        isPlaceholderData: true,
-        isSuccess: true,
       },
       {
+        state: {
+          isSuccess: true,
+          isPlaceholderData: true,
+          data: 'placeholder',
+        },
         count: 1,
-        data: 'placeholder',
-        isPlaceholderData: true,
-        isSuccess: true,
       },
-      { count: 1, data: 'data', isPlaceholderData: false, isSuccess: true },
+      {
+        state: {
+          isSuccess: true,
+          isPlaceholderData: false,
+          data: 'data',
+        },
+        count: 1,
+      },
     ])
   })
 
@@ -4327,8 +4325,8 @@ describe('useQuery', () => {
       const state = useQuery({
         queryKey: key1,
         queryFn: () => 1,
-        [placeholderOption]: 23,
-        [selectOption]: (data) => String(data * 2),
+        placeholderData: 23,
+        select: (data) => String(data * 2),
       })
 
       states.push(state)
@@ -4370,11 +4368,11 @@ describe('useQuery', () => {
       const state = useQuery({
         queryKey: key1,
         queryFn: () => 1,
-        [placeholderOption]: () => {
+        placeholderData: () => {
           placeholderFunctionRunCount++
           return 23
         },
-        [selectOption]: (data) => String(data * 2),
+        select: (data) => String(data * 2),
       })
 
       states.push(state)
@@ -4426,14 +4424,14 @@ describe('useQuery', () => {
       const state = useQuery({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 0),
-        [selectOption]: React.useCallback(
+        select: React.useCallback(
           (data: number) => {
             selectRun++
             return `selected ${data + count}`
           },
           [count],
         ),
-        [placeholderOption]: 99,
+        placeholderData: 99,
       })
 
       return (
@@ -4469,13 +4467,13 @@ describe('useQuery', () => {
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 0),
 
-        [selectOption]: React.useCallback(
+        select: React.useCallback(
           (data: number) => {
             return `selected ${data + count}`
           },
           [count],
         ),
-        [placeholderOption]: 99,
+        placeholderData: 99,
       })
 
       return (
@@ -4516,7 +4514,7 @@ describe('useQuery', () => {
         queryKey: key1,
         queryFn: () => sleep(10).then(() => [1, 2]),
 
-        [selectOption]: (res) => res.map((x) => x + 1),
+        select: (res) => res.map((x) => x + 1),
       })
 
       React.useEffect(() => {
@@ -4912,7 +4910,7 @@ describe('useQuery', () => {
     )
 
     function Page({ enabled }: { enabled: boolean }) {
-      const result = useQuery({
+      const { error, isPending } = useQuery({
         queryKey: key,
         queryFn,
         enabled,
@@ -4921,8 +4919,6 @@ describe('useQuery', () => {
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
-      const { error } = result
-      const isPending = result.isPending
 
       if (isPending) {
         return <div>status: pending</div>
@@ -4969,7 +4965,7 @@ describe('useQuery', () => {
 
   it('should refetch when query key changed when previous status is error', async () => {
     function Page({ id }: { id: number }) {
-      const result = useQuery({
+      const { error, isPending } = useQuery({
         queryKey: [id],
         queryFn: () =>
           sleep(10).then(() => {
@@ -4984,8 +4980,6 @@ describe('useQuery', () => {
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
-      const { error } = result
-      const isPending = result.isPending
 
       if (isPending) {
         return <div>status: pending</div>
@@ -5031,7 +5025,7 @@ describe('useQuery', () => {
 
   it('should refetch when query key changed when switching between erroneous queries', async () => {
     function Page({ id }: { id: boolean }) {
-      const result = useQuery({
+      const { error, isFetching } = useQuery({
         queryKey: [id],
         queryFn: () =>
           sleep(10).then(() => Promise.reject<unknown>(new Error('Error'))),
@@ -5040,8 +5034,6 @@ describe('useQuery', () => {
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
-      const { error } = result
-      const isFetching = result.isFetching
 
       if (isFetching) {
         return <div>status: fetching</div>
@@ -5224,11 +5216,7 @@ describe('useQuery', () => {
             <div>failureReason: {state.failureReason ?? 'null'}</div>
             <div>data: {state.data}</div>
             <button
-              onClick={() =>
-                queryClient.invalidateQueries({
-                  queryKey: key,
-                })
-              }
+              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
             >
               invalidate
             </button>
@@ -5286,11 +5274,7 @@ describe('useQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() =>
-                queryClient.invalidateQueries({
-                  queryKey: key,
-                })
-              }
+              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
             >
               invalidate
             </button>
@@ -5336,11 +5320,7 @@ describe('useQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() =>
-                queryClient.invalidateQueries({
-                  queryKey: key,
-                })
-              }
+              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
             >
               invalidate
             </button>
@@ -5385,11 +5365,7 @@ describe('useQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() =>
-                queryClient.invalidateQueries({
-                  queryKey: key,
-                })
-              }
+              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
             >
               invalidate
             </button>
@@ -5435,11 +5411,7 @@ describe('useQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() =>
-                queryClient.invalidateQueries({
-                  queryKey: key,
-                })
-              }
+              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
             >
               invalidate
             </button>
@@ -5720,11 +5692,7 @@ describe('useQuery', () => {
             {show && <Component />}
             <button onClick={() => setShow(false)}>hide</button>
             <button
-              onClick={() =>
-                queryClient.invalidateQueries({
-                  queryKey: key,
-                })
-              }
+              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
             >
               invalidate
             </button>
@@ -6211,7 +6179,7 @@ describe('useQuery', () => {
       const [id, setId] = React.useState(1)
 
       const { data } = useQuery({
-        [selectOption]: selector,
+        select: selector,
         queryKey: [key, 'user', id],
         queryFn: () => fetchNumber(id),
       })
@@ -6278,10 +6246,10 @@ describe('useQuery', () => {
       const [id, setId] = React.useState(1)
 
       const { data } = useQuery({
-        [selectOption]: selector,
+        select: selector,
         queryKey: [key, 'user', id],
         queryFn: () => fetchNumber(id),
-        [placeholderOption]: { numbers: { current: { id: 99 } } },
+        placeholderData: { numbers: { current: { id: 99 } } },
       })
 
       React.useEffect(() => {
@@ -6367,7 +6335,7 @@ describe('useQuery', () => {
         staleTime: Infinity,
         queryKey: [key, steps[count]],
         queryFn: () => sleep(10).then(() => steps[count]),
-        [placeholderOption]: keepPreviousData,
+        placeholderData: keepPreviousData,
       })
 
       states.push(state)
@@ -7153,8 +7121,8 @@ describe('useQuery', () => {
         queryKey: [...key, id],
         queryFn: () => [id],
         enabled: id !== '',
-        [placeholderOption]: keepPreviousData,
-        [selectOption]: (items) => items.find((item) => item === id),
+        placeholderData: keepPreviousData,
+        select: (items) => items.find((item) => item === id),
       })
 
       return (
@@ -7181,8 +7149,8 @@ describe('useQuery', () => {
         queryKey: [...key, id],
         queryFn: () => [id],
         enabled: id !== '',
-        [placeholderOption]: keepPreviousData,
-        [selectOption]: (items) => items.find((item) => item === id),
+        placeholderData: keepPreviousData,
+        select: (items) => items.find((item) => item === id),
       })
       states.push(state)
 

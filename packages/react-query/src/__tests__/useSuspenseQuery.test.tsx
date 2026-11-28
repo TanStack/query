@@ -1,9 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { refetchInterval } from '@tanstack/query-test-utils/polling'
-import {
-  placeholderOption,
-  selectOption,
-} from '@tanstack/query-test-utils/projection'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -634,7 +629,7 @@ describe('useSuspenseQuery', () => {
       useSuspenseQuery({
         queryKey: key,
         queryFn: () => sleep(10).then(() => ({ a: { b: 'c' } })),
-        [selectOption]: () => {
+        select: () => {
           throw new Error('foo')
         },
       })
@@ -916,7 +911,7 @@ describe('useSuspenseQuery', () => {
       const state = useSuspenseQuery({
         queryKey: [...key, 'detail', 1],
         queryFn,
-        [placeholderOption]: () =>
+        placeholderData: () =>
           queryClient
             .getQueryData<Array<{ id: number; text: string }>>([...key, 'list'])
             ?.find((item) => item.id === 1),
@@ -953,7 +948,7 @@ describe('useSuspenseQuery', () => {
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          [placeholderOption]: keepPreviousData,
+          placeholderData: keepPreviousData,
         },
       },
     })
@@ -1021,7 +1016,7 @@ describe('useSuspenseQuery', () => {
       const state = useSuspenseQuery({
         queryKey: key,
         queryFn: () => sleep(10).then(() => 'data'),
-        [placeholderOption]: () => undefined,
+        placeholderData: () => undefined,
       })
 
       return <div>data: {state.data}</div>
@@ -1044,7 +1039,7 @@ describe('useSuspenseQuery', () => {
       const state = useSuspenseQuery({
         queryKey: key,
         queryFn,
-        [placeholderOption]: showPlaceholder ? 'placeholder' : undefined,
+        placeholderData: showPlaceholder ? 'placeholder' : undefined,
       })
 
       return <div>data: {state.data}</div>
@@ -1094,7 +1089,7 @@ describe('useSuspenseQuery', () => {
       const state = useSuspenseQuery({
         queryKey: key,
         queryFn,
-        [placeholderOption]: 'placeholder',
+        placeholderData: 'placeholder',
         retry: false,
       })
 
@@ -1216,7 +1211,7 @@ describe('useSuspenseQuery', () => {
       const state = useSuspenseQuery({
         queryKey: key,
         queryFn: () => sleep(10).then(() => ++count),
-        refetchInterval: refetchInterval(10),
+        refetchInterval: 10,
       })
 
       return <div>count: {state.data}</div>

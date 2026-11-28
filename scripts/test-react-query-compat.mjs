@@ -7,10 +7,11 @@ import {
   mkdtempSync,
   readdirSync,
   rmSync,
+  symlinkSync,
   writeFileSync,
 } from 'node:fs'
 import { createRequire } from 'node:module'
-import { basename, join, relative, resolve, sep } from 'node:path'
+import { join, relative, resolve, sep } from 'node:path'
 import { queryClientTestPort } from './port-query-client-tests.mjs'
 import { portProjectionOptions } from './port-query-projection-tests.mjs'
 
@@ -34,21 +35,34 @@ if (selected && !['query-core', 'react-query'].includes(selected))
   throw new Error('Unknown test suite ' + selected)
 for (const suite of selected ? [selected] : ['query-core', 'react-query']) {
   const upstream = join(repository, 'packages', suite)
-  const cache = join(upstream, '.cache')
+  const experiment = join(repository, 'packages', suite + '-pluggable')
+  const cache = join(experiment, '.cache', suite)
   mkdirSync(cache, { recursive: true })
   const project = mkdtempSync(join(cache, 'compat-'))
   try {
     const source = join(project, 'src')
     const implementation =
       suite === 'query-core' ? coreSource : join(adapter, 'src')
-    cpSync(join(upstream, 'src/__tests__'), join(source, '__tests__'), {
-      recursive: true,
-      // Only query-core exposes the extension points for non-React adapters.
-      filter: (path) =>
-        suite !== 'query-core' || basename(path) !== 'frameworkAdapters',
-    })
     const tests = join(source, '__tests__')
     const originals = join(upstream, 'src/__tests__')
+    cpSync(originals, tests, { recursive: true })
+    // Use exactly the dependencies installed for the corresponding v6 suite.
+    symlinkSync(
+      join(upstream, 'node_modules'),
+      join(project, 'node_modules'),
+      'junction',
+    )
+    // Only divergent expectations need a patch. Git checks its context so an
+    // incompatible change to an upstream case fails the compatibility run.
+    execFileSync(
+      'git',
+      [
+        'apply',
+        '--directory=' + relative(repository, project),
+        join(experiment, 'tests/compat', suite + '.patch'),
+      ],
+      { cwd: repository },
+    )
     const testFiles = readdirSync(tests, { recursive: true }).filter((file) =>
       /\.tsx?$/.test(file),
     )
@@ -62,10 +76,16 @@ for (const suite of selected ? [selected] : ['query-core', 'react-query']) {
             ),
           ]
         : []
+    const copies = new Map(
+      testFiles.map((f) => [join(originals, f), join(tests, f)]),
+    )
+    const compatPaths = { '#compat/*': [join(adapter, 'tests/compat-*.ts')] }
     const port = queryClientTestPort(
       upstream,
-      [...testFiles.map((file) => join(originals, file)), ...configFiles],
+      [...copies.keys(), ...configFiles],
       coreName,
+      copies,
+      compatPaths,
     )
     function copyTestModule(from, to) {
       writeFileSync(to, port(from))
@@ -79,13 +99,7 @@ for (const suite of selected ? [selected] : ['query-core', 'react-query']) {
       const target = importPath(source, join(implementation, file.name))
       writeFileSync(join(source, file.name), `export * from '${target}'\n`)
     }
-    if (suite === 'query-core') {
-      // The pluggable runtime exposes the page fetcher directly.
-      writeFileSync(
-        join(source, '__tests__/infiniteFetch.ts'),
-        `export { prepareInfiniteFetch } from '../infiniteQueryBehavior'\n`,
-      )
-    } else {
+    if (suite === 'react-query') {
       // Exercise the same upstream cases through the required descriptor API.
       const compat = join(adapter, 'tests/compat-useQuery.ts')
       for (const module of ['index', 'useQuery']) {
@@ -127,7 +141,7 @@ for (const suite of selected ? [selected] : ['query-core', 'react-query']) {
           ...Object.fromEntries(
             ['polling', 'projection', 'scope', 'descriptors', 'result'].map(
               (name) => [
-                `@tanstack/query-test-utils/${name}`,
+                `#compat/${name}`,
                 [join(adapter, `tests/compat-${name}.ts`)],
               ],
             ),

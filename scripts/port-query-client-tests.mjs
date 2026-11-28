@@ -32,7 +32,13 @@ const queryFactories = {
   useSuspenseInfiniteQuery: 'suspenseInfiniteQueryOptions',
 }
 
-export function queryClientTestPort(upstream, files, packageName) {
+export function queryClientTestPort(
+  upstream,
+  files,
+  packageName,
+  copies,
+  paths,
+) {
   const config = ts.readConfigFile(
     path.join(upstream, 'tsconfig.json'),
     ts.sys.readFile,
@@ -42,7 +48,13 @@ export function queryClientTestPort(upstream, files, packageName) {
     ts.sys,
     upstream,
   )
-  const program = ts.createProgram(files, options)
+  // Resolve v6 symbols at their original locations, reading the adapted test
+  // text from the isolated project. All implementation files are read as-is.
+  options.paths = { ...options.paths, ...paths }
+  const host = ts.createCompilerHost(options)
+  const readFile = host.readFile
+  host.readFile = (name) => readFile(copies.get(name) ?? name)
+  const program = ts.createProgram(files, options, host)
   const checker = program.getTypeChecker()
 
   function methodName(receiver, name) {

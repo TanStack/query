@@ -1,5 +1,4 @@
 import { createKey } from '@tanstack/query-test-utils'
-import { selectOption } from '@tanstack/query-test-utils/projection'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { defaultQueryFn } from '..'
 import { queryOptions } from '../queryOptions'
@@ -230,7 +229,7 @@ describe('useQuery', () => {
 
         const query = useQuery({
           ...options,
-          [selectOption]: (data) => data > 1,
+          select: (data) => data > 1,
         })
 
         expectTypeOf(query.data).toEqualTypeOf<boolean | undefined>()
@@ -280,7 +279,7 @@ describe('useQuery', () => {
       })
 
       it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
-        const result = useQuery({
+        const { data, isSuccess } = useQuery({
           queryKey: createKey(),
           queryFn: () => {
             return {
@@ -290,8 +289,8 @@ describe('useQuery', () => {
           initialData: () => undefined as { wow: boolean } | undefined,
         })
 
-        if (result.isSuccess) {
-          expectTypeOf(result.data).toEqualTypeOf<{ wow: boolean }>()
+        if (isSuccess) {
+          expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
         }
       })
 

@@ -6,7 +6,7 @@ import {
   QueryClient,
   defaultQueryFn,
 } from '..'
-import { prepareInfiniteFetch } from './infiniteFetch'
+import { infiniteQueryBehavior } from '../infiniteQueryBehavior'
 import type {
   InfiniteData,
   InfiniteQueryObserverResult,
@@ -351,6 +351,7 @@ describe('InfiniteQueryBehavior', () => {
         return pageParam
       })
 
+    const behavior = infiniteQueryBehavior<number, Error, number, number>()
     const context = {
       client: queryClient,
       queryKey: key,
@@ -371,12 +372,9 @@ describe('InfiniteQueryBehavior', () => {
       signal: abortController.signal,
     }
 
-    const fetchPages = prepareInfiniteFetch<number, Error, number, number>(
-      context as any,
-      {} as any,
-    )
+    behavior.onFetch(context as any, {} as any)
 
-    await expect(fetchPages()).rejects.toBe(abortController.signal.reason)
+    await expect(context.fetchFn()).rejects.toBe(abortController.signal.reason)
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 

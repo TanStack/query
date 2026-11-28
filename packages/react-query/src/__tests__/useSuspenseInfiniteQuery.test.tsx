@@ -1,5 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { placeholderOption } from '@tanstack/query-test-utils/projection'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -132,7 +131,7 @@ describe('useSuspenseInfiniteQuery', () => {
         queryFn,
         initialPageParam: 1,
         getNextPageParam: () => undefined,
-        [placeholderOption]: { pages: [0], pageParams: [1] },
+        placeholderData: { pages: [0], pageParams: [1] },
       })
 
       states.push(state)
@@ -158,7 +157,7 @@ describe('useSuspenseInfiniteQuery', () => {
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          [placeholderOption]: keepPreviousData,
+          placeholderData: keepPreviousData,
         },
       },
     })
@@ -231,7 +230,7 @@ describe('useSuspenseInfiniteQuery', () => {
         queryFn: () => queryFn(count),
         initialPageParam: 1,
         getNextPageParam: () => undefined,
-        [placeholderOption]: keepPreviousData,
+        placeholderData: keepPreviousData,
       })
 
       return (

@@ -1,6 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { selectOption } from '@tanstack/query-test-utils/projection'
-import { serialScope } from '@tanstack/query-test-utils/scope'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   CancelledError,
@@ -379,7 +377,7 @@ describe('queryClient', () => {
             ? prevData
             : newData
         },
-      } as Pick<QueryObserverOptions, 'structuralSharing'>
+      } as QueryObserverOptions
 
       queryClient.setDefaultOptions({ queries: queryObserverOptions })
 
@@ -799,7 +797,7 @@ describe('queryClient', () => {
         // @ts-expect-error enabled is not supported for imperative queries
         enabled: false,
         staleTime: 0,
-        [selectOption]: (data) => `${data}-selected`,
+        select: (data) => `${data}-selected`,
       })
       expect(result).toBe('fetched-data-selected')
       expect(queryFn).toHaveBeenCalledTimes(1)
@@ -834,7 +832,7 @@ describe('queryClient', () => {
         queryClient.query({
           queryKey: key,
           queryFn: skipToken,
-          [selectOption]: select,
+          select,
           initialData,
         }),
       ).resolves.toBeUndefined()
@@ -852,7 +850,7 @@ describe('queryClient', () => {
       const result = await queryClient.query({
         queryKey: key,
         queryFn: skipToken,
-        [selectOption]: (data: unknown) => (data as string).length,
+        select: (data: unknown) => (data as string).length,
       })
       expect(result).toBe('cached-data'.length)
     })
@@ -1103,7 +1101,7 @@ describe('queryClient', () => {
         queryKey: key,
         queryFn,
         staleTime: Infinity,
-        [selectOption]: (data) => `${data}-selected`,
+        select: (data) => `${data}-selected`,
       })
       expect(result).toBe('cached-data-selected')
       expect(queryFn).not.toHaveBeenCalled()
@@ -1118,7 +1116,7 @@ describe('queryClient', () => {
       const result = await queryClient.query({
         queryKey: key,
         queryFn,
-        [selectOption]: (data) => data.value.toUpperCase(),
+        select: (data) => data.value.toUpperCase(),
       })
       expect(result).toBe('FETCHED-DATA')
       expect(queryFn).toHaveBeenCalledTimes(1)
@@ -1214,7 +1212,7 @@ describe('queryClient', () => {
         initialPageParam: 0,
         // @ts-expect-error enabled is not supported for imperative queries
         enabled: false,
-        [selectOption]: (data) => data.pages.map((page) => `${page}-selected`),
+        select: (data) => data.pages.map((page) => `${page}-selected`),
       })
       expect(result).toStrictEqual(["'fetched-0-selected"])
       expect(queryFn).toHaveBeenCalledTimes(1)
@@ -1252,7 +1250,7 @@ describe('queryClient', () => {
           queryFn: skipToken,
           getNextPageParam: () => undefined,
           initialPageParam: 0,
-          [selectOption]: select,
+          select,
         }),
       ).resolves.toBeUndefined()
 
@@ -1351,7 +1349,7 @@ describe('queryClient', () => {
         getNextPageParam: () => undefined,
         initialPageParam: 10,
         queryFn: ({ pageParam }) => Number(pageParam),
-        [selectOption]: (data) => data.pages.map((page) => page * 2),
+        select: (data) => data.pages.map((page) => page * 2),
       })
       expect(result).toStrictEqual([20])
     })
@@ -1518,10 +1516,7 @@ describe('queryClient', () => {
 
       // check the error doesn't occur
       expect(() =>
-        queryClient.removeQueries({
-          queryKey: key,
-          exact: true,
-        }),
+        queryClient.removeQueries({ queryKey: key, exact: true }),
       ).not.toThrow()
 
       // check query was successful removed
@@ -1688,10 +1683,7 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      await queryClient.refetchQueries({
-        type: 'active',
-        stale: false,
-      })
+      await queryClient.refetchQueries({ type: 'active', stale: false })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(1)
@@ -2139,9 +2131,7 @@ describe('queryClient', () => {
       })
       observer.subscribe(() => undefined)
 
-      queryClient.refetchQueries(undefined, {
-        cancelRefetch: false,
-      })
+      queryClient.refetchQueries(undefined, { cancelRefetch: false })
       await vi.advanceTimersByTimeAsync(10)
       observer.destroy()
       expect(abortFn).toHaveBeenCalledTimes(0)
@@ -2497,7 +2487,9 @@ describe('queryClient', () => {
       const orders: Array<string> = []
 
       const observer1 = new MutationObserver(queryClient, {
-        scope: serialScope('scope'),
+        scope: {
+          id: 'scope',
+        },
         mutationFn: async () => {
           orders.push('1start')
           await sleep(50)
@@ -2507,7 +2499,9 @@ describe('queryClient', () => {
       })
 
       const observer2 = new MutationObserver(queryClient, {
-        scope: serialScope('scope'),
+        scope: {
+          id: 'scope',
+        },
         mutationFn: async () => {
           orders.push('2start')
           await sleep(20)
@@ -2627,7 +2621,9 @@ describe('queryClient', () => {
       void observer.mutate()
 
       const observer2 = new MutationObserver(queryClient, {
-        scope: serialScope('scope'),
+        scope: {
+          id: 'scope',
+        },
         mutationFn: async () => {
           results.push('mutation2-start')
           await sleep(50)
@@ -2639,7 +2635,9 @@ describe('queryClient', () => {
       void observer2.mutate()
 
       const observer3 = new MutationObserver(queryClient, {
-        scope: serialScope('scope'),
+        scope: {
+          id: 'scope',
+        },
         mutationFn: async () => {
           results.push('mutation3-start')
           await sleep(50)

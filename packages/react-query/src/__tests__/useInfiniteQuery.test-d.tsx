@@ -1,10 +1,8 @@
 import { QueryClient } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
-import { selectOption } from '@tanstack/query-test-utils/projection'
 import { describe, expectTypeOf, it } from 'vitest'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
-import type { NumericPageParam } from '@tanstack/query-test-utils/descriptors'
 import type { UseInfiniteQueryOptions } from '../types'
 
 describe('pageParam', () => {
@@ -44,8 +42,9 @@ describe('select', () => {
       getNextPageParam: () => undefined,
     })
 
+    // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
     expectTypeOf(infiniteQuery.data).toEqualTypeOf<
-      InfiniteData<number, NumericPageParam> | undefined
+      InfiniteData<number, unknown> | undefined
     >()
   })
 
@@ -57,7 +56,7 @@ describe('select', () => {
       },
       initialPageParam: 1,
       getNextPageParam: () => undefined,
-      [selectOption]: (data) => {
+      select: (data) => {
         expectTypeOf(data).toEqualTypeOf<InfiniteData<number, number>>()
         return 'selected' as const
       },
@@ -96,15 +95,21 @@ describe('getNextPageParam / getPreviousPageParam', () => {
       },
     })
 
+    // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
     expectTypeOf(infiniteQuery.data).toEqualTypeOf<
-      InfiniteData<string, NumericPageParam> | undefined
+      InfiniteData<string, unknown> | undefined
     >()
   })
 })
 
 describe('error booleans', () => {
   it('should not be permanently `false`', () => {
-    const result = useInfiniteQuery({
+    const {
+      isFetchNextPageError,
+      isFetchPreviousPageError,
+      isLoadingError,
+      isRefetchError,
+    } = useInfiniteQuery({
       queryKey: createKey(),
       queryFn: ({ pageParam }) => {
         return pageParam * 5
@@ -112,10 +117,6 @@ describe('error booleans', () => {
       initialPageParam: 1,
       getNextPageParam: () => undefined,
     })
-    const isFetchNextPageError = result.isFetchNextPageError
-    const isFetchPreviousPageError = result.isFetchPreviousPageError
-    const isLoadingError = result.isLoadingError
-    const isRefetchError = result.isRefetchError
 
     expectTypeOf(isFetchNextPageError).toEqualTypeOf<boolean>()
     expectTypeOf(isFetchPreviousPageError).toEqualTypeOf<boolean>()

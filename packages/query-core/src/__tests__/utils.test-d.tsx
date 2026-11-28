@@ -24,10 +24,16 @@ import {
   sleep,
   timeUntilStale,
 } from '../utils'
-import type { DataTag, EqualityFn, MutationStatus } from '..'
 import type { Mutation } from '../mutation'
 import type { Query } from '../query'
-import type { QueryFunction, QueryKey, QueryOptions } from '../types'
+import type {
+  DataTag,
+  EqualityFn,
+  MutationStatus,
+  QueryFunction,
+  QueryKey,
+  QueryOptions,
+} from '../types'
 import type {
   DefaultQueryFn,
   MutationFilters,
@@ -119,10 +125,9 @@ describe('QueryFilters', () => {
 
     const queryKey: Key = ['foo', 'bar'] as any as Key
 
-    const result = new QueryClient().invalidateQueries({
+    expectTypeOf(new QueryClient().invalidateQueries).toBeCallableWith({
       queryKey,
     })
-    expectTypeOf(result).toEqualTypeOf<Promise<void>>()
   })
 
   it('should error on invalid query keys', () => {

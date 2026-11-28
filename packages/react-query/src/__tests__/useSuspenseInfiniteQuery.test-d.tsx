@@ -1,13 +1,8 @@
 import { keepPreviousData, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
-import {
-  placeholderOption,
-  selectOption,
-} from '@tanstack/query-test-utils/projection'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { useSuspenseInfiniteQuery } from '../useSuspenseInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
-import type { NumericPageParam } from '@tanstack/query-test-utils/descriptors'
 import type { UseSuspenseInfiniteQueryOptions } from '../types'
 
 describe('useSuspenseInfiniteQuery', () => {
@@ -19,7 +14,7 @@ describe('useSuspenseInfiniteQuery', () => {
       getNextPageParam: () => 1,
     })
 
-    expectTypeOf(data).toEqualTypeOf<InfiniteData<number, NumericPageParam>>()
+    expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
   })
 
   it('should allow undefined data when queryFn can be skipToken', () => {
@@ -31,7 +26,7 @@ describe('useSuspenseInfiniteQuery', () => {
           : ({ pageParam }) => pageParam.toFixed(),
       initialPageParam: 1,
       getNextPageParam: () => undefined,
-      [selectOption]: (data) => data.pages,
+      select: (data) => data.pages,
     })
 
     expectTypeOf(result.data).toEqualTypeOf<Array<string> | undefined>()
@@ -59,12 +54,10 @@ describe('useSuspenseInfiniteQuery', () => {
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
-      [placeholderOption]: keepPreviousData,
+      placeholderData: keepPreviousData,
     })
 
-    expectTypeOf(query.data).toEqualTypeOf<
-      InfiniteData<number, NumericPageParam>
-    >()
+    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<number, unknown>>()
     expectTypeOf(query.isPlaceholderData).toEqualTypeOf<boolean>()
 
     const selected = useSuspenseInfiniteQuery({
@@ -72,13 +65,13 @@ describe('useSuspenseInfiniteQuery', () => {
       queryFn: () => Promise.resolve(5),
       initialPageParam: 1,
       getNextPageParam: () => 1,
-      [placeholderOption]: (previousData) => {
+      placeholderData: (previousData) => {
         expectTypeOf(previousData).toEqualTypeOf<
           InfiniteData<number, number> | undefined
         >()
         return previousData ?? { pages: [0], pageParams: [1] }
       },
-      [selectOption]: (data) => data.pages.length,
+      select: (data) => data.pages.length,
     })
 
     expectTypeOf(selected.data).toEqualTypeOf<number>()
@@ -91,7 +84,7 @@ describe('useSuspenseInfiniteQuery', () => {
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        [placeholderOption]: { pages: [5], pageParams: [1] },
+        placeholderData: { pages: [5], pageParams: [1] },
         // @ts-expect-error TS2345
         enabled: true,
       }),

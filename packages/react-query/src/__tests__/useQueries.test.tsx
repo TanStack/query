@@ -1,5 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { selectOption } from '@tanstack/query-test-utils/projection'
 import { fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -71,7 +70,7 @@ describe('useQueries', () => {
           {
             queryKey: key,
             queryFn: () => Promise.resolve([1, 2, 3]),
-            [selectOption]: select,
+            select,
             staleTime: Infinity,
             structuralSharing: false,
           },
@@ -142,7 +141,7 @@ describe('useQueries', () => {
             {
               queryKey,
               queryFn,
-              [selectOption]: (value: string) => {
+              select: (value: string) => {
                 if (throws) throw new Error(value + ' with a select error')
                 return new Set([value])
               },

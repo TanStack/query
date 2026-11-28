@@ -1,8 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import {
-  placeholderOption,
-  selectOption,
-} from '@tanstack/query-test-utils/projection'
 import { act, fireEvent, render } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -388,14 +384,14 @@ describe('useSuspenseQueries', () => {
     function getName() {
       return {
         ...getUserData(),
-        [selectOption]: (data: any) => data.name,
+        select: (data: any) => data.name,
       }
     }
 
     function getAge() {
       return {
         ...getUserData(),
-        [selectOption]: (data: any) => data.age,
+        select: (data: any) => data.age,
       }
     }
 
@@ -690,7 +686,7 @@ describe('useSuspenseQueries', () => {
             queryKey: key,
             queryFn: () => Promise.resolve('First'),
             staleTime: Infinity,
-            [selectOption]: (data: string) =>
+            select: (data: string) =>
               expanded ? data.toUpperCase() : data.toLowerCase(),
           },
           ...(expanded
@@ -842,7 +838,7 @@ describe('useSuspenseQueries', () => {
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          [placeholderOption]: 'placeholder',
+          placeholderData: 'placeholder',
         },
       },
     })
@@ -934,7 +930,7 @@ describe('useSuspenseQueries', () => {
           {
             queryKey: [...key, 1],
             queryFn: placeholderQueryFn,
-            [placeholderOption]: 'placeholder',
+            placeholderData: 'placeholder',
           },
           { queryKey: [...key, 2], queryFn: pendingQueryFn },
         ],
@@ -979,7 +975,7 @@ describe('useSuspenseQueries', () => {
           {
             queryKey: [...key, deferredCount],
             queryFn: () => queryFn(deferredCount),
-            [placeholderOption]: 'placeholder',
+            placeholderData: 'placeholder',
           },
         ],
       })

@@ -1,10 +1,10 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { selectOption } from '@tanstack/query-test-utils/projection'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { InfiniteQueryObserver, QueryClient } from '..'
-import type { GetNextPageParamFunction, GetPreviousPageParamFunction } from '..'
 import type {
   DefaultedInfiniteQueryObserverOptions,
+  GetNextPageParamFunction,
+  GetPreviousPageParamFunction,
   InfiniteData,
 } from '../types'
 
@@ -27,7 +27,7 @@ describe('InfiniteQueryObserver', () => {
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 1),
-      [selectOption]: (data) => ({
+      select: (data) => ({
         pages: data.pages.map((x) => `${x}`),
         pageParams: data.pageParams,
       }),
@@ -56,7 +56,7 @@ describe('InfiniteQueryObserver', () => {
       meta,
       queryKey: key,
       queryFn,
-      [selectOption]: (data) => ({
+      select: (data) => ({
         pages: data.pages.map((x) => `${x}`),
         pageParams: data.pageParams,
       }),

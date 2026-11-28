@@ -1,8 +1,5 @@
 import { placeholderData, select } from '@tanstack/query-core-pluggable'
 
-export { select, placeholderData }
-export const selectOption = 'select'
-export const placeholderOption = 'placeholderData'
 export type ProjectionInput<T> = T extends readonly [unknown, infer Input]
   ? Input
   : T

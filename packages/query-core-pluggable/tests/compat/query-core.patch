@@ -1,0 +1,354 @@
+diff --git a/src/__tests__/infiniteQueryBehavior.test.tsx b/src/__tests__/infiniteQueryBehavior.test.tsx
+--- a/src/__tests__/infiniteQueryBehavior.test.tsx
++++ b/src/__tests__/infiniteQueryBehavior.test.tsx
+@@ -7,5 +7,5 @@
+   defaultQueryFn,
+ } from '..'
+-import { infiniteQueryBehavior } from '../infiniteQueryBehavior'
++import { prepareInfiniteFetch } from '../infiniteQueryBehavior'
+ import type {
+   InfiniteData,
+@@ -352,5 +352,4 @@
+       })
+
+-    const behavior = infiniteQueryBehavior<number, Error, number, number>()
+     const context = {
+       client: queryClient,
+@@ -373,7 +372,10 @@
+     }
+
+-    behavior.onFetch(context as any, {} as any)
+-
+-    await expect(context.fetchFn()).rejects.toBe(abortController.signal.reason)
++    const fetchPages = prepareInfiniteFetch<number, Error, number, number>(
++      context as any,
++      {} as any,
++    )
++
++    await expect(fetchPages()).rejects.toBe(abortController.signal.reason)
+     expect(queryFn).toHaveBeenCalledTimes(1)
+   })
+diff --git a/src/__tests__/infiniteQueryObserver.test-d.tsx b/src/__tests__/infiniteQueryObserver.test-d.tsx
+--- a/src/__tests__/infiniteQueryObserver.test-d.tsx
++++ b/src/__tests__/infiniteQueryObserver.test-d.tsx
+@@ -1,3 +1,4 @@
+ import { createKey } from '@tanstack/query-test-utils'
++import { projectionInput } from '#compat/projection'
+ import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
+ import { InfiniteQueryObserver, QueryClient } from '..'
+@@ -392,8 +393,5 @@
+           | 'hasNextPage'
+           | 'hasPreviousPage'
+-          | 'isFetchNextPageError'
+-          | 'isFetchPreviousPageError'
+-          | 'isFetchingNextPage'
+-          | 'isFetchingPreviousPage'
++          | 'fetchDirection'
+         >()
+       })
+@@ -712,6 +710,6 @@
+           expectTypeOf(result.isLoadingError).toEqualTypeOf<true>()
+           expectTypeOf(result.isRefetchError).toEqualTypeOf<false>()
+-          expectTypeOf(result.isFetchNextPageError).toEqualTypeOf<false>()
+-          expectTypeOf(result.isFetchPreviousPageError).toEqualTypeOf<false>()
++          expectTypeOf(result.isFetchNextPageError).toEqualTypeOf<boolean>()
++          expectTypeOf(result.isFetchPreviousPageError).toEqualTypeOf<boolean>()
+           expectTypeOf(result.isSuccess).toEqualTypeOf<false>()
+           expectTypeOf(result.status).toEqualTypeOf<'error'>()
+@@ -737,5 +735,5 @@
+       })
+
+-      it('should leave the page error flags unpinned', () => {
++      it('should expose the page error types during a full refetch', () => {
+         type RefetchError = Extract<
+           InfiniteQueryObserverResult<InfiniteData<{ value: string }, number>>,
+@@ -745,8 +743,8 @@
+         expectTypeOf<
+           RefetchError['isFetchNextPageError']
+-        >().toEqualTypeOf<boolean>()
++        >().toEqualTypeOf<false>()
+         expectTypeOf<
+           RefetchError['isFetchPreviousPageError']
+-        >().toEqualTypeOf<boolean>()
++        >().toEqualTypeOf<false>()
+       })
+
+@@ -1005,5 +1003,5 @@
+       })
+
+-      expectTypeOf(observer.options.select).toEqualTypeOf<
++      expectTypeOf(projectionInput(observer.options.select)).toEqualTypeOf<
+         | ((
+             data: InfiniteData<{ value: string }, number>,
+diff --git a/src/__tests__/mutation.test-d.tsx b/src/__tests__/mutation.test-d.tsx
+--- a/src/__tests__/mutation.test-d.tsx
++++ b/src/__tests__/mutation.test-d.tsx
+@@ -2,4 +2,5 @@
+ import { Mutation } from '../mutation'
+ import { QueryClient } from '../queryClient'
++import type { serialScope } from '#compat/scope'
+ import type { Action, MutationState } from '../mutation'
+ import type { MutationObserver } from '../mutationObserver'
+@@ -491,5 +492,5 @@
+       it('should be an optional scope carrying a string id', () => {
+         expectTypeOf<Options['scope']>().toEqualTypeOf<
+-          { id: string } | undefined
++          ReturnType<typeof serialScope> | undefined
+         >()
+       })
+diff --git a/src/__tests__/notifyManager.test-d.tsx b/src/__tests__/notifyManager.test-d.tsx
+--- a/src/__tests__/notifyManager.test-d.tsx
++++ b/src/__tests__/notifyManager.test-d.tsx
+@@ -27,5 +27,4 @@
+       | 'schedule'
+       | 'setNotifyFunction'
+-      | 'setBatchNotifyFunction'
+       | 'setScheduler'
+     >()
+@@ -162,22 +161,4 @@
+   })
+
+-  describe('setBatchNotifyFunction', () => {
+-    it('should only accept a function taking a callback', () => {
+-      const localNotifyManager = createNotifyManager()
+-
+-      expectTypeOf(
+-        localNotifyManager.setBatchNotifyFunction,
+-      ).parameters.toEqualTypeOf<[fn: (callback: () => void) => void]>()
+-    })
+-
+-    it('should return void', () => {
+-      const localNotifyManager = createNotifyManager()
+-
+-      expectTypeOf(
+-        localNotifyManager.setBatchNotifyFunction,
+-      ).returns.toEqualTypeOf<void>()
+-    })
+-  })
+-
+   describe('setScheduler', () => {
+     it('should only accept a function taking a callback', () => {
+diff --git a/src/__tests__/notifyManager.test.tsx b/src/__tests__/notifyManager.test.tsx
+--- a/src/__tests__/notifyManager.test.tsx
++++ b/src/__tests__/notifyManager.test.tsx
+@@ -77,23 +77,4 @@
+   })
+
+-  it('should use custom batch notify function', async () => {
+-    const notifyManagerTest = createNotifyManager()
+-    const batchNotifySpy = vi.fn<(callback: () => void) => void>((cb) => cb())
+-    const callbackSpy1 = vi.fn<() => void>()
+-    const callbackSpy2 = vi.fn<() => void>()
+-
+-    notifyManagerTest.setBatchNotifyFunction(batchNotifySpy)
+-
+-    notifyManagerTest.batch(() => {
+-      notifyManagerTest.schedule(callbackSpy1)
+-      notifyManagerTest.schedule(callbackSpy2)
+-    })
+-
+-    await vi.advanceTimersByTimeAsync(0)
+-    expect(batchNotifySpy).toHaveBeenCalledWith(expect.any(Function))
+-    expect(callbackSpy1).toHaveBeenCalledWith()
+-    expect(callbackSpy2).toHaveBeenCalledWith()
+-  })
+-
+   it('should batch calls correctly', async () => {
+     const notifyManagerTest = createNotifyManager()
+diff --git a/src/__tests__/queriesObserver.test-d.tsx b/src/__tests__/queriesObserver.test-d.tsx
+--- a/src/__tests__/queriesObserver.test-d.tsx
++++ b/src/__tests__/queriesObserver.test-d.tsx
+@@ -2,5 +2,5 @@
+ import { afterEach, beforeEach, describe, expectTypeOf, it } from 'vitest'
+ import { QueriesObserver, QueryClient, defaultQueryFn } from '..'
+-import type { Query, QueryObserver, QueryObserverResult } from '..'
++import type { QueryObserver, QueryObserverResult } from '..'
+ import type { QueriesObserverOptions } from '../queriesObserver'
+ import type { ObserverOptionsInput } from '../queryObserver'
+@@ -26,5 +26,4 @@
+         | 'setQueries'
+         | 'getCurrentResult'
+-        | 'getQueries'
+         | 'getObservers'
+         | 'createResultReader'
+@@ -186,12 +185,4 @@
+   })
+
+-  describe('getQueries', () => {
+-    it('should return the observed queries', () => {
+-      const observer = new QueriesObserver(queryClient, [])
+-
+-      expectTypeOf(observer.getQueries()).toEqualTypeOf<Array<Query>>()
+-    })
+-  })
+-
+   describe('getObservers', () => {
+     it('should return the underlying observers', () => {
+diff --git a/src/__tests__/queriesObserver.test.tsx b/src/__tests__/queriesObserver.test.tsx
+--- a/src/__tests__/queriesObserver.test.tsx
++++ b/src/__tests__/queriesObserver.test.tsx
+@@ -85,5 +85,7 @@
+       readerB.commit()
+       expect(listener).toHaveBeenCalledTimes(1)
+-      expect(observer.getQueries()[0]!.queryKey).toStrictEqual(keyB)
++      expect(
++        observer.getObservers()[0]!.getCurrentQuery().queryKey,
++      ).toStrictEqual(keyB)
+       listener.mockClear()
+       queryClient.setQueryData(keyA, 3)
+@@ -145,5 +147,7 @@
+       expect(observer.getCurrentResult()[0]!.data).toBe(snapshot[0]!.data)
+       expect(
+-        observer.getQueries().map((query) => query.queryKey),
++        observer
++          .getObservers()
++          .map((entry) => entry.getCurrentQuery().queryKey),
+       ).toStrictEqual([keyB, keyA])
+       unsubscribe()
+@@ -299,25 +303,4 @@
+   })
+
+-  it('should return current queries via getQueries', async () => {
+-    const key1 = createKey()
+-    const key2 = createKey()
+-    const queryFn1 = vi.fn<() => number>().mockReturnValue(1)
+-    const queryFn2 = vi.fn<() => number>().mockReturnValue(2)
+-    const observer = new QueriesObserver(queryClient, [
+-      { queryKey: key1, queryFn: queryFn1 },
+-      { queryKey: key2, queryFn: queryFn2 },
+-    ])
+-    const unsubscribe = observer.subscribe(() => undefined)
+-    await vi.advanceTimersByTimeAsync(0)
+-
+-    const queries = observer.getQueries()
+-
+-    expect(queries).toHaveLength(2)
+-    expect(queries[0]?.queryKey).toStrictEqual(key1)
+-    expect(queries[1]?.queryKey).toStrictEqual(key2)
+-
+-    unsubscribe()
+-  })
+-
+   it('should update when a query updates', async () => {
+     const key1 = createKey()
+diff --git a/src/__tests__/queryClient.test.tsx b/src/__tests__/queryClient.test.tsx
+--- a/src/__tests__/queryClient.test.tsx
++++ b/src/__tests__/queryClient.test.tsx
+@@ -378,5 +378,5 @@
+             : newData
+         },
+-      } as QueryObserverOptions
++      } as Pick<QueryObserverOptions, 'structuralSharing'>
+
+       queryClient.setDefaultOptions({ queries: queryObserverOptions })
+diff --git a/src/__tests__/queryObserver.test-d.tsx b/src/__tests__/queryObserver.test-d.tsx
+--- a/src/__tests__/queryObserver.test-d.tsx
++++ b/src/__tests__/queryObserver.test-d.tsx
+@@ -1,3 +1,4 @@
+ import { createKey } from '@tanstack/query-test-utils'
++import { projectionInput } from '#compat/projection'
+ import {
+   afterEach,
+@@ -9,4 +10,7 @@
+ } from 'vitest'
+ import { QueryClient, QueryObserver, defaultQueryFn } from '..'
++import type { QueryBoundaryTuple } from '#compat/descriptors'
++import type { IntervalInput } from '#compat/polling'
++import type { ProjectionInput } from '#compat/projection'
+ import type {
+   DefaultError,
+@@ -70,5 +74,5 @@
+     it('should derive its remaining type parameters from the data type', () => {
+       expectTypeOf<
+-        QueryObserverOptions<{ value: string }>['select']
++        ProjectionInput<QueryObserverOptions<{ value: string }>['select']>
+       >().toEqualTypeOf<
+         ((data: { value: string }) => { value: string }) | undefined
+@@ -207,5 +211,5 @@
+         expectTypeOf<
+           Extract<
+-            QueryObserverOptions['refetchInterval'],
++            IntervalInput<QueryObserverOptions['refetchInterval']>,
+             (...args: Array<any>) => any
+           >
+@@ -213,5 +217,5 @@
+         expectTypeOf<
+           Exclude<
+-            QueryObserverOptions['refetchInterval'],
++            IntervalInput<QueryObserverOptions['refetchInterval']>,
+             (...args: Array<any>) => any
+           >
+@@ -380,5 +384,5 @@
+             (...args: Array<any>) => any
+           >
+-        >().toEqualTypeOf<boolean | undefined>()
++        >().toEqualTypeOf<boolean | undefined | QueryBoundaryTuple>()
+       })
+     })
+@@ -531,10 +535,12 @@
+
+         expectTypeOf<
+-          QueryObserverOptions<
+-            { count: number },
+-            DefaultError,
+-            number,
+-            { count: number }
+-          >['placeholderData']
++          ProjectionInput<
++            QueryObserverOptions<
++              { count: number },
++              DefaultError,
++              number,
++              { count: number }
++            >['placeholderData']
++          >
+         >()
+           .extract<(...args: Array<any>) => any>()
+@@ -586,5 +592,7 @@
+         expectTypeOf<
+           Exclude<
+-            QueryObserverOptions<{ value: string }>['placeholderData'],
++            ProjectionInput<
++              QueryObserverOptions<{ value: string }>['placeholderData']
++            >,
+             (...args: Array<any>) => any
+           >
+@@ -1474,5 +1482,5 @@
+         .parameter(0)
+         .toEqualTypeOf<CustomError>()
+-      expectTypeOf(observer.options.select).toEqualTypeOf<
++      expectTypeOf(projectionInput(observer.options.select)).toEqualTypeOf<
+         ((data: { value: string }) => { value: string }) | undefined
+       >()
+@@ -1767,10 +1775,11 @@
+       >()
+
+-      expectTypeOf(observer.fetchOptimistic)
+-        .parameter(0)
+-        .toHaveProperty('select')
+-        .toEqualTypeOf<
+-          ((data: { value: string }) => { value: string }) | undefined
+-        >()
++      expectTypeOf<
++        ProjectionInput<
++          Parameters<typeof observer.fetchOptimistic>[0]['select']
++        >
++      >().toEqualTypeOf<
++        ((data: { value: string }) => { value: string }) | undefined
++      >()
+     })
+   })
+diff --git a/src/__tests__/utils.test-d.tsx b/src/__tests__/utils.test-d.tsx
+--- a/src/__tests__/utils.test-d.tsx
++++ b/src/__tests__/utils.test-d.tsx
+@@ -126,8 +126,9 @@
+     const queryKey: Key = ['foo', 'bar'] as any as Key
+
+-    expectTypeOf(new QueryClient().invalidateQueries).toBeCallableWith({
++    const result = new QueryClient().invalidateQueries({
+       queryKey,
+     })
++    expectTypeOf(result).toEqualTypeOf<Promise<void>>()
+   })
+
+   it('should error on invalid query keys', () => {

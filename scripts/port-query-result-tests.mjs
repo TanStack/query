@@ -174,7 +174,7 @@ export function queryResultTestPort(checker, source, edit, packageName) {
       expect.expression.getText(source) === 'expectTypeOf' &&
       ts.isPropertyAccessExpression(expect.parent) &&
       ts.isCallExpression(expect.parent.parent) &&
-      /^(?:true|false|PageFailureDuringLoad)$/.test(
+      /^(?:true|false|boolean)$/.test(
         expect.parent.parent.typeArguments?.[0]?.getText(source),
       ) &&
       ts.isIdentifier(receiver)
@@ -208,9 +208,7 @@ export function queryResultTestPort(checker, source, edit, packageName) {
         ? 'import * as ' + api + ' from ' + JSON.stringify(packageName) + '\n'
         : '') +
       (imports.size
-        ? 'import { ' +
-          [...imports].join(', ') +
-          ' } from "@tanstack/query-test-utils/result"\n'
+        ? 'import { ' + [...imports].join(', ') + ' } from "#compat/result"\n'
         : ''),
   }
 }

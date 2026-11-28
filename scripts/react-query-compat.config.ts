@@ -5,7 +5,7 @@ import core from '../packages/query-core/vite.config.ts'
 import react from '../packages/react-query/vite.config.ts'
 
 const adapter = process.env.REACT_QUERY_COMPAT_ADAPTER!
-const suite = basename(resolve(process.cwd(), '../..'))
+const suite = basename(resolve(process.cwd(), '..'))
 const isReact = suite === 'react-query'
 
 const base = isReact ? react : core

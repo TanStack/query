@@ -33,6 +33,7 @@
       "{workspaceRoot}/scripts/react-query-compat.config.ts",
       "{workspaceRoot}/packages/query-core/src/__tests__/**/*",
       "{workspaceRoot}/packages/query-core/vite.config.ts",
+      "{workspaceRoot}/packages/query-core-pluggable/tests/compat/*.patch",
       "{workspaceRoot}/packages/react-query/src/__tests__/**/*",
       "{workspaceRoot}/packages/react-query/test-setup.ts",
       "{workspaceRoot}/packages/react-query/vite.config.ts",

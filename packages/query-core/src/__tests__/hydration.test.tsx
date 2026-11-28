@@ -1,5 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import { serialScope } from '@tanstack/query-test-utils/scope'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { dehydrate, hydrate } from '../hydration'
 import { dehydrateQuery } from '../index'
@@ -979,7 +978,9 @@ describe('dehydration and rehydration', () => {
         mutationFn: () => {
           return Promise.resolve('mutation')
         },
-        scope: serialScope('scope'),
+        scope: {
+          id: 'scope',
+        },
       },
       'vars',
     )

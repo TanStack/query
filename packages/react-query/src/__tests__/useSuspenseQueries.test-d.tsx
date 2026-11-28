@@ -1,8 +1,4 @@
 import { createKey } from '@tanstack/query-test-utils'
-import {
-  placeholderOption,
-  selectOption,
-} from '@tanstack/query-test-utils/projection'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { skipToken, useSuspenseQueries } from '..'
 import { queryOptions } from '../queryOptions'
@@ -43,7 +39,7 @@ describe('UseSuspenseQueries config object overload', () => {
       {
         queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
-        [placeholderOption]: (previousData, previousQuery) => {
+        placeholderData: (previousData, previousQuery) => {
           expectTypeOf(previousData).toEqualTypeOf<undefined>()
           expectTypeOf(previousQuery).toEqualTypeOf<undefined>()
           return 0
@@ -58,8 +54,8 @@ describe('UseSuspenseQueries config object overload', () => {
     const selectedOptions = queryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
-      [placeholderOption]: 0,
-      [selectOption]: (data) => data.toString(),
+      placeholderData: 0,
+      select: (data) => data.toString(),
     })
     const [selectedQuery] = useSuspenseQueries({
       queries: [selectedOptions],
@@ -88,13 +84,13 @@ describe('UseSuspenseQueries config object overload', () => {
     const query1 = queryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve(1),
-      [selectOption]: (data) => data > 1,
+      select: (data) => data > 1,
     })
 
     const query2 = {
       queryKey: createKey(),
       queryFn: () => Promise.resolve(1),
-      [selectOption]: (data: number) => data > 1,
+      select: (data: number) => data > 1,
     }
 
     const queryResults = useSuspenseQueries({ queries: [query1, query2] })
@@ -217,7 +213,7 @@ describe('UseSuspenseQueries config object overload', () => {
         ...queries1List,
         {
           ...Queries2.get(),
-          [selectOption](data: boolean) {
+          select(data: boolean) {
             return data
           },
         },
@@ -281,7 +277,7 @@ describe('UseSuspenseQueries config object overload', () => {
               queryKey: createKey(),
               queryFn: () => 'Query Data',
             }),
-            [selectOption](data: string) {
+            select(data: string) {
               return data
             },
           },
@@ -305,7 +301,7 @@ describe('UseSuspenseQueries config object overload', () => {
             {
               queryKey: createKey(),
               queryFn: () => Promise.resolve(1),
-              [selectOption]: (data) => {
+              select: (data) => {
                 expectTypeOf(data).toBeUnknown()
                 // @ts-expect-error `data` is `unknown`, not the expected `number`
                 return data.toFixed()
@@ -321,7 +317,7 @@ describe('UseSuspenseQueries config object overload', () => {
             {
               queryKey: createKey(),
               queryFn: () => Promise.resolve(1),
-              [selectOption]: (data: number) => data.toFixed(),
+              select: (data: number) => data.toFixed(),
             },
           ],
         })
@@ -343,7 +339,7 @@ describe('UseSuspenseQueries config object overload', () => {
         const options = queryOptions({
           queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
-          [selectOption]: (data) => {
+          select: (data) => {
             expectTypeOf(data).toEqualTypeOf<number>()
             return data.toFixed()
           },
@@ -361,7 +357,7 @@ describe('UseSuspenseQueries config object overload', () => {
           queries: [
             queryOptions({
               ...baseOptions,
-              [selectOption]: (data) => {
+              select: (data) => {
                 expectTypeOf(data).toEqualTypeOf<number>()
                 return data.toFixed()
               },
@@ -377,13 +373,13 @@ describe('UseSuspenseQueries config object overload', () => {
         const baseOptions = queryOptions({
           queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
-          [selectOption]: (data) => data + 1,
+          select: (data) => data + 1,
         })
         const queryResults = useSuspenseQueries({
           queries: [
             queryOptions({
               ...baseOptions,
-              [selectOption]: (data) => {
+              select: (data) => {
                 expectTypeOf(data).toEqualTypeOf<number>()
                 return data.toFixed()
               },
@@ -405,7 +401,7 @@ describe('UseSuspenseQueries config object overload', () => {
             {
               ...options,
               // @ts-expect-error Without an annotation the inline `select` parameter `data` implicitly has type `any`
-              [selectOption]: (data) => {
+              select: (data) => {
                 expectTypeOf(data).toBeAny()
                 return data
               },
@@ -420,9 +416,7 @@ describe('UseSuspenseQueries config object overload', () => {
           queryFn: () => Promise.resolve(1),
         })
         const queryResults = useSuspenseQueries({
-          queries: [
-            { ...options, [selectOption]: (data: number) => data.toFixed() },
-          ],
+          queries: [{ ...options, select: (data: number) => data.toFixed() }],
         })
         expectTypeOf(queryResults[0].data).toEqualTypeOf<string>()
       })
@@ -431,14 +425,14 @@ describe('UseSuspenseQueries config object overload', () => {
         const options = queryOptions({
           queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
-          [selectOption]: (data) => data + 1,
+          select: (data) => data + 1,
         })
         useSuspenseQueries({
           queries: [
             {
               ...options,
               // @ts-expect-error Without an annotation the inline `select` parameter `data` implicitly has type `any`
-              [selectOption]: (data) => {
+              select: (data) => {
                 expectTypeOf(data).toBeAny()
                 return data
               },
@@ -451,12 +445,10 @@ describe('UseSuspenseQueries config object overload', () => {
         const options = queryOptions({
           queryKey: createKey(),
           queryFn: () => Promise.resolve(1),
-          [selectOption]: (data) => data + 1,
+          select: (data) => data + 1,
         })
         const queryResults = useSuspenseQueries({
-          queries: [
-            { ...options, [selectOption]: (data: number) => data.toFixed() },
-          ],
+          queries: [{ ...options, select: (data: number) => data.toFixed() }],
         })
         expectTypeOf(queryResults[0].data).toEqualTypeOf<string>()
       })

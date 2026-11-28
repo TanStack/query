@@ -1,8 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import {
-  placeholderOption,
-  selectOption,
-} from '@tanstack/query-test-utils/projection'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { startTransition, useDeferredValue } from 'react'
@@ -37,7 +33,7 @@ describe('react transitions', () => {
         queryKey: [key, id],
         queryFn: () => Promise.resolve({ value: id }),
         staleTime: Infinity,
-        [selectOption]: select,
+        select,
       })
       if (id === 2) {
         renderB(data)
@@ -171,7 +167,7 @@ describe('react transitions', () => {
         const query = useSuspenseQuery({
           queryKey: [key, queryCount],
           queryFn: () => queryFn(queryCount),
-          [placeholderOption]:
+          placeholderData:
             placeholderMode === 'static' ? 'placeholder' : keepPreviousData,
         })
 
@@ -246,7 +242,7 @@ describe('react transitions', () => {
         const query = useSuspenseQuery({
           queryKey: [...key, 'placeholder', count],
           queryFn: () => placeholderQueryFn(count),
-          [placeholderOption]:
+          placeholderData:
             placeholderMode === 'static' ? 'placeholder' : keepPreviousData,
         })
         return <div>{query.data}</div>
@@ -328,7 +324,7 @@ describe('react transitions', () => {
       const placeholderQuery = useSuspenseQuery({
         queryKey: [...key, 'placeholder', count],
         queryFn: () => placeholderQueryFn(count),
-        [placeholderOption]: keepPreviousData,
+        placeholderData: keepPreviousData,
       })
       const suspenseQuery = useSuspenseQuery({
         queryKey: [...key, 'suspense', count],

@@ -1,6 +1,5 @@
 import { QueryClient, dataTagSymbol, skipToken } from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
-import { selectOption } from '@tanstack/query-test-utils/projection'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { defaultQueryFn } from '..'
 import { queryOptions } from '../queryOptions'
@@ -39,7 +38,7 @@ describe('queryOptions', () => {
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       staleTime: 1000,
-      [selectOption]: (data) => {
+      select: (data) => {
         expectTypeOf(data).toEqualTypeOf<number>()
       },
     })
@@ -79,7 +78,7 @@ describe('queryOptions', () => {
     const options = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
-      [selectOption]: (data) => data.toString(),
+      select: (data) => data.toString(),
     })
 
     const data = await new QueryClient().query(options)
@@ -101,7 +100,7 @@ describe('queryOptions', () => {
     const options = queryOptions({
       queryKey: ['key'],
       queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
-      [selectOption]: (data) => data.toFixed(),
+      select: (data) => data.toFixed(),
     })
 
     const data = await new QueryClient().query(options)
@@ -152,7 +151,7 @@ describe('queryOptions', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
-      [selectOption]: (data) => data.toString(),
+      select: (data) => data.toString(),
     })
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()

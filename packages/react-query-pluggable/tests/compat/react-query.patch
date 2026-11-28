@@ -1,0 +1,483 @@
+diff --git a/src/__tests__/infiniteQueryOptions.test-d.tsx b/src/__tests__/infiniteQueryOptions.test-d.tsx
+--- a/src/__tests__/infiniteQueryOptions.test-d.tsx
++++ b/src/__tests__/infiniteQueryOptions.test-d.tsx
+@@ -59,9 +59,8 @@
+
+     const { data } = useInfiniteQuery(options)
+
+-    // known issue: type of pageParams is unknown when returned from useInfiniteQuery
+-    expectTypeOf(data).toEqualTypeOf<
+-      InfiniteData<string, unknown> | undefined
++    expectTypeOf(data).toEqualTypeOf<
++      InfiniteData<string, number> | undefined
+     >()
+   })
+
+@@ -76,7 +75,6 @@
+
+     const { data } = useInfiniteQuery(options)
+
+-    // known issue: type of pageParams is unknown when returned from useInfiniteQuery
+     expectTypeOf(data).toEqualTypeOf<Array<string> | undefined>()
+   })
+
+@@ -90,7 +88,7 @@
+
+     const { data } = useSuspenseInfiniteQuery(options)
+
+-    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, unknown>>()
++    expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+   })
+
+   it('should work when passed to useSuspenseInfiniteQuery with select', () => {
+@@ -171,7 +169,9 @@
+       initialPageParam: 1,
+     })
+
+-    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
++    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<
++      InfiniteData<string, number>
++    >()
+   })
+
+   it('should tag the queryKey even if no promise is returned', () => {
+@@ -182,7 +182,9 @@
+       initialPageParam: 1,
+     })
+
+-    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
++    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<
++      InfiniteData<string, number>
++    >()
+   })
+
+   it('should tag the queryKey with the result type of the QueryFn if select is used', () => {
+@@ -194,7 +196,9 @@
+       initialPageParam: 1,
+     })
+
+-    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<InfiniteData<string>>()
++    expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<
++      InfiniteData<string, number>
++    >()
+   })
+
+   it('should return the proper type when passed to getQueryData', () => {
+@@ -209,7 +213,7 @@
+     const data = queryClient.getQueryData(tagged)
+
+     expectTypeOf(data).toEqualTypeOf<
+-      InfiniteData<string, unknown> | undefined
++      InfiniteData<string, number> | undefined
+     >()
+   })
+
+@@ -224,13 +228,13 @@
+     const queryClient = new QueryClient()
+     const data = queryClient.setQueryData(tagged, (prev) => {
+       expectTypeOf(prev).toEqualTypeOf<
+-        InfiniteData<string, unknown> | undefined
++        InfiniteData<string, number> | undefined
+       >()
+       return prev
+     })
+
+     expectTypeOf(data).toEqualTypeOf<
+-      InfiniteData<string, unknown> | undefined
++      InfiniteData<string, number> | undefined
+     >()
+   })
+
+@@ -244,7 +248,7 @@
+     })
+     const { data } = useSuspenseInfiniteQuery(options)
+     expectTypeOf(data).toEqualTypeOf<
+-      InfiniteData<string, unknown> | undefined
++      InfiniteData<string, number> | undefined
+     >()
+   })
+
+@@ -316,7 +320,7 @@
+
+     const { data } = useInfiniteQuery(options)
+     expectTypeOf(data).toEqualTypeOf<
+-      InfiniteData<{ example: boolean }, unknown> | undefined
++      InfiniteData<{ example: boolean }, number> | undefined
+     >()
+   })
+
+@@ -331,7 +335,7 @@
+     })
+
+     expectTypeOf(options.queryKey).toEqualTypeOf<
+-      DataTag<MyQueryKey, InfiniteData<number>, Error>
++      DataTag<MyQueryKey, InfiniteData<number, number>, Error>
+     >()
+   })
+
+diff --git a/src/__tests__/infiniteQueryOptions.test.tsx b/src/__tests__/infiniteQueryOptions.test.tsx
+--- a/src/__tests__/infiniteQueryOptions.test.tsx
++++ b/src/__tests__/infiniteQueryOptions.test.tsx
+@@ -4,7 +4,7 @@
+ import type { UseInfiniteQueryOptions } from '../types'
+
+ describe('infiniteQueryOptions', () => {
+-  it('should return the object received as a parameter without any modification.', () => {
++  it('should create a new descriptor and preserve the supplied options', () => {
+     const object: UseInfiniteQueryOptions = {
+       queryKey: createKey(),
+       queryFn: () => Promise.resolve(5),
+@@ -12,6 +12,8 @@
+       initialPageParam: null,
+     }
+
+-    expect(infiniteQueryOptions(object)).toBe(object)
++    const result = infiniteQueryOptions(object)
++    expect(result).not.toBe(object)
++    expect(result).toMatchObject(object)
+   })
+ })
+diff --git a/src/__tests__/placeholderData.test.ts b/src/__tests__/placeholderData.test.ts
+--- a/src/__tests__/placeholderData.test.ts
++++ b/src/__tests__/placeholderData.test.ts
+@@ -2,6 +2,10 @@
+ import { renderHook } from '@testing-library/react'
+ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+ import { QueryClient, useQueries, useQuery } from '..'
++import type {
++  PlaceholderSetting,
++  SelectSetting,
++} from '#compat/projection'
+
+ class Placeholder {
+   constructor(readonly value: number) {}
+@@ -10,8 +14,8 @@
+ type Options = {
+   queryKey: ReadonlyArray<unknown>
+   queryFn: () => Promise<Placeholder>
+-  placeholderData: Placeholder
+-  select?: (data: Placeholder) => Placeholder | Set<number>
++  placeholderData: PlaceholderSetting<Placeholder>
++  select?: SelectSetting<(data: Placeholder) => Placeholder | Set<number>>
+ }
+
+ function useMultiple(options: Options, client: QueryClient) {
+diff --git a/src/__tests__/queryOptions.test.tsx b/src/__tests__/queryOptions.test.tsx
+--- a/src/__tests__/queryOptions.test.tsx
++++ b/src/__tests__/queryOptions.test.tsx
+@@ -3,12 +3,14 @@
+ import type { UseQueryOptions } from '../types'
+
+ describe('queryOptions', () => {
+-  it('should return the object received as a parameter without any modification.', () => {
++  it('should create a new descriptor and preserve the supplied options', () => {
+     const object: UseQueryOptions = {
+       queryKey: ['key'],
+       queryFn: () => Promise.resolve(5),
+     } as const
+
+-    expect(queryOptions(object)).toBe(object)
++    const result = queryOptions(object)
++    expect(result).not.toBe(object)
++    expect(result).toMatchObject(object)
+   })
+ })
+diff --git a/src/__tests__/ssr-hydration.test.tsx b/src/__tests__/ssr-hydration.test.tsx
+--- a/src/__tests__/ssr-hydration.test.tsx
++++ b/src/__tests__/ssr-hydration.test.tsx
+@@ -13,6 +13,7 @@
+   useQuery,
+ } from '..'
+ import { setIsServer } from './utils'
++import type { UseQueryResult } from '..'
+
+ const ReactHydrate = (element: React.ReactElement, container: Element) => {
+   let root: any
+@@ -29,7 +30,13 @@
+   return value
+ }
+
+-function PrintStateComponent({ componentName, result }: any): any {
++function PrintStateComponent({
++  componentName,
++  result,
++}: {
++  componentName: string
++  result: UseQueryResult
++}) {
+   return `${componentName} - status:${result.status} fetching:${result.isFetching} data:${result.data}`
+ }
+
+diff --git a/src/__tests__/useInfiniteQuery.test-d.tsx b/src/__tests__/useInfiniteQuery.test-d.tsx
+--- a/src/__tests__/useInfiniteQuery.test-d.tsx
++++ b/src/__tests__/useInfiniteQuery.test-d.tsx
+@@ -42,9 +42,8 @@
+       getNextPageParam: () => undefined,
+     })
+
+-    // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
+     expectTypeOf(infiniteQuery.data).toEqualTypeOf<
+-      InfiniteData<number, unknown> | undefined
++      InfiniteData<number, number> | undefined
+     >()
+   })
+
+@@ -95,21 +94,15 @@
+       },
+     })
+
+-    // TODO: Order of generics prevents pageParams to be typed correctly. Using `unknown` for now
+     expectTypeOf(infiniteQuery.data).toEqualTypeOf<
+-      InfiniteData<string, unknown> | undefined
++      InfiniteData<string, number> | undefined
+     >()
+   })
+ })
+
+ describe('error booleans', () => {
+   it('should not be permanently `false`', () => {
+-    const {
+-      isFetchNextPageError,
+-      isFetchPreviousPageError,
+-      isLoadingError,
+-      isRefetchError,
+-    } = useInfiniteQuery({
++    const result = useInfiniteQuery({
+       queryKey: createKey(),
+       queryFn: ({ pageParam }) => {
+         return pageParam * 5
+@@ -117,6 +110,10 @@
+       initialPageParam: 1,
+       getNextPageParam: () => undefined,
+     })
++    const isFetchNextPageError = result.isFetchNextPageError
++    const isFetchPreviousPageError = result.isFetchPreviousPageError
++    const isLoadingError = result.isLoadingError
++    const isRefetchError = result.isRefetchError
+
+     expectTypeOf(isFetchNextPageError).toEqualTypeOf<boolean>()
+     expectTypeOf(isFetchPreviousPageError).toEqualTypeOf<boolean>()
+diff --git a/src/__tests__/useInfiniteQuery.test.tsx b/src/__tests__/useInfiniteQuery.test.tsx
+--- a/src/__tests__/useInfiniteQuery.test.tsx
++++ b/src/__tests__/useInfiniteQuery.test.tsx
+@@ -1478,21 +1481,16 @@
+
+     function Page() {
+       const fetchCountRef = React.useRef(0)
+-      const {
+-        status,
+-        data,
+-        error,
+-        isFetchingNextPage,
+-        fetchNextPage,
+-        hasNextPage,
+-        refetch,
+-      } = useInfiniteQuery({
++      const result = useInfiniteQuery({
+         queryKey: key,
+         queryFn: ({ pageParam }) =>
+           fetchItemsWithLimit(pageParam, fetchCountRef.current++),
+         initialPageParam: 0,
+         getNextPageParam: (lastPage) => lastPage.nextId,
+       })
++      const { status, data, error, fetchNextPage, hasNextPage, refetch } =
++        result
++      const isFetchingNextPage = result.isFetchingNextPage
+
+       return (
+         <div>
+@@ -1604,16 +1604,7 @@
+       const fetchCountRef = React.useRef(0)
+       const [isRemovedLastPage, setIsRemovedLastPage] =
+         React.useState<boolean>(false)
+-      const {
+-        status,
+-        data,
+-        error,
+-        isFetching,
+-        isFetchingNextPage,
+-        fetchNextPage,
+-        hasNextPage,
+-        refetch,
+-      } = useInfiniteQuery({
++      const result = useInfiniteQuery({
+         queryKey: key,
+         queryFn: ({ pageParam }): Promise<Result> => {
+           const noNext =
+@@ -1630,6 +1621,10 @@
+         getNextPageParam: (lastPage) => lastPage.nextId,
+         initialPageParam: 0,
+       })
++      const { status, data, error, fetchNextPage, hasNextPage, refetch } =
++        result
++      const isFetching = result.isFetching
++      const isFetchingNextPage = result.isFetchingNextPage
+
+       return (
+         <div>
+@@ -1803,12 +1798,14 @@
+     function Page() {
+       const [postId, setPostId] = React.useState<string>()
+
+-      const { data, isFetching } = useInfiniteQuery({
++      const result = useInfiniteQuery({
+         queryKey: key,
+         queryFn: postId != null ? queryFn : skipToken,
+         initialPageParam: 0,
+         getNextPageParam: () => 12,
+       })
++      const { data } = result
++      const isFetching = result.isFetching
+
+       return (
+         <div>
+diff --git a/src/__tests__/useQuery.test-d.tsx b/src/__tests__/useQuery.test-d.tsx
+--- a/src/__tests__/useQuery.test-d.tsx
++++ b/src/__tests__/useQuery.test-d.tsx
+@@ -279,7 +279,7 @@
+       })
+
+       it('should narrow TData after an isSuccess check when initialData is provided as a function which can return undefined', () => {
+-        const { data, isSuccess } = useQuery({
++        const result = useQuery({
+           queryKey: createKey(),
+           queryFn: () => {
+             return {
+@@ -289,8 +289,8 @@
+           initialData: () => undefined as { wow: boolean } | undefined,
+         })
+
+-        if (isSuccess) {
+-          expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
++        if (result.isSuccess) {
++          expectTypeOf(result.data).toEqualTypeOf<{ wow: boolean }>()
+         }
+       })
+
+diff --git a/src/__tests__/useQuery.test.tsx b/src/__tests__/useQuery.test.tsx
+--- a/src/__tests__/useQuery.test.tsx
++++ b/src/__tests__/useQuery.test.tsx
+@@ -4288,31 +4288,27 @@
+     await vi.advanceTimersByTimeAsync(0)
+     rendered.getByText('Data: data')
+
+-    expect(states).toMatchObject([
++    expect(
++      states.map(({ count, state }) => ({
++        count,
++        data: state.data,
++        isPlaceholderData: state.isPlaceholderData,
++        isSuccess: state.isSuccess,
++      })),
++    ).toStrictEqual([
+       {
+-        state: {
+-          isSuccess: true,
+-          isPlaceholderData: true,
+-          data: 'placeholder',
+-        },
+         count: 0,
++        data: 'placeholder',
++        isPlaceholderData: true,
++        isSuccess: true,
+       },
+       {
+-        state: {
+-          isSuccess: true,
+-          isPlaceholderData: true,
+-          data: 'placeholder',
+-        },
+         count: 1,
++        data: 'placeholder',
++        isPlaceholderData: true,
++        isSuccess: true,
+       },
+-      {
+-        state: {
+-          isSuccess: true,
+-          isPlaceholderData: false,
+-          data: 'data',
+-        },
+-        count: 1,
+-      },
++      { count: 1, data: 'data', isPlaceholderData: false, isSuccess: true },
+     ])
+   })
+
+@@ -4910,7 +4906,7 @@
+     )
+
+     function Page({ enabled }: { enabled: boolean }) {
+-      const { error, isPending } = useQuery({
++      const result = useQuery({
+         queryKey: key,
+         queryFn,
+         enabled,
+@@ -4919,6 +4915,8 @@
+         refetchOnMount: false,
+         refetchOnWindowFocus: false,
+       })
++      const { error } = result
++      const isPending = result.isPending
+
+       if (isPending) {
+         return <div>status: pending</div>
+@@ -4965,7 +4963,7 @@
+
+   it('should refetch when query key changed when previous status is error', async () => {
+     function Page({ id }: { id: number }) {
+-      const { error, isPending } = useQuery({
++      const result = useQuery({
+         queryKey: [id],
+         queryFn: () =>
+           sleep(10).then(() => {
+@@ -4980,6 +4978,8 @@
+         refetchOnMount: false,
+         refetchOnWindowFocus: false,
+       })
++      const { error } = result
++      const isPending = result.isPending
+
+       if (isPending) {
+         return <div>status: pending</div>
+@@ -5025,7 +5025,7 @@
+
+   it('should refetch when query key changed when switching between erroneous queries', async () => {
+     function Page({ id }: { id: boolean }) {
+-      const { error, isFetching } = useQuery({
++      const result = useQuery({
+         queryKey: [id],
+         queryFn: () =>
+           sleep(10).then(() => Promise.reject<unknown>(new Error('Error'))),
+@@ -5034,6 +5034,8 @@
+         refetchOnMount: false,
+         refetchOnWindowFocus: false,
+       })
++      const { error } = result
++      const isFetching = result.isFetching
+
+       if (isFetching) {
+         return <div>status: fetching</div>
+diff --git a/src/__tests__/useSuspenseInfiniteQuery.test-d.tsx b/src/__tests__/useSuspenseInfiniteQuery.test-d.tsx
+--- a/src/__tests__/useSuspenseInfiniteQuery.test-d.tsx
++++ b/src/__tests__/useSuspenseInfiniteQuery.test-d.tsx
+@@ -14,7 +14,7 @@
+       getNextPageParam: () => 1,
+     })
+
+-    expectTypeOf(data).toEqualTypeOf<InfiniteData<number, unknown>>()
++    expectTypeOf(data).toEqualTypeOf<InfiniteData<number, number>>()
+   })
+
+   it('should allow undefined data when queryFn can be skipToken', () => {
+@@ -57,7 +57,9 @@
+       placeholderData: keepPreviousData,
+     })
+
+-    expectTypeOf(query.data).toEqualTypeOf<InfiniteData<number, unknown>>()
++    expectTypeOf(query.data).toEqualTypeOf<
++      InfiniteData<number, number>
++    >()
+     expectTypeOf(query.isPlaceholderData).toEqualTypeOf<boolean>()
+
+     const selected = useSuspenseInfiniteQuery({

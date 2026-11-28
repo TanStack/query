@@ -13,7 +13,6 @@ import {
   useQuery,
 } from '..'
 import { setIsServer } from './utils'
-import type { UseQueryResult } from '..'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
   let root: any
@@ -30,13 +29,7 @@ async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
   return value
 }
 
-function PrintStateComponent({
-  componentName,
-  result,
-}: {
-  componentName: string
-  result: UseQueryResult
-}) {
+function PrintStateComponent({ componentName, result }: any): any {
   return `${componentName} - status:${result.status} fetching:${result.isFetching} data:${result.data}`
 }
 

@@ -76,6 +76,25 @@ describe('notifyManager', () => {
     expect(notifySpy).toHaveBeenCalledTimes(1)
   })
 
+  it('should use custom batch notify function', async () => {
+    const notifyManagerTest = createNotifyManager()
+    const batchNotifySpy = vi.fn<(callback: () => void) => void>((cb) => cb())
+    const callbackSpy1 = vi.fn<() => void>()
+    const callbackSpy2 = vi.fn<() => void>()
+
+    notifyManagerTest.setBatchNotifyFunction(batchNotifySpy)
+
+    notifyManagerTest.batch(() => {
+      notifyManagerTest.schedule(callbackSpy1)
+      notifyManagerTest.schedule(callbackSpy2)
+    })
+
+    await vi.advanceTimersByTimeAsync(0)
+    expect(batchNotifySpy).toHaveBeenCalledWith(expect.any(Function))
+    expect(callbackSpy1).toHaveBeenCalledWith()
+    expect(callbackSpy2).toHaveBeenCalledWith()
+  })
+
   it('should batch calls correctly', async () => {
     const notifyManagerTest = createNotifyManager()
     const callbackSpy = vi.fn<(a: number, b: string) => void>()

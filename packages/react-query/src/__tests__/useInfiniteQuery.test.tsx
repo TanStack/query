@@ -1,8 +1,4 @@
 import { createKey, sleep } from '@tanstack/query-test-utils'
-import {
-  placeholderOption,
-  selectOption,
-} from '@tanstack/query-test-utils/projection'
 import { fireEvent, render } from '@testing-library/react'
 import { createRenderStream } from '@testing-library/react-render-stream'
 import * as React from 'react'
@@ -191,7 +187,7 @@ describe('useInfiniteQuery', () => {
           sleep(10).then(() => `${pageParam}-${order}`),
         getNextPageParam: () => 1,
         initialPageParam: 0,
-        [placeholderOption]: keepPreviousData,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       })
 
@@ -275,7 +271,7 @@ describe('useInfiniteQuery', () => {
       const state = useInfiniteQuery({
         queryKey: key,
         queryFn: () => sleep(10).then(() => ({ count: 1 })),
-        [selectOption]: (data) => ({
+        select: (data) => ({
           pages: data.pages.map((x) => `count: ${x.count}`),
           pageParams: data.pageParams,
         }),
@@ -314,16 +310,13 @@ describe('useInfiniteQuery', () => {
       const state = useInfiniteQuery({
         queryKey: key,
         queryFn: () => sleep(10).then(() => ({ count: 1 })),
-        [selectOption]: React.useCallback(
-          (data: InfiniteData<{ count: number }>) => {
-            selectCalled++
-            return {
-              pages: data.pages.map((x) => ({ ...x, id: Math.random() })),
-              pageParams: data.pageParams,
-            }
-          },
-          [],
-        ),
+        select: React.useCallback((data: InfiniteData<{ count: number }>) => {
+          selectCalled++
+          return {
+            pages: data.pages.map((x) => ({ ...x, id: Math.random() })),
+            pageParams: data.pageParams,
+          }
+        }, []),
         getNextPageParam: () => undefined,
         initialPageParam: 0,
       })
@@ -363,7 +356,7 @@ describe('useInfiniteQuery', () => {
       const state = useInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
-        [selectOption]: (data) => ({
+        select: (data) => ({
           pages: [...data.pages].reverse(),
           pageParams: [...data.pageParams].reverse(),
         }),
@@ -1436,7 +1429,7 @@ describe('useInfiniteQuery', () => {
         queryKey: key,
         queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
         getNextPageParam: (lastPage) => (lastPage === 1 ? 2 : undefined),
-        [selectOption]: (data) => ({
+        select: (data) => ({
           pages: data.pages.map((x) => x.toString()),
           pageParams: data.pageParams,
         }),
@@ -1485,16 +1478,21 @@ describe('useInfiniteQuery', () => {
 
     function Page() {
       const fetchCountRef = React.useRef(0)
-      const result = useInfiniteQuery({
+      const {
+        status,
+        data,
+        error,
+        isFetchingNextPage,
+        fetchNextPage,
+        hasNextPage,
+        refetch,
+      } = useInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }) =>
           fetchItemsWithLimit(pageParam, fetchCountRef.current++),
         initialPageParam: 0,
         getNextPageParam: (lastPage) => lastPage.nextId,
       })
-      const { status, data, error, fetchNextPage, hasNextPage, refetch } =
-        result
-      const isFetchingNextPage = result.isFetchingNextPage
 
       return (
         <div>
@@ -1536,9 +1534,7 @@ describe('useInfiniteQuery', () => {
                     // makes an actual network request
                     // and calls invalidateQueries in an onSuccess
                     items.splice(4, 1)
-                    queryClient.invalidateQueries({
-                      queryKey: key,
-                    })
+                    queryClient.invalidateQueries({ queryKey: key })
                   }}
                 >
                   Remove item
@@ -1608,7 +1604,16 @@ describe('useInfiniteQuery', () => {
       const fetchCountRef = React.useRef(0)
       const [isRemovedLastPage, setIsRemovedLastPage] =
         React.useState<boolean>(false)
-      const result = useInfiniteQuery({
+      const {
+        status,
+        data,
+        error,
+        isFetching,
+        isFetchingNextPage,
+        fetchNextPage,
+        hasNextPage,
+        refetch,
+      } = useInfiniteQuery({
         queryKey: key,
         queryFn: ({ pageParam }): Promise<Result> => {
           const noNext =
@@ -1625,10 +1630,6 @@ describe('useInfiniteQuery', () => {
         getNextPageParam: (lastPage) => lastPage.nextId,
         initialPageParam: 0,
       })
-      const { status, data, error, fetchNextPage, hasNextPage, refetch } =
-        result
-      const isFetching = result.isFetching
-      const isFetchingNextPage = result.isFetchingNextPage
 
       return (
         <div>
@@ -1802,14 +1803,12 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const [postId, setPostId] = React.useState<string>()
 
-      const result = useInfiniteQuery({
+      const { data, isFetching } = useInfiniteQuery({
         queryKey: key,
         queryFn: postId != null ? queryFn : skipToken,
         initialPageParam: 0,
         getNextPageParam: () => 12,
       })
-      const { data } = result
-      const isFetching = result.isFetching
 
       return (
         <div>

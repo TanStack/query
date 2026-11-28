@@ -1,8 +1,4 @@
 import { createKey } from '@tanstack/query-test-utils'
-import {
-  placeholderOption,
-  selectOption,
-} from '@tanstack/query-test-utils/projection'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, QueryObserver, defaultQueryFn, noop } from '..'
 
@@ -25,8 +21,8 @@ describe('observer data outcome after reset', () => {
       queryKey: key,
       queryFn: () => new Promise<{ label: string | null }>(() => {}),
       enabled: false,
-      [placeholderOption]: placeholder,
-      [selectOption]: (row) => {
+      placeholderData: placeholder,
+      select: (row) => {
         if (row.label === null) throw new Error('label not ready')
         return row.label
       },
@@ -61,8 +57,8 @@ describe('observer data outcome after reset', () => {
       queryKey: key,
       queryFn: defaultQueryFn,
       enabled: false,
-      [placeholderOption]: { label: null },
-      [selectOption]: select,
+      placeholderData: { label: null },
+      select,
     } as const
     queryClient.setQueryData(key, { label: 'first' })
     const observer = new QueryObserver(queryClient, options)
@@ -108,10 +104,7 @@ describe('observer callback errors', () => {
     const placeholderData = vi.fn<() => never>(() => {
       throw new Error('placeholder failed')
     })
-    const reader = observer.createResultReader({
-      ...options,
-      [placeholderOption]: placeholderData,
-    })
+    const reader = observer.createResultReader({ ...options, placeholderData })
 
     try {
       const result = reader.getSnapshot()
@@ -150,7 +143,7 @@ describe('observer callback errors', () => {
     } as const
     const observer = new QueryObserver(client, {
       ...options,
-      [selectOption]: () => {
+      select: () => {
         throw undefined
       },
     })
@@ -177,7 +170,7 @@ describe('observer callback errors', () => {
       queryKey: createKey(),
       initialData: 1,
       enabled: false,
-      [selectOption]: (value: number) => value * 2,
+      select: (value: number) => value * 2,
     })
     const observer = new QueryObserver(client, options)
     const reader = observer.createResultReader({
@@ -203,7 +196,7 @@ describe('observer callback errors', () => {
     const options = client.defaultQueryOptions<{ value: number }>({
       queryKey: createKey(),
       enabled: false,
-      [placeholderOption]: placeholderData,
+      placeholderData,
       structuralSharing: false,
     })
     const observer = new QueryObserver(client, options)
@@ -220,7 +213,7 @@ describe('observer callback errors', () => {
 
       const secondReader = observer.createResultReader({
         ...options,
-        [placeholderOption]: () => placeholderData(),
+        placeholderData: () => placeholderData(),
       })
       const second = secondReader.getSnapshot()
       expect(secondReader.getSnapshot()).toBe(second)
