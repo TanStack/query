@@ -538,6 +538,10 @@
               "to": "framework/svelte/guides/queries"
             },
             {
+              "label": "Query Keys",
+              "to": "framework/svelte/guides/query-keys"
+            },
+            {
               "label": "Network Mode",
               "to": "framework/svelte/guides/network-mode"
             },
@@ -546,9 +550,22 @@
               "to": "framework/svelte/guides/parallel-queries"
             },
             {
+              "label": "Window Focus Refetching",
+              "to": "framework/svelte/guides/window-focus-refetching"
+            },
+            {
+              "label": "Disabling/Pausing Queries",
+              "to": "framework/svelte/guides/disabling-queries"
+            },
+            {
               "label": "Query Retries",
               "to": "framework/svelte/guides/query-retries"
             },
+            {
+              "label": "Paginated Queries",
+              "to": "framework/svelte/guides/paginated-queries"
+            },
+
             {
               "label": "Mutations",
               "to": "framework/svelte/guides/mutations"

@@ -21,12 +21,20 @@ replace:
 ```svelte
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
-  
+
   // The following queries will execute in parallel
-  const usersQuery = createQuery(() => ({ queryKey: ['users'], queryFn: fetchUsers }))
-  const teamsQuery = createQuery(() => ({ queryKey: ['teams'], queryFn: fetchTeams }))
-  const projectsQuery = createQuery(() => ({ queryKey: ['projects'], queryFn: fetchProjects }))
-  ...
+  const usersQuery = createQuery(() => ({
+    queryKey: ['users'],
+    queryFn: fetchUsers,
+  }))
+  const teamsQuery = createQuery(() => ({
+    queryKey: ['teams'],
+    queryFn: fetchTeams,
+  }))
+  const projectsQuery = createQuery(() => ({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+  }))
 </script>
 ```
 
