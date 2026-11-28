@@ -2,7 +2,8 @@
   "name": "@tanstack/query-integration-react-next-14",
   "private": true,
   "scripts": {
-    "build": "next build"
+    "build": "next build",
+    "test:types": "tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-query": "workspace:*",
@@ -13,6 +14,18 @@
   },
   "devDependencies": {
     "@types/react": "^18.2.79",
-    "@types/react-dom": "^18.2.25"
+    "@types/react-dom": "^18.2.25",
+    "typescript": "^6.0.3"
+  },
+  "nx": {
+    "targets": {
+      "test:types": {
+        "dependsOn": [
+          "^compile",
+          "^build",
+          "build"
+        ]
+      }
+    }
   }
 }

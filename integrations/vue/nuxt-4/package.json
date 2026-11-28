@@ -16,5 +16,16 @@
   "devDependencies": {
     "typescript": "^6.0.3",
     "vue-tsc": "^3.3.13"
+  },
+  "nx": {
+    "targets": {
+      "test:types": {
+        "dependsOn": [
+          "^compile",
+          "^build",
+          "build"
+        ]
+      }
+    }
   }
 }
