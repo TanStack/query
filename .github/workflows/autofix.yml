@@ -33,14 +33,14 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-      - name: Setup Tools
-        uses: TanStack/config/.github/setup@e4b48f16568324f76f467aa4c2aac2f05db632c3
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
       # Only on pushes: regenerating on every pull request would add large, unrelated diffs.
       - name: Generate reference docs
         if: ${{ github.event_name == 'push' || github.event.inputs.generate-docs == true }}
-        run: pnpm run generate-docs
+        run: vp run generate-docs
       - name: Fix formatting
-        run: pnpm run format
+        run: vp run format
       - name: Apply fixes
         uses: autofix-ci/action@635ffb0c9798bd160680f18fd73371e355b85f27
         with:

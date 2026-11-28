@@ -29,10 +29,10 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: true # changesets/action pushes version/release changes
-      - name: Setup Tools
-        uses: TanStack/config/.github/setup@e4b48f16568324f76f467aa4c2aac2f05db632c3
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
       - name: Run Build
-        run: pnpm run build:all
+        run: vp run build:all
       - name: Determine dist-tag
         id: dist-tag
         run: |
@@ -50,17 +50,14 @@ jobs:
         id: changesets
         uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
-          version-script: pnpm run changeset:version
-          publish-script: pnpm run changeset:publish ${{ steps.dist-tag.outputs.tag && format('--tag {0}', steps.dist-tag.outputs.tag) }}
+          version-script: vp run changeset:version
+          publish-script: vp run changeset:publish ${{ steps.dist-tag.outputs.tag && format('--tag {0}', steps.dist-tag.outputs.tag) }}
           pr-title: 'ci: Version Packages'
           commit-message: 'ci: changeset release'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create GitHub Release
         if: steps.changesets.outputs.published == 'true'
         run: node scripts/create-github-release.mjs ${PRERELEASE_FLAG} ${LATEST_FLAG}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           PRERELEASE_FLAG: ${{ steps.dist-tag.outputs.prerelease == 'true' && '--prerelease' }}
           LATEST_FLAG: ${{ steps.dist-tag.outputs.latest == 'true' && '--latest' }}
