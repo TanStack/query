@@ -1,4 +1,3 @@
-import { query } from '@tanstack/lit-query'
 import { readFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
 import { dirname, extname, resolve, sep } from 'node:path'
@@ -6,6 +5,7 @@ import { setTimeout as sleep } from 'node:timers/promises'
 import { fileURLToPath } from 'node:url'
 import { render } from '@lit-labs/ssr'
 import { collectResult } from '@lit-labs/ssr/lib/render-result.js'
+import { query } from '@tanstack/lit-query'
 import { QueryClient, dehydrate } from '@tanstack/lit-query'
 import { html } from 'lit'
 import {

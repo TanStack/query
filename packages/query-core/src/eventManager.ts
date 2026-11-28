@@ -3,7 +3,9 @@ import { Subscribable } from './subscribable'
 type Setup<TListener> = (listener: TListener) => (() => void) | undefined
 
 /** Registers an environment listener while the first to last subscriber is active. */
-export abstract class EventManager<TListener> extends Subscribable<(value: boolean) => void> {
+export abstract class EventManager<TListener> extends Subscribable<
+  (value: boolean) => void
+> {
   #cleanup?: () => void
   #setup: Setup<TListener>
 
@@ -37,9 +39,13 @@ export abstract class EventManager<TListener> extends Subscribable<(value: boole
 }
 
 /** Listens for browser events when a window with DOM event support is available. */
-export function listenToWindow(type: 'visibilitychange' | 'online' | 'offline', listener: () => void) {
+export function listenToWindow(
+  type: 'visibilitychange' | 'online' | 'offline',
+  listener: () => void,
+) {
   // React Native may expose a window without DOM event methods.
-  if (typeof window === 'undefined' || !window.addEventListener) return undefined
+  if (typeof window === 'undefined' || !window.addEventListener)
+    return undefined
   window.addEventListener(type, listener, false)
   return () => window.removeEventListener(type, listener)
 }

@@ -25,12 +25,18 @@ When `queryFn` cannot be `skipToken`, TypeScript gives `data` the type `TData`. 
 To skip a query in `suspenseQueryOptions` or `suspenseInfiniteQueryOptions`, pass `skipToken` as its `queryFn`. A skipped Query can still read cached data. It does not fetch automatically or suspend. If `queryFn` can be `skipToken`, check `data` before using it because the cache can be empty.
 
 ```tsx
-import { skipToken, suspenseQueryOptions, useQuery } from '@tanstack/react-query'
+import {
+  skipToken,
+  suspenseQueryOptions,
+  useQuery,
+} from '@tanstack/react-query'
 
-const { data } = useQuery(suspenseQueryOptions({
-  queryKey: ['post', postId],
-  queryFn: postId === undefined ? skipToken : () => fetchPost(postId),
-}))
+const { data } = useQuery(
+  suspenseQueryOptions({
+    queryKey: ['post', postId],
+    queryFn: postId === undefined ? skipToken : () => fetchPost(postId),
+  }),
+)
 ```
 
 For dependent Queries in the same component, each Query that suspends completes before the next hook runs.
@@ -50,7 +56,11 @@ throwOnError: (error, query) => typeof query.state.data === 'undefined'
 Since you can't change `throwOnError` (because it would allow for `data` to become potentially `undefined`), you have to throw errors manually if you want all errors to be handled by Error Boundaries:
 
 ```tsx
-import { isFetching, suspenseQueryOptions, useQuery } from '@tanstack/react-query'
+import {
+  isFetching,
+  suspenseQueryOptions,
+  useQuery,
+} from '@tanstack/react-query'
 
 const result = useQuery(suspenseQueryOptions({ queryKey, queryFn }))
 

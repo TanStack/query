@@ -59,8 +59,12 @@ export function isQueryDisabled(query: Query<any, any, any, any>): boolean {
  * @returns `true` if the query is static.
  */
 export function isQueryStatic(query: Query<any, any, any, any>): boolean {
-  return query.state.data !== undefined && query.observers.some(
-    (observer) => resolveQueryValue(observer.options.staleTime, query) === 'static',
+  return (
+    query.state.data !== undefined &&
+    query.observers.some(
+      (observer) =>
+        resolveQueryValue(observer.options.staleTime, query) === 'static',
+    )
   )
 }
 

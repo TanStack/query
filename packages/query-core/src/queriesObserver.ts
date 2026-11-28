@@ -193,8 +193,10 @@ export class QueriesObserver<
         observer.getCurrentResult(),
       )
 
-      const hasStructuralChange =
-        !shallowEqualObjects(newObservers, prevObservers)
+      const hasStructuralChange = !shallowEqualObjects(
+        newObservers,
+        prevObservers,
+      )
 
       if (!hasStructuralChange && equalResults(newResult, this.#result)) return
 
@@ -374,10 +376,7 @@ export class QueriesObserver<
           (observer.options.suspense && result?.data === undefined) ||
           (result?.status === 'error' &&
             result.fetchStatus !== 'fetching' &&
-            shouldThrowError(rule, [
-              result.error,
-              observer.getCurrentQuery(),
-            ]))
+            shouldThrowError(rule, [result.error, observer.getCurrentQuery()]))
         )
       })
     )

@@ -776,8 +776,10 @@ function shouldFetchOnMount(
   if (query.state.data !== undefined) {
     return shouldFetchOn(query, options, options.refetchOnMount)
   }
-  return resolveQueryValue(options.enabled, query) !== false && (
-    query.state.status !== 'error' || resolveQueryValue(options.retryOnMount, query) !== false
+  return (
+    resolveQueryValue(options.enabled, query) !== false &&
+    (query.state.status !== 'error' ||
+      resolveQueryValue(options.retryOnMount, query) !== false)
   )
 }
 

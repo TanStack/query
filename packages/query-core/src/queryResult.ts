@@ -141,9 +141,7 @@ export function isRefetching<TResult extends Status & Fetch & Partial<Page>>(
 export function isFetchingNextPage<TResult extends Fetch & Page>(
   result: TResult,
 ): result is TResult & { fetchStatus: 'fetching'; fetchDirection: 'forward' } {
-  return (
-    isFetching(result) && result.fetchDirection === 'forward'
-  )
+  return isFetching(result) && result.fetchDirection === 'forward'
 }
 
 /**
@@ -154,9 +152,7 @@ export function isFetchingNextPage<TResult extends Fetch & Page>(
 export function isFetchingPreviousPage<TResult extends Fetch & Page>(
   result: TResult,
 ): result is TResult & { fetchStatus: 'fetching'; fetchDirection: 'backward' } {
-  return (
-    isFetching(result) && result.fetchDirection === 'backward'
-  )
+  return isFetching(result) && result.fetchDirection === 'backward'
 }
 
 /**

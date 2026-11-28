@@ -276,15 +276,31 @@ export class MutationObserver<
           const error = action.type === 'error' ? action.error : null
           try {
             if (action.type === 'success') {
-              mutateOptions.onSuccess?.(action.data, variables, onMutateResult, context)
+              mutateOptions.onSuccess?.(
+                action.data,
+                variables,
+                onMutateResult,
+                context,
+              )
             } else {
-              mutateOptions.onError?.(action.error, variables, onMutateResult, context)
+              mutateOptions.onError?.(
+                action.error,
+                variables,
+                onMutateResult,
+                context,
+              )
             }
           } catch (callbackError) {
             void Promise.reject(callbackError)
           }
           try {
-            mutateOptions.onSettled?.(data, error, variables, onMutateResult, context)
+            mutateOptions.onSettled?.(
+              data,
+              error,
+              variables,
+              onMutateResult,
+              context,
+            )
           } catch (callbackError) {
             void Promise.reject(callbackError)
           }

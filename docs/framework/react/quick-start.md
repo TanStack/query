@@ -43,7 +43,9 @@ function Todos() {
   const queryClient = useQueryClient()
 
   // Queries
-  const query = useQuery(queryOptions({ queryKey: ['todos'], queryFn: getTodos }))
+  const query = useQuery(
+    queryOptions({ queryKey: ['todos'], queryFn: getTodos }),
+  )
 
   // Mutations
   const mutation = useMutation({

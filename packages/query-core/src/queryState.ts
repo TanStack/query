@@ -55,14 +55,17 @@ export function getDefaultQueryState<TData>(
   options: Pick<QueryOptions<TData>, 'initialData' | 'initialDataUpdatedAt'>,
 ): QueryState<TData, never> {
   const { initialData, initialDataUpdatedAt } = options
-  const data = typeof initialData === 'function'
-    ? (initialData as InitialDataFunction<TData>)()
-    : initialData
+  const data =
+    typeof initialData === 'function'
+      ? (initialData as InitialDataFunction<TData>)()
+      : initialData
 
   const hasData = data !== undefined
 
   const dataUpdatedAt = hasData
-    ? (typeof initialDataUpdatedAt === 'function' ? initialDataUpdatedAt() : initialDataUpdatedAt) ?? Date.now()
+    ? ((typeof initialDataUpdatedAt === 'function'
+        ? initialDataUpdatedAt()
+        : initialDataUpdatedAt) ?? Date.now())
     : 0
 
   return {

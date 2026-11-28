@@ -24,7 +24,9 @@ To subscribe to a query in your components or custom hooks, pass prepared option
 import { queryOptions, useQuery } from '@tanstack/react-query'
 
 function App() {
-  const info = useQuery(queryOptions({ queryKey: ['todos'], queryFn: fetchTodoList }))
+  const info = useQuery(
+    queryOptions({ queryKey: ['todos'], queryFn: fetchTodoList }),
+  )
 }
 ```
 
@@ -37,7 +39,9 @@ The query result returned by `useQuery` contains all of the information about th
 [//]: # 'Example2'
 
 ```tsx
-const result = useQuery(queryOptions({ queryKey: ['todos'], queryFn: fetchTodoList }))
+const result = useQuery(
+  queryOptions({ queryKey: ['todos'], queryFn: fetchTodoList }),
+)
 ```
 
 [//]: # 'Example2'
@@ -59,13 +63,20 @@ For **most** queries, it's usually sufficient to check for the `isPending` state
 [//]: # 'Example3'
 
 ```tsx
-import { isError, isPending, queryOptions, useQuery } from '@tanstack/react-query'
+import {
+  isError,
+  isPending,
+  queryOptions,
+  useQuery,
+} from '@tanstack/react-query'
 
 function Todos() {
-  const todos = useQuery(queryOptions({
-    queryKey: ['todos'],
-    queryFn: fetchTodoList,
-  }))
+  const todos = useQuery(
+    queryOptions({
+      queryKey: ['todos'],
+      queryFn: fetchTodoList,
+    }),
+  )
 
   if (isPending(todos)) {
     return <span>Loading...</span>
@@ -94,10 +105,12 @@ If booleans aren't your thing, you can always use the `status` state as well:
 
 ```tsx
 function Todos() {
-  const { status, data, error } = useQuery(queryOptions({
-    queryKey: ['todos'],
-    queryFn: fetchTodoList,
-  }))
+  const { status, data, error } = useQuery(
+    queryOptions({
+      queryKey: ['todos'],
+      queryFn: fetchTodoList,
+    }),
+  )
 
   if (status === 'pending') {
     return <span>Loading...</span>

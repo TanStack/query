@@ -8,7 +8,13 @@ Keep the cache key, fetch function, and options together in a factory. TypeScrip
 [//]: # 'Example1'
 
 ```ts
-import { query, queryOptions, setQueryData, useQueries, useQuery } from '@tanstack/react-query'
+import {
+  query,
+  queryOptions,
+  setQueryData,
+  useQueries,
+  useQuery,
+} from '@tanstack/react-query'
 
 function groupOptions(id: number) {
   return queryOptions({
@@ -44,10 +50,12 @@ import { queryOptions, select, useQuery } from '@tanstack/react-query'
 
 // selected.data has the selected name's type.
 
-const selected = useQuery(queryOptions({
-  ...groupOptions(1),
-  select: select((group) => group.groupName),
-}))
+const selected = useQuery(
+  queryOptions({
+    ...groupOptions(1),
+    select: select((group) => group.groupName),
+  }),
+)
 ```
 
 [//]: # 'Example2'

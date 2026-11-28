@@ -69,16 +69,18 @@ export default function App() {
 }
 
 function Example() {
-  const repo = useQuery(queryOptions({
-    queryKey: ['repoData'],
-    queryFn: async () => {
-      const response = await fetch(
-        'https://api.github.com/repos/TanStack/query',
-      )
-      if (!response.ok) throw new Error('Failed to fetch repo data')
-      return response.json()
-    },
-  }))
+  const repo = useQuery(
+    queryOptions({
+      queryKey: ['repoData'],
+      queryFn: async () => {
+        const response = await fetch(
+          'https://api.github.com/repos/TanStack/query',
+        )
+        if (!response.ok) throw new Error('Failed to fetch repo data')
+        return response.json()
+      },
+    }),
+  )
 
   if (isPending(repo)) return 'Loading...'
 

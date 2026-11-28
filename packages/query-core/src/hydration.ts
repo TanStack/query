@@ -351,9 +351,10 @@ export function hydrateQueries(
             ? deserializeData(rawData)
             : rawData
 
-      const resolvedState = state.status === 'pending' && data !== undefined
-        ? { status: 'success' as const, dataUpdatedAt: dehydratedAt }
-        : undefined
+      const resolvedState =
+        state.status === 'pending' && data !== undefined
+          ? { status: 'success' as const, dataUpdatedAt: dehydratedAt }
+          : undefined
       let query = queryCache.get(queryHash)
       const existingQueryIsPending = query?.state.status === 'pending'
       const existingQueryIsFetching = query?.state.fetchStatus === 'fetching'
@@ -377,7 +378,8 @@ export function hydrateQueries(
             // Since you can opt into dehydrating failed queries, and those can have data from
             // previous successful fetches, we make sure we only do this for pending queries.
             ...resolvedState,
-            ...(resolvedState && !existingQueryIsFetching && { fetchStatus: 'idle' as const }),
+            ...(resolvedState &&
+              !existingQueryIsFetching && { fetchStatus: 'idle' as const }),
           })
         }
       } else {

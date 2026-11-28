@@ -104,22 +104,18 @@ export function mountQueryClient(client: QueryClient): void {
   const state = client[clientState]
   if (++state.mountCount !== 1) return
 
-  const unsubscribeFocus = focusManager.subscribe(
-    async (focused) => {
-      if (focused) {
-        await resumePausedMutations(client)
-        state.queryCache.onFocus()
-      }
-    },
-  )
-  const unsubscribeOnline = onlineManager.subscribe(
-    async (online) => {
-      if (online) {
-        await resumePausedMutations(client)
-        state.queryCache.onOnline()
-      }
-    },
-  )
+  const unsubscribeFocus = focusManager.subscribe(async (focused) => {
+    if (focused) {
+      await resumePausedMutations(client)
+      state.queryCache.onFocus()
+    }
+  })
+  const unsubscribeOnline = onlineManager.subscribe(async (online) => {
+    if (online) {
+      await resumePausedMutations(client)
+      state.queryCache.onOnline()
+    }
+  })
   state.unsubscribe = () => {
     unsubscribeFocus()
     unsubscribeOnline()

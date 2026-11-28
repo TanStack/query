@@ -113,9 +113,7 @@ async function buildApp(
         '#query-hooks': path.join(
           root,
           'src',
-          adapter === treeshakable
-            ? 'treeshakable-query.ts'
-            : 'v6-query.ts',
+          adapter === treeshakable ? 'treeshakable-query.ts' : 'v6-query.ts',
         ),
         '#polling-option': path.join(
           root,
@@ -510,11 +508,7 @@ async function measure(adapter: Adapter, screen: Screen) {
   const owners = runtimeOwners(source)
   const belongsToAdapter = (id: string) =>
     owners.some((dir) => id.startsWith(dir))
-  checkPairOwnership(
-    renderedModules(app),
-    owners,
-    `${adapter} ${screen} app`,
-  )
+  checkPairOwnership(renderedModules(app), owners, `${adapter} ${screen} app`)
   const attributed = await buildApp(adapter, screen, belongsToAdapter)
   checkPairOwnership(
     renderedModules(attributed),

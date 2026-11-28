@@ -16,7 +16,13 @@ replace:
 [//]: # 'Example1'
 
 ```ts
-import { query, queryOptions, setQueryData, useQueries, useQuery } from '@tanstack/solid-query'
+import {
+  query,
+  queryOptions,
+  setQueryData,
+  useQueries,
+  useQuery,
+} from '@tanstack/solid-query'
 
 function groupOptions(id: number) {
   return queryOptions({
