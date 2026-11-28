@@ -90,9 +90,6 @@ export const rule = createRule({
         }
 
         if (returnValue.type !== AST_NODE_TYPES.ArrayPattern) {
-          if (returnValue.type === AST_NODE_TYPES.Identifier) {
-            queryResultVariables.add(returnValue.name)
-          }
           return
         }
 
