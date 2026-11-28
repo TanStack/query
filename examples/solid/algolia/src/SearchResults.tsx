@@ -1,7 +1,7 @@
 import {
-  isLoading,
   isFetching,
   isFetchingNextPage,
+  isLoading,
   useInfiniteQuery,
 } from '@tanstack/solid-query'
 import { For, Match, Show, Switch } from 'solid-js'

@@ -69,7 +69,7 @@ export function isPaused<TResult extends Fetch>(
 export function isLoading<TResult extends Status & Fetch>(
   result: TResult,
 ): result is TResult & { status: 'pending'; fetchStatus: 'fetching' } {
-  return isPending(result) && isFetching(result)
+  return result.status === 'pending' && result.fetchStatus === 'fetching'
 }
 
 /**
@@ -92,7 +92,7 @@ export function isFetched(result: {
 export function isLoadingError<TResult extends Status & Data>(
   result: TResult,
 ): result is TResult & { status: 'error'; data: undefined } {
-  return isError(result) && result.data === undefined
+  return result.status === 'error' && result.data === undefined
 }
 
 /**
@@ -108,7 +108,7 @@ export function isRefetchError<TResult extends Status & Data & Partial<Page>>(
   fetchDirection?: undefined
 } {
   return (
-    isError(result) &&
+    result.status === 'error' &&
     result.data !== undefined &&
     result.fetchDirection === undefined
   )
@@ -127,8 +127,8 @@ export function isRefetching<TResult extends Status & Fetch & Partial<Page>>(
   fetchDirection?: undefined
 } {
   return (
-    isFetching(result) &&
-    !isPending(result) &&
+    result.fetchStatus === 'fetching' &&
+    result.status !== 'pending' &&
     result.fetchDirection === undefined
   )
 }
@@ -141,7 +141,9 @@ export function isRefetching<TResult extends Status & Fetch & Partial<Page>>(
 export function isFetchingNextPage<TResult extends Fetch & Page>(
   result: TResult,
 ): result is TResult & { fetchStatus: 'fetching'; fetchDirection: 'forward' } {
-  return isFetching(result) && result.fetchDirection === 'forward'
+  return (
+    result.fetchStatus === 'fetching' && result.fetchDirection === 'forward'
+  )
 }
 
 /**
@@ -152,7 +154,9 @@ export function isFetchingNextPage<TResult extends Fetch & Page>(
 export function isFetchingPreviousPage<TResult extends Fetch & Page>(
   result: TResult,
 ): result is TResult & { fetchStatus: 'fetching'; fetchDirection: 'backward' } {
-  return isFetching(result) && result.fetchDirection === 'backward'
+  return (
+    result.fetchStatus === 'fetching' && result.fetchDirection === 'backward'
+  )
 }
 
 /**
@@ -163,7 +167,7 @@ export function isFetchingPreviousPage<TResult extends Fetch & Page>(
 export function isFetchNextPageError<TResult extends Status & Page>(
   result: TResult,
 ): result is TResult & { status: 'error'; fetchDirection: 'forward' } {
-  return isError(result) && result.fetchDirection === 'forward'
+  return result.status === 'error' && result.fetchDirection === 'forward'
 }
 
 /**
@@ -174,5 +178,5 @@ export function isFetchNextPageError<TResult extends Status & Page>(
 export function isFetchPreviousPageError<TResult extends Status & Page>(
   result: TResult,
 ): result is TResult & { status: 'error'; fetchDirection: 'backward' } {
-  return isError(result) && result.fetchDirection === 'backward'
+  return result.status === 'error' && result.fetchDirection === 'backward'
 }

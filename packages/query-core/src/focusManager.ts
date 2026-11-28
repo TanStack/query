@@ -1,21 +1,90 @@
-import { EventManager, listenToWindow } from './eventManager'
+import { Subscribable } from './subscribable'
+
+type Listener = (focused: boolean) => void
+
+type SetupFn = (
+  setFocused: (focused?: boolean) => void,
+) => (() => void) | undefined
 
 /**
  * The `FocusManager` manages the focus state within TanStack Query.
  *
  * It can be used to change the default event listeners or to manually change the focus state.
  */
-export class FocusManager extends EventManager<(focused?: boolean) => void> {
+export class FocusManager extends Subscribable<Listener> {
   #focused?: boolean
+  #cleanup?: () => void
+
+  #setup: SetupFn
+
   constructor() {
-    super((onFocus) => listenToWindow('visibilitychange', () => onFocus()))
+    super()
+    this.#setup = (onFocus) => {
+      // addEventListener does not exist in React Native, but window does
+      // oxlint-disable-next-line typescript/no-unnecessary-condition
+      if (typeof window !== 'undefined' && window.addEventListener) {
+        const listener = () => onFocus()
+        // Listen to visibilitychange
+        window.addEventListener('visibilitychange', listener, false)
+
+        return () => {
+          // Be sure to unsubscribe if a new handler is set
+          window.removeEventListener('visibilitychange', listener)
+        }
+      }
+      return
+    }
   }
 
-  protected getListener() {
-    return (focused?: boolean) => {
-      if (typeof focused === 'boolean') this.setFocused(focused)
-      else this.onFocus()
+  protected override onSubscribe(): void {
+    if (!this.#cleanup) {
+      this.setEventListener(this.#setup)
     }
+  }
+
+  protected override onUnsubscribe() {
+    if (!this.hasListeners()) {
+      this.#cleanup?.()
+      this.#cleanup = undefined
+    }
+  }
+
+  /**
+   * `setEventListener` can be used to set a custom event listener that will
+   * be used to determine the focus state. The provided `setup` function
+   * receives a `setFocused` callback: call it with a `boolean` to manually
+   * set the focus state, or with no arguments to re-evaluate the current
+   * focus state and notify subscribers.
+   * @param setup - Receives the `setFocused` callback, registers the event listener, and may return
+   * a cleanup function that is called when the listener is replaced or no longer needed.
+   * @example
+   * ```ts
+   * import { focusManager } from '@tanstack/query-core-pluggable'
+   *
+   * focusManager.setEventListener((handleFocus) => {
+   *   const listener = () => handleFocus()
+   *   // Listen to visibilitychange
+   *   if (typeof window !== 'undefined' && window.addEventListener) {
+   *     window.addEventListener('visibilitychange', listener, false)
+   *   }
+   *
+   *   return () => {
+   *     // Be sure to unsubscribe if a new handler is set
+   *     window.removeEventListener('visibilitychange', listener)
+   *   }
+   * })
+   * ```
+   */
+  setEventListener(setup: SetupFn): void {
+    this.#setup = setup
+    this.#cleanup?.()
+    this.#cleanup = setup((focused) => {
+      if (typeof focused === 'boolean') {
+        this.setFocused(focused)
+      } else {
+        this.onFocus()
+      }
+    })
   }
 
   /**
@@ -24,7 +93,7 @@ export class FocusManager extends EventManager<(focused?: boolean) => void> {
    * @param focused - The focus state, or `undefined` to use the default focus check.
    * @example
    * ```ts
-   * import { focusManager } from '@tanstack/query-core'
+   * import { focusManager } from '@tanstack/query-core-pluggable'
    *
    * // Set focused
    * focusManager.setFocused(true)

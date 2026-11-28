@@ -45,7 +45,6 @@ import {
   skipToken,
   unmountQueryClient,
 } from '..'
-import { optionalSelect } from './helpers/projection'
 import { mockOnlineManagerIsOnline } from './utils'
 import type {
   InfiniteData,
@@ -886,7 +885,7 @@ describe('queryClient', () => {
         fetchQueryData(queryClient, {
           queryKey: key,
           queryFn: skipToken,
-          select: optionalSelect(select),
+          select: selectData(select),
           initialData,
         }),
       ).resolves.toBeUndefined()
@@ -904,7 +903,7 @@ describe('queryClient', () => {
       const result = await fetchQueryData(queryClient, {
         queryKey: key,
         queryFn: skipToken,
-        select: optionalSelect((data: unknown) => (data as string).length),
+        select: selectData((data: unknown) => (data as string).length),
       })
       expect(result).toBe('cached-data'.length)
     })
@@ -1307,7 +1306,7 @@ describe('queryClient', () => {
           queryFn: skipToken,
           getNextPageParam: () => undefined,
           initialPageParam: 0,
-          select: optionalSelect(select),
+          select: selectData(select),
         }),
       ).resolves.toBeUndefined()
 

@@ -1,9 +1,9 @@
 import {
-  query,
   QueryClientProvider,
   dehydrate,
   hydrate,
   noop,
+  query,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { uneval } from 'devalue'

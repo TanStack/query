@@ -1,5 +1,6 @@
+import { equalItems } from './equalItems'
 import { projectResult } from './projectResult'
-import { replaceData, shallowEqualObjects } from './utils'
+import { replaceData } from './utils'
 import type { Select } from './projectionTypes'
 import type { Query } from './query'
 import type { QueryObserverResultContext } from './queryObserver'
@@ -18,70 +19,14 @@ export function select<TInput, TData>(
 }
 
 select.project = projectResult
-select.reuse = reuseSelection
 select.resolve = resolveSelection
-
-/**
- * Reuses the last committed selection when a reader sees the same input and selector.
- * @param options - The reader's options.
- * @param query - The query being read.
- * @param committed - Memoized selections for the active observer.
- * @param context - Selections local to this result reader.
- */
-function reuseSelection<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey extends QueryKey,
->(
-  options: QueryObserverOptionsBase<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >,
-  query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
-  committed: QueryObserverResultContext<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >,
-  context: QueryObserverResultContext<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >,
-): void {
-  const transform = options.select?.[1]
-  const input = query.state.data
-  if (
-    input !== undefined &&
-    transform &&
-    shallowEqualObjects(
-      {
-        input,
-        select: transform,
-        structuralSharing: options.structuralSharing,
-      },
-      committed.selection?.key,
-    )
-  ) {
-    context.selection = committed.selection
-    context.selected = committed.selected
-  }
-}
 
 /**
  * Memoizes the result or error of applying a selector to query or placeholder data.
  * @param options - Options controlling structural sharing.
  * @param transform - The caller's selector.
  * @param context - Selection state for this observer or render.
+ * @param committed - The last committed selection, which a reader may reuse.
  * @param previousData - The previous data for structural sharing.
  * @param input - The value passed to the selector.
  * @param sourceQuery - The query supplying the selected data, if any.
@@ -108,16 +53,21 @@ function resolveSelection<
     TQueryData,
     TQueryKey
   >,
+  committed: typeof context,
   previousData: TData | undefined,
   input: TQueryData,
   sourceQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
 ): void {
-  const key = {
-    input,
-    select: transform,
-    structuralSharing: options.structuralSharing,
+  const key = [input, transform, options.structuralSharing] as const
+  if (
+    context !== committed &&
+    sourceQuery?.state.data === input &&
+    equalItems<unknown>(key, committed.selection?.key)
+  ) {
+    context.selection = committed.selection
+    context.selected = committed.selected
   }
-  if (shallowEqualObjects(key, context.selection?.key)) return
+  if (equalItems<unknown>(key, context.selection?.key)) return
   try {
     const data = replaceData(previousData, transform(input), options)
     context.selected = { data, query: sourceQuery }

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+  import { isPending, isError, createQuery } from '@tanstack/svelte-query'
   import CharacterItem from '$lib/CharacterItem.svelte'
   import { charactersQueries } from '$lib/services/characters/queries'
 
@@ -20,9 +20,9 @@
     it without a loading state.
   </p>
   <h2>Characters</h2>
-  {#if charactersQuery.isPending}
+  {#if isPending(charactersQuery)}
     Loading...
-  {:else if charactersQuery.isError}
+  {:else if isError(charactersQuery)}
     <span>Error: {charactersQuery.error.message}</span>
   {:else}
     <ul>
@@ -32,9 +32,9 @@
     </ul>
 
     <h3>Selected Character</h3>
-    {#if characterQuery.isPending}
+    {#if isPending(characterQuery)}
       Loading...
-    {:else if characterQuery.isError}
+    {:else if isError(characterQuery)}
       <span>Error: {characterQuery.error.message}</span>
     {:else}
       <pre>{JSON.stringify(characterQuery.data, null, 2)}</pre>

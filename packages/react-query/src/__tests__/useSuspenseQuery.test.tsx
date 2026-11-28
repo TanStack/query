@@ -7,7 +7,9 @@ import {
   query,
   refetchInterval,
   resetQueries,
+  select as selectResult,
   setQueryData,
+  placeholderData as withPlaceholder,
 } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent } from '@testing-library/react'
@@ -26,7 +28,6 @@ import {
   useQuery,
   useQueryErrorResetBoundary,
 } from '..'
-import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 import { resultForComparison } from './helpers/result'
 import { renderWithSuspense } from './utils'
 import type {
@@ -683,7 +684,7 @@ describe('useSuspenseQuery', () => {
         suspenseQueryOptions({
           queryKey: key,
           queryFn: () => sleep(10).then(() => ({ a: { b: 'c' } })),
-          select: optionalSelect(() => {
+          select: selectResult(() => {
             throw new Error('foo')
           }),
         }),
@@ -975,7 +976,7 @@ describe('useSuspenseQuery', () => {
         suspenseQueryOptions({
           queryKey: [...key, 'detail', 1],
           queryFn,
-          placeholderData: optionalPlaceholderData(() =>
+          placeholderData: withPlaceholder(() =>
             getQueryData<Array<{ id: number; text: string }>>(queryClient, [
               ...key,
               'list',
@@ -1015,7 +1016,7 @@ describe('useSuspenseQuery', () => {
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: withPlaceholder(keepPreviousData),
         },
       },
     })
@@ -1086,7 +1087,7 @@ describe('useSuspenseQuery', () => {
         suspenseQueryOptions({
           queryKey: key,
           queryFn: () => sleep(10).then(() => 'data'),
-          placeholderData: optionalPlaceholderData(() => undefined),
+          placeholderData: withPlaceholder(() => undefined),
         }),
       )
 
@@ -1111,9 +1112,9 @@ describe('useSuspenseQuery', () => {
         suspenseQueryOptions({
           queryKey: key,
           queryFn,
-          placeholderData: optionalPlaceholderData(
-            showPlaceholder ? 'placeholder' : undefined,
-          ),
+          placeholderData: showPlaceholder
+            ? withPlaceholder('placeholder')
+            : undefined,
         }),
       )
 
@@ -1165,7 +1166,7 @@ describe('useSuspenseQuery', () => {
         suspenseQueryOptions({
           queryKey: key,
           queryFn,
-          placeholderData: optionalPlaceholderData('placeholder'),
+          placeholderData: withPlaceholder('placeholder'),
           retry: false,
         }),
       )

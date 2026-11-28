@@ -6,8 +6,8 @@ import {
   clearQueryClient,
   defaultQueryFn,
   mountQueryClient,
+  select as selectResult,
 } from '..'
-import { optionalSelect } from './helpers/projection'
 import type { Query, QueryObserver, QueryObserverResult } from '..'
 import type { QueriesObserverOptions } from '../queriesObserver'
 import type { ObserverOptionsInput } from '../queryObserver'
@@ -101,9 +101,7 @@ describe('queriesObserver', () => {
     it('should reject an option it does not declare', () => {
       new QueriesObserver(queryClient, [], {
         // @ts-expect-error combine is the only option
-        select: optionalSelect(
-          (results: Array<QueryObserverResult>) => results,
-        ),
+        select: selectResult((results: Array<QueryObserverResult>) => results),
       })
 
       expectTypeOf<

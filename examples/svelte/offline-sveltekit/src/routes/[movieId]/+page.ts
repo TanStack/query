@@ -1,8 +1,8 @@
 import {
   getQueryData,
-  query,
   noop,
   onlineManager,
+  query,
 } from '@tanstack/svelte-query'
 import { queryClient } from '$lib/queryClient'
 import { moviesQueries } from '$lib/services/movies/queries'

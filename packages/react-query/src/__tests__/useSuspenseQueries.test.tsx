@@ -5,7 +5,9 @@ import {
   getQueryData,
   getQueryObserverCount,
   resetQueries,
+  select as selectResult,
   setQueryData,
+  placeholderData as withPlaceholder,
 } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent, render } from '@testing-library/react'
@@ -28,7 +30,6 @@ import {
   useQuery,
   useSuspenseQueries,
 } from '..'
-import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 import { renderWithClient, renderWithSuspense } from './utils'
 import type { UseSuspenseQueryOptions, UseSuspenseQueryResult } from '..'
 
@@ -395,14 +396,14 @@ describe('useSuspenseQueries', () => {
     function getName() {
       return {
         ...getUserData(),
-        select: optionalSelect((data: any) => data.name),
+        select: selectResult((data: any) => data.name),
       }
     }
 
     function getAge() {
       return {
         ...getUserData(),
-        select: optionalSelect((data: any) => data.age),
+        select: selectResult((data: any) => data.age),
       }
     }
 
@@ -701,7 +702,7 @@ describe('useSuspenseQueries', () => {
             queryKey: key,
             queryFn: () => Promise.resolve('First'),
             staleTime: Infinity,
-            select: optionalSelect((data: string) =>
+            select: selectResult((data: string) =>
               expanded ? data.toUpperCase() : data.toLowerCase(),
             ),
           },
@@ -856,7 +857,7 @@ describe('useSuspenseQueries', () => {
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          placeholderData: optionalPlaceholderData('placeholder'),
+          placeholderData: withPlaceholder('placeholder'),
         },
       },
     })
@@ -948,7 +949,7 @@ describe('useSuspenseQueries', () => {
           {
             queryKey: [...key, 1],
             queryFn: placeholderQueryFn,
-            placeholderData: optionalPlaceholderData('placeholder'),
+            placeholderData: withPlaceholder('placeholder'),
           },
           { queryKey: [...key, 2], queryFn: pendingQueryFn },
         ],
@@ -993,7 +994,7 @@ describe('useSuspenseQueries', () => {
           {
             queryKey: [...key, deferredCount],
             queryFn: () => queryFn(deferredCount),
-            placeholderData: optionalPlaceholderData('placeholder'),
+            placeholderData: withPlaceholder('placeholder'),
           },
         ],
       })

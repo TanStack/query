@@ -1,7 +1,7 @@
 'use client'
 
 import { skipToken } from '@tanstack/query-core'
-import { defaultThrowOnError, suspenseQueriesPolicy } from './suspense'
+import { suspenseQueriesPolicy } from './suspense'
 import { useBaseQueries } from './useQueries'
 import type {
   DefaultError,
@@ -539,24 +539,11 @@ export function useSuspenseQueries<
 ): TCombinedResult
 
 export function useSuspenseQueries(options: any, queryClient?: QueryClient) {
-  return useBaseQueries(
-    {
-      ...options,
-      queries: options.queries.map((query: any) => {
-        if (process.env.NODE_ENV !== 'production') {
-          if (query.queryFn === skipToken) {
-            console.error('skipToken is not allowed for useSuspenseQueries')
-          }
-        }
-
-        return {
-          ...query,
-          throwOnError: defaultThrowOnError,
-          enabled: true,
-        }
-      }),
-    },
-    queryClient,
-    suspenseQueriesPolicy,
-  )
+  if (process.env.NODE_ENV !== 'production') {
+    options.queries.forEach((query: { queryFn?: unknown }) => {
+      if (query.queryFn === skipToken)
+        console.error('skipToken is not allowed for useSuspenseQueries')
+    })
+  }
+  return useBaseQueries(options, queryClient, suspenseQueriesPolicy)
 }

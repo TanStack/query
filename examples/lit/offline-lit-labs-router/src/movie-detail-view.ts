@@ -4,6 +4,10 @@ import {
   createQueryController,
   getQueryData,
   invalidateQueries,
+  isError,
+  isFetching,
+  isLoading,
+  isPaused,
   setQueryData,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
@@ -88,20 +92,18 @@ class MovieDetailView extends LitElement {
   }
 
   render() {
-    const { data, error, isError, isFetching, isLoading, isPaused } =
-      this.movie()
-    const { isPaused: isMutationPaused, isPending: isMutationPending } =
-      this.updateMovie()
+    const queryResult = this.movie()
+    const updateMovie = this.updateMovie()
 
-    if (isLoading) {
+    if (isLoading(queryResult)) {
       return 'Loading...'
     }
 
-    if (data) {
+    if (queryResult.data) {
       return html`
         <form @submit=${this.submitForm}>
           <a href="/">Back</a>
-          <h1>Movie: ${data.movie.title}</h1>
+          <h1>Movie: ${queryResult.data.movie.title}</h1>
           <p>
             Try to mock offline behavior with the button above, then update the
             comment. The optimistic update will succeed, but the actual mutation
@@ -125,13 +127,15 @@ class MovieDetailView extends LitElement {
             </label>
           </p>
           <button type="submit">Submit</button>
-          <div>Updated at: ${new Date(data.ts).toLocaleTimeString()}</div>
-          <div>${isFetching ? 'fetching...' : ''}</div>
+          <div>
+            Updated at: ${new Date(queryResult.data.ts).toLocaleTimeString()}
+          </div>
+          <div>${isFetching(queryResult) ? 'fetching...' : ''}</div>
           <div>
             ${
-              isMutationPaused
+              updateMovie.isPaused
                 ? 'mutation paused - offline'
-                : isMutationPending
+                : updateMovie.isPending
                   ? 'updating...'
                   : ''
             }
@@ -140,17 +144,17 @@ class MovieDetailView extends LitElement {
       `
     }
 
-    if (isError) {
+    if (isError(queryResult)) {
       return html`
         <div>
           <a href="/">Back</a>
           <h1>Couldn't load movie!</h1>
-          <div>${error.message}</div>
+          <div>${queryResult.error.message}</div>
         </div>
       `
     }
 
-    if (isPaused) {
+    if (isPaused(queryResult)) {
       return "We're offline and have no data to show :("
     }
 

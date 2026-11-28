@@ -1,7 +1,7 @@
 import {
   isFetching,
-  query,
   noop,
+  query,
   useQuery,
   useQueryClient,
 } from '@tanstack/solid-query'

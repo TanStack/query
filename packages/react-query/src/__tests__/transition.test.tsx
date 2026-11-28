@@ -2,7 +2,9 @@ import {
   clearQueryClient,
   findCachedQuery,
   getQueryCache,
+  select as selectResult,
   setQueryData,
+  placeholderData as withPlaceholder,
 } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent } from '@testing-library/react'
@@ -16,7 +18,6 @@ import {
   suspenseQueryOptions,
   useQuery,
 } from '..'
-import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 import { renderWithClient, renderWithSuspense } from './utils'
 
 describe('react transitions', () => {
@@ -47,7 +48,7 @@ describe('react transitions', () => {
           queryKey: [key, id],
           queryFn: () => Promise.resolve({ value: id }),
           staleTime: Infinity,
-          select: optionalSelect(select),
+          select: selectResult(select),
         }),
       )
       if (id === 2) {
@@ -190,7 +191,7 @@ describe('react transitions', () => {
           suspenseQueryOptions({
             queryKey: [key, queryCount],
             queryFn: () => queryFn(queryCount),
-            placeholderData: optionalPlaceholderData(
+            placeholderData: withPlaceholder(
               placeholderMode === 'static' ? 'placeholder' : keepPreviousData,
             ),
           }),
@@ -268,7 +269,7 @@ describe('react transitions', () => {
           suspenseQueryOptions({
             queryKey: [...key, 'placeholder', count],
             queryFn: () => placeholderQueryFn(count),
-            placeholderData: optionalPlaceholderData(
+            placeholderData: withPlaceholder(
               placeholderMode === 'static' ? 'placeholder' : keepPreviousData,
             ),
           }),
@@ -355,7 +356,7 @@ describe('react transitions', () => {
         suspenseQueryOptions({
           queryKey: [...key, 'placeholder', count],
           queryFn: () => placeholderQueryFn(count),
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: withPlaceholder(keepPreviousData),
         }),
       )
       const suspenseQuery = useQuery(

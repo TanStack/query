@@ -1,5 +1,5 @@
 import { createDebouncer } from '@tanstack/solid-pacer/debouncer'
-import { query, select, useIsFetching, useQuery } from '@tanstack/solid-query'
+import { query, useIsFetching, useQuery } from '@tanstack/solid-query'
 import {
   Link,
   Outlet,

@@ -3,8 +3,11 @@ import type { MutationCache } from './mutationCache'
 
 type QueuedMutation = Mutation<any, any, any, any>
 
-// Each cache owns its own queues, even when clients reuse the same option.
-const queues = new WeakMap<MutationCache, Map<string, Set<QueuedMutation>>>()
+// A shared cache coordinates scopes created by independently bundled clients.
+const queues = Symbol.for('@tanstack/query-core/serialScopes')
+type ScopedCache = MutationCache & {
+  [queues]?: Map<string, Set<QueuedMutation>>
+}
 
 /** Runs mutations with the same ID in registration order within one cache. */
 class SerialScope {
@@ -16,12 +19,8 @@ class SerialScope {
    * @param cache - The cache owning this queue.
    * @param mutation - The mutation to register.
    */
-  add(cache: MutationCache, mutation: QueuedMutation): void {
-    let scopes = queues.get(cache)
-    if (!scopes) {
-      scopes = new Map()
-      queues.set(cache, scopes)
-    }
+  add(cache: ScopedCache, mutation: QueuedMutation): void {
+    const scopes = (cache[queues] ??= new Map())
     let queue = scopes.get(this.id)
     if (!queue) {
       queue = new Set()
@@ -36,13 +35,12 @@ class SerialScope {
    * @param cache - The cache owning this queue.
    * @param mutation - The mutation to remove.
    */
-  remove(cache: MutationCache, mutation: QueuedMutation): void {
-    const scopes = queues.get(cache)
+  remove(cache: ScopedCache, mutation: QueuedMutation): void {
+    const scopes = cache[queues]
     if (!scopes) return
     const queue = scopes.get(this.id)
     if (queue?.delete(mutation) && !queue.size) {
       scopes.delete(this.id)
-      if (!scopes.size) queues.delete(cache)
     }
   }
 
@@ -53,8 +51,8 @@ class SerialScope {
    * @param mutation - The mutation to check.
    * @returns Whether this mutation can start or continue.
    */
-  canRun(cache: MutationCache, mutation: QueuedMutation): boolean {
-    const queue = queues.get(cache)?.get(this.id)
+  canRun(cache: ScopedCache, mutation: QueuedMutation): boolean {
+    const queue = cache[queues]?.get(this.id)
     if (queue) {
       for (const entry of queue) {
         if (entry.state.status === 'pending') return entry === mutation
@@ -71,10 +69,10 @@ class SerialScope {
    * @returns The next waiting mutation’s promise, if present.
    */
   runNext(
-    cache: MutationCache,
+    cache: ScopedCache,
     mutation: QueuedMutation,
   ): Promise<unknown> | undefined {
-    const queue = queues.get(cache)?.get(this.id)
+    const queue = cache[queues]?.get(this.id)
     if (queue) {
       for (const entry of queue) {
         if (entry !== mutation && entry.state.isPaused) return entry.continue()

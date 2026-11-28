@@ -1,4 +1,4 @@
-import { getQueryCache, hydrate } from '@tanstack/query-core'
+import { getQueryCache, hydrateQueries } from '@tanstack/query-core'
 import { Fragment } from 'preact'
 import { useEffect, useMemo, useRef } from 'preact/hooks'
 import { useQueryClient } from './QueryClientProvider'
@@ -124,14 +124,14 @@ export const HydrationBoundary = ({
     }
 
     if (newQueries.length > 0) {
-      hydrate(client, { queries: newQueries }, optionsRef.current)
+      hydrateQueries(client, newQueries, optionsRef.current)
     }
     return existingQueries.length > 0 ? existingQueries : undefined
   }, [client, state])
 
   useEffect(() => {
     if (hydrationQueue) {
-      hydrate(client, { queries: hydrationQueue }, optionsRef.current)
+      hydrateQueries(client, hydrationQueue, optionsRef.current)
     }
   }, [client, hydrationQueue])
 

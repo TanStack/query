@@ -1,5 +1,5 @@
 import { A, action, useParams, useSubmission } from '@solidjs/router'
-import { query, invalidateQueries, noop, useQuery } from '@tanstack/solid-query'
+import { invalidateQueries, noop, query, useQuery } from '@tanstack/solid-query'
 import { Show } from 'solid-js'
 import { queryClient } from '../queryClient'
 import { contactsAPI } from '../services/contacts/api'

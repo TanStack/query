@@ -26,7 +26,6 @@ import {
   setQueryData,
   timeoutManager,
 } from '..'
-import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 import { resultForComparison } from './helpers/result'
 import { setIsServer } from './utils'
 import type {
@@ -56,7 +55,7 @@ describe('queryObserver', () => {
       queryKey,
       queryFn: defaultQueryFn,
       enabled: false,
-      select: optionalSelect(() => {
+      select: selectData(() => {
         throw new Error('selection failed')
       }),
     } as const
@@ -437,7 +436,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
-      select: optionalSelect(select1),
+      select: selectData(select1),
     })
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -446,7 +445,7 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key,
       queryFn,
-      select: optionalSelect(select2),
+      select: selectData(select2),
     })
     await observer.refetch()
     unsubscribe()
@@ -491,7 +490,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
-      select: optionalSelect(select),
+      select: selectData(select),
     })
     const unsubscribe = observer.subscribe((result) => {
       results.push(result)
@@ -500,7 +499,7 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key,
       queryFn,
-      select: optionalSelect(select),
+      select: selectData(select),
     })
     await observer.refetch()
     unsubscribe()
@@ -556,7 +555,7 @@ describe('queryObserver', () => {
       queryFn: defaultQueryFn,
       initialData: 'data',
       enabled: false,
-      select: optionalSelect(() => {
+      select: selectData(() => {
         throw error
       }),
     })
@@ -577,7 +576,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
-      select: optionalSelect(() => {
+      select: selectData(() => {
         throw new Error('selector error')
       }),
     })
@@ -616,8 +615,8 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
-      placeholderData: optionalPlaceholderData({ count: 0 }),
-      select: optionalSelect(() => {
+      placeholderData: placeholderData({ count: 0 }),
+      select: selectData(() => {
         throw new Error('selector error')
       }),
     })
@@ -690,9 +689,12 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key1,
       queryFn: () => sleep(10).then(() => ({ count: 1 })),
-      select: optionalSelect((): { count: number } => {
-        throw new Error('selector error')
-      }),
+      select: [
+        selectData,
+        (): { count: number } => {
+          throw new Error('selector error')
+        },
+      ],
     })
     const unsubscribe = observer.subscribe(() => {})
     await vi.advanceTimersByTimeAsync(10)
@@ -727,7 +729,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: keyA,
       queryFn: () => sleep(10).then(() => ({ count: 1 })),
-      placeholderData: optionalPlaceholderData(placeholder),
+      placeholderData: placeholderData(placeholder),
       select: [selectData, (data) => ({ selected: data.count })],
     })
     const unsubscribe = observer.subscribe(() => {})
@@ -740,8 +742,8 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: keyB,
       queryFn: () => sleep(10).then(() => ({ count: 2 })),
-      placeholderData: optionalPlaceholderData(placeholder),
-      select: optionalSelect((): { selected: number } => {
+      placeholderData: placeholderData(placeholder),
+      select: selectData((): { selected: number } => {
         throw new Error('selector error')
       }),
     })
@@ -752,7 +754,7 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: keyC,
       queryFn: () => sleep(10).then(() => ({ count: 3 })),
-      placeholderData: optionalPlaceholderData(placeholder),
+      placeholderData: placeholderData(placeholder),
       select: [selectData, (data) => ({ selected: data.count })],
     })
     expect(observer.getCurrentResult()).toMatchObject({
@@ -814,7 +816,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: ++count }),
-      select: optionalSelect(() => ({ myCount: 1 })),
+      select: selectData(() => ({ myCount: 1 })),
     })
     const observerResult1 = await observer.refetch()
     const observerResult2 = await observer.refetch()
@@ -1072,7 +1074,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 'data',
-      placeholderData: optionalPlaceholderData('placeholder'),
+      placeholderData: placeholderData('placeholder'),
     })
 
     expect(observer.getCurrentResult()).toMatchObject({
@@ -1099,7 +1101,7 @@ describe('queryObserver', () => {
       queryKey: key,
       enabled: false,
       queryFn: () => 'data',
-      placeholderData: optionalPlaceholderData({}),
+      placeholderData: placeholderData({}),
     })
 
     const firstData = observer.getCurrentResult().data
@@ -1107,7 +1109,7 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key,
       queryFn: defaultQueryFn,
-      placeholderData: optionalPlaceholderData({}),
+      placeholderData: placeholderData({}),
     })
 
     const secondData = observer.getCurrentResult().data
@@ -1191,7 +1193,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => data,
-      select: optionalSelect(() => data),
+      select: selectData(() => data),
     })
 
     const unsubscribe = observer.subscribe(() => undefined)
@@ -1202,7 +1204,7 @@ describe('queryObserver', () => {
       queryKey: key,
       queryFn: () => data,
       structuralSharing: false,
-      select: optionalSelect(() => selectedData),
+      select: selectData(() => selectedData),
     })
 
     await observer.refetch()
@@ -1223,25 +1225,25 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => data,
-      select: optionalSelect(() => data),
+      select: selectData(() => data),
     })
 
     observer.setOptions({
       queryKey: key,
       queryFn: () => data,
-      select: optionalSelect(() => {
+      select: selectData(() => {
         return selectedData1
       }),
-      placeholderData: optionalPlaceholderData(placeholderData1),
+      placeholderData: placeholderData(placeholderData1),
     })
 
     observer.setOptions({
       queryKey: key,
       queryFn: () => data,
-      select: optionalSelect(() => {
+      select: selectData(() => {
         return selectedData2
       }),
-      placeholderData: optionalPlaceholderData(placeholderData2),
+      placeholderData: placeholderData(placeholderData2),
       structuralSharing: false,
     })
     expect(observer.getCurrentResult().data).toBe(selectedData2)
@@ -1404,7 +1406,7 @@ describe('queryObserver', () => {
       queryKey: key1,
       queryFn: () => data1,
       placeholderData: [placeholderData, (prev) => prev],
-      select: optionalSelect(stableSelect),
+      select: selectData(stableSelect),
     })
 
     const unsubscribe = observer.subscribe((result) => {
@@ -1416,7 +1418,7 @@ describe('queryObserver', () => {
       queryKey: key2,
       queryFn: () => data2,
       placeholderData: [placeholderData, (prev) => prev],
-      select: optionalSelect(stableSelect),
+      select: selectData(stableSelect),
     })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
@@ -2104,8 +2106,8 @@ describe('queryObserver', () => {
         queryKey: [...key, id],
         queryFn: () => [id],
         enabled: id !== '',
-        placeholderData: optionalPlaceholderData(keepPreviousData),
-        select: optionalSelect((items: Array<string>) =>
+        placeholderData: placeholderData(keepPreviousData),
+        select: selectData((items: Array<string>) =>
           items.find((item) => item === id),
         ),
       })
@@ -2133,7 +2135,7 @@ describe('queryObserver', () => {
     // A new placeholderData is not memoized, so its undefined means pending
     observer.setOptions({
       ...options(''),
-      placeholderData: optionalPlaceholderData(() => undefined),
+      placeholderData: placeholderData(() => undefined),
     })
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',

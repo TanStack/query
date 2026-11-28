@@ -1,46 +1,43 @@
-import { useQuery, infiniteQueryOptions } from '@tanstack/preact-query'
+import {
+  isFetching,
+  isFetchingNextPage,
+  isFetchingPreviousPage,
+  useQuery,
+} from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { Fragment } from 'preact'
 import { projectsQueries } from './services/projects/queries'
 
 export default function App() {
-  const {
-    status,
-    data,
-    error,
-    isFetching,
-    isFetchingNextPage,
-    isFetchingPreviousPage,
-    fetchNextPage,
-    fetchPreviousPage,
-    hasNextPage,
-    hasPreviousPage,
-  } = useQuery(infiniteQueryOptions(projectsQueries.infinite()))
+  const queryResult = useQuery(projectsQueries.infinite())
 
   return (
     <div>
       <h1>Infinite Query with max pages</h1>
       <h3>4 projects per page</h3>
       <h3>3 pages max</h3>
-      {status === 'pending' ? (
+      {queryResult.status === 'pending' ? (
         <p>Loading...</p>
-      ) : status === 'error' ? (
-        <span>Error: {error.message}</span>
+      ) : queryResult.status === 'error' ? (
+        <span>Error: {queryResult.error.message}</span>
       ) : (
         <>
           <div>
             <button
-              onClick={() => fetchPreviousPage()}
-              disabled={!hasPreviousPage || isFetchingPreviousPage}
+              onClick={() => queryResult.fetchPreviousPage()}
+              disabled={
+                !queryResult.hasPreviousPage ||
+                isFetchingPreviousPage(queryResult)
+              }
             >
-              {isFetchingPreviousPage
+              {isFetchingPreviousPage(queryResult)
                 ? 'Loading more...'
-                : hasPreviousPage
+                : queryResult.hasPreviousPage
                   ? 'Load Older'
                   : 'Nothing more to load'}
             </button>
           </div>
-          {data.pages.map((page) => (
+          {queryResult.data.pages.map((page) => (
             <Fragment key={page.nextId}>
               {page.data.map((project) => (
                 <p
@@ -60,18 +57,20 @@ export default function App() {
           ))}
           <div>
             <button
-              onClick={() => fetchNextPage()}
-              disabled={!hasNextPage || isFetchingNextPage}
+              onClick={() => queryResult.fetchNextPage()}
+              disabled={
+                !queryResult.hasNextPage || isFetchingNextPage(queryResult)
+              }
             >
-              {isFetchingNextPage
+              {isFetchingNextPage(queryResult)
                 ? 'Loading more...'
-                : hasNextPage
+                : queryResult.hasNextPage
                   ? 'Load Newer'
                   : 'Nothing more to load'}
             </button>
           </div>
           <div>
-            {isFetching && !isFetchingNextPage
+            {isFetching(queryResult) && !isFetchingNextPage(queryResult)
               ? 'Background Updating...'
               : null}
           </div>

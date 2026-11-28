@@ -1,12 +1,17 @@
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
+  import {
+    isLoading,
+    isFetching,
+    isError,
+    createQuery,
+  } from '@tanstack/svelte-query'
   import { resolve } from '$app/paths'
   import { moviesQueries } from '$lib/services/movies/queries'
 
   const moviesQuery = createQuery(() => moviesQueries.list())
 </script>
 
-{#if moviesQuery.isLoading}
+{#if isLoading(moviesQuery)}
   Loading...
 {:else if moviesQuery.data}
   <div>
@@ -28,9 +33,9 @@
     <div>
       Updated at: {new Date(moviesQuery.data.ts).toLocaleTimeString()}
     </div>
-    <div>{moviesQuery.isFetching ? 'fetching...' : ''}</div>
+    <div>{isFetching(moviesQuery) ? 'fetching...' : ''}</div>
   </div>
-{:else if moviesQuery.isError}
+{:else if isError(moviesQuery)}
   <div>
     <h1>Couldn't load movies!</h1>
     <div>{moviesQuery.error.message}</div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { query, noop, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { noop, query, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { charactersQueries } from '../services/characters/queries'
 import type { Character } from '../services/characters/types'
 

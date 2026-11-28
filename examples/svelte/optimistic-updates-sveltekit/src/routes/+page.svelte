@@ -1,5 +1,8 @@
 <script lang="ts">
   import {
+    isPending,
+    isSuccess,
+    isFetching,
     cancelQueries,
     getQueryData,
     setQueryData,
@@ -80,14 +83,14 @@
   </div>
 </form>
 
-{#if todos.isPending}
+{#if isPending(todos)}
   Loading...
 {/if}
 {#if todos.error}
   An error has occurred:
   {todos.error.message}
 {/if}
-{#if todos.isSuccess}
+{#if isSuccess(todos)}
   <div class="mb-4">
     Updated At: {new Date(todos.data.ts).toLocaleTimeString()}
   </div>
@@ -97,7 +100,7 @@
     {/each}
   </ul>
 {/if}
-{#if todos.isFetching}
+{#if isFetching(todos)}
   <div style="color:darkgreen; font-weight:700">Background Updating...</div>
 {/if}
 

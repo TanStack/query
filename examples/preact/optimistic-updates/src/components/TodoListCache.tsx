@@ -1,11 +1,11 @@
 import {
-  useQuery,
-  suspenseQueryOptions,
   cancelQueries,
   getQueryData,
-  setQueryData,
   invalidateQueries,
+  setQueryData,
+  suspenseQueryOptions,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/preact-query'
 import { useState } from 'preact/hooks'

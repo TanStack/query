@@ -1,4 +1,4 @@
-import { query, noop } from '@tanstack/vue-query'
+import { noop, query } from '@tanstack/vue-query'
 import { createRouter, createWebHistory } from 'vue-router'
 import { queryClient } from './queryClient'
 import ContactView from './routes/ContactView.vue'

@@ -236,7 +236,7 @@ export class Mutation<
    */
   async execute(variables: TVariables): Promise<TData> {
     const onContinue = () => {
-      this.#dispatch({ type: 'continue' })
+      this.#dispatch({ type: 'continue' }, { isPaused: false })
     }
 
     const mutationFnContext = {
@@ -244,6 +244,37 @@ export class Mutation<
       meta: this.options.meta,
       mutationKey: this.options.mutationKey,
     } satisfies MutationFunctionContext
+
+    // Cache callbacks precede the mutation's own callbacks. Resolve the options again
+    // after the cache callback because it may change the observer's options.
+    const notify = async (
+      preserveError: boolean,
+      ...[name, ...outcome]:
+        | ['onSuccess', TData]
+        | ['onError', TError]
+        | ['onSettled', TData | undefined, TError | null]
+    ) => {
+      for (const fromCache of [true, false]) {
+        try {
+          const owner = fromCache ? this.#mutationCache.config : this.options
+          const callback = owner[name]
+          const args: Array<unknown> = [
+            ...outcome,
+            fromCache && name === 'onSettled'
+              ? this.state.variables
+              : variables,
+            this.state.context,
+          ]
+          if (fromCache) args.push(this)
+          args.push(mutationFnContext)
+          await (callback && Reflect.apply(callback, owner, args))
+        } catch (callbackError) {
+          if (!preserveError) throw callbackError
+          // A notification failure must leave the original rejection available to the caller.
+          void Promise.reject(callbackError)
+        }
+      }
+    }
 
     const retryer = (this.#retryer = createRetryer({
       fn: () => {
@@ -254,10 +285,13 @@ export class Mutation<
         return this.options.mutationFn(variables, mutationFnContext)
       },
       onFail: (failureCount, error) => {
-        this.#dispatch({ type: 'failed', failureCount, error })
+        this.#dispatch(
+          { type: 'failed', failureCount, error },
+          { failureCount, failureReason: error },
+        )
       },
       onPause: () => {
-        this.#dispatch({ type: 'pause' })
+        this.#dispatch({ type: 'pause' }, { isPaused: true })
       },
       onContinue,
       retry: this.options.retry ?? 0,
@@ -274,7 +308,23 @@ export class Mutation<
         // Dispatch continue action to unpause restored mutation
         onContinue()
       } else {
-        this.#dispatch({ type: 'pending', variables, isPaused })
+        const pending = (context?: TOnMutateResult) => {
+          const action = {
+            type: 'pending' as const,
+            variables,
+            isPaused,
+            ...(context === undefined ? {} : { context }),
+          }
+          this.#dispatch(action, {
+            ...getDefaultState<TData, TError, TVariables, TOnMutateResult>(),
+            status: 'pending',
+            context,
+            variables,
+            isPaused,
+            submittedAt: Date.now(),
+          })
+        }
+        pending()
         // Notify cache callback
         if (this.#mutationCache.config.onMutate) {
           await this.#mutationCache.config.onMutate(
@@ -288,12 +338,7 @@ export class Mutation<
           mutationFnContext,
         )
         if (context !== this.state.context) {
-          this.#dispatch({
-            type: 'pending',
-            context,
-            variables,
-            isPaused,
-          })
+          pending(context)
         }
       }
       // Unpause a mutation that became able to start while onMutate was running
@@ -302,94 +347,34 @@ export class Mutation<
       }
       const data = await retryer.start()
 
-      // Notify cache callback
-      await this.#mutationCache.config.onSuccess?.(
-        data,
-        variables,
-        this.state.context,
-        this as Mutation<unknown, unknown, unknown, unknown>,
-        mutationFnContext,
+      await notify(false, 'onSuccess', data)
+      await notify(false, 'onSettled', data, null)
+      this.#dispatch(
+        { type: 'success', data },
+        {
+          status: 'success',
+          data,
+          error: null,
+          failureCount: 0,
+          failureReason: null,
+          isPaused: false,
+        },
       )
-
-      await this.options.onSuccess?.(
-        data,
-        variables,
-        this.state.context!,
-        mutationFnContext,
-      )
-
-      // Notify cache callback
-      await this.#mutationCache.config.onSettled?.(
-        data,
-        null,
-        this.state.variables,
-        this.state.context,
-        this as Mutation<unknown, unknown, unknown, unknown>,
-        mutationFnContext,
-      )
-
-      await this.options.onSettled?.(
-        data,
-        null,
-        variables,
-        this.state.context,
-        mutationFnContext,
-      )
-
-      this.#dispatch({ type: 'success', data })
       return data
     } catch (error) {
-      try {
-        // Notify cache callback
-        await this.#mutationCache.config.onError?.(
-          error as any,
-          variables,
-          this.state.context,
-          this as Mutation<unknown, unknown, unknown, unknown>,
-          mutationFnContext,
-        )
-      } catch (e) {
-        void Promise.reject(e)
-      }
-
-      try {
-        await this.options.onError?.(
-          error as TError,
-          variables,
-          this.state.context,
-          mutationFnContext,
-        )
-      } catch (e) {
-        void Promise.reject(e)
-      }
-
-      try {
-        // Notify cache callback
-        await this.#mutationCache.config.onSettled?.(
-          undefined,
-          error as any,
-          this.state.variables,
-          this.state.context,
-          this as Mutation<unknown, unknown, unknown, unknown>,
-          mutationFnContext,
-        )
-      } catch (e) {
-        void Promise.reject(e)
-      }
-
-      try {
-        await this.options.onSettled?.(
-          undefined,
-          error as TError,
-          variables,
-          this.state.context,
-          mutationFnContext,
-        )
-      } catch (e) {
-        void Promise.reject(e)
-      }
-
-      this.#dispatch({ type: 'error', error: error as TError })
+      await notify(true, 'onError', error as TError)
+      await notify(true, 'onSettled', undefined, error as TError)
+      this.#dispatch(
+        { type: 'error', error: error as TError },
+        {
+          status: 'error',
+          data: undefined,
+          error: error as TError,
+          failureCount: this.state.failureCount + 1,
+          failureReason: error as TError,
+          isPaused: false,
+        },
+      )
       throw error
     } finally {
       // The settled retryer's promise would otherwise pin this mutation's
@@ -401,64 +386,11 @@ export class Mutation<
     }
   }
 
-  #dispatch(action: Action<TData, TError, TVariables, TOnMutateResult>): void {
-    const reducer = (
-      state: MutationState<TData, TError, TVariables, TOnMutateResult>,
-    ): MutationState<TData, TError, TVariables, TOnMutateResult> => {
-      switch (action.type) {
-        case 'failed':
-          return {
-            ...state,
-            failureCount: action.failureCount,
-            failureReason: action.error,
-          }
-        case 'pause':
-          return {
-            ...state,
-            isPaused: true,
-          }
-        case 'continue':
-          return {
-            ...state,
-            isPaused: false,
-          }
-        case 'pending':
-          return {
-            ...state,
-            context: action.context,
-            data: undefined,
-            failureCount: 0,
-            failureReason: null,
-            error: null,
-            isPaused: action.isPaused,
-            status: 'pending',
-            variables: action.variables,
-            submittedAt: Date.now(),
-          }
-        case 'success':
-          return {
-            ...state,
-            data: action.data,
-            failureCount: 0,
-            failureReason: null,
-            error: null,
-            status: 'success',
-            isPaused: false,
-          }
-        case 'error':
-          return {
-            ...state,
-            data: undefined,
-            error: action.error,
-            failureCount: state.failureCount + 1,
-            failureReason: action.error,
-            isPaused: false,
-            status: 'error',
-          }
-      }
-    }
-    this.state = reducer(this.state)
-
+  #dispatch(
+    action: Action<TData, TError, TVariables, TOnMutateResult>,
+    state: Partial<MutationState<TData, TError, TVariables, TOnMutateResult>>,
+  ): void {
+    this.state = { ...this.state, ...state }
     notifyManager.batch(() => {
       this.#observers.forEach((observer) => {
         observer.onMutationUpdate(action)

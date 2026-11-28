@@ -1,11 +1,6 @@
-import {
-  countFetchingQueries,
-  getQueryCache,
-  notifyManager,
-} from '@tanstack/query-core'
-import { useCallback } from 'preact/hooks'
+import { countFetchingQueries, getQueryCache } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import { useSyncExternalStore } from './utils'
+import { useStoreSnapshot } from './useStoreSnapshot'
 import type { QueryClient, QueryFilters } from '@tanstack/query-core'
 
 /**
@@ -48,12 +43,7 @@ export function useIsFetching(
   const client = useQueryClient(queryClient)
   const queryCache = getQueryCache(client)
 
-  return useSyncExternalStore(
-    useCallback(
-      (onStoreChange) =>
-        queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [queryCache],
-    ),
-    () => countFetchingQueries(client, filters),
+  return useStoreSnapshot(queryCache, () =>
+    countFetchingQueries(client, filters),
   )
 }

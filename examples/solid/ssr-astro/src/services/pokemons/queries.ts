@@ -1,6 +1,6 @@
 import {
-  placeholderData,
   keepPreviousData,
+  placeholderData,
   queryOptions,
 } from '@tanstack/solid-query'
 import { pokemonsAPI } from './api'

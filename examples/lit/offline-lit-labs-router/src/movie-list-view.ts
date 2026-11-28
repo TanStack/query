@@ -1,4 +1,9 @@
-import { createQueryController } from '@tanstack/lit-query'
+import {
+  createQueryController,
+  isError,
+  isFetching,
+  isLoading,
+} from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { moviesQueries } from './services/movies/queries'
 
@@ -10,13 +15,13 @@ class MovieListView extends LitElement {
   }
 
   render() {
-    const { data, error, isError, isFetching, isLoading } = this.movies()
+    const queryResult = this.movies()
 
-    if (isLoading) {
+    if (isLoading(queryResult)) {
       return 'Loading...'
     }
 
-    if (data) {
+    if (queryResult.data) {
       return html`
         <div>
           <h1>Movies</h1>
@@ -26,22 +31,24 @@ class MovieListView extends LitElement {
             refetch as soon as you go online again.
           </p>
           <ul>
-            ${data.movies.map(
+            ${queryResult.data.movies.map(
               (movie) =>
                 html`<li><a href="/${movie.id}">${movie.title}</a></li>`,
             )}
           </ul>
-          <div>Updated at: ${new Date(data.ts).toLocaleTimeString()}</div>
-          <div>${isFetching ? 'fetching...' : ''}</div>
+          <div>
+            Updated at: ${new Date(queryResult.data.ts).toLocaleTimeString()}
+          </div>
+          <div>${isFetching(queryResult) ? 'fetching...' : ''}</div>
         </div>
       `
     }
 
-    if (isError) {
+    if (isError(queryResult)) {
       return html`
         <div>
           <h1>Couldn't load movies!</h1>
-          <div>${error.message}</div>
+          <div>${queryResult.error.message}</div>
         </div>
       `
     }

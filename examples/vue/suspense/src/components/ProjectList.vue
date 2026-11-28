@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {
-  isFetching as queryIsFetching,
-  query,
   noop,
+  query,
+  isFetching as queryIsFetching,
   useQuery,
   useQueryClient,
 } from '@tanstack/vue-query'

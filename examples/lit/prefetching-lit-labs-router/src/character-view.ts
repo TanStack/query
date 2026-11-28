@@ -1,4 +1,4 @@
-import { createQueryController } from '@tanstack/lit-query'
+import { createQueryController, isFetching } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { charactersQueries } from './services/characters/queries'
 
@@ -24,21 +24,22 @@ class CharacterView extends LitElement {
   }
 
   private renderCharacter() {
-    const { status, data, error, isFetching } = this.character()
+    const queryResult = this.character()
 
     if (!this.isValidId) return 'Invalid character ID'
-    if (status === 'pending') return 'Loading...'
-    if (status === 'error') return html`<span>Error: ${error.message}</span>`
+    if (queryResult.status === 'pending') return 'Loading...'
+    if (queryResult.status === 'error')
+      return html`<span>Error: ${queryResult.error.message}</span>`
 
     return html`
-      <h1>${data.name}</h1>
+      <h1>${queryResult.data.name}</h1>
       <div>
-        <p>status: ${data.status}</p>
-        <p>species: ${data.species}</p>
-        <p>gender: ${data.gender}</p>
-        <p>origin: ${data.origin.name}</p>
+        <p>status: ${queryResult.data.status}</p>
+        <p>species: ${queryResult.data.species}</p>
+        <p>gender: ${queryResult.data.gender}</p>
+        <p>origin: ${queryResult.data.origin.name}</p>
       </div>
-      <div>${isFetching ? 'Background Updating...' : ' '}</div>
+      <div>${isFetching(queryResult) ? 'Background Updating...' : ' '}</div>
     `
   }
 

@@ -10,6 +10,7 @@ import type { QueryKey, QueryObserverOptionsBase } from './types'
  * @param context - Memoized results for this observer or uncommitted result reader.
  * @param previousData - The preceding observer result for structural sharing.
  * @param previousQuery - The preceding query with defined cached data.
+ * @param committed - The observer's committed projection state.
  * @returns The projected fields, including whether the result contains placeholder data.
  */
 export function projectResult<
@@ -37,6 +38,7 @@ export function projectResult<
   >,
   previousData: TData | undefined,
   previousQuery: Query<TQueryFnData, TError, TQueryData, TQueryKey> | undefined,
+  committed: typeof context,
 ): Pick<
   QueryState<TData, TError>,
   'data' | 'status' | 'error' | 'errorUpdatedAt'
@@ -67,6 +69,7 @@ export function projectResult<
       options,
       select[1],
       context,
+      committed,
       previousData,
       input,
       placeholder ? placeholder.sourceQuery : query,

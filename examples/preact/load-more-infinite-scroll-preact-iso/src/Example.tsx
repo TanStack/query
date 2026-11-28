@@ -1,4 +1,9 @@
-import { useQuery, infiniteQueryOptions } from '@tanstack/preact-query'
+import {
+  isFetching,
+  isFetchingNextPage,
+  isFetchingPreviousPage,
+  useQuery,
+} from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { Fragment } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
@@ -8,18 +13,7 @@ export default function Example() {
   const ref = useRef<HTMLButtonElement>(null)
   const [inView, setInView] = useState(false)
 
-  const {
-    status,
-    data,
-    error,
-    isFetching,
-    isFetchingNextPage,
-    isFetchingPreviousPage,
-    fetchNextPage,
-    fetchPreviousPage,
-    hasNextPage,
-    hasPreviousPage,
-  } = useQuery(infiniteQueryOptions(projectsQueries.infinite()))
+  const queryResult = useQuery(projectsQueries.infinite())
 
   useEffect(() => {
     if (!ref.current) return
@@ -30,36 +24,44 @@ export default function Example() {
     observer.observe(ref.current)
 
     return () => observer.disconnect()
-  }, [status])
+  }, [queryResult.status])
 
   useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage()
+    if (inView && queryResult.hasNextPage && !isFetchingNextPage(queryResult)) {
+      queryResult.fetchNextPage()
     }
-  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage])
+  }, [
+    inView,
+    queryResult.hasNextPage,
+    isFetchingNextPage(queryResult),
+    queryResult.fetchNextPage,
+  ])
 
   return (
     <div>
       <h1>Infinite Loading</h1>
-      {status === 'pending' ? (
+      {queryResult.status === 'pending' ? (
         <p>Loading...</p>
-      ) : status === 'error' ? (
-        <span>Error: {error.message}</span>
+      ) : queryResult.status === 'error' ? (
+        <span>Error: {queryResult.error.message}</span>
       ) : (
         <>
           <div>
             <button
-              onClick={() => fetchPreviousPage()}
-              disabled={!hasPreviousPage || isFetchingPreviousPage}
+              onClick={() => queryResult.fetchPreviousPage()}
+              disabled={
+                !queryResult.hasPreviousPage ||
+                isFetchingPreviousPage(queryResult)
+              }
             >
-              {isFetchingPreviousPage
+              {isFetchingPreviousPage(queryResult)
                 ? 'Loading more...'
-                : hasPreviousPage
+                : queryResult.hasPreviousPage
                   ? 'Load Older'
                   : 'Nothing more to load'}
             </button>
           </div>
-          {data.pages.map((page) => (
+          {queryResult.data.pages.map((page) => (
             <Fragment key={page.nextId}>
               {page.data.map((project) => (
                 <p
@@ -79,18 +81,20 @@ export default function Example() {
           <div>
             <button
               ref={ref}
-              onClick={() => fetchNextPage()}
-              disabled={!hasNextPage || isFetchingNextPage}
+              onClick={() => queryResult.fetchNextPage()}
+              disabled={
+                !queryResult.hasNextPage || isFetchingNextPage(queryResult)
+              }
             >
-              {isFetchingNextPage
+              {isFetchingNextPage(queryResult)
                 ? 'Loading more...'
-                : hasNextPage
+                : queryResult.hasNextPage
                   ? 'Load Newer'
                   : 'Nothing more to load'}
             </button>
           </div>
           <div>
-            {isFetching && !isFetchingNextPage
+            {isFetching(queryResult) && !isFetchingNextPage(queryResult)
               ? 'Background Updating...'
               : null}
           </div>

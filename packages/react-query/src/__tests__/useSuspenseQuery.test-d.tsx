@@ -9,7 +9,6 @@ import {
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { suspenseQueryOptions, useQuery } from '..'
-import { optionalPlaceholderData } from './helpers/projection'
 
 describe('useSuspenseQuery', () => {
   it('should always have data defined', () => {
@@ -84,7 +83,7 @@ describe('useSuspenseQuery', () => {
         suspenseQueryOptions({
           queryKey: createKey(),
           queryFn: () => Promise.resolve(5),
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: placeholderData(keepPreviousData),
         }),
       ),
     )
@@ -93,7 +92,7 @@ describe('useSuspenseQuery', () => {
       suspenseQueryOptions({
         queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
-        placeholderData: optionalPlaceholderData(0),
+        placeholderData: placeholderData(0),
         select: [select, (data) => data.toString()],
       }),
     )
@@ -112,7 +111,7 @@ describe('useSuspenseQuery', () => {
         suspenseQueryOptions({
           queryKey: createKey(),
           queryFn: () => Promise.resolve(5),
-          placeholderData: optionalPlaceholderData(5),
+          placeholderData: placeholderData(5),
           // @ts-expect-error TS2345
           enabled: true,
         }),

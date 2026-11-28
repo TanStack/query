@@ -1,12 +1,7 @@
-import {
-  MutationObserver,
-  noop,
-  notifyManager,
-  shouldThrowError,
-} from '@tanstack/query-core'
+import { MutationObserver, noop, shouldThrowError } from '@tanstack/query-core'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 import { useQueryClient } from './QueryClientProvider'
-import { useSyncExternalStore } from './utils'
+import { useStoreSnapshot } from './useStoreSnapshot'
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
 import type {
   UseMutateFunction,
@@ -207,14 +202,7 @@ export function useMutation<
     observer.setOptions(options)
   }, [observer, options])
 
-  const result = useSyncExternalStore(
-    useCallback(
-      (onStoreChange) =>
-        observer.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [observer],
-    ),
-    () => observer.getCurrentResult(),
-  )
+  const result = useStoreSnapshot(observer, () => observer.getCurrentResult())
 
   const mutate = useCallback<
     UseMutateFunction<TData, TError, TVariables, TOnMutateResult>

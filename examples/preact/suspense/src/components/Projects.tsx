@@ -1,8 +1,9 @@
 import {
-  useQuery,
-  suspenseQueryOptions,
-  query,
+  isFetching,
   noop,
+  query,
+  suspenseQueryOptions,
+  useQuery,
   useQueryClient,
 } from '@tanstack/preact-query'
 import { projectsQueries } from '../services/projects/queries'
@@ -15,14 +16,14 @@ export default function Projects({
   setActiveProject: (activeProject: string | null) => void
 }) {
   const queryClient = useQueryClient()
-  const { data, isFetching } = useQuery(
-    suspenseQueryOptions(projectsQueries.list()),
-  )
+  const queryResult = useQuery(suspenseQueryOptions(projectsQueries.list()))
 
   return (
     <div>
-      <h1>TanStack Repositories {isFetching ? <Spinner /> : null}</h1>
-      {data.map((project) => (
+      <h1>
+        TanStack Repositories {isFetching(queryResult) ? <Spinner /> : null}
+      </h1>
+      {queryResult.data.map((project) => (
         <p key={project.full_name}>
           <Button
             onClick={() => {

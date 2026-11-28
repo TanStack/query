@@ -1,11 +1,11 @@
 import { Route, Router } from '@solidjs/router'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import {
-  setMutationDefaults,
-  resumePausedMutations,
-  invalidateQueries,
   MutationCache,
   QueryClient,
+  invalidateQueries,
+  resumePausedMutations,
+  setMutationDefaults,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/solid-query-persist-client'

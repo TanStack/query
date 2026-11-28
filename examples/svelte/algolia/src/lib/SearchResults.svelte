@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { select, createInfiniteQuery } from '@tanstack/svelte-query'
+  import {
+    isLoading,
+    isFetching,
+    isFetchingNextPage,
+    select,
+    createInfiniteQuery,
+  } from '@tanstack/svelte-query'
   import { productsQueries } from './services/products/queries'
 
   type Product = {
@@ -27,7 +33,7 @@
 </script>
 
 {#if query}
-  {#if searchQuery.isLoading}
+  {#if isLoading(searchQuery)}
     <div class="loading">Loading...</div>
   {:else if searchQuery.status === 'error'}
     <div>Error: {searchQuery.error.message}</div>
@@ -35,7 +41,7 @@
     <div>
       <div class="search-status">
         Status: {searchQuery.status}
-        {#if searchQuery.isFetching}<span>fetching...</span>{/if}
+        {#if isFetching(searchQuery)}<span>fetching...</span>{/if}
       </div>
       <div>
         <div class="search-result">
@@ -62,12 +68,12 @@
             type="button"
             class="search-more"
             onclick={() => searchQuery.fetchNextPage()}
-            disabled={searchQuery.isFetching}
+            disabled={isFetching(searchQuery)}
           >
             more
           </button>
         {/if}
-        {#if searchQuery.isFetchingNextPage}
+        {#if isFetchingNextPage(searchQuery)}
           <div class="search-status">Fetching next page...</div>
         {/if}
       </div>

@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/preact-query'
+import { useQuery } from '@tanstack/preact-query'
 import { useRoute } from 'preact-iso'
 import { charactersQueries } from './services/characters/queries'
 import { filmsQueries } from './services/films/queries'
@@ -8,9 +8,7 @@ export default function Character() {
   const { params } = useRoute()
   const characterId = params.characterId
 
-  const { status, data } = useQuery(
-    queryOptions(charactersQueries.detail(characterId)),
-  )
+  const { status, data } = useQuery(charactersQueries.detail(characterId))
 
   if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>
@@ -51,7 +49,7 @@ export default function Character() {
 }
 
 function Film({ filmId }: { filmId: string }) {
-  const { data, status } = useQuery(queryOptions(filmsQueries.detail(filmId)))
+  const { data, status } = useQuery(filmsQueries.detail(filmId))
 
   if (status === 'success') {
     return (
@@ -65,9 +63,7 @@ function Film({ filmId }: { filmId: string }) {
 }
 
 function Homeworld({ homeworldId }: { homeworldId: string }) {
-  const { data, status } = useQuery(
-    queryOptions(planetsQueries.detail(homeworldId)),
-  )
+  const { data, status } = useQuery(planetsQueries.detail(homeworldId))
 
   if (status === 'pending') return <span>Loading...</span>
   if (status === 'error') return <span>Error :(</span>

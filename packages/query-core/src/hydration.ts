@@ -237,9 +237,10 @@ export function dehydrate(
   client: QueryClient,
   options: DehydrateOptions = {},
 ): DehydratedState {
+  const defaults = getDefaultOptions(client).dehydrate
   const filterMutation =
     options.shouldDehydrateMutation ??
-    getDefaultOptions(client).dehydrate?.shouldDehydrateMutation ??
+    defaults?.shouldDehydrateMutation ??
     defaultShouldDehydrateMutation
 
   const mutations =
@@ -251,15 +252,13 @@ export function dehydrate(
 
   const filterQuery =
     options.shouldDehydrateQuery ??
-    getDefaultOptions(client).dehydrate?.shouldDehydrateQuery ??
+    defaults?.shouldDehydrateQuery ??
     defaultShouldDehydrateQuery
 
   const shouldRedactErrors =
-    options.shouldRedactErrors ??
-    getDefaultOptions(client).dehydrate?.shouldRedactErrors
+    options.shouldRedactErrors ?? defaults?.shouldRedactErrors
 
-  const serializeData =
-    options.serializeData ?? getDefaultOptions(client).dehydrate?.serializeData
+  const serializeData = options.serializeData ?? defaults?.serializeData
 
   const queries = getQueryCache(client)
     .getAll()
@@ -351,63 +350,50 @@ export function hydrateQueries(
             ? deserializeData(rawData)
             : rawData
 
-      const resolvedState =
-        state.status === 'pending' && data !== undefined
-          ? { status: 'success' as const, dataUpdatedAt: dehydratedAt }
-          : undefined
       let query = queryCache.get(queryHash)
-      const existingQueryIsPending = query?.state.status === 'pending'
-      const existingQueryIsFetching = query?.state.fetchStatus === 'fetching'
+      const previous = query?.state
+      const pending = previous?.status === 'pending'
+      const fetching = previous?.fetchStatus === 'fetching'
 
-      // Do not hydrate if an existing query exists with newer data
-      if (query) {
-        const hasNewerSyncData =
-          syncData && dehydratedAt > query.state.dataUpdatedAt
-        if (
-          state.dataUpdatedAt > query.state.dataUpdatedAt ||
-          hasNewerSyncData
-        ) {
-          // Omit fetchStatus from dehydrated state so that query stays in its current fetchStatus
-          const { fetchStatus: _ignored, ...serializedState } = state
-          query.setState({
-            ...serializedState,
-            data,
-            // If the query was pending at the moment of dehydration, but resolved to have data
-            // before hydration, we can assume the query should be hydrated as successful.
-            //
-            // Since you can opt into dehydrating failed queries, and those can have data from
-            // previous successful fetches, we make sure we only do this for pending queries.
-            ...resolvedState,
-            ...(resolvedState &&
-              !existingQueryIsFetching && { fetchStatus: 'idle' as const }),
-          })
+      if (
+        !previous ||
+        state.dataUpdatedAt > previous.dataUpdatedAt ||
+        (syncData && dehydratedAt > previous.dataUpdatedAt)
+      ) {
+        const resolved = state.status === 'pending' && data !== undefined
+        // A synchronously resolved promise is successful at dehydration time. Preserve active
+        // requests, and restore new or resolved paused queries in the idle state.
+        const snapshot = {
+          ...state,
+          data,
+          fetchStatus:
+            resolved && !fetching
+              ? ('idle' as const)
+              : (previous?.fetchStatus ?? ('idle' as const)),
+          ...(resolved && {
+            status: 'success' as const,
+            dataUpdatedAt: dehydratedAt,
+          }),
         }
-      } else {
-        // Restore query
-        query = queryCache.build(
-          client,
-          {
-            ...getDefaultOptions(client).hydrate?.queries,
-            ...options?.defaultOptions?.queries,
-            queryKey,
-            queryHash,
-            meta,
-            ...(queryType === 'infinite' && {
-              _type: queryType,
-              _prepareInfiniteFetch: createInfiniteFetch,
-            }),
-          },
-          // Reset fetch status to idle to avoid
-          // query being stuck in fetching state upon hydration
-          {
-            ...state,
-            data,
-            fetchStatus: 'idle',
-            // Like above, if the query was pending at the moment of dehydration but has data,
-            // we can assume it should be hydrated as successful.
-            ...resolvedState,
-          },
-        )
+        if (query) {
+          query.setState(snapshot)
+        } else {
+          query = queryCache.build(
+            client,
+            {
+              ...getDefaultOptions(client).hydrate?.queries,
+              ...options?.defaultOptions?.queries,
+              queryKey,
+              queryHash,
+              meta,
+              ...(queryType === 'infinite' && {
+                _type: queryType,
+                _prepareInfiniteFetch: createInfiniteFetch,
+              }),
+            },
+            snapshot,
+          )
+        }
       }
 
       if (
@@ -415,10 +401,11 @@ export function hydrateQueries(
         // If the data was synchronously available, there is no need to set up
         // a retryer and thus no reason to call fetch
         !syncData &&
-        !existingQueryIsPending &&
-        !existingQueryIsFetching &&
+        !pending &&
+        !fetching &&
         // Only hydrate if dehydration is newer than any existing data,
         // this is always true for new queries
+        query &&
         dehydratedAt > query.state.dataUpdatedAt
       ) {
         // This doesn't actually fetch - it just creates a retryer

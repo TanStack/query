@@ -1,12 +1,12 @@
 import { Title } from '@solidjs/meta'
 import {
-  isFetching,
+  isError,
   isFetched,
+  isFetching,
+  isLoading,
   isPending,
   isRefetching,
-  isLoading,
   isSuccess,
-  isError,
   useQuery,
 } from '@tanstack/solid-query'
 import { Suspense, createSignal } from 'solid-js'

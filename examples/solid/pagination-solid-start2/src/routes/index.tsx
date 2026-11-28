@@ -1,9 +1,9 @@
 import {
-  placeholderData,
-  query,
   isFetching,
   keepPreviousData,
   noop,
+  placeholderData,
+  query,
   useQuery,
   useQueryClient,
 } from '@tanstack/solid-query'

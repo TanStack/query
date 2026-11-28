@@ -1,4 +1,10 @@
-import { createInfiniteQueryController, select } from '@tanstack/lit-query'
+import {
+  createInfiniteQueryController,
+  isFetching,
+  isFetchingNextPage,
+  isLoading,
+  select,
+} from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { productsQueries } from './services/products/queries'
 
@@ -33,31 +39,25 @@ class SearchResults extends LitElement {
   render() {
     if (!this.query) return null
 
-    const {
-      isLoading,
-      status,
-      error,
-      isFetching,
-      data: products,
-      hasNextPage,
-      isFetchingNextPage,
-    } = this.products()
+    const queryResult = this.products()
 
-    if (isLoading) return html`<div class="loading">Loading...</div>`
+    if (isLoading(queryResult))
+      return html`<div class="loading">Loading...</div>`
 
-    if (status === 'error') return html`<div>Error: ${error.message}</div>`
+    if (queryResult.status === 'error')
+      return html`<div>Error: ${queryResult.error.message}</div>`
 
     return html`
       <div>
         <div class="search-status">
-          Status: ${status}
-          ${isFetching ? html`<span>fetching...</span>` : null}
+          Status: ${queryResult.status}
+          ${isFetching(queryResult) ? html`<span>fetching...</span>` : null}
         </div>
         <div>
           <div class="search-result">
             ${
-              products && products.length > 0
-                ? products.map(
+              queryResult.data && queryResult.data.length > 0
+                ? queryResult.data.map(
                     (product) => html`
                       <li class="product">
                         <span class="product-name">${product.name}</span>
@@ -80,12 +80,12 @@ class SearchResults extends LitElement {
             }
           </div>
           ${
-            hasNextPage
+            queryResult.hasNextPage
               ? html`
                   <button
                     type="button"
                     class="search-more"
-                    ?disabled=${isFetching}
+                    ?disabled=${isFetching(queryResult)}
                     @click=${() => this.products.fetchNextPage()}
                   >
                     more
@@ -94,7 +94,7 @@ class SearchResults extends LitElement {
               : null
           }
           ${
-            isFetchingNextPage
+            isFetchingNextPage(queryResult)
               ? html`<div class="search-status">Fetching next page...</div>`
               : null
           }

@@ -2,6 +2,8 @@ import {
   QueryClient,
   QueryClientProvider,
   createQueryController,
+  isFetching,
+  isPending,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { reposQueries } from './services/repos/queries'
@@ -23,19 +25,20 @@ class SimpleExample extends LitElement {
   }
 
   render() {
-    const { data, error, isFetching, isPending } = this.repo()
+    const queryResult = this.repo()
 
-    if (isPending) return html`Loading...`
+    if (isPending(queryResult)) return html`Loading...`
 
-    if (error) return html`An error has occurred: ${error.message}`
+    if (queryResult.error)
+      return html`An error has occurred: ${queryResult.error.message}`
 
     return html`
-      <h1>${data.name}</h1>
-      <p>${data.description}</p>
-      <strong>👀 ${data.subscribers_count}</strong>
-      <strong>✨ ${data.stargazers_count}</strong>
-      <strong>🍴 ${data.forks_count}</strong>
-      <div>${isFetching ? 'Updating...' : ''}</div>
+      <h1>${queryResult.data.name}</h1>
+      <p>${queryResult.data.description}</p>
+      <strong>👀 ${queryResult.data.subscribers_count}</strong>
+      <strong>✨ ${queryResult.data.stargazers_count}</strong>
+      <strong>🍴 ${queryResult.data.forks_count}</strong>
+      <div>${isFetching(queryResult) ? 'Updating...' : ''}</div>
     `
   }
 }

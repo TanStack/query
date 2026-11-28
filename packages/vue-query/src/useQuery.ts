@@ -170,7 +170,7 @@ export function useQuery<
  * fetched rather than from now:
  * ```vue
  * <script setup lang="ts">
- * import { useQuery, useQueryClient } from '@tanstack/vue-query'
+ * import { getQueryState, useQuery, useQueryClient } from '@tanstack/vue-query'
  *
  * const props = defineProps<{ postId: number }>()
  * const queryClient = useQueryClient()

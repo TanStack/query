@@ -247,7 +247,7 @@ describe('useQuery', () => {
             wow: true,
           },
         })
-        const { data } = useQuery(queryOptions(options))
+        const { data } = useQuery(options)
 
         expectTypeOf(data).toEqualTypeOf<{ wow: boolean }>()
       })

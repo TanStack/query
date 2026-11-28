@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/preact-query'
+import { isFetching, useQuery } from '@tanstack/preact-query'
 import { useRoute } from 'preact-iso'
 import { charactersQueries } from './services/characters/queries'
 
@@ -7,28 +7,28 @@ export default function CharacterPage() {
   const id = Number(params.id)
   const isValidId = /^\d+$/.test(params.id) && id > 0
 
-  const { status, data, error, isFetching } = useQuery(
-    queryOptions(charactersQueries.detail(isValidId ? id : undefined)),
+  const queryResult = useQuery(
+    charactersQueries.detail(isValidId ? id : undefined),
   )
 
   return (
     <div style={{ textAlign: 'center' }}>
       {!isValidId ? (
         'Invalid character ID'
-      ) : status === 'pending' ? (
+      ) : queryResult.status === 'pending' ? (
         'Loading...'
-      ) : status === 'error' ? (
-        <span>Error: {error.message}</span>
+      ) : queryResult.status === 'error' ? (
+        <span>Error: {queryResult.error.message}</span>
       ) : (
         <>
-          <h1>{data.name}</h1>
+          <h1>{queryResult.data.name}</h1>
           <div>
-            <p>status: {data.status}</p>
-            <p>species: {data.species}</p>
-            <p>gender: {data.gender}</p>
-            <p>origin: {data.origin.name}</p>
+            <p>status: {queryResult.data.status}</p>
+            <p>species: {queryResult.data.species}</p>
+            <p>gender: {queryResult.data.gender}</p>
+            <p>origin: {queryResult.data.origin.name}</p>
           </div>
-          <div>{isFetching ? 'Background Updating...' : ' '}</div>
+          <div>{isFetching(queryResult) ? 'Background Updating...' : ' '}</div>
         </>
       )}
       <br />

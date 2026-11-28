@@ -1,5 +1,6 @@
+import { equalItems } from './equalItems'
 import { projectResult } from './projectResult'
-import { replaceData, shallowEqualObjects } from './utils'
+import { replaceData } from './utils'
 import type { Query } from './query'
 import type {
   ProjectionFailure,
@@ -62,15 +63,15 @@ function resolvePlaceholder<
 >['placeholder'] {
   const value = options.placeholderData![1]
   const previousState = previousQuery?.state
-  const key: NonNullable<typeof context.placeholder>['key'] = {
-    placeholderData: value,
-    structuralSharing: options.structuralSharing,
+  const key = [
+    value,
+    options.structuralSharing,
     previousQuery,
     previousState,
-    previousOptions: previousQuery?.options,
-  }
+    previousQuery?.options,
+  ] as const
   const memo = context.placeholder
-  if (shallowEqualObjects(key, memo?.key)) return memo
+  if (equalItems<unknown>(key, memo?.key)) return memo
 
   let input: TQueryData | undefined
   let sourceQuery: typeof previousQuery

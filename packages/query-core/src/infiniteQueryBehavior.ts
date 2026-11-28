@@ -51,18 +51,20 @@ export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
   >,
   query: Query,
 ) {
-  const options = context.options as InfiniteQueryPageParamsOptions<TData> & {
-    pages?: number
-  }
-  const direction = context.fetchOptions?.meta?.fetchMore?.direction
+  const { client, queryKey, state, fetchOptions } = context
+  const options = context.options as typeof context.options &
+    InfiniteQueryPageParamsOptions<TData> & {
+      pages?: number
+    }
+  const direction = fetchOptions?.meta?.fetchMore?.direction
   let result: InfiniteData<unknown> = { pages: [], pageParams: [] }
-  const previousData = context.state.data ?? result
+  const previousData = state.data ?? result
   let currentPage = 0
 
   const fetchFn = async () => {
     let cancelled = false
     const signalContext: FetchSignalContext = context
-    const queryFn = ensureQueryFn(context.options, context.fetchOptions)
+    const queryFn = ensureQueryFn(options, fetchOptions)
 
     // Create function to fetch a page
     const fetchPage = async (
@@ -80,10 +82,10 @@ export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
 
       const queryFnContext = addConsumeAwareSignal(
         {
-          client: context.client,
-          queryKey: context.queryKey,
+          client,
+          queryKey,
           pageParam: param,
-          meta: context.options.meta,
+          meta: options.meta,
         },
         () => context.signal,
         () => (cancelled = true),
@@ -92,7 +94,7 @@ export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
 
       const page = await queryFn(queryFnContext)
 
-      const { maxPages } = context.options
+      const { maxPages } = options
       return {
         pages: addToArray(data.pages, page, maxPages, previous),
         pageParams: addToArray(data.pageParams, param, maxPages, previous),
@@ -102,8 +104,7 @@ export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
     // fetch next / previous page?
     if (direction && previousData.pages.length) {
       const previous = direction === 'backward'
-      const pageParamFn = previous ? getPreviousPageParam : getNextPageParam
-      const param = pageParamFn(options, previousData)
+      const param = getPageParam(options, previousData, previous)
 
       result = await fetchPage(previousData, param, previous)
     } else {
@@ -116,7 +117,7 @@ export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
             ? previousData.pageParams[0] === undefined
               ? options.initialPageParam
               : previousData.pageParams[0]
-            : getNextPageParam(options, result)
+            : getPageParam(options, result)
         if (currentPage > 0 && param == null) {
           break
         }
@@ -127,14 +128,14 @@ export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
 
     return result
   }
-  if (context.options.persister) {
+  if (options.persister) {
     return () => {
-      return context.options.persister?.(
+      return options.persister?.(
         fetchFn as any,
         {
-          client: context.client,
-          queryKey: context.queryKey,
-          meta: context.options.meta,
+          client,
+          queryKey,
+          meta: options.meta,
           signal: context.signal,
         },
         query,
@@ -145,40 +146,26 @@ export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
 }
 
 /**
- * Computes the page param of the page after the last one, with the `getNextPageParam` option.
- * @param options - The infinite query options.
- * @param data - The current pages and page params.
- * @returns The next page param, or `undefined` if there are no pages yet.
+ * Resolves a page cursor from the edge of the cached pages.
+ * @param options - The cursor functions supplied with the query.
+ * @param data - The cached pages with their corresponding parameters.
+ * @param previous - Reads the leading edge for backward pagination.
+ * @returns The cursor for the next request, or undefined when there is no page.
  */
-function getNextPageParam(
+function getPageParam(
   options: InfiniteQueryPageParamsOptions<any>,
-  { pages, pageParams }: InfiniteData<unknown>,
-): unknown | undefined {
-  return pages.length > 0
-    ? options.getNextPageParam(
-        pages.at(-1),
-        pages,
-        pageParams.at(-1),
-        pageParams,
-      )
-    : undefined
-}
-
-/**
- * Computes the page param of the page before the first one, with the `getPreviousPageParam`
- * option.
- * @param options - The infinite query options.
- * @param data - The current pages and page params.
- * @returns The previous page param, or `undefined` if there are no pages yet or no
- * `getPreviousPageParam` option.
- */
-function getPreviousPageParam(
-  options: InfiniteQueryPageParamsOptions<any>,
-  { pages, pageParams }: InfiniteData<unknown>,
-): unknown | undefined {
-  return pages.length > 0
-    ? options.getPreviousPageParam?.(pages[0], pages, pageParams[0], pageParams)
-    : undefined
+  data: InfiniteData<unknown> | undefined,
+  previous = false,
+): unknown {
+  if (!data?.pages.length) return
+  const { pages, pageParams } = data
+  const index = previous ? 0 : -1
+  return options[previous ? 'getPreviousPageParam' : 'getNextPageParam']?.(
+    pages.at(index),
+    pages,
+    pageParams.at(index),
+    pageParams,
+  )
 }
 
 /**
@@ -191,8 +178,7 @@ export function hasNextPage(
   options: InfiniteQueryPageParamsOptions<any, any>,
   data?: InfiniteData<unknown>,
 ): boolean {
-  if (!data) return false
-  return getNextPageParam(options, data) != null
+  return getPageParam(options, data) != null
 }
 
 /**
@@ -206,8 +192,7 @@ export function hasPreviousPage(
   options: InfiniteQueryPageParamsOptions<any, any>,
   data?: InfiniteData<unknown>,
 ): boolean {
-  if (!data || !options.getPreviousPageParam) return false
-  return getPreviousPageParam(options, data) != null
+  return getPageParam(options, data, true) != null
 }
 
 /**

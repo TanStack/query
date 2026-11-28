@@ -48,7 +48,6 @@ import {
   throwOnError,
   useQuery,
 } from '..'
-import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 import { resultForComparison } from './helpers/result'
 import {
   Blink,
@@ -122,7 +121,7 @@ describe('useQuery', () => {
           queryKey: [key, id],
           queryFn: () => Promise.resolve({ value: id }),
           staleTime: Infinity,
-          select: optionalSelect(select),
+          select: selectData(select),
         }),
       )
       results.push(data)
@@ -161,7 +160,7 @@ describe('useQuery', () => {
           queryKey: key,
           queryFn: () => Promise.resolve(todos),
           staleTime: Infinity,
-          select: optionalSelect(
+          select: selectData(
             React.useCallback(
               (items: typeof todos) =>
                 items.filter((todo) => todo.completed === completed),
@@ -878,7 +877,7 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: key,
           queryFn: () => ({ name: 'test' }),
-          select: optionalSelect(() => {
+          select: selectData(() => {
             throw error
           }),
         }),
@@ -911,7 +910,7 @@ describe('useQuery', () => {
           queryKey: key,
           queryFn: () => (runs === 0 ? 'test' : 'test2'),
 
-          select: optionalSelect(
+          select: selectData(
             React.useCallback(() => {
               runs++
               throw error
@@ -1424,7 +1423,7 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: [key, count],
           queryFn: () => sleep(10).then(() => count),
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: placeholderData(keepPreviousData),
         }),
       )
 
@@ -1494,7 +1493,7 @@ describe('useQuery', () => {
               return data.count
             },
           ],
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: placeholderData(keepPreviousData),
         }),
       )
 
@@ -1622,7 +1621,7 @@ describe('useQuery', () => {
               return data.count
             },
           ],
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: placeholderData(keepPreviousData),
         }),
       )
 
@@ -1706,7 +1705,7 @@ describe('useQuery', () => {
               return Promise.resolve(count)
             }),
           retry: false,
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: placeholderData(keepPreviousData),
         }),
       )
 
@@ -1799,7 +1798,7 @@ describe('useQuery', () => {
           queryKey: [key, count],
           queryFn: () => sleep(10).then(() => count),
           initialData: 99,
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: placeholderData(keepPreviousData),
         }),
       )
 
@@ -1869,7 +1868,7 @@ describe('useQuery', () => {
           queryKey: [key, count],
           queryFn: () => sleep(10).then(() => count),
           enabled: false,
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: placeholderData(keepPreviousData),
           notifyOnChangeProps: 'all',
         }),
       )
@@ -1963,7 +1962,7 @@ describe('useQuery', () => {
           queryKey: [key, count],
           queryFn: () => sleep(10).then(() => count),
           enabled: false,
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: placeholderData(keepPreviousData),
           notifyOnChangeProps: 'all',
         }),
       )
@@ -4055,7 +4054,7 @@ describe('useQuery', () => {
           initialData() {
             return filter === '' ? initialTodos : undefined
           },
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: placeholderData(keepPreviousData),
           staleTime: 5000,
         }),
       )
@@ -4506,7 +4505,7 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: key1,
           queryFn: () => 'data',
-          placeholderData: optionalPlaceholderData('placeholder'),
+          placeholderData: placeholderData('placeholder'),
         }),
       )
 
@@ -4551,7 +4550,7 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: key1,
           queryFn: () => 'data',
-          placeholderData: optionalPlaceholderData('placeholder'),
+          placeholderData: placeholderData('placeholder'),
           enabled: count === 0,
         }),
       )
@@ -4609,7 +4608,7 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: key1,
           queryFn: () => 1,
-          placeholderData: optionalPlaceholderData(23),
+          placeholderData: placeholderData(23),
           select: [selectData, (data) => String(data * 2)],
         }),
       )
@@ -4654,7 +4653,7 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: key1,
           queryFn: () => 1,
-          placeholderData: optionalPlaceholderData(() => {
+          placeholderData: placeholderData(() => {
             placeholderFunctionRunCount++
             return 23
           }),
@@ -4712,7 +4711,7 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: key1,
           queryFn: () => sleep(10).then(() => 0),
-          select: optionalSelect(
+          select: selectData(
             React.useCallback(
               (data: number) => {
                 selectRun++
@@ -4721,7 +4720,7 @@ describe('useQuery', () => {
               [count],
             ),
           ),
-          placeholderData: optionalPlaceholderData(99),
+          placeholderData: placeholderData(99),
         }),
       )
 
@@ -4759,7 +4758,7 @@ describe('useQuery', () => {
           queryKey: key1,
           queryFn: () => sleep(10).then(() => 0),
 
-          select: optionalSelect(
+          select: selectData(
             React.useCallback(
               (data: number) => {
                 return `selected ${data + count}`
@@ -4767,7 +4766,7 @@ describe('useQuery', () => {
               [count],
             ),
           ),
-          placeholderData: optionalPlaceholderData(99),
+          placeholderData: placeholderData(99),
         }),
       )
 
@@ -6554,7 +6553,7 @@ describe('useQuery', () => {
 
       const { data } = useQuery(
         queryOptions({
-          select: optionalSelect(selector),
+          select: selectData(selector),
           queryKey: [key, 'user', id],
           queryFn: () => fetchNumber(id),
         }),
@@ -6623,10 +6622,10 @@ describe('useQuery', () => {
 
       const { data } = useQuery(
         queryOptions({
-          select: optionalSelect(selector),
+          select: selectData(selector),
           queryKey: [key, 'user', id],
           queryFn: () => fetchNumber(id),
-          placeholderData: optionalPlaceholderData({
+          placeholderData: placeholderData({
             numbers: { current: { id: 99 } },
           }),
         }),
@@ -6718,7 +6717,7 @@ describe('useQuery', () => {
           staleTime: Infinity,
           queryKey: [key, steps[count]],
           queryFn: () => sleep(10).then(() => steps[count]),
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: placeholderData(keepPreviousData),
         }),
       )
 
@@ -7530,7 +7529,7 @@ describe('useQuery', () => {
           queryKey: [...key, id],
           queryFn: () => [id],
           enabled: id !== '',
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: placeholderData(keepPreviousData),
           select: [selectData, (items) => items.find((item) => item === id)],
         }),
       )
@@ -7560,7 +7559,7 @@ describe('useQuery', () => {
           queryKey: [...key, id],
           queryFn: () => [id],
           enabled: id !== '',
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: placeholderData(keepPreviousData),
           select: [selectData, (items) => items.find((item) => item === id)],
         }),
       )

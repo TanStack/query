@@ -1,13 +1,9 @@
 'use client'
 
-import {
-  MutationObserver,
-  noop,
-  notifyManager,
-  shouldThrowError,
-} from '@tanstack/query-core'
+import { MutationObserver, noop, shouldThrowError } from '@tanstack/query-core'
 import * as React from 'react'
 import { useQueryClient } from './QueryClientProvider'
+import { useStoreSnapshot } from './useStoreSnapshot'
 import type { DefaultError, QueryClient } from '@tanstack/query-core'
 import type {
   UseMutateFunction,
@@ -208,15 +204,7 @@ export function useMutation<
     observer.setOptions(options)
   }, [observer, options])
 
-  const result = React.useSyncExternalStore(
-    React.useCallback(
-      (onStoreChange) =>
-        observer.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [observer],
-    ),
-    () => observer.getCurrentResult(),
-    () => observer.getCurrentResult(),
-  )
+  const result = useStoreSnapshot(observer, () => observer.getCurrentResult())
 
   const mutate = React.useCallback<
     UseMutateFunction<TData, TError, TVariables, TOnMutateResult>

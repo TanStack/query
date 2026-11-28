@@ -12,7 +12,6 @@ import {
   mountQueryClient,
   select,
 } from '..'
-import { projectionInput } from './helpers/projection'
 import type {
   DefaultError,
   DefinedInfiniteQueryObserverResult,
@@ -1246,7 +1245,7 @@ describe('infiniteQueryObserver', () => {
         getNextPageParam: () => 1,
       })
 
-      expectTypeOf(projectionInput(observer.options.select)).toEqualTypeOf<
+      expectTypeOf(observer.options.select?.[1]).toEqualTypeOf<
         | ((
             data: InfiniteData<{ value: string }, number>,
           ) => InfiniteData<{ value: string }, unknown>)

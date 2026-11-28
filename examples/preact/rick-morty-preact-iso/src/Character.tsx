@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/preact-query'
+import { useQuery } from '@tanstack/preact-query'
 import { useRoute } from 'preact-iso'
 import { charactersQueries } from './services/characters/queries'
 import { episodesQueries } from './services/episodes/queries'
@@ -8,9 +8,7 @@ function Character() {
   const { params } = useRoute()
   const characterId = params.characterId
 
-  const { status, data } = useQuery(
-    queryOptions(charactersQueries.detail(characterId)),
-  )
+  const { status, data } = useQuery(charactersQueries.detail(characterId))
 
   if (status === 'pending') return <p>Loading...</p>
   if (status === 'error') return <p>Error :(</p>
@@ -49,9 +47,7 @@ function Character() {
 }
 
 function Episode({ episodeId }: { episodeId: string }) {
-  const { data, status } = useQuery(
-    queryOptions(episodesQueries.detail(episodeId)),
-  )
+  const { data, status } = useQuery(episodesQueries.detail(episodeId))
 
   if (status === 'success') {
     return (
@@ -70,9 +66,7 @@ function Episode({ episodeId }: { episodeId: string }) {
 }
 
 function Location({ locationId }: { locationId: string }) {
-  const { data, status } = useQuery(
-    queryOptions(locationsQueries.detail(locationId)),
-  )
+  const { data, status } = useQuery(locationsQueries.detail(locationId))
 
   if (status === 'pending') return <span>Loading...</span>
   if (status === 'error') return <span>Error :(</span>

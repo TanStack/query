@@ -6,6 +6,7 @@ import {
   isLoading as isLoadingOption,
   isPending as isPendingOption,
   refetchQueries,
+  select as selectResult,
   setQueryData,
 } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
@@ -20,7 +21,6 @@ import {
   defaultQueryFn,
   useQueries,
 } from '..'
-import { optionalSelect } from './helpers/projection'
 import { renderWithClient } from './utils'
 import type { QueryObserverResult, UseQueryResult } from '..'
 
@@ -81,7 +81,7 @@ describe('useQueries', () => {
           {
             queryKey: key,
             queryFn: () => Promise.resolve([1, 2, 3]),
-            select: optionalSelect(select),
+            select: selectResult(select),
             staleTime: Infinity,
             structuralSharing: false,
           },
@@ -152,7 +152,7 @@ describe('useQueries', () => {
             {
               queryKey,
               queryFn,
-              select: optionalSelect((value: string) => {
+              select: selectResult((value: string) => {
                 if (throws) throw new Error(value + ' with a select error')
                 return new Set([value])
               }),

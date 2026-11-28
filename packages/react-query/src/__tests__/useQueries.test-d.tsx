@@ -1,10 +1,12 @@
-import { select } from '@tanstack/query-core'
+import {
+  select,
+  placeholderData as withPlaceholder,
+} from '@tanstack/query-core'
 import { createKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 import { skipToken } from '..'
 import { queryOptions } from '../queryOptions'
 import { useQueries } from '../useQueries'
-import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 import type { QueryFunctionContext } from '@tanstack/query-core'
 import type { DefaultQueryFn, OmitKeyof, QueryFunction, QueryKey } from '..'
 import type { UseQueryOptions, UseQueryResult } from '../types'
@@ -75,7 +77,7 @@ describe('useQueries', () => {
       const query2 = {
         queryKey: createKey(),
         queryFn: () => Promise.resolve(1),
-        select: optionalSelect((data: number) => data > 1),
+        select: select((data: number) => data > 1),
       }
 
       const queryResults = useQueries({ queries: [query1, query2] })
@@ -268,7 +270,7 @@ describe('useQueries', () => {
                   return a.toLowerCase()
                 },
               ],
-              placeholderData: optionalPlaceholderData('string'),
+              placeholderData: withPlaceholder('string'),
               // @ts-expect-error (initialData: string)
               initialData: 123,
             },
@@ -282,7 +284,7 @@ describe('useQueries', () => {
                   return parseInt(a)
                 },
               ],
-              placeholderData: optionalPlaceholderData('string'),
+              placeholderData: withPlaceholder('string'),
               // @ts-expect-error (initialData: string)
               initialData: 123,
             },
@@ -441,7 +443,7 @@ describe('useQueries', () => {
                   return a.toLowerCase()
                 },
               ],
-              placeholderData: optionalPlaceholderData('string'),
+              placeholderData: withPlaceholder('string'),
               // @ts-expect-error (initialData: string)
               initialData: 123,
             },
@@ -455,7 +457,7 @@ describe('useQueries', () => {
                   return parseInt(a)
                 },
               ],
-              placeholderData: optionalPlaceholderData('string'),
+              placeholderData: withPlaceholder('string'),
               // @ts-expect-error (initialData: string)
               initialData: 123,
             },
@@ -560,7 +562,7 @@ describe('useQueries', () => {
           queries: Array(50).map((_, i) => ({
             queryKey: ['key', i] as const,
             queryFn: () => i + 10,
-            select: optionalSelect((data: number) => data.toString()),
+            select: select((data: number) => data.toString()),
           })),
         })
         expectTypeOf(result2).toEqualTypeOf<
@@ -571,7 +573,7 @@ describe('useQueries', () => {
           queries: Array(50).map((_, i) => ({
             queryKey: ['key', i] as const,
             queryFn: () => i + 10,
-            select: optionalSelect((data: number) => data.toString()),
+            select: select((data: number) => data.toString()),
             throwOnError,
           })),
         })
@@ -592,7 +594,7 @@ describe('useQueries', () => {
             {
               queryKey: key3,
               queryFn: () => ['string[]'],
-              select: optionalSelect(() => 123),
+              select: select(() => 123),
             },
             {
               queryKey: key5,
@@ -618,7 +620,7 @@ describe('useQueries', () => {
             {
               queryKey: key1,
               queryFn: () => 'string',
-              placeholderData: optionalPlaceholderData('string'),
+              placeholderData: withPlaceholder('string'),
               // @ts-expect-error (initialData: string)
               initialData: 123,
             },
@@ -626,7 +628,7 @@ describe('useQueries', () => {
               queryKey: key2,
               queryFn: () => 123,
               // @ts-expect-error (placeholderData: number)
-              placeholderData: optionalPlaceholderData('string'),
+              placeholderData: withPlaceholder('string'),
               initialData: 123,
             },
           ],
@@ -653,7 +655,7 @@ describe('useQueries', () => {
             {
               queryKey: key4,
               queryFn: () => 'string',
-              select: optionalSelect((a: string) => parseInt(a)),
+              select: select((a: string) => parseInt(a)),
             },
             {
               queryKey: key5,
@@ -668,14 +670,14 @@ describe('useQueries', () => {
           queries: Array(50).map((_, i) => ({
             queryKey: ['key', i] as const,
             queryFn: () => i + 10,
-            select: optionalSelect((data: number) => data.toString()),
+            select: select((data: number) => data.toString()),
           })),
         })
         useQueries({
           queries: Array(50).map((_, i) => ({
             queryKey: ['key', i] as const,
             queryFn: () => i + 10,
-            select: optionalSelect((data: number) => data.toString()),
+            select: select((data: number) => data.toString()),
           })),
         })
 
@@ -693,12 +695,12 @@ describe('useQueries', () => {
             {
               queryKey: key4,
               queryFn: () => 'string',
-              select: optionalSelect((a: string) => parseInt(a)),
+              select: select((a: string) => parseInt(a)),
             },
             {
               queryKey: key5,
               queryFn: () => 'string',
-              select: optionalSelect((a: string) => parseInt(a)),
+              select: select((a: string) => parseInt(a)),
               throwOnError,
             },
           ],
@@ -876,12 +878,12 @@ describe('useQueries', () => {
             {
               queryKey: getQueryKeyA(),
               queryFn: getQueryFunctionA(),
-              select: optionalSelect(getSelectorA()),
+              select: select(getSelectorA()),
             },
             {
               queryKey: getQueryKeyB('id'),
               queryFn: getQueryFunctionB(),
-              select: optionalSelect(getSelectorB()),
+              select: select(getSelectorB()),
             },
           ],
         })
@@ -896,7 +898,7 @@ describe('useQueries', () => {
           Array(10).map(() => ({
             queryKey: getQueryKeyA(),
             queryFn: getQueryFunctionA(),
-            select: optionalSelect(getSelectorA()),
+            select: select(getSelectorA()),
           })),
         )
 
@@ -941,7 +943,7 @@ describe('useQueries', () => {
             {
               queryKey: createKey(),
               queryFn: () => Promise.resolve(1),
-              select: optionalSelect((data: number) => data.toFixed()),
+              select: select((data: number) => data.toFixed()),
             },
           ],
         })
@@ -1055,7 +1057,7 @@ describe('useQueries', () => {
           queries: [
             {
               ...options,
-              select: optionalSelect((data: number) => data.toFixed()),
+              select: select((data: number) => data.toFixed()),
             },
           ],
         })
@@ -1095,7 +1097,7 @@ describe('useQueries', () => {
           queries: [
             {
               ...options,
-              select: optionalSelect((data: number) => data.toFixed()),
+              select: select((data: number) => data.toFixed()),
             },
           ],
         })

@@ -6,7 +6,6 @@ import {
   defaultQueryOptions,
   select,
 } from '..'
-import { optionalSelect } from './helpers/projection'
 import type {
   DefaultedInfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
@@ -30,7 +29,7 @@ describe('result reader types', () => {
     >(client, {
       queryKey: ['value'],
       queryFn: () => 1,
-      select: optionalSelect(String),
+      select: select(String),
     })
     const observer = new QueryObserver(client, options)
     const reader = observer.createResultReader(options)

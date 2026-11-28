@@ -1,5 +1,6 @@
 <script lang="ts">
   import {
+    isFetching,
     getQueryData,
     useQueryClient,
     createQuery,
@@ -38,7 +39,7 @@
         {/each}
       </ul>
       <pre
-        class={['updating-text', posts.isFetching && 'on']}
+        class={['updating-text', isFetching(posts) && 'on']}
         style="font-weight:700">Background Updating...</pre>
     {/if}
   </div>

@@ -8,7 +8,6 @@ import {
 import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { suspenseInfiniteQueryOptions, useQuery } from '..'
-import { optionalPlaceholderData } from './helpers/projection'
 import type { InfiniteData } from '@tanstack/query-core'
 import type { UseSuspenseInfiniteQueryOptions } from '../types'
 
@@ -68,7 +67,7 @@ describe('useSuspenseInfiniteQuery', () => {
         queryFn: () => Promise.resolve(5),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        placeholderData: optionalPlaceholderData(keepPreviousData),
+        placeholderData: placeholderData(keepPreviousData),
       }),
     )
 
@@ -105,7 +104,7 @@ describe('useSuspenseInfiniteQuery', () => {
           queryFn: () => Promise.resolve(5),
           initialPageParam: 1,
           getNextPageParam: () => 1,
-          placeholderData: optionalPlaceholderData({
+          placeholderData: placeholderData({
             pages: [5],
             pageParams: [1],
           }),

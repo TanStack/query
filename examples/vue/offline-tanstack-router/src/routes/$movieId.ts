@@ -1,4 +1,4 @@
-import { getQueryData, query, noop, onlineManager } from '@tanstack/vue-query'
+import { getQueryData, noop, onlineManager, query } from '@tanstack/vue-query'
 import { createFileRoute } from '@tanstack/vue-router'
 import { moviesQueries } from '../services/movies/queries'
 

@@ -1,4 +1,4 @@
-import { useQuery, suspenseQueryOptions } from '@tanstack/preact-query'
+import { suspenseQueryOptions, useQuery } from '@tanstack/preact-query'
 import { Suspense } from 'preact/compat'
 import ErrorBoundary from './ErrorBoundary'
 import { waitQueries } from './services/wait/queries'

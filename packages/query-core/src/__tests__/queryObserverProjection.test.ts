@@ -12,8 +12,8 @@ import {
   resetQueries,
   select as selectData,
   setQueryData,
+  placeholderData as withPlaceholder,
 } from '..'
-import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 
 describe('observer data outcome after reset', () => {
   let queryClient: QueryClient
@@ -34,7 +34,7 @@ describe('observer data outcome after reset', () => {
       queryKey: key,
       queryFn: () => new Promise<{ label: string | null }>(() => {}),
       enabled: false,
-      placeholderData: optionalPlaceholderData(placeholder),
+      placeholderData: withPlaceholder(placeholder),
       select: [
         selectData,
         (row) => {
@@ -73,8 +73,8 @@ describe('observer data outcome after reset', () => {
       queryKey: key,
       queryFn: defaultQueryFn,
       enabled: false,
-      placeholderData: optionalPlaceholderData({ label: null }),
-      select: optionalSelect(select),
+      placeholderData: withPlaceholder({ label: null }),
+      select: selectData(select),
     } as const
     setQueryData(queryClient, key, { label: 'first' })
     const observer = new QueryObserver(queryClient, options)
@@ -122,7 +122,7 @@ describe('observer callback errors', () => {
     })
     const reader = observer.createResultReader({
       ...options,
-      placeholderData: optionalPlaceholderData(placeholderData),
+      placeholderData: withPlaceholder(placeholderData),
     })
 
     try {
@@ -162,7 +162,7 @@ describe('observer callback errors', () => {
     } as const
     const observer = new QueryObserver(client, {
       ...options,
-      select: optionalSelect(() => {
+      select: selectData(() => {
         throw undefined
       }),
     })
@@ -189,7 +189,7 @@ describe('observer callback errors', () => {
       queryKey: createKey(),
       initialData: 1,
       enabled: false,
-      select: optionalSelect((value: number) => value * 2),
+      select: selectData((value: number) => value * 2),
     })
     const observer = new QueryObserver(client, options)
     const reader = observer.createResultReader({
@@ -215,7 +215,7 @@ describe('observer callback errors', () => {
     const options = defaultQueryOptions<{ value: number }>(client, {
       queryKey: createKey(),
       enabled: false,
-      placeholderData: optionalPlaceholderData(placeholderData),
+      placeholderData: withPlaceholder(placeholderData),
       structuralSharing: false,
     })
     const observer = new QueryObserver(client, options)
@@ -232,7 +232,7 @@ describe('observer callback errors', () => {
 
       const secondReader = observer.createResultReader({
         ...options,
-        placeholderData: optionalPlaceholderData(() => placeholderData()),
+        placeholderData: withPlaceholder(() => placeholderData()),
       })
       const second = secondReader.getSnapshot()
       expect(secondReader.getSnapshot()).toBe(second)

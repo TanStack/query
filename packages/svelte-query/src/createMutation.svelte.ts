@@ -25,7 +25,7 @@ import type {
  * @example
  * ```svelte
  * <script lang="ts">
- *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+ *   import { createMutation, invalidateQueries, useQueryClient } from '@tanstack/svelte-query'
  *
  *   const queryClient = useQueryClient()
  *
@@ -49,7 +49,7 @@ import type {
  * Rendering the mutation's own state, rather than just firing it off:
  * ```svelte
  * <script lang="ts">
- *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+ *   import { createMutation, invalidateQueries, useQueryClient } from '@tanstack/svelte-query'
  *
  *   const queryClient = useQueryClient()
  *
@@ -72,7 +72,7 @@ import type {
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```svelte
  * <script lang="ts">
- *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+ *   import { cancelQueries, createMutation, invalidateQueries, setQueryData, useQueryClient } from '@tanstack/svelte-query'
  *
  *   const queryClient = useQueryClient()
  *
@@ -106,7 +106,7 @@ import type {
  * promise per call instead, so you can wait for all of them when they succeed:
  * ```svelte
  * <script lang="ts">
- *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+ *   import { createMutation, invalidateQueries, useQueryClient } from '@tanstack/svelte-query'
  *
  *   const queryClient = useQueryClient()
  *
@@ -134,7 +134,7 @@ import type {
  * `Promise.allSettled`:
  * ```svelte
  * <script lang="ts">
- *   import { createMutation, useQueryClient } from '@tanstack/svelte-query'
+ *   import { createMutation, invalidateQueries, useQueryClient } from '@tanstack/svelte-query'
  *
  *   const queryClient = useQueryClient()
  *

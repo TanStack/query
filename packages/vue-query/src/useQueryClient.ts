@@ -13,7 +13,7 @@ import type { QueryClient } from './queryClient'
  * @example
  * ```vue
  * <script setup lang="ts">
- * import { useQueryClient } from '@tanstack/vue-query'
+ * import { invalidateQueries, useQueryClient } from '@tanstack/vue-query'
  *
  * const queryClient = useQueryClient()
  *

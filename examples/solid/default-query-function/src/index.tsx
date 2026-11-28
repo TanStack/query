@@ -1,9 +1,9 @@
 import {
-  getQueryData,
-  isFetching,
   QueryClient,
   QueryClientProvider,
   defaultQueryFn,
+  getQueryData,
+  isFetching,
   useQuery,
 } from '@tanstack/solid-query'
 /* @refresh reload */

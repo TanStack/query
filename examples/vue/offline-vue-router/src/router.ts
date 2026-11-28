@@ -1,4 +1,4 @@
-import { getQueryData, query, noop, onlineManager } from '@tanstack/vue-query'
+import { getQueryData, noop, onlineManager, query } from '@tanstack/vue-query'
 import { createRouter, createWebHistory } from 'vue-router'
 import { queryClient } from './queryClient'
 import MovieDetailView from './routes/MovieDetailView.vue'

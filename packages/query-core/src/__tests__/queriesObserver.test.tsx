@@ -16,9 +16,10 @@ import {
   refetchQueries,
   removeQueries,
   resetQueries,
+  select as selectResult,
   setQueryData,
+  placeholderData as withPlaceholder,
 } from '..'
-import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 import type { QueryObserverResult } from '..'
 
 describe('queriesObserver', () => {
@@ -150,7 +151,7 @@ describe('queriesObserver', () => {
         queryKey: keyB,
         queryFn: defaultQueryFn,
         staleTime: Infinity,
-        select: optionalSelect(select),
+        select: selectResult(select),
         structuralSharing: false,
       } as const
       const observer = new QueriesObserver(queryClient, [optionsA])
@@ -177,7 +178,7 @@ describe('queriesObserver', () => {
       const options = {
         queryKey: key,
         queryFn: defaultQueryFn,
-        select: optionalSelect(select),
+        select: selectResult(select),
         structuralSharing: false,
       } as const
       const observer = new QueriesObserver(queryClient, [])
@@ -215,7 +216,7 @@ describe('queriesObserver', () => {
       const reader = observer.createResultReader(
         queries.map((query) => ({
           ...query,
-          select: optionalSelect((data: number) => data * 10),
+          select: selectResult((data: number) => data * 10),
         })),
         { combine },
       )
@@ -249,7 +250,7 @@ describe('queriesObserver', () => {
       })
       first.commit()
       const second = observer.createResultReader(
-        [{ ...options, select: optionalSelect((data: number) => data * 3) }],
+        [{ ...options, select: selectResult((data: number) => data * 3) }],
         { combine },
       )
       expect(second.combineResult(second.getSnapshot())).toStrictEqual({
@@ -258,7 +259,7 @@ describe('queriesObserver', () => {
       expect(observer.getCurrentResult()[0]!.data).toBe(2)
       second.commit()
       const third = observer.createResultReader(
-        [{ ...options, select: optionalSelect((data: number) => data * 3) }],
+        [{ ...options, select: selectResult((data: number) => data * 3) }],
         { combine },
       )
       expect(third.combineResult(third.getSnapshot())).toStrictEqual({
@@ -272,19 +273,19 @@ describe('queriesObserver', () => {
     const first = {
       queryKey: createKey(),
       enabled: false,
-      placeholderData: optionalPlaceholderData(1),
+      placeholderData: withPlaceholder(1),
       queryFn: defaultQueryFn,
     } as const
     const second = {
       queryKey: createKey(),
       enabled: false,
-      placeholderData: optionalPlaceholderData(2),
+      placeholderData: withPlaceholder(2),
       queryFn: defaultQueryFn,
     } as const
     const third = {
       queryKey: createKey(),
       enabled: false,
-      placeholderData: optionalPlaceholderData(3),
+      placeholderData: withPlaceholder(3),
       queryFn: defaultQueryFn,
     } as const
     const observer = new QueriesObserver(queryClient, [first, second])
@@ -292,7 +293,7 @@ describe('queriesObserver', () => {
 
     const optimistic = observer
       .createResultReader([
-        { ...first, placeholderData: optionalPlaceholderData(4) },
+        { ...first, placeholderData: withPlaceholder(4) },
         third,
       ])
       .getSnapshot()
@@ -703,12 +704,12 @@ describe('queriesObserver', () => {
       {
         queryKey: key1,
         queryFn: queryFn1,
-        select: optionalSelect((d: any) => d + 100),
+        select: selectResult((d: any) => d + 100),
       },
       {
         queryKey: key2,
         queryFn: queryFn2,
-        select: optionalSelect((d: any) => d + 100),
+        select: selectResult((d: any) => d + 100),
       },
     ])
 

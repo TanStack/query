@@ -1,7 +1,7 @@
 import {
   QueryClient,
   QueryClientProvider,
-  queryOptions,
+  isFetching,
   useQuery,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
@@ -23,20 +23,20 @@ export default function App() {
 }
 
 function ChatMessage({ id, question }: { id: string; question: string }) {
-  const {
-    error,
-    data = [],
-    isFetching,
-  } = useQuery(queryOptions(messagesQueries.detail(id, question)))
+  const queryResult = useQuery(messagesQueries.detail(id, question))
 
-  if (error) return `An error has occurred: ${error.message}`
+  if (queryResult.error)
+    return `An error has occurred: ${queryResult.error.message}`
 
   return (
     <div>
       <Message message={{ content: question, isQuestion: true }} />
       <Message
-        inProgress={isFetching}
-        message={{ content: data.join(' '), isQuestion: false }}
+        inProgress={isFetching(queryResult)}
+        message={{
+          content: (queryResult.data ?? []).join(' '),
+          isQuestion: false,
+        }}
       />
     </div>
   )

@@ -4,6 +4,7 @@ import {
   createMutationController,
   createQueryController,
   invalidateQueries,
+  isFetching,
   refetchInterval,
 } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
@@ -60,10 +61,11 @@ class AutoRefetchingExample extends LitElement {
   }
 
   render() {
-    const { status, data, error, isFetching } = this.todos()
+    const queryResult = this.todos()
 
-    if (status === 'pending') return html`<h1>Loading...</h1>`
-    if (status === 'error') return html`<span>Error: ${error.message}</span>`
+    if (queryResult.status === 'pending') return html`<h1>Loading...</h1>`
+    if (queryResult.status === 'error')
+      return html`<span>Error: ${queryResult.error.message}</span>`
 
     return html`
       <div>
@@ -86,9 +88,9 @@ class AutoRefetchingExample extends LitElement {
           />
           <span
             style="display: inline-block; margin-left: .5rem; width: 10px; height: 10px; background: ${
-              isFetching ? 'green' : 'transparent'
+              isFetching(queryResult) ? 'green' : 'transparent'
             }; transition: ${
-              !isFetching ? 'all .3s ease' : 'none'
+              !isFetching(queryResult) ? 'all .3s ease' : 'none'
             }; border-radius: 100%; transform: scale(2)"
           ></span>
         </label>
@@ -102,7 +104,7 @@ class AutoRefetchingExample extends LitElement {
           />
         </form>
         <ul>
-          ${data.map((item) => html`<li>${item}</li>`)}
+          ${queryResult.data.map((item) => html`<li>${item}</li>`)}
         </ul>
         <div>
           <button type="button" @click=${() => this.clearMutation.mutate()}>

@@ -1,4 +1,4 @@
-import { createQueryController } from '@tanstack/lit-query'
+import { createQueryController, isFetching } from '@tanstack/lit-query'
 import { LitElement, html } from 'lit'
 import { todosQueries } from './services/todos/queries'
 
@@ -26,8 +26,7 @@ class TodoList extends LitElement {
   }
 
   render() {
-    const { status, data, isFetching, error, failureCount, refetch } =
-      this.todos()
+    const queryResult = this.todos()
 
     return html`
       <div>
@@ -42,21 +41,23 @@ class TodoList extends LitElement {
           </label>
         </div>
         ${
-          status === 'pending'
-            ? html`<span>Loading... (Attempt: ${failureCount + 1})</span>`
-            : status === 'error'
+          queryResult.status === 'pending'
+            ? html`<span
+                >Loading... (Attempt: ${queryResult.failureCount + 1})</span
+              >`
+            : queryResult.status === 'error'
               ? html`
                   <span>
-                    Error: ${error.message}
+                    Error: ${queryResult.error.message}
                     <br />
-                    <button type="button" @click=${() => refetch()}>
+                    <button type="button" @click=${() => queryResult.refetch()}>
                       Retry
                     </button>
                   </span>
                 `
               : html`
                   <ul>
-                    ${data.map(
+                    ${queryResult.data.map(
                       (todo) => html`
                         <li>
                           ${todo.name}
@@ -72,10 +73,10 @@ class TodoList extends LitElement {
                   </ul>
                   <div>
                     ${
-                      isFetching
+                      isFetching(queryResult)
                         ? html`<span>
                             Background Refreshing... (Attempt:
-                            ${failureCount + 1})
+                            ${queryResult.failureCount + 1})
                           </span>`
                         : html`<span>&nbsp;</span>`
                     }

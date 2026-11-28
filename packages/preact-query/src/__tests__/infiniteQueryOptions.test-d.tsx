@@ -67,7 +67,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    const { data } = useQuery(infiniteQueryOptions(options))
+    const { data } = useQuery(options)
     expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number> | undefined>()
   })
 
@@ -291,7 +291,7 @@ describe('infiniteQueryOptions', () => {
       initialPageParam: 1,
     })
 
-    const { data } = useQuery(infiniteQueryOptions(options))
+    const { data } = useQuery(options)
     expectTypeOf(data).toEqualTypeOf<
       InfiniteData<{ example: boolean }, number> | undefined
     >()

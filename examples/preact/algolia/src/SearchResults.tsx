@@ -1,4 +1,11 @@
-import { infiniteQueryOptions, select, useQuery } from '@tanstack/preact-query'
+import {
+  infiniteQueryOptions,
+  isFetching,
+  isFetchingNextPage,
+  isLoading,
+  select,
+  useQuery,
+} from '@tanstack/preact-query'
 import { productsQueries } from './services/products/queries'
 
 type Product = {
@@ -12,16 +19,7 @@ type SearchResultsProps = {
 }
 
 export default function SearchResults({ query = '' }: SearchResultsProps) {
-  const {
-    data: hits,
-    error,
-    isLoading,
-    isFetching,
-    status,
-    hasNextPage,
-    isFetchingNextPage,
-    fetchNextPage,
-  } = useQuery(
+  const queryResult = useQuery(
     infiniteQueryOptions({
       ...productsQueries.search<Product>({
         indexName: 'bestbuy',
@@ -36,19 +34,21 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
 
   if (!query) return null
 
-  if (isLoading) return <div className="loading">Loading...</div>
+  if (isLoading(queryResult)) return <div className="loading">Loading...</div>
 
-  if (status === 'error') return <div>Error: {error.message}</div>
+  if (queryResult.status === 'error')
+    return <div>Error: {queryResult.error.message}</div>
 
   return (
     <div>
       <div className="search-status">
-        Status: {status} {isFetching && <span>fetching...</span>}
+        Status: {queryResult.status}{' '}
+        {isFetching(queryResult) && <span>fetching...</span>}
       </div>
       <div>
         <div className="search-result">
-          {hits && hits.length > 0 ? (
-            hits.map((product) => (
+          {queryResult.data && queryResult.data.length > 0 ? (
+            queryResult.data.map((product) => (
               <li key={product.objectID} className="product">
                 <span className="product-name">{product.name}</span>
                 {product.shortDescription && (
@@ -67,17 +67,17 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
             <h3>No products found!</h3>
           )}
         </div>
-        {hasNextPage && (
+        {queryResult.hasNextPage && (
           <button
             type="button"
             className="search-more"
-            onClick={() => fetchNextPage()}
-            disabled={isFetching}
+            onClick={() => queryResult.fetchNextPage()}
+            disabled={isFetching(queryResult)}
           >
             more
           </button>
         )}
-        {isFetchingNextPage && (
+        {isFetchingNextPage(queryResult) && (
           <div className="search-status">Fetching next page...</div>
         )}
       </div>

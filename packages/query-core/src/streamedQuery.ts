@@ -89,16 +89,12 @@ export function streamedQuery<
   TQueryKey
 > {
   return async (context) => {
+    const { client, queryKey } = context
     const signalContext: FetchSignalContext = context
     const signal = signalContext[fetchSignal]
-    if (signal?.aborted) {
-      return initialValue
-    }
+    if (signal?.aborted) return initialValue
 
-    const query = findCachedQuery(getQueryCache(context.client), {
-      queryKey: context.queryKey,
-      exact: true,
-    })
+    const query = findCachedQuery(getQueryCache(client), { queryKey })
     const isRefetch = !!query && isQueryFetched(query)
     if (isRefetch && refetchMode === 'reset') {
       query.setState({
@@ -114,9 +110,9 @@ export function streamedQuery<
       OmitKeyof<typeof context, 'signal'>
     >(
       {
-        client: context.client,
+        client,
         meta: context.meta,
-        queryKey: context.queryKey,
+        queryKey,
         pageParam: context.pageParam,
       },
       () => context.signal,
@@ -138,7 +134,7 @@ export function streamedQuery<
         // don't append to the cache directly when replace-refetching
         result = reducer(result, chunk)
       } else {
-        setQueryData<TData>(context.client, context.queryKey, (prev) =>
+        setQueryData<TData>(client, queryKey, (prev) =>
           reducer(prev === undefined ? initialValue : prev, chunk),
         )
       }
@@ -146,10 +142,10 @@ export function streamedQuery<
 
     // finalize result: replace-refetching needs to write to the cache
     if (isReplaceRefetch && !isStreamInactive()) {
-      setQueryData<TData>(context.client, context.queryKey, result)
+      setQueryData<TData>(client, queryKey, result)
     }
 
-    const data = getQueryData<TData>(context.client, context.queryKey)
+    const data = getQueryData<TData>(client, queryKey)
     return data === undefined ? initialValue : data
   }
 }

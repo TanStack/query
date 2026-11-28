@@ -1,4 +1,4 @@
-import { query, noop } from '@tanstack/svelte-query'
+import { noop, query } from '@tanstack/svelte-query'
 import { postsQueries } from '$lib/services/posts/queries'
 import type { PageLoad } from './$types'
 

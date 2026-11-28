@@ -101,7 +101,7 @@ export type UseMutationReturnType<
  * @example
  * ```vue
  * <script setup lang="ts">
- * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ * import { invalidateQueries, useMutation, useQueryClient } from '@tanstack/vue-query'
  *
  * const queryClient = useQueryClient()
  *
@@ -125,7 +125,7 @@ export type UseMutationReturnType<
  * Rendering the mutation's own state, rather than just firing it off:
  * ```vue
  * <script setup lang="ts">
- * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ * import { invalidateQueries, useMutation, useQueryClient } from '@tanstack/vue-query'
  *
  * const queryClient = useQueryClient()
  *
@@ -147,7 +147,7 @@ export type UseMutationReturnType<
  * Optimistic update via `onMutate`, rolling back on `onError`:
  * ```vue
  * <script setup lang="ts">
- * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ * import { cancelQueries, invalidateQueries, setQueryData, useMutation, useQueryClient } from '@tanstack/vue-query'
  *
  * const queryClient = useQueryClient()
  *
@@ -183,7 +183,7 @@ export type UseMutationReturnType<
  * promise per call instead, so you can wait for all of them when they succeed:
  * ```vue
  * <script setup lang="ts">
- * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ * import { invalidateQueries, useMutation, useQueryClient } from '@tanstack/vue-query'
  *
  * const queryClient = useQueryClient()
  *
@@ -211,7 +211,7 @@ export type UseMutationReturnType<
  * `Promise.allSettled`:
  * ```vue
  * <script setup lang="ts">
- * import { useMutation, useQueryClient } from '@tanstack/vue-query'
+ * import { invalidateQueries, useMutation, useQueryClient } from '@tanstack/vue-query'
  *
  * const queryClient = useQueryClient()
  *

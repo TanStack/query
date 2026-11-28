@@ -224,6 +224,6 @@ A cancel options object supports the following properties:
 
 [//]: # 'Limitations'
 
-Cancellation does not work when working with `Suspense` hooks: `suspenseQueryOptions`, `useSuspenseQueries` and `suspenseInfiniteQueryOptions`.
+Queries running in Suspense mode do not support cancellation. This applies to `useQuery` with either Suspense descriptor and to `useSuspenseQueries`.
 
 [//]: # 'Limitations'

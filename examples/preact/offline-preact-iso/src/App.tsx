@@ -1,20 +1,19 @@
 import {
-  queryOptions,
-  setMutationDefaults,
-  resumePausedMutations,
-  invalidateQueries,
-  isLoading,
-  query,
-  isFetching,
-  isError,
-  cancelQueries,
-  getQueryData,
-  setQueryData,
-  isPaused,
   MutationCache,
   QueryClient,
+  cancelQueries,
+  getQueryData,
+  invalidateQueries,
+  isError,
+  isFetching,
+  isLoading,
+  isPaused,
   noop,
   onlineManager,
+  query,
+  resumePausedMutations,
+  setMutationDefaults,
+  setQueryData,
   useIsRestoring,
   useMutation,
   useQuery,
@@ -81,7 +80,7 @@ export default function App() {
 
 function List() {
   const isRestoring = useIsRestoring()
-  const moviesQuery = useQuery(queryOptions(moviesQueries.list()))
+  const moviesQuery = useQuery(moviesQueries.list())
 
   if (isLoading(moviesQuery)) {
     return 'Loading...'
@@ -139,7 +138,7 @@ function List() {
 
 function Detail() {
   const { movieId } = useRoute().params
-  const movieQuery = useQuery(queryOptions(moviesQueries.detail(movieId)))
+  const movieQuery = useQuery(moviesQueries.detail(movieId))
 
   const [commentDraft, setCommentDraft] = useState<string | undefined>()
 

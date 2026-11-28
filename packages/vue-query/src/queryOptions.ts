@@ -373,7 +373,7 @@ export function queryOptions<
  * ```vue
  * <script setup lang="ts">
  * import { ref } from 'vue'
- * import { queryOptions, useQuery, useQueryClient } from '@tanstack/vue-query'
+ * import { invalidateQueries, queryOptions, useQuery, useQueryClient } from '@tanstack/vue-query'
  *
  * const postId = ref(1)
  * const postOptions = queryOptions(() => ({

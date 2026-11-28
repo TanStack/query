@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { query, noop, useQueryClient } from '@tanstack/vue-query'
+import { noop, query, useQueryClient } from '@tanstack/vue-query'
 import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import { defineAsyncComponent, onErrorCaptured, provide, ref } from 'vue'
 import BaseButton from './components/BaseButton.vue'

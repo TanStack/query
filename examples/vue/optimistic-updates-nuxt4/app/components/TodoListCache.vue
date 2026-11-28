@@ -2,8 +2,8 @@
 import {
   cancelQueries,
   getQueryData,
-  setQueryData,
   invalidateQueries,
+  setQueryData,
   useMutation,
   useQuery,
   useQueryClient,

@@ -1,11 +1,12 @@
 'use client'
 
-import { defaultQueryOptions } from '@tanstack/query-core'
 import * as React from 'react'
-import { useIsRestoring } from './IsRestoringProvider'
-import { useQueryClient } from './QueryClientProvider'
 import { observerKey } from './queryDescriptor'
-import { useObserverSnapshot } from './useObserverSnapshot'
+import {
+  defaultReaderOptions,
+  useObserverSnapshot,
+  useReaderContext,
+} from './useObserverSnapshot'
 import type {
   InfiniteData,
   QueryClient,
@@ -95,26 +96,19 @@ export function useQuery(
   }
 
   const Observer = options[observerKey] as typeof QueryObserver
-  const client = useQueryClient(queryClient)
-  const isRestoring = useIsRestoring()
-
+  const { client, mode } = useReaderContext(queryClient, options.subscribed)
   const policy: QueryRenderPolicy = options.renderPolicy
-  const defaulted = defaultQueryOptions(client, {
-    ...(options as AnyUseQueryOptions),
-    suspense: policy.suspense,
-  })
+  const defaulted = defaultReaderOptions(
+    client,
+    options as AnyUseQueryOptions,
+    mode,
+    policy,
+  )
   if (process.env.NODE_ENV !== 'production' && !defaulted.queryFn) {
     console.error(
       `[${defaulted.queryHash}]: No query function was provided or configured in the query defaults. More info here: https://tanstack.com/query/latest/docs/framework/react/guides/default-query-function`,
     )
   }
-  const subscribed = options.subscribed !== false
-  defaulted._optimisticResults = isRestoring
-    ? 'isRestoring'
-    : subscribed
-      ? 'optimistic'
-      : undefined
-  policy.prepare?.(defaulted)
   const rule = defaulted.throwOnError
   const boundaryPolicy =
     policy.errorBoundary ??
@@ -126,30 +120,23 @@ export function useQuery(
   const boundary = boundaryPolicy && React.use(boundaryPolicy.context)
   const handling =
     boundary && boundaryPolicy.prepare(client, defaulted, boundary)
-  const onCommit = handling?.onCommit
-  React.useEffect(() => onCommit?.(), [onCommit])
 
-  const createObserver = () => ({
-    client,
-    Observer,
-    observer: new Observer(client, defaulted),
-  })
-  const [saved, setSaved] = React.useState(createObserver)
-  let current = saved
-  if (current.Observer !== Observer || current.client !== client) {
-    current = createObserver()
-    setSaved(current)
-  }
-
-  const { observer } = current
+  // Options are updated by the result reader. Only changing the client or query mode
+  // requires a different observer.
+  const observer = React.useMemo(
+    () => new Observer(client, defaulted),
+    // oxlint-disable-next-line react-hooks-js/exhaustive-deps -- the current options are applied by createResultReader below
+    [client, Observer],
+  )
   const reader = observer.createResultReader(defaulted)
   if (boundary)
     policy.readQuery?.(defaulted, reader, observer, client, boundary)
   const result = useObserverSnapshot(
     observer,
     reader,
-    !isRestoring && subscribed,
+    mode === 'optimistic',
     refreshQuery,
+    handling?.onCommit,
   )
   handling?.check(result)
   return defaulted.notifyOnChangeProps ? result : observer.trackResult(result)

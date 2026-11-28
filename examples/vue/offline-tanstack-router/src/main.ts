@@ -1,9 +1,9 @@
 import { persistQueryClient } from '@tanstack/query-persist-client-core'
 import 'vue-sonner/style.css'
 import {
-  resumePausedMutations,
-  invalidateQueries,
   VueQueryPlugin,
+  invalidateQueries,
+  resumePausedMutations,
 } from '@tanstack/vue-query'
 import { createApp } from 'vue'
 import App from './App.vue'

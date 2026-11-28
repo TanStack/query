@@ -32,7 +32,6 @@ import {
 } from '..'
 import { QueryClient } from '../queryClient'
 import { skipToken } from '../utils'
-import { optionalSelect } from './helpers/projection'
 import type { setDefaultOptions } from '..'
 import type { Mutation } from '../mutation'
 import type { MutationCache } from '../mutationCache'
@@ -414,7 +413,7 @@ describe('queryClient', () => {
       const result = fetchQueryData(new QueryClient(), {
         queryKey: ['key'],
         queryFn: skipToken,
-        select: optionalSelect((data: string) => data.length),
+        select: select((data: string) => data.length),
       })
 
       expectTypeOf(result).toEqualTypeOf<Promise<number | undefined>>()

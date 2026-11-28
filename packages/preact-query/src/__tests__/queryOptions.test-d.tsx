@@ -57,7 +57,7 @@ describe('queryOptions', () => {
       queryFn: () => Promise.resolve(5),
     })
 
-    const { data } = useQuery(queryOptions(options))
+    const { data } = useQuery(options)
     expectTypeOf(data).toEqualTypeOf<number | undefined>()
   })
 

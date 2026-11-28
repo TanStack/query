@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import {
-  isPending as queryIsPending,
+  defaultQueryFn,
+  getQueryData,
   isError as queryIsError,
   isFetching as queryIsFetching,
-  getQueryData,
-  defaultQueryFn,
+  isPending as queryIsPending,
   useQuery,
   useQueryClient,
 } from '@tanstack/vue-query'

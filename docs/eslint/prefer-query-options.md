@@ -61,11 +61,16 @@ function getFooOptions(id) {
 }
 
 function useFooQuery(id) {
-  return useQuery({ ...getFooOptions(id), select: (data) => data.foo })
+  return useQuery(
+    queryOptions({
+      ...getFooOptions(id),
+      select: [select, (data) => data.foo],
+    }),
+  )
 }
 ```
 
-The rule also enforces reusing `queryKey` from a `queryOptions` result instead of typing it manually in `QueryClient` methods or filters.
+The rule also enforces reusing `queryKey` from a `queryOptions` result instead of typing it manually in client-first operations or filters. It recognizes named imports and aliases from TanStack Query.
 
 Examples of **incorrect** `queryKey` references for this rule:
 
@@ -81,7 +86,7 @@ function todoOptions(id) {
 
 function Component({ id }) {
   const queryClient = useQueryClient()
-  return queryClient.getQueryData(['todo', id])
+  return getQueryData(queryClient, ['todo', id])
 }
 ```
 
@@ -97,7 +102,7 @@ function todoOptions(id) {
 
 function Component({ id }) {
   const queryClient = useQueryClient()
-  return queryClient.invalidateQueries({ queryKey: ['todo', id] })
+  return invalidateQueries(queryClient, { queryKey: ['todo', id] })
 }
 ```
 
@@ -115,7 +120,7 @@ function todoOptions(id) {
 
 function Component({ id }) {
   const queryClient = useQueryClient()
-  return queryClient.getQueryData(todoOptions(id).queryKey)
+  return getQueryData(queryClient, todoOptions(id).queryKey)
 }
 ```
 
@@ -131,7 +136,7 @@ function todoOptions(id) {
 
 function Component({ id }) {
   const queryClient = useQueryClient()
-  return queryClient.invalidateQueries({ queryKey: todoOptions(id).queryKey })
+  return invalidateQueries(queryClient, { queryKey: todoOptions(id).queryKey })
 }
 ```
 

@@ -1,8 +1,8 @@
 import {
-  query,
   QueryClient,
   QueryClientProvider,
   noop,
+  query,
   useQueryClient,
 } from '@tanstack/solid-query'
 /* @refresh reload */

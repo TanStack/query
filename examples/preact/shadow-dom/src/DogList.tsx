@@ -1,8 +1,8 @@
-import { queryOptions, useQuery } from '@tanstack/preact-query'
+import { useQuery } from '@tanstack/preact-query'
 import { dogsQueries } from './services/dogs/queries'
 
 export const DogList = () => {
-  const { data, status } = useQuery(queryOptions(dogsQueries.list()))
+  const { data, status } = useQuery(dogsQueries.list())
 
   if (status === 'pending') return 'Loading...'
 

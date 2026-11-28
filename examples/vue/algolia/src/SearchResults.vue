@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import {
-  isLoading as queryIsLoading,
   isFetching as queryIsFetching,
   isFetchingNextPage as queryIsFetchingNextPage,
+  isLoading as queryIsLoading,
   useInfiniteQuery,
 } from '@tanstack/vue-query'
 import { computed } from 'vue'

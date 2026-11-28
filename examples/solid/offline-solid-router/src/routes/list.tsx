@@ -1,5 +1,5 @@
 import { A } from '@solidjs/router'
-import { isLoading, isFetching, isError, useQuery } from '@tanstack/solid-query'
+import { isError, isFetching, isLoading, useQuery } from '@tanstack/solid-query'
 import { For, Match, Show, Switch } from 'solid-js'
 import { moviesQueries } from '../services/movies/queries'
 

@@ -1,10 +1,10 @@
 import { Transform } from 'node:stream'
 import {
-  query as queryQuery,
-  getQueryCache,
   QueryClientProvider,
   dehydrate,
+  getQueryCache,
   noop,
+  query as queryQuery,
 } from '@tanstack/preact-query'
 import { PreactQueryDevtools } from '@tanstack/preact-query-devtools'
 import { uneval } from 'devalue'

@@ -1,10 +1,10 @@
 import {
-  queryOptions,
-  setDefaultOptions,
-  invalidateQueries,
-  setQueryData,
   QueryClient,
   QueryClientProvider,
+  invalidateQueries,
+  isFetching,
+  setDefaultOptions,
+  setQueryData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -188,9 +188,7 @@ function Todos({
 }) {
   const [filter, setFilter] = useState(initialFilter)
 
-  const { status, data, isFetching, error, failureCount, refetch } = useQuery(
-    queryOptions(todosQueries.list(filter)),
-  )
+  const queryResult = useQuery(todosQueries.list(filter))
 
   return (
     <div>
@@ -203,18 +201,18 @@ function Todos({
           />
         </label>
       </div>
-      {status === 'pending' ? (
-        <span>Loading... (Attempt: {failureCount + 1})</span>
-      ) : status === 'error' ? (
+      {queryResult.status === 'pending' ? (
+        <span>Loading... (Attempt: {queryResult.failureCount + 1})</span>
+      ) : queryResult.status === 'error' ? (
         <span>
-          Error: {error.message}
+          Error: {queryResult.error.message}
           <br />
-          <button onClick={() => refetch()}>Retry</button>
+          <button onClick={() => queryResult.refetch()}>Retry</button>
         </span>
       ) : (
         <>
           <ul>
-            {data.map((todo) => (
+            {queryResult.data.map((todo) => (
               <li key={todo.id}>
                 {todo.name}{' '}
                 <button onClick={() => setEditingIndex(todo.id)}>Edit</button>
@@ -222,9 +220,10 @@ function Todos({
             ))}
           </ul>
           <div>
-            {isFetching ? (
+            {isFetching(queryResult) ? (
               <span>
-                Background Refreshing... (Attempt: {failureCount + 1})
+                Background Refreshing... (Attempt:{' '}
+                {queryResult.failureCount + 1})
               </span>
             ) : (
               <span>&nbsp;</span>
@@ -245,9 +244,7 @@ function EditTodo({
 }) {
   const queryClient = useQueryClient()
 
-  const { status, data, isFetching, failureCount, refetch } = useQuery(
-    queryOptions(todosQueries.detail(editingIndex)),
-  )
+  const detailQuery = useQuery(todosQueries.detail(editingIndex))
 
   const [draft, setDraft] = useState<Partial<Omit<Todo, 'id'>>>({})
 
@@ -266,31 +263,31 @@ function EditTodo({
   })
 
   const disableEditSave =
-    status === 'pending' || saveMutation.status === 'pending'
+    detailQuery.status === 'pending' || saveMutation.status === 'pending'
 
   return (
     <div>
       <div>
-        {data ? (
+        {detailQuery.data ? (
           <>
             <button onClick={() => setEditingIndex(null)}>Back</button> Editing
-            Todo "{data.name}" (#
+            Todo "{detailQuery.data.name}" (#
             {editingIndex})
           </>
         ) : null}
       </div>
-      {status === 'pending' ? (
-        <span>Loading... (Attempt: {failureCount + 1})</span>
-      ) : status === 'error' ? (
+      {detailQuery.status === 'pending' ? (
+        <span>Loading... (Attempt: {detailQuery.failureCount + 1})</span>
+      ) : detailQuery.status === 'error' ? (
         <span>
-          Error! <button onClick={() => refetch()}>Retry</button>
+          Error! <button onClick={() => detailQuery.refetch()}>Retry</button>
         </span>
       ) : (
         <>
           <label>
             Name:{' '}
             <input
-              value={draft.name ?? data.name}
+              value={draft.name ?? detailQuery.data.name}
               onInput={(e) =>
                 setDraft((old) => ({ ...old, name: e.currentTarget.value }))
               }
@@ -300,7 +297,7 @@ function EditTodo({
           <label>
             Notes:{' '}
             <input
-              value={draft.notes ?? data.notes}
+              value={draft.notes ?? detailQuery.data.notes}
               onInput={(e) =>
                 setDraft((old) => ({ ...old, notes: e.currentTarget.value }))
               }
@@ -309,7 +306,9 @@ function EditTodo({
           </label>
           <div>
             <button
-              onClick={() => saveMutation.mutate({ ...data, ...draft })}
+              onClick={() =>
+                saveMutation.mutate({ ...detailQuery.data, ...draft })
+              }
               disabled={disableEditSave}
             >
               Save
@@ -325,9 +324,10 @@ function EditTodo({
                   : null}
           </div>
           <div>
-            {isFetching ? (
+            {isFetching(detailQuery) ? (
               <span>
-                Background Refreshing... (Attempt: {failureCount + 1})
+                Background Refreshing... (Attempt:{' '}
+                {detailQuery.failureCount + 1})
               </span>
             ) : (
               <span>&nbsp;</span>

@@ -3,6 +3,7 @@ import {
   QueryClientProvider,
   defaultQueryFn,
   getQueryData,
+  isFetching,
   queryOptions,
   useQuery,
   useQueryClient,
@@ -64,7 +65,7 @@ function App() {
 function Posts({ setPostId }: { setPostId: (postId: number) => void }) {
   const queryClient = useQueryClient()
 
-  const { status, data, error, isFetching } = useQuery(
+  const queryResult = useQuery(
     queryOptions<Array<Post>>({
       queryKey: ['/posts'],
       queryFn: defaultQueryFn,
@@ -75,14 +76,14 @@ function Posts({ setPostId }: { setPostId: (postId: number) => void }) {
     <div>
       <h1>Posts</h1>
       <div>
-        {status === 'pending' ? (
+        {queryResult.status === 'pending' ? (
           'Loading...'
-        ) : status === 'error' ? (
-          <span>Error: {error.message}</span>
+        ) : queryResult.status === 'error' ? (
+          <span>Error: {queryResult.error.message}</span>
         ) : (
           <>
             <div>
-              {data.map((post) => (
+              {queryResult.data.map((post) => (
                 <p key={post.id}>
                   <a
                     onClick={() => setPostId(post.id)}
@@ -103,7 +104,9 @@ function Posts({ setPostId }: { setPostId: (postId: number) => void }) {
                 </p>
               ))}
             </div>
-            <div>{isFetching ? 'Background Updating...' : ' '}</div>
+            <div>
+              {isFetching(queryResult) ? 'Background Updating...' : ' '}
+            </div>
           </>
         )}
       </div>
@@ -118,7 +121,7 @@ function Post({
   postId: number
   setPostId: (postId: number) => void
 }) {
-  const { status, data, error, isFetching } = useQuery(
+  const detailQuery = useQuery(
     queryOptions<Post>({
       queryKey: [`/posts/${postId}`],
       queryFn: defaultQueryFn,
@@ -133,17 +136,17 @@ function Post({
           Back
         </a>
       </div>
-      {!postId || status === 'pending' ? (
+      {!postId || detailQuery.status === 'pending' ? (
         'Loading...'
-      ) : status === 'error' ? (
-        <span>Error: {error.message}</span>
+      ) : detailQuery.status === 'error' ? (
+        <span>Error: {detailQuery.error.message}</span>
       ) : (
         <>
-          <h1>{data.title}</h1>
+          <h1>{detailQuery.data.title}</h1>
           <div>
-            <p>{data.body}</p>
+            <p>{detailQuery.data.body}</p>
           </div>
-          <div>{isFetching ? 'Background Updating...' : ' '}</div>
+          <div>{isFetching(detailQuery) ? 'Background Updating...' : ' '}</div>
         </>
       )}
     </div>

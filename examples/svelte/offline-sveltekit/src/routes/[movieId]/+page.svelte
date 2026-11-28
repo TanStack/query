@@ -1,5 +1,9 @@
 <script lang="ts">
   import {
+    isLoading,
+    isFetching,
+    isError,
+    isPaused,
     cancelQueries,
     getQueryData,
     setQueryData,
@@ -76,7 +80,7 @@
   }
 </script>
 
-{#if movieQuery.isLoading}
+{#if isLoading(movieQuery)}
   Loading...
 {:else if movieQuery.data}
   <form onsubmit={submitForm}>
@@ -106,7 +110,7 @@
     <div>
       Updated at: {new Date(movieQuery.data.ts).toLocaleTimeString()}
     </div>
-    <div>{movieQuery.isFetching ? 'fetching...' : ''}</div>
+    <div>{isFetching(movieQuery) ? 'fetching...' : ''}</div>
     <div>
       {updateMovie.isPaused
         ? 'mutation paused - offline'
@@ -115,12 +119,12 @@
           : ''}
     </div>
   </form>
-{:else if movieQuery.isError}
+{:else if isError(movieQuery)}
   <div>
     <a href={resolve('/')}>Back</a>
     <h1>Couldn't load movie!</h1>
     <div>{movieQuery.error.message}</div>
   </div>
-{:else if movieQuery.isPaused}
+{:else if isPaused(movieQuery)}
   We're offline and have no data to show :(
 {/if}

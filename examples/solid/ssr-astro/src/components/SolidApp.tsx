@@ -1,9 +1,9 @@
 import {
-  select,
-  placeholderData,
   QueryClient,
   QueryClientProvider,
   keepPreviousData,
+  placeholderData,
+  select,
   useQuery,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'

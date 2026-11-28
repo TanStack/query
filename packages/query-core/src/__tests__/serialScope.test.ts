@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   MutationObserver,
   QueryClient,
@@ -10,6 +10,35 @@ import {
 import { clearQueryClient, resumePausedMutations } from '../queryClient'
 
 describe('serialScope', () => {
+  it('queues mutations across independent module instances that share a cache', async () => {
+    const client = new QueryClient()
+    const started = Promise.withResolvers<void>()
+    const finish = Promise.withResolvers<void>()
+    const first = new MutationObserver(client, {
+      scope: serialScope('orders'),
+      mutationFn: async () => {
+        started.resolve()
+        await finish.promise
+      },
+    })
+    vi.resetModules()
+    const { serialScope: otherScope } = await import('../serialScope')
+    const second = new MutationObserver(client, {
+      scope: otherScope('orders'),
+      mutationFn: () => Promise.resolve(),
+    })
+    const firstMutation = first.mutate(undefined)
+    await started.promise
+    const secondMutation = second.mutate(undefined)
+    try {
+      expect(second.getCurrentResult().isPaused).toBe(true)
+    } finally {
+      finish.resolve()
+      await Promise.all([firstMutation, secondMutation])
+      clearQueryClient(client)
+    }
+  })
+
   it('restores the queue from JSON and resumes its mutations in order', async () => {
     const source = new QueryClient()
     const started = Promise.withResolvers<void>()

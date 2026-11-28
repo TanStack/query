@@ -154,7 +154,7 @@ export function countFetchingQueries(
   client: QueryClient,
   filters?: Omit<QueryFilters, 'fetchStatus'>,
 ): number {
-  return findCachedQueries(client[clientState].queryCache, {
+  return findCachedQueries(getQueryCache(client), {
     ...filters,
     fetchStatus: 'fetching',
   }).length
@@ -255,7 +255,7 @@ export function setQueryData<
     QueryKey
   >(client, { queryKey })
 
-  const query = client[clientState].queryCache.get<
+  const query = getQueryCache(client).get<
     InferDataFromTag<NoInfer<TQueryFnData>, TTaggedQueryKey>
   >(defaultedOptions.queryHash)
   const prevData = query?.state.data
@@ -265,7 +265,7 @@ export function setQueryData<
     return undefined
   }
 
-  return client[clientState].queryCache
+  return getQueryCache(client)
     .build(client, defaultedOptions)
     .setData(data, { ...options, manual: true })
 }
@@ -293,10 +293,9 @@ export function getQueryState<
   queryKey: TTaggedQueryKey,
 ): QueryState<TInferredQueryFnData, TInferredError> | undefined {
   const options = defaultQueryOptions(client, { queryKey })
-  return client[clientState].queryCache.get<
-    TInferredQueryFnData,
-    TInferredError
-  >(options.queryHash)?.state
+  return getQueryCache(client).get<TInferredQueryFnData, TInferredError>(
+    options.queryHash,
+  )?.state
 }
 
 /**
@@ -397,7 +396,7 @@ export async function query<
   let queryData: TQueryData
 
   if (options.queryFn === skipToken) {
-    const cachedData = client[clientState].queryCache.get<
+    const cachedData = getQueryCache(client).get<
       TQueryFnData,
       TError,
       TQueryData,
@@ -411,10 +410,7 @@ export async function query<
       defaultedOptions.retry = false
     }
 
-    const cachedQuery = client[clientState].queryCache.build(
-      client,
-      defaultedOptions,
-    )
+    const cachedQuery = getQueryCache(client).build(client, defaultedOptions)
 
     const isStale = cachedQuery.isStaleByTime(
       resolveQueryValue(defaultedOptions.staleTime, cachedQuery),
@@ -550,7 +546,7 @@ export function setQueryDefaults<
   ;(client[clientState].queryDefaults ??= new KeyDefaults()).set(
     queryKey,
     options,
-    client[clientState].queryCache.config.queryKey,
+    getQueryCache(client).config.queryKey,
   )
 }
 
@@ -574,7 +570,7 @@ export function getQueryDefaults(
   return (
     client[clientState].queryDefaults?.get(
       queryKey,
-      client[clientState].queryCache.config.queryKey,
+      getQueryCache(client).config.queryKey,
     ) ?? {}
   )
 }
@@ -685,7 +681,7 @@ export function defaultQueryOptions<
 
   const queryDefaults = getQueryDefaults(client, options.queryKey)
   const defaultedOptions = {
-    ...client[clientState].defaultOptions.queries,
+    ...getDefaultOptions(client).queries,
     ...queryDefaults,
     ...options,
     _defaulted: true,
@@ -695,13 +691,13 @@ export function defaultQueryOptions<
     defaultedOptions.queryFn =
       'queryFn' in queryDefaults
         ? queryDefaults.queryFn
-        : client[clientState].defaultOptions.queries?.queryFn
+        : getDefaultOptions(client).queries?.queryFn
   }
 
   if (!defaultedOptions.queryHash) {
     defaultedOptions.queryHash = hashKeyByOptions(
       defaultedOptions.queryKey,
-      client[clientState].queryCache.config.queryKey,
+      getQueryCache(client).config.queryKey,
     )
   }
 
@@ -748,7 +744,7 @@ export function defaultMutationOptions<
     return options
   }
   return {
-    ...client[clientState].defaultOptions.mutations,
+    ...getDefaultOptions(client).mutations,
     ...(options?.mutationKey &&
       getMutationDefaults(client, options.mutationKey)),
     ...options,
@@ -770,6 +766,6 @@ export function defaultMutationOptions<
  * ```
  */
 export function clearQueryClient(client: QueryClient): void {
-  clearQueryCache(client[clientState].queryCache)
+  clearQueryCache(getQueryCache(client))
   client[mutationCacheKey]?.clear()
 }

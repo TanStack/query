@@ -1,15 +1,13 @@
 'use client'
-import {
-  QueriesObserver,
-  defaultQueryOptions,
-  getQueryCache,
-} from '@tanstack/query-core'
+import { QueriesObserver } from '@tanstack/query-core'
 import * as React from 'react'
-import { useIsRestoring } from './IsRestoringProvider'
-import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
-import { getHasError, prepareErrorBoundary } from './errorBoundaryUtils'
-import { useObserverSnapshot } from './useObserverSnapshot'
+import { prepareErrorBoundary } from './errorBoundaryUtils'
+import {
+  defaultReaderOptions,
+  useObserverSnapshot,
+  useReaderContext,
+} from './useObserverSnapshot'
 import type {
   DefaultError,
   OmitKeyof,
@@ -412,38 +410,26 @@ export function useBaseQueries<
   queryClient?: QueryClient,
   suspense?: typeof suspenseQueriesPolicy,
 ): TCombinedResult {
-  const client = useQueryClient(queryClient)
-  const isRestoring = useIsRestoring()
+  const { client, mode } = useReaderContext(queryClient, options.subscribed)
   const errorResetBoundary = useQueryErrorResetBoundary()
-  const subscribed = options.subscribed !== false
-
   const defaultedQueries = React.useMemo(
     () =>
-      queries.map((opts) => {
-        const defaultedOptions = defaultQueryOptions(client, {
-          ...opts,
-          suspense: !!suspense,
-        } as QueryObserverOptions)
-
-        // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions._optimisticResults = isRestoring
-          ? 'isRestoring'
-          : subscribed
-            ? 'optimistic'
-            : undefined
-
-        return defaultedOptions
-      }),
-    [queries, client, isRestoring, subscribed, suspense],
+      queries.map((opts) =>
+        defaultReaderOptions(
+          client,
+          opts as QueryObserverOptions,
+          mode,
+          suspense,
+        ),
+      ),
+    [queries, client, mode, suspense],
   )
 
-  defaultedQueries.forEach((queryOptions) => {
-    const query = getQueryCache(client).get(queryOptions.queryHash)
-    suspense?.prepare?.(queryOptions)
-    prepareErrorBoundary(queryOptions, errorResetBoundary, query)
-  })
-
-  React.useEffect(() => errorResetBoundary.clearReset(), [errorResetBoundary])
+  const errorChecks = defaultedQueries.map(
+    (query) =>
+      (query.throwOnError || suspense) &&
+      prepareErrorBoundary(client, query, errorResetBoundary, true),
+  )
 
   const [observer] = React.useState(
     () =>
@@ -463,27 +449,15 @@ export function useBaseQueries<
   const results = useObserverSnapshot(
     observer,
     reader,
-    !isRestoring && subscribed,
+    mode === 'optimistic',
     refreshQueries,
+    errorResetBoundary.clearReset,
   )
 
-  const firstErrorResult = results.find((result, index) => {
-    const query = defaultedQueries[index]
-    return (
-      query &&
-      getHasError(
-        result,
-        query,
-        getQueryCache(client).get(query.queryHash),
-        errorResetBoundary,
-      )
-    )
+  results.forEach((result, index) => {
+    const check = errorChecks[index]
+    if (check) check(result)
   })
-
-  if (firstErrorResult) {
-    throw firstErrorResult.error
-  }
-
   return reader.combineResult(results)
 }
 

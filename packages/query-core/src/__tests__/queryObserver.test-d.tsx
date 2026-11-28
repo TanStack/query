@@ -25,13 +25,14 @@ import {
   refetchInterval,
   select,
 } from '..'
-import { optionalPlaceholderData, projectionInput } from './helpers/projection'
 import type {
   DefaultError,
   DefinedQueryObserverResult,
   InitialDataFunction,
   PlaceholderDataFunction,
   Query,
+  QueryErrorBoundaryOption,
+  QueryKey,
   QueryMeta,
   QueryObserverBaseResult,
   QueryObserverLoadingErrorResult,
@@ -49,10 +50,19 @@ import type {
   isPaused,
   isRefetching,
 } from '..'
-import type { QueryBoundaryTuple } from './helpers/descriptors'
-import type { IntervalInput } from './helpers/polling'
-import type { ProjectionInput } from './helpers/projection'
 import type { FlagFor, Guarded, GuardedProperties } from './helpers/result'
+
+type IntervalInput<TOption> = Extract<TOption, { value: unknown }>['value']
+
+type ProjectionInput<T> = T extends readonly [unknown, infer TInput]
+  ? TInput
+  : T
+
+/** The boundary rule an adapter can attach to observer options. */
+type QueryBoundaryTuple = Exclude<
+  QueryErrorBoundaryOption<unknown, DefaultError, unknown, QueryKey>,
+  false
+>
 
 type OptimisticArgs<TObserver> =
   TObserver extends QueryObserver<
@@ -625,7 +635,7 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => Promise.resolve({ value: 'data' }),
-          placeholderData: optionalPlaceholderData({ value: 'placeholder' }),
+          placeholderData: placeholderData({ value: 'placeholder' }),
         })
 
         expectTypeOf<
@@ -1680,7 +1690,7 @@ describe('queryObserver', () => {
       >()
         .parameter(0)
         .toEqualTypeOf<CustomError>()
-      expectTypeOf(projectionInput(observer.options.select)).toEqualTypeOf<
+      expectTypeOf(observer.options.select?.[1]).toEqualTypeOf<
         ((data: { value: string }) => { value: string }) | undefined
       >()
     })

@@ -1,9 +1,4 @@
-import {
-  queryOptions,
-  isPending,
-  isError,
-  useQuery,
-} from '@tanstack/preact-query'
+import { isError, isPending, useQuery } from '@tanstack/preact-query'
 import { commentsQueries } from './services/comments/queries'
 import { postsQueries } from './services/posts/queries'
 import { usersQueries } from './services/users/queries'
@@ -11,16 +6,16 @@ import { usersQueries } from './services/users/queries'
 export default function App() {
   // This query was prefetched on the server, so its data is already in the
   // server-rendered markup and is available immediately on the client
-  const postsQuery = useQuery(queryOptions(postsQueries.list()))
+  const postsQuery = useQuery(postsQueries.list())
 
   // This query depends on the posts, and was prefetched on the server as well
   const authorQuery = useQuery(
-    queryOptions(usersQueries.detail(postsQuery.data?.[0]?.userId)),
+    usersQueries.detail(postsQuery.data?.[0]?.userId),
   )
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix
-  const commentsQuery = useQuery(queryOptions(commentsQueries.list()))
+  const commentsQuery = useQuery(commentsQueries.list())
 
   return (
     <div>

@@ -1,8 +1,8 @@
 import { A } from '@solidjs/router'
 import {
-  query,
   isSuccess,
   noop,
+  query,
   useQuery,
   useQueryClient,
 } from '@tanstack/solid-query'

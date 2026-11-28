@@ -1,4 +1,7 @@
-import { clearQueryClient } from '@tanstack/query-core'
+import {
+  clearQueryClient,
+  placeholderData as withPlaceholder,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { act, fireEvent } from '@testing-library/react'
 import * as React from 'react'
@@ -11,7 +14,6 @@ import {
   suspenseInfiniteQueryOptions,
   useQuery,
 } from '..'
-import { optionalPlaceholderData } from './helpers/projection'
 import { resultForComparison } from './helpers/result'
 import { renderWithSuspense } from './utils'
 import type { InfiniteData, UseSuspenseInfiniteQueryResult } from '..'
@@ -140,7 +142,7 @@ describe('useSuspenseInfiniteQuery', () => {
           queryFn,
           initialPageParam: 1,
           getNextPageParam: () => undefined,
-          placeholderData: optionalPlaceholderData({
+          placeholderData: withPlaceholder({
             pages: [0],
             pageParams: [1],
           }),
@@ -170,7 +172,7 @@ describe('useSuspenseInfiniteQuery', () => {
     const queryClientWithPlaceholder = new QueryClient({
       defaultOptions: {
         queries: {
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: withPlaceholder(keepPreviousData),
         },
       },
     })
@@ -246,7 +248,7 @@ describe('useSuspenseInfiniteQuery', () => {
           queryFn: () => queryFn(count),
           initialPageParam: 1,
           getNextPageParam: () => undefined,
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: withPlaceholder(keepPreviousData),
         }),
       )
 

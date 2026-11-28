@@ -1,4 +1,8 @@
-import { useQuery, suspenseQueryOptions } from '@tanstack/preact-query'
+import {
+  isFetching,
+  suspenseQueryOptions,
+  useQuery,
+} from '@tanstack/preact-query'
 import { projectsQueries } from '../services/projects/queries'
 import Button from './Button'
 import Spinner from './Spinner'
@@ -10,7 +14,7 @@ export default function Project({
   activeProject: string
   setActiveProject: (activeProject: string | null) => void
 }) {
-  const { data, isFetching } = useQuery(
+  const queryResult = useQuery(
     suspenseQueryOptions(projectsQueries.detail(activeProject)),
   )
 
@@ -18,12 +22,12 @@ export default function Project({
     <div>
       <Button onClick={() => setActiveProject(null)}>Back</Button>
       <h1>
-        {activeProject} {isFetching ? <Spinner /> : null}
+        {activeProject} {isFetching(queryResult) ? <Spinner /> : null}
       </h1>
       <div>
-        <p>forks: {data.forks_count}</p>
-        <p>stars: {data.stargazers_count}</p>
-        <p>watchers: {data.subscribers_count}</p>
+        <p>forks: {queryResult.data.forks_count}</p>
+        <p>stars: {queryResult.data.stargazers_count}</p>
+        <p>watchers: {queryResult.data.subscribers_count}</p>
       </div>
       <br />
       <br />

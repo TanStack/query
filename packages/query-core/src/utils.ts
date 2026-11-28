@@ -176,13 +176,7 @@ export function resolveQueryValue<
     | ((query: Query<TQueryFnData, TError, TData, TQueryKey>) => TValue),
   query: Query<TQueryFnData, TError, TData, TQueryKey>,
 ): TValue | undefined {
-  return typeof value === 'function'
-    ? (
-        value as (
-          query: Query<TQueryFnData, TError, TData, TQueryKey>,
-        ) => TValue
-      )(query)
-    : value
+  return functionalUpdate(value, query)
 }
 
 /**
@@ -227,14 +221,8 @@ export function matchQuery(
     }
   }
 
-  if (type !== 'all') {
-    const isActive = isQueryActive(query)
-    if (type === 'active' && !isActive) {
-      return false
-    }
-    if (type === 'inactive' && isActive) {
-      return false
-    }
+  if (type !== 'all' && isQueryActive(query) !== (type === 'active')) {
+    return false
   }
 
   if (typeof stale === 'boolean' && isQueryStale(query) !== stale) {
@@ -245,11 +233,7 @@ export function matchQuery(
     return false
   }
 
-  if (predicate && !predicate(query)) {
-    return false
-  }
-
-  return true
+  return !predicate || !!predicate(query)
 }
 
 /**
@@ -301,11 +285,7 @@ export function matchMutation(
     return false
   }
 
-  if (predicate && !predicate(mutation)) {
-    return false
-  }
-
-  return true
+  return !predicate || !!predicate(mutation)
 }
 
 /**
@@ -377,28 +357,18 @@ export function partialMatchKey(
     return true
   }
 
-  if (typeof a !== typeof b) {
-    return false
-  }
-
+  if (typeof a !== 'object' || typeof b !== 'object') return false
   if (isPlainArray(a) && isPlainArray(b)) {
     if (b.length > a.length) return false
     for (let i = 0; i < b.length; i++) {
-      if (!partialMatchKey(a[i], b[i], equalityFn)) {
-        return false
-      }
+      if (!partialMatchKey(a[i], b[i], equalityFn)) return false
     }
     return true
   }
-
   if (isPlainObject(a) && isPlainObject(b)) {
-    const bKeys = Object.keys(b)
-    for (const key of bKeys) {
-      if (!partialMatchKey(a[key], b[key], equalityFn)) {
-        return false
-      }
-    }
-    return true
+    return Object.keys(b).every((key) =>
+      partialMatchKey(a[key], b[key], equalityFn),
+    )
   }
 
   return false
@@ -529,48 +499,12 @@ export function isPlainArray(value: unknown): value is Array<unknown> {
  * @returns `true` if `o` is a plain object.
  */
 export function isPlainObject(o: any): o is Record<PropertyKey, unknown> {
-  if (!hasObjectPrototype(o)) {
+  if (Object.prototype.toString.call(o) !== '[object Object]') {
     return false
   }
 
-  // If has no constructor
-  const objectPrototype = Object.getPrototypeOf(o)
-  const ctor = objectPrototype?.constructor
-  if (ctor === undefined) {
-    return true
-  }
-
-  if (typeof ctor !== 'function') {
-    return false
-  }
-
-  // If has modified prototype
-  const prot = ctor.prototype
-  if (!hasObjectPrototype(prot)) {
-    return false
-  }
-
-  // If constructor does not have an Object-specific method
-  if (!prot.hasOwnProperty('isPrototypeOf')) {
-    return false
-  }
-
-  // Handles Objects created by Object.create(<arbitrary prototype>)
-  if (objectPrototype !== Object.prototype) {
-    return false
-  }
-
-  // Most likely a plain Object
-  return true
-}
-
-/**
- * Checks whether a value's `Object.prototype.toString` tag is `[object Object]`.
- * @param o - The value to check.
- * @returns `true` if the tag is `[object Object]`.
- */
-function hasObjectPrototype(o: any): boolean {
-  return Object.prototype.toString.call(o) === '[object Object]'
+  const prototype = Object.getPrototypeOf(o)
+  return prototype === Object.prototype || prototype?.constructor === undefined
 }
 
 /**
@@ -791,7 +725,6 @@ export function addConsumeAwareSignal<T extends object>(
   onCancelled: () => void,
   internalSignal?: AbortSignal,
 ): T & { signal: AbortSignal } {
-  let consumed = false
   let signal: AbortSignal | undefined
 
   Object.defineProperties(object, {
@@ -799,12 +732,8 @@ export function addConsumeAwareSignal<T extends object>(
     signal: {
       enumerable: true,
       get: () => {
-        signal ??= getSignal()
-        if (consumed) {
-          return signal
-        }
-
-        consumed = true
+        if (signal) return signal
+        signal = getSignal()
         if (signal.aborted) {
           onCancelled()
         } else {

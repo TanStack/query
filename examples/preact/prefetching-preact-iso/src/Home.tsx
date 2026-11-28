@@ -1,9 +1,9 @@
 import {
-  queryOptions,
-  query,
-  isPending,
   isError,
+  isPending,
   noop,
+  query,
+  queryOptions,
   useQuery,
   useQueryClient,
 } from '@tanstack/preact-query'
@@ -54,11 +54,9 @@ function CharacterItem({
 export default function Home() {
   const [selectedChar, setSelectedChar] = useState(1)
 
-  const charactersQuery = useQuery(queryOptions(charactersQueries.list()))
+  const charactersQuery = useQuery(charactersQueries.list())
 
-  const characterQuery = useQuery(
-    queryOptions(charactersQueries.detail(selectedChar)),
-  )
+  const characterQuery = useQuery(charactersQueries.detail(selectedChar))
 
   return (
     <div className="App">

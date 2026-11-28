@@ -1,4 +1,3 @@
-import { isFetched } from './queryResult'
 import { resolveQueryValue, skipToken } from './utils'
 import type { Query } from './query'
 
@@ -19,7 +18,7 @@ export function getQueryObserverCount(
  * @returns Whether data or an error has been recorded since the initial state.
  */
 export function isQueryFetched(query: Query<any, any, any, any>): boolean {
-  return isFetched(query.state)
+  return query.state.dataUpdateCount + query.state.errorUpdateCount > 0
 }
 
 /**

@@ -11,8 +11,8 @@ import {
   onlineManager,
   select as selectData,
   setQueryData,
+  placeholderData as withPlaceholder,
 } from '..'
-import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 import { resultForComparison } from './helpers/result'
 import type { DefaultedInfiniteQueryObserverOptions, InfiniteData } from '..'
 
@@ -43,7 +43,7 @@ describe('query observer result readers', () => {
     const options = defaultQueryOptions(client, {
       queryKey: keyA,
       enabled: false,
-      select: optionalSelect(select),
+      select: selectData(select),
     })
     const observer = new QueryObserver(client, options)
     const listener = vi.fn<() => void>()
@@ -185,7 +185,7 @@ describe('query observer result readers', () => {
       queryKey: createKey(),
       initialData: { value: 1 },
       enabled: false,
-      select: optionalSelect((data: { value: number }) => data.value),
+      select: selectData((data: { value: number }) => data.value),
     })
     const observer = new QueryObserver(client, options)
     const current = observer.getCurrentResult()
@@ -195,7 +195,7 @@ describe('query observer result readers', () => {
     })
     const reader = observer.createResultReader({
       ...options,
-      select: optionalSelect(select),
+      select: selectData(select),
     })
     const snapshot = reader.getSnapshot()
     await vi.advanceTimersByTimeAsync(10)
@@ -218,7 +218,7 @@ describe('query observer result readers', () => {
     const options = defaultQueryOptions(client, {
       queryKey: key,
       enabled: false,
-      select: optionalSelect(select),
+      select: selectData(select),
       structuralSharing: false,
     })
     const observer = new QueryObserver(client, options)
@@ -254,7 +254,7 @@ describe('query observer result readers', () => {
     const options = defaultQueryOptions(client, {
       queryKey: key,
       enabled: false,
-      select: optionalSelect(select),
+      select: selectData(select),
     })
     const observer = new QueryObserver(client, options)
     const reader = observer.createResultReader(options)
@@ -272,7 +272,7 @@ describe('query observer result readers', () => {
       queryKey: createKey(),
       queryFn: () => ({ value: 1 }),
       enabled: false,
-      select: optionalSelect((data: { value: number }) => data.value),
+      select: selectData((data: { value: number }) => data.value),
     })
     const observer = new QueryObserver(client, options)
     const placeholderData = vi.fn<() => { value: number }>(() => ({ value: 2 }))
@@ -281,8 +281,8 @@ describe('query observer result readers', () => {
     })
     const reader = observer.createResultReader({
       ...options,
-      placeholderData: optionalPlaceholderData(placeholderData),
-      select: optionalSelect(select),
+      placeholderData: withPlaceholder(placeholderData),
+      select: selectData(select),
     })
     const snapshot = reader.getSnapshot()
     await vi.advanceTimersByTimeAsync(10)
@@ -296,7 +296,7 @@ describe('query observer result readers', () => {
       queryKey: createKey(),
       initialData: { value: 1 },
       enabled: false,
-      select: optionalSelect((data: { value: number }) => ({
+      select: selectData((data: { value: number }) => ({
         selected: data.value,
       })),
     })
@@ -310,7 +310,7 @@ describe('query observer result readers', () => {
     const unsubscribe = observer.subscribe(listener)
     const reader = observer.createResultReader({
       ...options,
-      select: optionalSelect(select),
+      select: selectData(select),
     })
     const snapshot = reader.getSnapshot()
     reader.commit()
@@ -339,7 +339,7 @@ describe('query observer result readers', () => {
         initialData: undefined,
         queryKey: createKey(),
         enabled: false,
-        placeholderData: optionalPlaceholderData(placeholderData),
+        placeholderData: withPlaceholder(placeholderData),
       }),
     )
     const snapshot = reader.getSnapshot()
@@ -365,7 +365,7 @@ describe('query observer result readers', () => {
       queryKey: createKey(),
       queryFn: () => ({ value: 0 }),
       enabled: false,
-      placeholderData: optionalPlaceholderData(placeholderData),
+      placeholderData: withPlaceholder(placeholderData),
     })
     const observer = new QueryObserver(client, options)
     expect(

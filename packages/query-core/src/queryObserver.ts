@@ -61,16 +61,16 @@ export interface QueryObserverResultContext<
 
   /** The memo key and failure of the most recent selection. */
   selection?: {
-    key: {
-      input: TQueryData
-      select: (data: TQueryData) => TData
-      structuralSharing: QueryOptions<
+    key: readonly [
+      input: TQueryData,
+      select: (data: TQueryData) => TData,
+      sharing: QueryOptions<
         TQueryFnData,
         TError,
         TQueryData,
         TQueryKey
-      >['structuralSharing']
-    }
+      >['structuralSharing'],
+    ]
     failure?: ProjectionFailure<TError>
   }
   /** The last successful selection, used if selection fails. */
@@ -80,24 +80,22 @@ export interface QueryObserverResultContext<
   }
   /** The unselected placeholder or factory error. */
   placeholder?: {
-    key: {
-      placeholderData:
-        | PlaceholderValue<TQueryData, TError, TQueryKey>
-        | undefined
-      structuralSharing: QueryOptions<
+    key: readonly [
+      value: PlaceholderValue<TQueryData, TError, TQueryKey> | undefined,
+      sharing: QueryOptions<
         TQueryFnData,
         TError,
         TQueryData,
         TQueryKey
-      >['structuralSharing']
+      >['structuralSharing'],
       previousQuery:
         | Query<TQueryFnData, TError, TQueryData, TQueryKey>
-        | undefined
-      previousState: QueryState<TQueryData, TError> | undefined
+        | undefined,
+      previousState: QueryState<TQueryData, TError> | undefined,
       previousOptions:
         | QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>
-        | undefined
-    }
+        | undefined,
+    ]
     sourceQuery?: Query<TQueryFnData, TError, TQueryData, TQueryKey>
     input: TQueryData | undefined
     failure?: ProjectionFailure<TError>
@@ -285,12 +283,11 @@ export class QueryObserver<
 
     this.options = defaultQueryOptions(this.#client, options)
 
+    const { enabled } = this.options
     if (
-      this.options.enabled !== undefined &&
-      typeof this.options.enabled !== 'boolean' &&
-      typeof this.options.enabled !== 'function' &&
-      typeof resolveQueryValue(this.options.enabled, this.#currentQuery) !==
-        'boolean'
+      enabled !== undefined &&
+      typeof enabled !== 'boolean' &&
+      typeof enabled !== 'function'
     ) {
       throw new Error(
         'Expected enabled to be a boolean or a callback that returns a boolean',
@@ -372,13 +369,6 @@ export class QueryObserver<
         this.#client,
         readerOptions,
       )
-      readerOptions.select?.[0].reuse(
-        readerOptions,
-        query,
-        this.#resultContext,
-        context,
-      )
-
       const nextResult = this.createResult(
         query,
         readerOptions,
@@ -626,16 +616,14 @@ export class QueryObserver<
       context,
       prevResult?.data,
       this.#lastQueryWithDefinedData,
+      this.#resultContext,
     )
-    const { error, errorUpdatedAt, status } = projection ?? newState
-    const data = projection
-      ? projection.data
-      : (newState.data as unknown as TData | undefined)
+    const { data, error, errorUpdatedAt, status } = projection ?? newState
     const isPlaceholderData = projection?.isPlaceholderData ?? false
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
       fetchStatus,
-      data,
+      data: data as TData | undefined,
       dataUpdatedAt: newState.dataUpdatedAt,
       dataUpdateCount: newState.dataUpdateCount,
       error,
@@ -678,40 +666,16 @@ export class QueryObserver<
 
     this.#currentResult = nextResult
 
-    const shouldNotifyListeners = (): boolean => {
-      if (!prevResult) {
-        return true
-      }
-
-      const { notifyOnChangeProps } = this.options
-
-      if (
-        notifyOnChangeProps === 'all' ||
-        (notifyOnChangeProps !== 'none' && !this.#trackedProps.size)
-      ) {
-        return true
-      }
-
-      if (
-        this.options.throwOnError &&
-        this.#currentResult.error !== prevResult.error
-      ) {
-        return true
-      }
-
-      if (notifyOnChangeProps === 'none') {
-        return false
-      }
-
-      for (const key of this.#trackedProps) {
-        if (this.#currentResult[key] !== prevResult[key]) {
-          return true
-        }
-      }
-      return false
-    }
-
-    const notifyListeners = shouldNotifyListeners()
+    const { notifyOnChangeProps, throwOnError } = this.options
+    const notifyListeners =
+      !prevResult ||
+      notifyOnChangeProps === 'all' ||
+      (throwOnError && nextResult.error !== prevResult.error) ||
+      (notifyOnChangeProps !== 'none' &&
+        (!this.#trackedProps.size ||
+          [...this.#trackedProps].some(
+            (key) => nextResult[key] !== prevResult[key],
+          )))
 
     notifyManager.batch(() => {
       // First, trigger the listeners

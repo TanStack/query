@@ -1,10 +1,12 @@
-import { clearQueryClient } from '@tanstack/query-core'
+import {
+  clearQueryClient,
+  select as selectResult,
+  placeholderData as withPlaceholder,
+} from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryClient, queryOptions, useQueries, useQuery } from '..'
-import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
-import type { PlaceholderSetting, SelectSetting } from './helpers/projection'
 
 class Placeholder {
   constructor(readonly value: number) {}
@@ -13,8 +15,10 @@ class Placeholder {
 type Options = {
   queryKey: ReadonlyArray<unknown>
   queryFn: () => Promise<Placeholder>
-  placeholderData: PlaceholderSetting<Placeholder>
-  select?: SelectSetting<(data: Placeholder) => Placeholder | Set<number>>
+  placeholderData: ReturnType<typeof withPlaceholder<Placeholder>>
+  select?: ReturnType<
+    typeof selectResult<Placeholder, Placeholder | Set<number>>
+  >
 }
 
 function useSingle(options: Options, client: QueryClient) {
@@ -90,8 +94,8 @@ describe('placeholder updates', () => {
           {
             queryKey: key,
             queryFn: () => new Promise<Placeholder>(() => {}),
-            placeholderData: optionalPlaceholderData(input),
-            select: optionalSelect(select),
+            placeholderData: withPlaceholder(input),
+            select: select && selectResult(select),
           },
           client,
         )
@@ -125,8 +129,8 @@ describe('placeholder updates', () => {
             {
               queryKey,
               queryFn,
-              placeholderData: optionalPlaceholderData(placeholderData),
-              select: optionalSelect(select),
+              placeholderData: withPlaceholder(placeholderData),
+              select: selectResult(select),
             },
           ],
         },

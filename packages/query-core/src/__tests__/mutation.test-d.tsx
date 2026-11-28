@@ -3,6 +3,7 @@ import { Mutation } from '../mutation'
 import { QueryClient } from '../queryClient'
 import type { Action, MutationState } from '../mutation'
 import type { MutationObserver } from '../mutationObserver'
+import type { serialScope } from '../serialScope'
 import type {
   DefaultError,
   MutateFunction,
@@ -10,7 +11,6 @@ import type {
   MutationMeta,
   MutationOptions,
 } from '../types'
-import type { serialScope } from './helpers/scope'
 
 class CustomError extends Error {
   override name = 'CustomError' as const

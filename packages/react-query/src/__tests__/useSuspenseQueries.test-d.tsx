@@ -3,7 +3,6 @@ import { createKey } from '@tanstack/query-test-utils'
 import { assertType, describe, expectTypeOf, it } from 'vitest'
 import { skipToken, useSuspenseQueries } from '..'
 import { queryOptions } from '../queryOptions'
-import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 import type { OmitKeyof } from '..'
 import type { UseQueryOptions, UseSuspenseQueryResult } from '../types'
 import type { SuspenseQueriesOptions } from '../useSuspenseQueries'
@@ -59,7 +58,7 @@ describe('UseSuspenseQueries config object overload', () => {
     const selectedOptions = queryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
-      placeholderData: optionalPlaceholderData(0),
+      placeholderData: placeholderData(0),
       select: [select, (data) => data.toString()],
     })
     const [selectedQuery] = useSuspenseQueries({
@@ -95,7 +94,7 @@ describe('UseSuspenseQueries config object overload', () => {
     const query2 = {
       queryKey: createKey(),
       queryFn: () => Promise.resolve(1),
-      select: optionalSelect((data: number) => data > 1),
+      select: select((data: number) => data > 1),
     }
 
     const queryResults = useSuspenseQueries({ queries: [query1, query2] })
@@ -331,7 +330,7 @@ describe('UseSuspenseQueries config object overload', () => {
             {
               queryKey: createKey(),
               queryFn: () => Promise.resolve(1),
-              select: optionalSelect((data: number) => data.toFixed()),
+              select: select((data: number) => data.toFixed()),
             },
           ],
         })
@@ -445,7 +444,7 @@ describe('UseSuspenseQueries config object overload', () => {
           queries: [
             {
               ...options,
-              select: optionalSelect((data: number) => data.toFixed()),
+              select: select((data: number) => data.toFixed()),
             },
           ],
         })
@@ -485,7 +484,7 @@ describe('UseSuspenseQueries config object overload', () => {
           queries: [
             {
               ...options,
-              select: optionalSelect((data: number) => data.toFixed()),
+              select: select((data: number) => data.toFixed()),
             },
           ],
         })

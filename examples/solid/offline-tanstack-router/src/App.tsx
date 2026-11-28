@@ -1,10 +1,10 @@
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import {
-  setMutationDefaults,
-  resumePausedMutations,
-  invalidateQueries,
   MutationCache,
   QueryClient,
+  invalidateQueries,
+  resumePausedMutations,
+  setMutationDefaults,
   useIsRestoring,
 } from '@tanstack/solid-query'
 import { SolidQueryDevtools } from '@tanstack/solid-query-devtools'

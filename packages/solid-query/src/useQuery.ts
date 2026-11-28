@@ -177,7 +177,7 @@ export function useQuery<
  * over the list's own fetch time, so that if you set a `staleTime`, it's measured from when the list was
  * fetched rather than from now:
  * ```tsx
- * import { useQuery, useQueryClient } from '@tanstack/solid-query'
+ * import { getQueryState, useQuery, useQueryClient } from '@tanstack/solid-query'
  *
  * function Post(props: { postId: number }) {
  *   const queryClient = useQueryClient()

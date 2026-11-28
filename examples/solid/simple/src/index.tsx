@@ -1,8 +1,8 @@
 import {
-  isPending,
-  isFetching,
   QueryClient,
   QueryClientProvider,
+  isFetching,
+  isPending,
   useQuery,
 } from '@tanstack/solid-query'
 /* @refresh reload */

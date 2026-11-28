@@ -6,6 +6,7 @@ import {
   isFetching as isFetchingOption,
   select,
   setQueryData,
+  placeholderData as withPlaceholder,
 } from '@tanstack/query-core'
 import { createKey, sleep } from '@tanstack/query-test-utils'
 import { fireEvent, render } from '@testing-library/react'
@@ -21,7 +22,6 @@ import {
   skipToken,
   useQuery,
 } from '..'
-import { optionalPlaceholderData, optionalSelect } from './helpers/projection'
 import { resultForComparison } from './helpers/result'
 import { renderWithClient, setActTimeout } from './utils'
 import type { Mock } from 'vitest'
@@ -204,7 +204,7 @@ describe('useInfiniteQuery', () => {
             sleep(10).then(() => `${pageParam}-${order}`),
           getNextPageParam: () => 1,
           initialPageParam: 0,
-          placeholderData: optionalPlaceholderData(keepPreviousData),
+          placeholderData: withPlaceholder(keepPreviousData),
           notifyOnChangeProps: 'all',
         }),
       )
@@ -334,7 +334,7 @@ describe('useInfiniteQuery', () => {
         infiniteQueryOptions({
           queryKey: key,
           queryFn: () => sleep(10).then(() => ({ count: 1 })),
-          select: optionalSelect(
+          select: select(
             React.useCallback((data: InfiniteData<{ count: number }>) => {
               selectCalled++
               return {
