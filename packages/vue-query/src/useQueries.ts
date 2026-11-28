@@ -334,7 +334,7 @@ type UseQueriesOptionsArg<T extends Array<any>> = readonly [
  * resolved before it reaches `useQueries`:
  * ```vue
  * <script setup lang="ts">
- * import { queryOptions, useQueries } from '@tanstack/vue-query'
+ * import { select, queryOptions, useQueries } from '@tanstack/vue-query'
  *
  * const props = defineProps<{ id: number }>()
  *
@@ -349,7 +349,7 @@ type UseQueriesOptionsArg<T extends Array<any>> = readonly [
  *     {
  *       ...postOptions(props.id),
  *       // ❌ `data` is `unknown` here
- *       select: (data) => data.title,
+ *       select: select((data) => data.title),
  *     },
  *   ],
  * })
@@ -359,7 +359,7 @@ type UseQueriesOptionsArg<T extends Array<any>> = readonly [
  *     queryOptions({
  *       ...postOptions(props.id),
  *       // ✅ `data` is `Post`
- *       select: (data) => data.title,
+ *       select: select((data) => data.title),
  *     }),
  *   ],
  * })

@@ -298,7 +298,7 @@ Filter conditional entries before passing a list to `useSuspenseQueries`.
 
 ## Selecting and keeping data
 
-`select` maps the cached value for one observer. `placeholderData` supplies a temporary value for a pending query. Wrap a typed selector in `select(getTitle)`, or use the tuple form to infer an inline callback's argument from the query. For example, this hook keeps displaying the previous post title while the next post loads.
+`select` maps the cached value for one observer. `placeholderData` supplies a temporary value for a pending query. Pass an inline callback or a named selector to `select`. Inside `queryOptions`, TypeScript infers the callback's argument from the fetcher and its return type becomes the observer's data type. For example, this hook keeps displaying the previous post title while the next post loads.
 
 ```tsx
 import {
@@ -309,12 +309,17 @@ import {
   useQuery,
 } from '@tanstack/react-query'
 
+const postQueryOptions = (id: number) =>
+  queryOptions({
+    queryKey: ['post', id],
+    queryFn: () => fetchPost(id), // Promise<Post>
+  })
+
 function usePostTitle(id: number) {
   return useQuery(
     queryOptions({
-      queryKey: ['post', id],
-      queryFn: () => fetchPost(id), // Promise<{ title: string }>
-      select: [select, (post) => post.title],
+      ...postQueryOptions(id),
+      select: select((post) => post.title),
       placeholderData: placeholderData(keepPreviousData),
     }),
   )

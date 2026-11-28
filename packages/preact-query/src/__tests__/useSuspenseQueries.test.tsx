@@ -311,14 +311,14 @@ describe('useSuspenseQueries', () => {
     function getName() {
       return {
         ...getUserData(),
-        select: [select, (data: any) => data.name] as const,
+        select: select((data: any) => data.name),
       }
     }
 
     function getAge() {
       return {
         ...getUserData(),
-        select: [select, (data: any) => data.age] as const,
+        select: select((data: any) => data.age),
       }
     }
 

@@ -63,7 +63,7 @@ describe('useQuery', () => {
       const query = reactive(
         useQuery({
           ...options,
-          select: [select, (data) => data > 1],
+          select: select((data) => data > 1),
         }),
       )
 
@@ -347,7 +347,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn: () => 'fetched',
         initialData: 'initial',
-        select: [select, (value: string) => () => value],
+        select: select((value: string) => () => value),
       })
 
       if (state.status === 'success') {
@@ -538,7 +538,7 @@ describe('useQuery', () => {
       const { data } = useQuery({
         queryKey: createKey(),
         queryFn: () => sleep(0).then(() => ['a', 'b', 'c']),
-        select: [select, (posts) => posts.length],
+        select: select((posts) => posts.length),
       })
 
       expectTypeOf(data.value).toEqualTypeOf<number | undefined>()

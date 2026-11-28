@@ -156,13 +156,10 @@ useQuery(
   infiniteQueryOptions({
     queryKey: ['projects'],
     queryFn: fetchProjects,
-    select: [
-      select,
-      (data) => ({
-        pages: [...data.pages].reverse(),
-        pageParams: [...data.pageParams].reverse(),
-      }),
-    ],
+    select: select((data) => ({
+      pages: [...data.pages].reverse(),
+      pageParams: [...data.pageParams].reverse(),
+    })),
   }),
 )
 ```

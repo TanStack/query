@@ -290,13 +290,10 @@ describe('useInfiniteQuery', () => {
         infiniteQueryOptions({
           queryKey: key,
           queryFn: () => sleep(10).then(() => ({ count: 1 })),
-          select: [
-            select,
-            (data) => ({
-              pages: data.pages.map((x) => `count: ${x.count}`),
-              pageParams: data.pageParams,
-            }),
-          ],
+          select: select((data) => ({
+            pages: data.pages.map((x) => `count: ${x.count}`),
+            pageParams: data.pageParams,
+          })),
           getNextPageParam: () => undefined,
           initialPageParam: 0,
         }),
@@ -383,14 +380,12 @@ describe('useInfiniteQuery', () => {
       const state = useQuery(
         infiniteQueryOptions({
           queryKey: key,
-          queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
-          select: [
-            select,
-            (data) => ({
-              pages: [...data.pages].reverse(),
-              pageParams: [...data.pageParams].reverse(),
-            }),
-          ],
+          queryFn: ({ pageParam }: { pageParam: number }) =>
+            sleep(10).then(() => pageParam),
+          select: select((data) => ({
+            pages: [...data.pages].reverse(),
+            pageParams: [...data.pageParams].reverse(),
+          })),
           notifyOnChangeProps: 'all',
           getNextPageParam: () => 1,
           initialPageParam: 0,
@@ -1493,13 +1488,10 @@ describe('useInfiniteQuery', () => {
           queryKey: key,
           queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
           getNextPageParam: (lastPage) => (lastPage === 1 ? 2 : undefined),
-          select: [
-            select,
-            (data) => ({
-              pages: data.pages.map((x) => x.toString()),
-              pageParams: data.pageParams,
-            }),
-          ],
+          select: select((data) => ({
+            pages: data.pages.map((x) => x.toString()),
+            pageParams: data.pageParams,
+          })),
           initialPageParam: 1,
         }),
       )

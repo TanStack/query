@@ -93,7 +93,7 @@ export function useQuery(
     )
   }
 
-  const Observer = options[observerKey] as typeof QueryObserver
+  const Observer: typeof QueryObserver = options[observerKey]
   const client = useQueryClient(queryClient)
   const isRestoring = useIsRestoring()
 

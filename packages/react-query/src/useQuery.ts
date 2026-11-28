@@ -95,7 +95,7 @@ export function useQuery(
     )
   }
 
-  const Observer = options[observerKey] as typeof QueryObserver
+  const Observer: typeof QueryObserver = options[observerKey]
   const { client, mode } = useReaderContext(queryClient, options.subscribed)
   const policy: QueryRenderPolicy = options.renderPolicy
   const defaulted = defaultReaderOptions(

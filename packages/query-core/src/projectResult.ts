@@ -44,7 +44,8 @@ export function projectResult<
   'data' | 'status' | 'error' | 'errorUpdatedAt'
 > & { isPlaceholderData: boolean } {
   context.project = projectResult
-  const { select, placeholderData } = options
+  const { placeholderData } = options
+  const selection = options.select?.()
   context.placeholder =
     state.data === undefined && state.status === 'pending' && placeholderData
       ? placeholderData[0].resolve(
@@ -57,10 +58,10 @@ export function projectResult<
   const placeholder = context.placeholder
   const input = placeholder ? placeholder.input : state.data
   clearObsoleteSelection(context)
-  if (select && input !== undefined) {
-    select[0].resolve(
+  if (selection && input !== undefined) {
+    selection[0].resolve(
       options,
-      select[1],
+      selection[1],
       context,
       placeholder ? context : committed,
       previousData,

@@ -595,7 +595,7 @@ describe('createQuery', () => {
         options: () => ({
           queryKey: key,
           queryFn: () => ({ name: 'test' }),
-          select: [select, (data: { name: string }) => data.name],
+          select: select((data: { name: string }) => data.name),
         }),
       },
     })
@@ -615,12 +615,9 @@ describe('createQuery', () => {
         options: () => ({
           queryKey: key,
           queryFn: () => ({ name: 'test' }),
-          select: [
-            select,
-            () => {
-              throw error
-            },
-          ],
+          select: select(() => {
+            throw error
+          }),
         }),
       },
     })

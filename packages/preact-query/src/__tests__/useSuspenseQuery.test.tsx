@@ -659,12 +659,9 @@ describe('useSuspenseQuery', () => {
         suspenseQueryOptions({
           queryKey: key,
           queryFn: () => sleep(10).then(() => ({ a: { b: 'c' } })),
-          select: [
-            select,
-            () => {
-              throw new Error('foo')
-            },
-          ],
+          select: select(() => {
+            throw new Error('foo')
+          }),
         }),
       )
       return <div>rendered</div>

@@ -33,6 +33,7 @@ import type {
   QueryObserverBaseResult,
   QueryObserverResult,
   QueryPersister,
+  Select,
   isError,
   isFetchNextPageError,
   isFetchPreviousPageError,
@@ -315,15 +316,12 @@ describe('infiniteQueryObserver', () => {
           queryFn: () => Promise.resolve({ value: 'data' }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
-          select: [
-            select,
-            (data) => {
-              expectTypeOf(data).toEqualTypeOf<
-                InfiniteData<{ value: string }, number>
-              >()
-              return data.pages
-            },
-          ],
+          select: select((data) => {
+            expectTypeOf(data).toEqualTypeOf<
+              InfiniteData<{ value: string }, number>
+            >()
+            return data.pages
+          }),
         })
       })
 
@@ -333,7 +331,7 @@ describe('infiniteQueryObserver', () => {
           queryFn: () => Promise.resolve({ count: 1 }),
           initialPageParam: 1,
           getNextPageParam: () => 1,
-          select: [select, (data) => data.pages.length],
+          select: select((data) => data.pages.length),
         })
 
         expectTypeOf(observer.getCurrentResult().data).toEqualTypeOf<
@@ -1189,15 +1187,12 @@ describe('infiniteQueryObserver', () => {
         queryFn: () => Promise.resolve({ value: 'data' }),
         initialPageParam: 1,
         getNextPageParam: () => 1,
-        select: [
-          select,
-          (data) => {
-            expectTypeOf(data).toEqualTypeOf<
-              InfiniteData<{ value: string }, number>
-            >()
-            return data
-          },
-        ],
+        select: select((data) => {
+          expectTypeOf(data).toEqualTypeOf<
+            InfiniteData<{ value: string }, number>
+          >()
+          return data
+        }),
       })
 
       observer.setOptions({
@@ -1245,10 +1240,11 @@ describe('infiniteQueryObserver', () => {
         getNextPageParam: () => 1,
       })
 
-      expectTypeOf(observer.options.select?.[1]).toEqualTypeOf<
-        | ((
-            data: InfiniteData<{ value: string }, number>,
-          ) => InfiniteData<{ value: string }, unknown>)
+      expectTypeOf(observer.options.select).toEqualTypeOf<
+        | Select<
+            InfiniteData<{ value: string }, number>,
+            InfiniteData<{ value: string }, unknown>
+          >
         | undefined
       >()
     })

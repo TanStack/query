@@ -635,10 +635,7 @@ describe('injectQueries', () => {
             {
               queryKey: ['reactive-select'],
               queryFn: fetchSpy,
-              select: [
-                select,
-                (data: number) => data * currentMultiplier,
-              ] as const,
+              select: select((data: number) => data * currentMultiplier),
               staleTime: 0,
             },
           ],

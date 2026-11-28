@@ -50,12 +50,9 @@ describe('infiniteQueryOptions', () => {
       staleTime: 1000,
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      select: [
-        select,
-        (data) => {
-          expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
-        },
-      ],
+      select: select((data) => {
+        expectTypeOf(data).toEqualTypeOf<InfiniteData<string, number>>()
+      }),
     })
   })
 
@@ -103,7 +100,7 @@ describe('infiniteQueryOptions', () => {
       queryFn: () => Promise.resolve('string'),
       getNextPageParam: () => 1,
       initialPageParam: 1,
-      select: [select, (data) => data.pages],
+      select: select((data) => data.pages),
     })
 
     const data = await infiniteQuery(new QueryClient(), options)
@@ -170,7 +167,7 @@ describe('infiniteQueryOptions', () => {
     const { queryKey: tagged } = infiniteQueryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve('string'),
-      select: [select, (data) => data.pages],
+      select: select((data) => data.pages),
       getNextPageParam: () => 1,
       initialPageParam: 1,
     })

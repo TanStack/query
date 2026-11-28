@@ -51,14 +51,16 @@ You can still override some options at the component level. A very common and us
 [//]: # 'Example2'
 
 ```ts
-import { select } from '@tanstack/solid-query'
+import { queryOptions, select } from '@tanstack/solid-query'
 
 // Type inference still works, so query.data will be the return type of select instead of queryFn
 
-const groupQuery = useQuery(() => ({
-  ...groupOptions(1),
-  select: select((data) => data.groupName),
-}))
+const groupQuery = useQuery(() =>
+  queryOptions({
+    ...groupOptions(1),
+    select: select((data) => data.groupName),
+  }),
+)
 ```
 
 [//]: # 'Example2'

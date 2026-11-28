@@ -69,13 +69,13 @@ describe('UseQueries config object overload', () => {
     const query1 = queryOptions({
       queryKey: key1,
       queryFn: () => Promise.resolve(1),
-      select: [querySelect, (data) => data > 1],
+      select: querySelect((data) => data > 1),
     })
 
     const query2 = {
       queryKey: key2,
       queryFn: () => Promise.resolve(1),
-      select: [querySelect, (data: any) => data > 1] as const,
+      select: querySelect((data: any) => data > 1),
     }
 
     const queriesState = reactive(useQueries({ queries: [query1, query2] }))
@@ -163,7 +163,7 @@ describe('UseQueries config object overload', () => {
     const queries = numbers.map((n) => ({
       queryKey: [n],
       queryFn: () => Promise.resolve(n),
-      select: [querySelect, (data: number) => data.toString()] as const,
+      select: querySelect((data: number) => data.toString()),
     }))
 
     const queriesWithoutSelect = numbers.map((n) => ({
@@ -280,7 +280,7 @@ describe('UseQueries config object overload', () => {
     const options = queryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
-      select: [querySelect, (data) => data.toString()],
+      select: querySelect((data) => data.toString()),
     })
 
     const { value: queriesState } = useQueries({ queries: [options] })

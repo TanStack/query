@@ -137,7 +137,7 @@ import type {
  *       {
  *         ...postOptions(this.id()),
  *         // ❌ `data` is `unknown` here
- *         select: (data) => data.title,
+ *         select: select((data) => data.title),
  *       },
  *     ],
  *   }))
@@ -147,7 +147,7 @@ import type {
  *       queryOptions({
  *         ...postOptions(this.id()),
  *         // ✅ `data` is `Post`
- *         select: (data) => data.title,
+ *         select: select((data) => data.title),
  *       }),
  *     ],
  *   }))

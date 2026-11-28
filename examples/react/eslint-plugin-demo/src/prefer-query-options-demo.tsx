@@ -19,7 +19,7 @@ export function Todo({ id }: { id: string }) {
   const query = useQuery(
     queryOptions({
       ...todoOptions(id),
-      select: [select, (data) => data.title],
+      select: select((data) => data.title),
     }),
   )
   return query.data

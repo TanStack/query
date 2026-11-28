@@ -398,18 +398,18 @@ describe('QueryCache', () => {
     it('should properly unwrap staleTime, and select', () => {
       const queryClient = new QueryClient()
       const staleTime = () => 1000
-      const select = (data: string) => data.length
+      const selection = querySelect((data: string) => data.length)
 
       query(queryClient, {
         queryKey: queryKeyRef,
         staleTime: ref(staleTime),
-        select: [querySelect, ref(select)],
+        select: ref(selection),
       })
 
       expect(core.query).toHaveBeenCalledWith(queryClient, {
         queryKey: queryKeyUnref,
         staleTime,
-        select: querySelect(select),
+        select: selection,
       })
     })
 
@@ -433,14 +433,16 @@ describe('QueryCache', () => {
     it('should properly unwrap queryKey, initialPageParam, pages, and select', () => {
       const queryClient = new QueryClient()
       const getNextPageParam = () => 1
-      const select = (data: { pages: Array<string> }) => data.pages.length
+      const selection = querySelect(
+        (data: { pages: Array<string> }) => data.pages.length,
+      )
 
       infiniteQuery(queryClient, {
         queryKey: queryKeyRef,
         initialPageParam: ref(0),
         pages: ref(2),
         getNextPageParam: ref(getNextPageParam),
-        select: [querySelect, ref(select)],
+        select: ref(selection),
       })
 
       expect(core.infiniteQuery).toHaveBeenCalledWith(
@@ -450,7 +452,7 @@ describe('QueryCache', () => {
           initialPageParam: 0,
           pages: 2,
           getNextPageParam,
-          select: querySelect(select),
+          select: selection,
         }),
       )
     })

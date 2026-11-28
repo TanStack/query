@@ -403,7 +403,10 @@ describe('queryClient', () => {
       const result = fetchQueryData(new QueryClient(), {
         queryKey: ['key'],
         queryFn: () => Promise.resolve('string'),
-        select: [select, (data) => data.length],
+        select: select((data) => {
+          expectTypeOf(data).toEqualTypeOf<string>()
+          return data.length
+        }),
       })
 
       expectTypeOf(result).toEqualTypeOf<Promise<number>>()
@@ -452,12 +455,12 @@ describe('queryClient', () => {
         queryFn: () => Promise.resolve({ count: 1 }),
         initialPageParam: 1,
         getNextPageParam: () => 2,
-        select: [
-          select,
-          (data) => ({
-            pages: data.pages.map((x) => `count: ${x.count}`),
-          }),
-        ],
+        select: select((data) => {
+          expectTypeOf(data).toEqualTypeOf<
+            InfiniteData<{ count: number }, number>
+          >()
+          return { pages: data.pages.map((x) => `count: ${x.count}`) }
+        }),
       })
 
       expectTypeOf(result).toEqualTypeOf<Promise<{ pages: Array<string> }>>()

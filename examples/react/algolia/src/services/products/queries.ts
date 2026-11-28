@@ -18,7 +18,7 @@ export const productsQueries = {
         hitsPerPage,
       ] as const,
       queryFn: query
-        ? ({ pageParam }) =>
+        ? ({ pageParam }: Pick<SearchOptions, 'pageParam'>) =>
             productsAPI.searchProducts<TData>({
               indexName,
               query,
@@ -26,7 +26,7 @@ export const productsQueries = {
               hitsPerPage,
             })
         : skipToken,
-      select: [select, (data) => data.pages.flatMap((page) => page.hits)],
+      select: select((data) => data.pages.flatMap((page) => page.hits)),
       staleTime: 30 * 1000,
       gcTime: 15 * 60 * 1000,
       initialPageParam: 0,

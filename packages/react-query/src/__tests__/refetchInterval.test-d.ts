@@ -16,7 +16,7 @@ describe('refetchInterval types', () => {
     useQuery(
       queryOptions({
         ...options,
-        select: [select, (book) => book.length],
+        select: select((book) => book.length),
         refetchInterval: (query) => {
           expectTypeOf(query.state.data).toEqualTypeOf<string | undefined>()
           return refetchInterval(query.state.data ? false : 3000)

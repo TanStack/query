@@ -37,17 +37,21 @@ class MyComponent {
 [//]: # 'TypeInference2'
 
 ```angular-ts
+import { queryOptions, select } from '@tanstack/angular-query'
+
 @Component({
   // ...
   template: `@let data = query.data();`,
   //               ^? data: string | undefined
 })
 class MyComponent {
-  query = injectQuery(() => ({
-    queryKey: ['test'],
-    queryFn: () => Promise.resolve(5),
-    select: (data) => data.toString(),
-  }))
+  query = injectQuery(() =>
+    queryOptions({
+      queryKey: ['test'],
+      queryFn: () => Promise.resolve(5),
+      select: select((data) => data.toString()),
+    }),
+  )
 }
 ```
 

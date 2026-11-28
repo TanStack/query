@@ -38,6 +38,7 @@ import {
   vi,
 } from 'vitest'
 import {
+  queryOptions,
   QueryCache,
   QueryClient,
   defaultQueryFn,
@@ -968,11 +969,13 @@ describe('injectQuery', () => {
       changeDetection: ChangeDetectionStrategy.OnPush,
     })
     class TestComponent {
-      query = injectQuery(() => ({
-        queryKey: ['key13'],
-        queryFn: () => [{ id: 1 }, { id: 2 }],
-        select: [select, (data) => data.map((item) => item.id)],
-      }))
+      query = injectQuery(() =>
+        queryOptions({
+          queryKey: ['key13'],
+          queryFn: () => [{ id: 1 }, { id: 2 }],
+          select: select((data) => data.map((item) => item.id)),
+        }),
+      )
     }
 
     const fixture = TestBed.createComponent(TestComponent)

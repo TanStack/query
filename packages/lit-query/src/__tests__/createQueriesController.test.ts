@@ -969,7 +969,7 @@ describe('createQueriesController', () => {
             queryKey: key,
             queryFn: () => sleep(10).then(() => 'fetched'),
             initialData: 'seed',
-            select: [select, (data: string) => data.toUpperCase()],
+            select: select<string, string>((data) => data.toUpperCase()),
           },
         ],
         combine: (result) => result[0].data,

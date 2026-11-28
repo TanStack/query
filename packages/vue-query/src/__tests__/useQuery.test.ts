@@ -159,7 +159,7 @@ describe('useQuery', () => {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 'fetched'),
       initialData: 'initial',
-      select: [select, (value: string) => () => value],
+      select: select((value: string) => () => value),
     })
 
     expect(state.status).toBe('success')
@@ -577,7 +577,7 @@ describe('useQuery', () => {
     const query = useQuery({
       queryKey: key,
       queryFn: () => sleep(10).then(() => ['a', 'b', 'c']),
-      select: [select, (posts) => posts.length],
+      select: select((posts) => posts.length),
     })
 
     await vi.advanceTimersByTimeAsync(10)

@@ -255,7 +255,7 @@ describe('createQueryController', () => {
         })
         const query = createQueryController(
           new Host(),
-          { ...options, select: [select, (data) => data > 1] },
+          { ...options, select: select((data) => data > 1) },
           new QueryClient(),
         )
 

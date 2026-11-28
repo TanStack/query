@@ -32,10 +32,10 @@ describe('useSuspenseInfiniteQuery', () => {
         queryFn:
           Math.random() > 0.5
             ? skipToken
-            : ({ pageParam }) => pageParam.toFixed(),
+            : ({ pageParam }: { pageParam: number }) => pageParam.toFixed(),
         initialPageParam: 1,
         getNextPageParam: () => undefined,
-        select: [select, (data) => data.pages],
+        select: select((data) => data.pages),
       }),
     )
 
@@ -89,7 +89,7 @@ describe('useSuspenseInfiniteQuery', () => {
             return previousData ?? { pages: [0], pageParams: [1] }
           },
         ],
-        select: [select, (data) => data.pages.length],
+        select: select((data) => data.pages.length),
       }),
     )
 

@@ -19,6 +19,7 @@ import type { ManagedTimerId } from './timeoutManager'
 import type {
   DefaultError,
   DefaultedQueryObserverOptions,
+  MatchingQueryData,
   PlaceholderValue,
   QueryKey,
   QueryObserverBaseResult,
@@ -166,6 +167,27 @@ export class QueryObserver<
   #polling?: PollingTimer
   #trackedProps = new Set<keyof QueryObserverResult>()
 
+  constructor(
+    client: QueryClient,
+    options: ObserverOptionsInput<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey
+    > &
+      MatchingQueryData<TQueryData, TQueryFnData>,
+  )
+  constructor(
+    client: QueryClient,
+    options: ObserverOptionsInput<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >,
+  )
   constructor(
     client: QueryClient,
     public options: ObserverOptionsInput<
@@ -604,7 +626,7 @@ export class QueryObserver<
       options._optimisticResults === 'isRestoring'
         ? 'idle'
         : newState.fetchStatus
-    const feature = options.select?.[0] ?? options.placeholderData?.[0]
+    const feature = options.select?.()[0] ?? options.placeholderData?.[0]
     const project = feature?.project ?? context.project
     const projection = project?.(
       query,

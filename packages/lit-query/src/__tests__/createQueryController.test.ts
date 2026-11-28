@@ -28,6 +28,7 @@ import {
 } from 'vitest'
 import { QueryClientProvider } from '../QueryClientProvider.js'
 import { createQueryController } from '../createQueryController.js'
+import { queryOptions } from '../index.js'
 import { generateElementName } from './utils.js'
 import type { QueryResultAccessor } from '../createQueryController.js'
 
@@ -757,7 +758,7 @@ describe('createQueryController', () => {
         {
           queryKey: key,
           queryFn: () => sleep(10).then(() => ({ value: 2 })),
-          select: [select, (payload: { value: number }) => payload.value * 10],
+          select: select((payload: { value: number }) => payload.value * 10),
         },
         queryClient,
       )
@@ -787,12 +788,9 @@ describe('createQueryController', () => {
         {
           queryKey: key,
           queryFn: () => sleep(10).then(() => ({ value: 2 })),
-          select: [
-            select,
-            (_payload: { value: number }): number => {
-              throw new Error('select-failed')
-            },
-          ],
+          select: select((_payload: { value: number }): number => {
+            throw new Error('select-failed')
+          }),
         },
         queryClient,
       )
@@ -1210,11 +1208,12 @@ describe('createQueryController', () => {
     class Host extends LitElement {
       readonly query = createQueryController(
         this,
-        () => ({
-          queryKey: key,
-          queryFn: () => sleep(10).then(() => 2),
-          select: [select, (value: number) => value * multiplier] as const,
-        }),
+        () =>
+          queryOptions({
+            queryKey: key,
+            queryFn: () => sleep(10).then(() => 2),
+            select: select((value: number) => value * multiplier),
+          }),
         queryClient,
       )
 

@@ -37,7 +37,7 @@ const { data } = useQuery(
     //      ^? const data: string | undefined
     queryKey: ['test'],
     queryFn: () => Promise.resolve(5),
-    select: [select, (data) => data.toString()],
+    select: select((data) => data.toString()),
   }),
 )
 ```

@@ -31,19 +31,21 @@ query.data
 [typescript playground](https://www.typescriptlang.org/play/?#code/JYWwDg9gTgLgBAbzgYygUwIYzQRQK5pQCecAvnAGZQQhwDkAAjBgHYDOzyA1gPRsQAbYABMAtAEcCxOgFgAUPOQR28SYRIBeFOiy4pRABQGAlHA0A+OAYTy4duGuIBpNEQBccANp0WeEACNCOgBdABo4W3tHIgAxFg8TM0sABWoQYDY0ADp0fgEANzQDAFZjeVJjMoU5aKzhLAx5Hh57OAA9AH55brkgA)
 
 ```tsx
-import { useQuery } from '@tanstack/solid-query'
+import { queryOptions, select, useQuery } from '@tanstack/solid-query'
 
-const query = useQuery(() => ({
-  queryKey: ['test'],
-  queryFn: () => Promise.resolve(5),
-  select: (data) => data.toString(),
-}))
+const query = useQuery(() =>
+  queryOptions({
+    queryKey: ['test'],
+    queryFn: () => Promise.resolve(5),
+    select: select((data) => data.toString()),
+  }),
+)
 
 query.data
 //    ^? (property) data: string | undefined
 ```
 
-[typescript playground](https://www.typescriptlang.org/play/?#code/JYWwDg9gTgLgBAbzgYygUwIYzQRQK5pQCecAvnAGZQQhwDkAAjBgHYDOzyA1gPRsQAbYABMAtAEcCxOgFgAUPOQR28SYRIBeFOiy4pRABQGAlHA0A+OAYTy4duGuIBpNEQBccANp1sHOgF0AGjhbe0ciADEWDxMzSwAFahBgNjQAOnR+AQA3NAMAVmNA0LtUgTRkGBjhLAxTCzga5jSYCABlGChgFgBzE2K5UmNjeXlwtKaMeR4eezgAPQB+UYU5IA)
+[typescript playground](https://www.typescriptlang.org/play/?#code/JYWwDg9gTgLgBAbzgRwK4FMoE8DyYbAQB2AzgDRwnoA26AxjBalQIobZwC+cAZlBCDgByAAIwAhqQl0A1gHoSEasAAmAWjSYsQgFA66xEvE0cAvHGbo2WgBQ2AlHFMA+HXBTtc+QqRsI37h5aANLoWABccADaQjDoRkIAumQB7iZYAGJEkQ5OznAACvwgwFQAdFDxSgBu6DYArPYpgZQ09DCRVLQMdiriEo4ucH0SZTAQAMowUMBEAOYOTQGcS-Z66WUj4jpyci0AegD8cDZg-GCYMFiOW53Ts3NwAD4WRCroPLPoKkA)
 
 This works best if your `queryFn` has a well-defined returned type. Keep in mind that most data fetching libraries return `any` per default, so make sure to extract it to a properly typed function:
 

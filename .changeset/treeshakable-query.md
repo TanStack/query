@@ -16,4 +16,4 @@ Make the ESM query core and its framework adapters treeshakable. Import client o
 
 In React and Preact, pass `queryOptions`, `suspenseQueryOptions`, `infiniteQueryOptions`, or `suspenseInfiniteQueryOptions` to `useQuery`. Import result checks such as `isSuccess(result)` to narrow data or errors. Use `useQueries` and `useSuspenseQueries` for a variable number of queries.
 
-Import `select`, `placeholderData`, `refetchInterval`, and `serialScope` where those features are used. Structural sharing remains enabled by default. Ordinary React and Preact queries can opt into boundaries with `throwOnError: [throwOnError, true]` or a predicate in the second position.
+Import `select`, `placeholderData`, `refetchInterval`, and `serialScope` where those features are used. Write `select: select((post) => post.title)` to project the observer's data while keeping the full post in the cache. Structural sharing remains enabled by default. Ordinary React and Preact queries can opt into boundaries with `throwOnError: [throwOnError, true]` or a predicate in the second position.

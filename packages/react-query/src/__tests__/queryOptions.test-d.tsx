@@ -46,12 +46,9 @@ describe('queryOptions', () => {
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       staleTime: 1000,
-      select: [
-        select,
-        (data) => {
-          expectTypeOf(data).toEqualTypeOf<number>()
-        },
-      ],
+      select: select((data) => {
+        expectTypeOf(data).toEqualTypeOf<number>()
+      }),
     })
   })
 
@@ -89,7 +86,7 @@ describe('queryOptions', () => {
     const options = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(5),
-      select: [select, (data) => data.toString()],
+      select: select((data) => data.toString()),
     })
 
     const data = await query(new QueryClient(), options)
@@ -111,7 +108,7 @@ describe('queryOptions', () => {
     const options = queryOptions({
       queryKey: ['key'],
       queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
-      select: [select, (data) => data.toFixed()],
+      select: select((data) => data.toFixed()),
     })
 
     const data = await query(new QueryClient(), options)
@@ -162,7 +159,7 @@ describe('queryOptions', () => {
     const { queryKey: tagged } = queryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
-      select: [select, (data) => data.toString()],
+      select: select((data) => data.toString()),
     })
 
     expectTypeOf(tagged[dataTagSymbol]).toEqualTypeOf<number>()

@@ -62,18 +62,15 @@ describe('select', () => {
       new Host(),
       {
         queryKey: createKey(),
-        queryFn: ({ pageParam }) => {
+        queryFn: ({ pageParam }: { pageParam: number }) => {
           return pageParam * 5
         },
         initialPageParam: 1,
         getNextPageParam: () => undefined,
-        select: [
-          select,
-          (data) => {
-            expectTypeOf(data).toEqualTypeOf<InfiniteData<number, number>>()
-            return 'selected' as const
-          },
-        ],
+        select: select((data) => {
+          expectTypeOf(data).toEqualTypeOf<InfiniteData<number, number>>()
+          return 'selected' as const
+        }),
       },
       new QueryClient(),
     )

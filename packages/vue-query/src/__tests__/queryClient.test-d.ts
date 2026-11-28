@@ -181,7 +181,7 @@ describe('query', () => {
     const result = query(new QueryClient(), {
       queryKey: ['key'],
       queryFn: () => Promise.resolve('string'),
-      select: [select, (data) => data.length],
+      select: select((data) => data.length),
     })
 
     expectTypeOf(result).toEqualTypeOf<Promise<number>>()
@@ -217,7 +217,7 @@ describe('infiniteQuery', () => {
       queryFn: () => Promise.resolve({ count: 1 }),
       getNextPageParam: () => 2,
       initialPageParam: 1,
-      select: [select, (data) => data.pages.map((page) => page.count)],
+      select: select((data) => data.pages.map((page) => page.count)),
     })
 
     expectTypeOf(result).toEqualTypeOf<Promise<Array<number>>>()

@@ -850,7 +850,7 @@ describe('queryClient', () => {
         // @ts-expect-error enabled is not supported for imperative queries
         enabled: false,
         staleTime: 0,
-        select: [selectData, (data) => `${data}-selected`],
+        select: selectData((data) => `${data}-selected`),
       })
       expect(result).toBe('fetched-data-selected')
       expect(queryFn).toHaveBeenCalledTimes(1)
@@ -1157,7 +1157,7 @@ describe('queryClient', () => {
         queryKey: key,
         queryFn,
         staleTime: Infinity,
-        select: [selectData, (data) => `${data}-selected`],
+        select: selectData((data) => `${data}-selected`),
       })
       expect(result).toBe('cached-data-selected')
       expect(queryFn).not.toHaveBeenCalled()
@@ -1172,7 +1172,7 @@ describe('queryClient', () => {
       const result = await fetchQueryData(queryClient, {
         queryKey: key,
         queryFn,
-        select: [selectData, (data) => data.value.toUpperCase()],
+        select: selectData((data) => data.value.toUpperCase()),
       })
       expect(result).toBe('FETCHED-DATA')
       expect(queryFn).toHaveBeenCalledTimes(1)
@@ -1258,17 +1258,16 @@ describe('queryClient', () => {
         pageParams: [0],
       })
 
-      const result = await infiniteQuery(queryClient, {
+      const result: Array<string> = await infiniteQuery(queryClient, {
         queryKey: key,
         queryFn,
         getNextPageParam: () => undefined,
         initialPageParam: 0,
+        select: selectData((data) =>
+          data.pages.map((page) => `${page}-selected`),
+        ),
         // @ts-expect-error enabled is not supported for imperative queries
         enabled: false,
-        select: [
-          selectData,
-          (data) => data.pages.map((page) => `${page}-selected`),
-        ],
       })
       expect(result).toStrictEqual(["'fetched-0-selected"])
       expect(queryFn).toHaveBeenCalledTimes(1)
@@ -1404,8 +1403,8 @@ describe('queryClient', () => {
         queryKey: key,
         getNextPageParam: () => undefined,
         initialPageParam: 10,
-        queryFn: ({ pageParam }) => Number(pageParam),
-        select: [selectData, (data) => data.pages.map((page) => page * 2)],
+        queryFn: ({ pageParam }): number => Number(pageParam),
+        select: selectData((data) => data.pages.map((page) => page * 2)),
       })
       expect(result).toStrictEqual([20])
     })

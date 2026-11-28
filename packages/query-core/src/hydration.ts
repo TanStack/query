@@ -101,12 +101,13 @@ function tryResolveSync(promise: PromiseLike<unknown>) {
  * @returns The dehydrated mutation.
  */
 function dehydrateMutation(mutation: Mutation): DehydratedMutation {
-  return {
+  const result: DehydratedMutation = {
     mutationKey: mutation.options.mutationKey,
     state: mutation.state,
-    ...(mutation.options.scope && { scope: { id: mutation.options.scope.id } }),
-    ...(mutation.meta && { meta: mutation.meta }),
   }
+  if (mutation.options.scope) result.scope = { id: mutation.options.scope.id }
+  if (mutation.meta) result.meta = mutation.meta
+  return result
 }
 
 /**
@@ -163,23 +164,22 @@ export function dehydrateQuery(
   serializeData?: TransformerFn,
   shouldRedactErrors?: (error: unknown) => boolean,
 ): DehydratedQuery {
-  return {
-    dehydratedAt: Date.now(),
-    state: {
-      ...query.state,
-      ...(serializeData &&
-        query.state.data !== undefined && {
-          data: serializeData(query.state.data),
-        }),
-    },
+  const dehydratedAt = Date.now()
+  const state = { ...query.state }
+  if (serializeData && state.data !== undefined)
+    state.data = serializeData(state.data)
+  const result: DehydratedQuery = {
+    dehydratedAt,
+    state,
     queryKey: query.queryKey,
     queryHash: query.queryHash,
-    ...(query.state.status === 'pending' && {
-      promise: dehydratePromise(query, serializeData, shouldRedactErrors),
-    }),
-    ...(query.meta && { meta: query.meta }),
-    ...(query.queryType && { queryType: query.queryType }),
   }
+  if (query.state.status === 'pending') {
+    result.promise = dehydratePromise(query, serializeData, shouldRedactErrors)
+  }
+  if (query.meta) result.meta = query.meta
+  if (query.queryType) result.queryType = query.queryType
+  return result
 }
 
 /**

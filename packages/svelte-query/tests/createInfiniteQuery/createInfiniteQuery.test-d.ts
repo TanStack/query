@@ -108,21 +108,20 @@ describe('createInfiniteQuery', () => {
     })
 
     it('should be able to transform data to arbitrary result', () => {
-      const infiniteQuery = createInfiniteQuery(() => ({
-        queryKey: createKey(),
-        queryFn: ({ pageParam }) => {
-          return pageParam * 5
-        },
-        initialPageParam: 1,
-        getNextPageParam: () => undefined,
-        select: [
-          select,
-          (data) => {
+      const infiniteQuery = createInfiniteQuery(() =>
+        infiniteQueryOptions({
+          queryKey: createKey(),
+          queryFn: ({ pageParam }: { pageParam: number }) => {
+            return pageParam * 5
+          },
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+          select: select((data) => {
             expectTypeOf(data).toEqualTypeOf<InfiniteData<number, number>>()
             return 'selected' as const
-          },
-        ],
-      }))
+          }),
+        }),
+      )
 
       expectTypeOf(infiniteQuery.data).toEqualTypeOf<'selected' | undefined>()
     })

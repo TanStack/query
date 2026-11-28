@@ -364,7 +364,7 @@ type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
  *       {
  *         ...postOptions(id),
  *         // ❌ `data` is `unknown` here
- *         select: [select, (data) => data.title],
+ *         select: select((data) => data.title),
  *       },
  *     ],
  *   })
@@ -374,7 +374,7 @@ type UseQueriesInput<T extends Array<any>, TCombinedResult> = {
  *       queryOptions({
  *         ...postOptions(id),
  *         // ✅ `data` is `Post`
- *         select: [select, (data) => data.title],
+ *         select: select((data) => data.title),
  *       }),
  *     ],
  *   })

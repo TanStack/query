@@ -39,17 +39,16 @@ describe('initialData', () => {
     })
 
     it('should support selection function with select', () => {
-      const options = injectQuery(() => ({
-        queryKey: ['key'],
-        queryFn: () => '1',
-        select: [
-          select,
-          (data) => {
+      const options = injectQuery(() =>
+        queryOptions({
+          queryKey: ['key'],
+          queryFn: () => '1',
+          select: select((data) => {
             expectTypeOf(data).toEqualTypeOf<string>()
             return parseInt(data)
-          },
-        ],
-      }))
+          }),
+        }),
+      )
       expectTypeOf(options.data).toEqualTypeOf<Signal<number | undefined>>()
     })
 
@@ -59,10 +58,12 @@ describe('initialData', () => {
         queryFn: () => Promise.resolve(1),
       })
 
-      const query = injectQuery(() => ({
-        ...options,
-        select: [select, (data) => data > 1],
-      }))
+      const query = injectQuery(() =>
+        queryOptions({
+          ...options,
+          select: select((data) => data > 1),
+        }),
+      )
 
       expectTypeOf(query.data).toEqualTypeOf<Signal<boolean | undefined>>()
     })

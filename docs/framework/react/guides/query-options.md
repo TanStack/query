@@ -40,7 +40,7 @@ For Infinite Queries, a separate [`infiniteQueryOptions`](../reference/functions
 
 [//]: # 'SelectDescription'
 
-You can still override some options at the component level. A very common and useful pattern is to create per-component [`select`](./render-optimizations.md#select) functions:
+A component can select part of the cached data by passing a callback to `select`. Spreading a prepared query into `queryOptions` preserves the fetcher's data type for the callback.
 
 [//]: # 'SelectDescription'
 [//]: # 'Example2'
@@ -59,3 +59,18 @@ const selected = useQuery(
 ```
 
 [//]: # 'Example2'
+
+For a dynamic `useQueries` list, prepare each entry so TypeScript can infer its selector input independently.
+
+```ts
+const groups = useQueries({
+  queries: ids.map((id) =>
+    queryOptions({
+      ...groupOptions(id),
+      select: select((group) => group.groupName),
+    }),
+  ),
+})
+```
+
+When passing raw entries with different result types directly to `useQueries`, define a reusable selection first, such as `const groupName = select((group: Group) => group.groupName)`, and pass `select: groupName` in the entry. For an infinite query whose fetcher derives its return type from `pageParam`, typing the fetcher's parameter lets the selector infer the page data.

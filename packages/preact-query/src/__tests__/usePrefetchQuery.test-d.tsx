@@ -22,13 +22,10 @@ describe('usePrefetchQuery', () => {
         expectTypeOf(context.queryKey).toEqualTypeOf<CustomQueryKey>()
         return Promise.resolve('data')
       },
-      select: [
-        select,
-        (data) => {
-          expectTypeOf(data).toEqualTypeOf<Array<string>>()
-          return data.length
-        },
-      ],
+      select: select((data) => {
+        expectTypeOf(data).toEqualTypeOf<Array<string>>()
+        return data.length
+      }),
     })
   })
 

@@ -154,13 +154,10 @@ describe('useQueries', () => {
             {
               queryKey,
               queryFn,
-              select: [
-                querySelect,
-                (value: string) => {
-                  if (throws) throw new Error(`${value} with a select error`)
-                  return new Set([value])
-                },
-              ],
+              select: querySelect((value: string) => {
+                if (throws) throw new Error(`${value} with a select error`)
+                return new Set([value])
+              }),
             },
           ],
         })

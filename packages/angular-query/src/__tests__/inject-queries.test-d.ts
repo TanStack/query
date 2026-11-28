@@ -171,13 +171,13 @@ describe('InjectQueries config object overload', () => {
     const query1 = queryOptions({
       queryKey: ['key'],
       queryFn: () => Promise.resolve(1),
-      select: [select, (data) => data > 1],
+      select: select((data) => data > 1),
     })
 
     const query2 = {
       queryKey: ['key'],
       queryFn: () => Promise.resolve(1),
-      select: [select, (data: number) => data > 1] as const,
+      select: select((data: number) => data > 1),
     }
 
     const queryResults = injectQueries(() => ({ queries: [query1, query2] }))

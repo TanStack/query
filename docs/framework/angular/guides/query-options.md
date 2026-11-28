@@ -51,15 +51,17 @@ setQueryData(queryClient, this.queries.post(42).queryKey, newPost)
 [//]: # 'Example2'
 
 ```ts
-import { select } from '@tanstack/angular-query'
+import { queryOptions, select } from '@tanstack/angular-query'
 
 // Type inference still works, so postQuery.data will be the return type of select instead of queryFn
 queries = inject(QueriesService)
 
-postQuery = injectQuery(() => ({
-  ...this.queries.post(1),
-  select: select((data) => data.title),
-}))
+postQuery = injectQuery(() =>
+  queryOptions({
+    ...this.queries.post(1),
+    select: select((data) => data.title),
+  }),
+)
 ```
 
 [//]: # 'Example2'

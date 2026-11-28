@@ -154,13 +154,15 @@ export function createQuery<
  * actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
  * ```svelte
  * <script lang="ts">
- *   import { createQuery } from '@tanstack/svelte-query'
+ *   import { queryOptions, select, createQuery } from '@tanstack/svelte-query'
  *
- *   const query = createQuery(() => ({
- *     queryKey: ['posts'],
- *     queryFn: fetchPosts,
- *     select: (posts) => posts.length,
- *   }))
+ *   const query = createQuery(() =>
+ *     queryOptions({
+ *       queryKey: ['posts'],
+ *       queryFn: fetchPosts,
+ *       select: select((posts) => posts.length),
+ *     }),
+ *   )
  * </script>
  *
  * {#if query.isPending}

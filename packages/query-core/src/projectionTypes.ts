@@ -1,8 +1,8 @@
 import type { placeholderData } from './placeholderData'
 import type { select } from './select'
 
-/** A selector and its opt-in observer implementation. */
-export type Select<TInput, TData> = readonly [
+/** An option created by `select(transform)` that supplies the selector and its observer implementation. */
+export type Select<TInput, TData> = () => readonly [
   feature: typeof select,
   value: (data: TInput) => TData,
 ]

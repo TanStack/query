@@ -31,7 +31,7 @@ describe('UseSuspenseQueries config object overload', () => {
       queryKey: createKey(),
       queryFn: () => Promise.resolve(5),
       placeholderData: placeholderData(0),
-      select: [select, (data) => data.toString()],
+      select: select((data) => data.toString()),
     })
     const [selectedQuery] = useSuspenseQueries({
       queries: [selectedOptions],
@@ -87,13 +87,13 @@ describe('UseSuspenseQueries config object overload', () => {
     const query1 = queryOptions({
       queryKey: createKey(),
       queryFn: () => Promise.resolve(1),
-      select: [select, (data) => data > 1],
+      select: select((data) => data > 1),
     })
 
     const query2 = {
       queryKey: createKey(),
       queryFn: () => Promise.resolve(1),
-      select: [select, (data: number) => data > 1] as const,
+      select: select((data: number) => data > 1),
     }
 
     const queryResults = useSuspenseQueries({ queries: [query1, query2] })
@@ -216,12 +216,9 @@ describe('UseSuspenseQueries config object overload', () => {
         ...queries1List,
         {
           ...Queries2.get(),
-          select: [
-            select,
-            function (data: boolean) {
-              return data
-            },
-          ],
+          select: select((data: boolean) => {
+            return data
+          }),
         },
       ],
     })
@@ -283,12 +280,9 @@ describe('UseSuspenseQueries config object overload', () => {
               queryKey: createKey(),
               queryFn: () => 'Query Data',
             }),
-            select: [
-              select,
-              function (data: string) {
-                return data
-              },
-            ],
+            select: select((data: string) => {
+              return data
+            }),
           },
         ],
       }),

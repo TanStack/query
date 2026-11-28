@@ -114,6 +114,30 @@ describe('queriesObserver', () => {
       unsubscribe()
     })
 
+    it('keeps the last successful selection from reader creation until its first read', () => {
+      const query = {
+        queryKey: createKey(),
+        queryFn: () => 1,
+        initialData: 1,
+      }
+      const group = new QueriesObserver(queryClient, [
+        { ...query, select: selectResult(() => 'before') },
+      ])
+      const error = new Error('selection failed')
+      const reader = group.createResultReader([
+        {
+          ...query,
+          select: selectResult(() => {
+            throw error
+          }),
+        },
+      ])
+      group.setQueries([{ ...query, select: selectResult(() => 'after') }])
+
+      expect(reader.getSnapshot()[0]).toMatchObject({ data: 'before', error })
+      expect(group.getCurrentResult()[0]?.data).toBe('after')
+    })
+
     it('keeps the snapshot stable when predicted fetching starts', async () => {
       const options = defaultQueryOptions(queryClient, {
         queryKey: createKey(),

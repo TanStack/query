@@ -48,7 +48,7 @@ describe('infiniteQueryOptions', () => {
       queryKey: ['key'],
       queryFn: () => ({ wow: true }),
       initialPageParam: 0,
-      select: [select, (data) => data.pages],
+      select: select((data) => data.pages),
     })
 
     const data = await infiniteQuery(new QueryClient(), options)

@@ -70,7 +70,7 @@ const { data: userIds } = useQuery(
   queryOptions({
     queryKey: ['users'],
     queryFn: getUsersData,
-    select: [select, (users) => users.map((user) => user.id)],
+    select: select((users) => users.map((user) => user.id)),
   }),
 )
 

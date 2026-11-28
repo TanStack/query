@@ -46,6 +46,7 @@ import type {
   QueryPersister,
   QueryStatus,
   RefetchOptions,
+  Select,
   isFetching,
   isPaused,
   isRefetching,
@@ -54,7 +55,7 @@ import type { FlagFor, Guarded, GuardedProperties } from './helpers/result'
 
 type IntervalInput<TOption> = Extract<TOption, { value: unknown }>['value']
 
-type ProjectionInput<T> = T extends readonly [unknown, infer TInput]
+type PlaceholderInput<T> = T extends readonly [unknown, infer TInput]
   ? TInput
   : T
 
@@ -119,9 +120,9 @@ describe('queryObserver', () => {
 
     it('should derive its remaining type parameters from the data type', () => {
       expectTypeOf<
-        ProjectionInput<QueryObserverOptions<{ value: string }>['select']>
+        QueryObserverOptions<{ value: string }>['select']
       >().toEqualTypeOf<
-        ((data: { value: string }) => { value: string }) | undefined
+        Select<{ value: string }, { value: string }> | undefined
       >()
     })
 
@@ -524,7 +525,10 @@ describe('queryObserver', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => Promise.resolve({ count: 1 }),
-          select: [select, (data) => data.count],
+          select: select((data) => {
+            expectTypeOf(data).toEqualTypeOf<{ count: number }>()
+            return data.count
+          }),
         })
 
         expectTypeOf(observer.getCurrentResult().data).toEqualTypeOf<
@@ -536,7 +540,7 @@ describe('queryObserver', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => ({ count: 1 }),
-          select: [select, (data) => ({ myCount: data.count })],
+          select: select((data) => ({ myCount: data.count })),
         })
 
         observer.subscribe((result) => {
@@ -550,7 +554,7 @@ describe('queryObserver', () => {
         const observer = new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => ({ count: 1 }),
-          select: [select, (data) => ({ myCount: data.count })],
+          select: select((data) => ({ myCount: data.count })),
         })
 
         const observerResult = await observer.refetch()
@@ -564,7 +568,7 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => Promise.resolve({ count: 1 }),
-          select: [select, (data) => data.count],
+          select: select((data) => data.count),
           placeholderData: [
             placeholderData,
             (previousData) => {
@@ -583,7 +587,7 @@ describe('queryObserver', () => {
         })
 
         expectTypeOf<
-          ProjectionInput<
+          PlaceholderInput<
             QueryObserverOptions<
               { count: number },
               DefaultError,
@@ -640,7 +644,7 @@ describe('queryObserver', () => {
 
         expectTypeOf<
           Exclude<
-            ProjectionInput<
+            PlaceholderInput<
               QueryObserverOptions<{ value: string }>['placeholderData']
             >,
             (...args: Array<any>) => any
@@ -691,7 +695,7 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: createKey(),
           queryFn: () => queryData,
-          select: [select, (data) => data.foo],
+          select: select((data) => data.foo),
           placeholderData: [
             placeholderData,
             (previousData) => {
@@ -1655,13 +1659,10 @@ describe('queryObserver', () => {
       observer.setOptions({
         queryKey: createKey(),
         queryFn: () => Promise.resolve({ value: 'data' }),
-        select: [
-          select,
-          (data) => {
-            expectTypeOf(data).toEqualTypeOf<{ value: string }>()
-            return data
-          },
-        ],
+        select: select((data) => {
+          expectTypeOf(data).toEqualTypeOf<{ value: string }>()
+          return data
+        }),
       })
 
       observer.setOptions({
@@ -1690,8 +1691,8 @@ describe('queryObserver', () => {
       >()
         .parameter(0)
         .toEqualTypeOf<CustomError>()
-      expectTypeOf(observer.options.select?.[1]).toEqualTypeOf<
-        ((data: { value: string }) => { value: string }) | undefined
+      expectTypeOf(observer.options.select).toEqualTypeOf<
+        Select<{ value: string }, { value: string }> | undefined
       >()
     })
   })
@@ -1812,7 +1813,7 @@ describe('queryObserver', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: createKey(),
         queryFn: () => Promise.resolve({ count: 1 }),
-        select: [select, (data) => data.count],
+        select: select((data) => data.count),
       })
 
       expectTypeOf(observer.getCurrentQuery().state.data).toEqualTypeOf<
@@ -1988,9 +1989,9 @@ describe('queryObserver', () => {
       >()
 
       expectTypeOf<
-        ProjectionInput<OptimisticArgs<typeof observer>[0]['select']>
+        OptimisticArgs<typeof observer>[0]['select']
       >().toEqualTypeOf<
-        ((data: { value: string }) => { value: string }) | undefined
+        Select<{ value: string }, { value: string }> | undefined
       >()
     })
   })

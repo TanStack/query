@@ -112,14 +112,20 @@ projectsQuery = injectInfiniteQuery(() => ({
 [//]: # 'Example4'
 
 ```ts
-projectsQuery = injectInfiniteQuery(() => ({
-  queryKey: ['projects'],
-  queryFn: fetchProjects,
-  select: (data) => ({
-    pages: [...data.pages].reverse(),
-    pageParams: [...data.pageParams].reverse(),
+import { infiniteQueryOptions, select } from '@tanstack/angular-query'
+
+projectsQuery = injectInfiniteQuery(() =>
+  infiniteQueryOptions({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    select: select((data) => ({
+      pages: [...data.pages].reverse(),
+      pageParams: [...data.pageParams].reverse(),
+    })),
   }),
-}))
+)
 ```
 
 [//]: # 'Example4'

@@ -361,7 +361,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
-      select: [selectData, (data) => ({ myCount: data.count })],
+      select: selectData((data) => ({ myCount: data.count })),
     })
     let observerResult
     const unsubscribe = observer.subscribe((result) => {
@@ -377,7 +377,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
-      select: [selectData, (data) => ({ myCount: data.count })],
+      select: selectData((data) => ({ myCount: data.count })),
     })
     const observerResult = await observer.refetch()
     expect(observerResult.data).toMatchObject({ myCount: 1 })
@@ -388,7 +388,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
-      select: [selectData, (data) => ({ myCount: data.count })],
+      select: selectData((data) => ({ myCount: data.count })),
     })
     let observerResult
     const unsubscribe = observer.subscribe((result) => {
@@ -405,13 +405,10 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count }),
-      select: [
-        selectData,
-        (data) => {
-          count++
-          return { myCount: data.count }
-        },
-      ],
+      select: selectData((data) => {
+        count++
+        return { myCount: data.count }
+      }),
     })
     const observerResult1 = await observer.refetch()
     const observerResult2 = await observer.refetch()
@@ -533,13 +530,10 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
-      select: [
-        selectData,
-        (data) => {
-          count++
-          return { myCount: data.count }
-        },
-      ],
+      select: selectData((data) => {
+        count++
+        return { myCount: data.count }
+      }),
     })
     const observerResult1 = await observer.refetch()
     const observerResult2 = await observer.refetch()
@@ -637,16 +631,13 @@ describe('queryObserver', () => {
       queryKey: key,
       retry: 0,
       queryFn: () => sleep(10).then(() => (shouldError ? 2 : 1)),
-      select: [
-        selectData,
-        (num) => {
-          if (shouldError) {
-            throw error
-          }
-          shouldError = true
-          return String(num)
-        },
-      ],
+      select: selectData((num) => {
+        if (shouldError) {
+          throw error
+        }
+        shouldError = true
+        return String(num)
+      }),
     })
 
     const unsubscribe = observer.subscribe((result) => {
@@ -689,12 +680,9 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key1,
       queryFn: () => sleep(10).then(() => ({ count: 1 })),
-      select: [
-        selectData,
-        (): { count: number } => {
-          throw new Error('selector error')
-        },
-      ],
+      select: selectData((): { count: number } => {
+        throw new Error('selector error')
+      }),
     })
     const unsubscribe = observer.subscribe(() => {})
     await vi.advanceTimersByTimeAsync(10)
@@ -705,7 +693,7 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key2,
       queryFn: () => sleep(10).then(() => ({ count: 2 })),
-      select: [selectData, (data) => data],
+      select: selectData((data) => data),
     })
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'pending',
@@ -730,7 +718,7 @@ describe('queryObserver', () => {
       queryKey: keyA,
       queryFn: () => sleep(10).then(() => ({ count: 1 })),
       placeholderData: placeholderData(placeholder),
-      select: [selectData, (data) => ({ selected: data.count })],
+      select: selectData((data) => ({ selected: data.count })),
     })
     const unsubscribe = observer.subscribe(() => {})
     await vi.advanceTimersByTimeAsync(10)
@@ -755,7 +743,7 @@ describe('queryObserver', () => {
       queryKey: keyC,
       queryFn: () => sleep(10).then(() => ({ count: 3 })),
       placeholderData: placeholderData(placeholder),
-      select: [selectData, (data) => ({ selected: data.count })],
+      select: selectData((data) => ({ selected: data.count })),
     })
     expect(observer.getCurrentResult()).toMatchObject({
       status: 'success',
@@ -778,15 +766,12 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => ({ count: 1 })),
-      select: [
-        selectData,
-        (data): { count: number } => {
-          if (shouldThrow) {
-            throw new Error('selector error')
-          }
-          return data
-        },
-      ],
+      select: selectData((data): { count: number } => {
+        if (shouldThrow) {
+          throw new Error('selector error')
+        }
+        return data
+      }),
     })
     const unsubscribe = observer.subscribe(() => {})
     await vi.advanceTimersByTimeAsync(10)
@@ -1269,7 +1254,7 @@ describe('queryObserver', () => {
           return prev
         },
       ],
-      select: [selectData, (data) => data.value],
+      select: selectData((data) => data.value),
     })
 
     const unsubscribe = observer.subscribe((result) => {
@@ -1287,7 +1272,7 @@ describe('queryObserver', () => {
           return prev
         },
       ],
-      select: [selectData, (data) => data.value],
+      select: selectData((data) => data.value),
     })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()
@@ -1334,13 +1319,10 @@ describe('queryObserver', () => {
       queryKey: key1,
       queryFn: () => data1,
       placeholderData: [placeholderData, (prev) => prev],
-      select: [
-        selectData,
-        (data) => {
-          selectCount++
-          return data.value
-        },
-      ],
+      select: selectData((data) => {
+        selectCount++
+        return data.value
+      }),
     })
 
     const unsubscribe = observer.subscribe((result) => {
@@ -1352,13 +1334,10 @@ describe('queryObserver', () => {
       queryKey: key2,
       queryFn: () => data2,
       placeholderData: [placeholderData, (prev) => prev],
-      select: [
-        selectData,
-        (data) => {
-          selectCount++
-          return data.value
-        },
-      ],
+      select: selectData((data) => {
+        selectCount++
+        return data.value
+      }),
     })
     await vi.advanceTimersByTimeAsync(0)
     unsubscribe()

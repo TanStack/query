@@ -1,5 +1,6 @@
 <script lang="ts">
   import {
+    infiniteQueryOptions,
     isLoading,
     isFetching,
     isFetchingNextPage,
@@ -20,16 +21,18 @@
 
   let { query = '' }: Props = $props()
 
-  const searchQuery = createInfiniteQuery(() => ({
-    ...productsQueries.search<Product>({
-      indexName: 'bestbuy',
-      query,
-      hitsPerPage: 5,
+  const searchQuery = createInfiniteQuery(() =>
+    infiniteQueryOptions({
+      ...productsQueries.search<Product>({
+        indexName: 'bestbuy',
+        query,
+        hitsPerPage: 5,
+      }),
+      select: select((data) => data.pages.flatMap((page) => page.hits)),
+      staleTime: 30 * 1000, // 30s
+      gcTime: 15 * 60 * 1000, // 15m
     }),
-    select: [select, (data) => data.pages.flatMap((page) => page.hits)],
-    staleTime: 30 * 1000, // 30s
-    gcTime: 15 * 60 * 1000, // 15m
-  }))
+  )
 </script>
 
 {#if query}

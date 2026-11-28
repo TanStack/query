@@ -9,6 +9,7 @@ import {
 import { createKey } from '@tanstack/query-test-utils'
 import { describe, expectTypeOf, it } from 'vitest'
 import { QueryClient } from '../QueryClient'
+import { infiniteQueryOptions } from '../index.js'
 import { useInfiniteQuery } from '../useInfiniteQuery'
 import type { InfiniteData } from '@tanstack/query-core'
 
@@ -89,21 +90,20 @@ describe('useInfiniteQuery', () => {
     })
 
     it('should be able to transform data to arbitrary result', () => {
-      const infiniteQuery = useInfiniteQuery(() => ({
-        queryKey: createKey(),
-        queryFn: ({ pageParam }) => {
-          return pageParam * 5
-        },
-        initialPageParam: 1,
-        getNextPageParam: () => undefined,
-        select: [
-          select,
-          (data) => {
+      const infiniteQuery = useInfiniteQuery(() =>
+        infiniteQueryOptions({
+          queryKey: createKey(),
+          queryFn: ({ pageParam }: { pageParam: number }) => {
+            return pageParam * 5
+          },
+          initialPageParam: 1,
+          getNextPageParam: () => undefined,
+          select: select((data) => {
             expectTypeOf(data).toEqualTypeOf<InfiniteData<number, number>>()
             return 'selected' as const
-          },
-        ],
-      }))
+          }),
+        }),
+      )
 
       expectTypeOf(infiniteQuery.data).toEqualTypeOf<'selected' | undefined>()
     })

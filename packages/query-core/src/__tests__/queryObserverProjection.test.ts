@@ -35,13 +35,10 @@ describe('observer data outcome after reset', () => {
       queryFn: () => new Promise<{ label: string | null }>(() => {}),
       enabled: false,
       placeholderData: withPlaceholder(placeholder),
-      select: [
-        selectData,
-        (row) => {
-          if (row.label === null) throw new Error('label not ready')
-          return row.label
-        },
-      ],
+      select: selectData((row) => {
+        if (row.label === null) throw new Error('label not ready')
+        return row.label
+      }),
     })
     const unsubscribe = observer.subscribe(() => {})
 

@@ -91,24 +91,18 @@ describe('createQueries', () => {
           {
             queryKey: key1,
             queryFn: () => 'string',
-            select: [
-              select,
-              (a) => {
-                expectTypeOf(a).toEqualTypeOf<string>()
-                return a.toLowerCase()
-              },
-            ],
+            select: select((a) => {
+              expectTypeOf(a).toEqualTypeOf<string>()
+              return a.toLowerCase()
+            }),
           },
           {
             queryKey: key2,
             queryFn: () => 'string',
-            select: [
-              select,
-              (a) => {
-                expectTypeOf(a).toEqualTypeOf<string>()
-                return parseInt(a)
-              },
-            ],
+            select: select((a) => {
+              expectTypeOf(a).toEqualTypeOf<string>()
+              return parseInt(a)
+            }),
           },
         ],
       }),
@@ -127,13 +121,10 @@ describe('createQueries', () => {
           {
             queryKey: key1,
             queryFn: () => 'string',
-            select: [
-              select,
-              (a) => {
-                expectTypeOf(a).toEqualTypeOf<string>()
-                return a.toLowerCase()
-              },
-            ],
+            select: select((a) => {
+              expectTypeOf(a).toEqualTypeOf<string>()
+              return a.toLowerCase()
+            }),
             placeholderData: placeholderData('string'),
             // @ts-expect-error (initialData: string)
             initialData: 123,
@@ -141,13 +132,10 @@ describe('createQueries', () => {
           {
             queryKey: key2,
             queryFn: () => 'string',
-            select: [
-              select,
-              (a) => {
-                expectTypeOf(a).toEqualTypeOf<string>()
-                return parseInt(a)
-              },
-            ],
+            select: select((a) => {
+              expectTypeOf(a).toEqualTypeOf<string>()
+              return parseInt(a)
+            }),
             placeholderData: placeholderData('string'),
             // @ts-expect-error (initialData: string)
             initialData: 123,
@@ -225,24 +213,18 @@ describe('createQueries', () => {
           {
             queryKey: key1,
             queryFn: () => 'string',
-            select: [
-              select,
-              (a) => {
-                expectTypeOf(a).toEqualTypeOf<string>()
-                return a.toLowerCase()
-              },
-            ],
+            select: select((a) => {
+              expectTypeOf(a).toEqualTypeOf<string>()
+              return a.toLowerCase()
+            }),
           },
           {
             queryKey: key2,
             queryFn: () => 'string',
-            select: [
-              select,
-              (a) => {
-                expectTypeOf(a).toEqualTypeOf<string>()
-                return parseInt(a)
-              },
-            ],
+            select: select((a) => {
+              expectTypeOf(a).toEqualTypeOf<string>()
+              return parseInt(a)
+            }),
           },
         ],
       }),
@@ -261,24 +243,18 @@ describe('createQueries', () => {
           {
             queryKey: key1,
             queryFn: () => 'string',
-            select: [
-              select,
-              (a) => {
-                expectTypeOf(a).toEqualTypeOf<unknown>()
-                return a as string
-              },
-            ],
+            select: select((a) => {
+              expectTypeOf(a).toEqualTypeOf<unknown>()
+              return a as string
+            }),
           },
           {
             queryKey: key2,
             queryFn: () => 'string',
-            select: [
-              select,
-              (a) => {
-                expectTypeOf(a).toEqualTypeOf<unknown>()
-                return a as number
-              },
-            ],
+            select: select((a) => {
+              expectTypeOf(a).toEqualTypeOf<unknown>()
+              return a as number
+            }),
           },
         ],
       }),
@@ -302,13 +278,10 @@ describe('createQueries', () => {
           {
             queryKey: key1,
             queryFn: () => 'string',
-            select: [
-              select,
-              (a) => {
-                expectTypeOf(a).toEqualTypeOf<string>()
-                return a.toLowerCase()
-              },
-            ],
+            select: select((a) => {
+              expectTypeOf(a).toEqualTypeOf<string>()
+              return a.toLowerCase()
+            }),
             placeholderData: placeholderData('string'),
             // @ts-expect-error (initialData: string)
             initialData: 123,
@@ -316,13 +289,10 @@ describe('createQueries', () => {
           {
             queryKey: key2,
             queryFn: () => 'string',
-            select: [
-              select,
-              (a) => {
-                expectTypeOf(a).toEqualTypeOf<string>()
-                return parseInt(a)
-              },
-            ],
+            select: select((a) => {
+              expectTypeOf(a).toEqualTypeOf<string>()
+              return parseInt(a)
+            }),
             placeholderData: placeholderData('string'),
             // @ts-expect-error (initialData: string)
             initialData: 123,
@@ -377,7 +347,7 @@ describe('createQueries', () => {
         queries: Array(50).map((_, i) => ({
           queryKey: ['key', i] as const,
           queryFn: () => i + 10,
-          select: [select, (data: number) => data.toString()],
+          select: select((data: number) => data.toString()),
         })),
       }),
       () => queryClient,
@@ -401,7 +371,7 @@ describe('createQueries', () => {
           {
             queryKey: key3,
             queryFn: () => ['string[]'],
-            select: [select, () => 123],
+            select: select(() => 123),
           },
         ],
       }),
@@ -461,7 +431,7 @@ describe('createQueries', () => {
           {
             queryKey: key4,
             queryFn: () => 'string',
-            select: [select, (a: string) => parseInt(a)],
+            select: select((a: string) => parseInt(a)),
           },
         ],
       }),
@@ -474,7 +444,7 @@ describe('createQueries', () => {
         queries: Array(50).map((_, i) => ({
           queryKey: ['key', i] as const,
           queryFn: () => i + 10,
-          select: [select, (data: number) => data.toString()],
+          select: select((data: number) => data.toString()),
         })),
       }),
       () => queryClient,
@@ -495,7 +465,7 @@ describe('createQueries', () => {
           {
             queryKey: key4,
             queryFn: () => 'string',
-            select: [select, (a: string) => parseInt(a)],
+            select: select((a: string) => parseInt(a)),
           },
         ],
       }),

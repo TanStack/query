@@ -273,7 +273,7 @@ function createPlaceholderQueryObserverResult(
     return createPendingQueryObserverResult()
   }
 
-  const data = query.select ? query.select[1](initialData) : initialData
+  const data = query.select ? query.select()[1](initialData) : initialData
   const initialDataUpdatedAt =
     typeof query.initialDataUpdatedAt === 'function'
       ? query.initialDataUpdatedAt()

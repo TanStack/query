@@ -1,4 +1,5 @@
 import {
+  queryOptions,
   QueryClient,
   QueryClientProvider,
   keepPreviousData,
@@ -92,11 +93,10 @@ const PokemonDetails = () => {
 const PokemonDex = (props: { id: string }) => {
   const pokemon = useQuery(() => pokemonsQueries.detail(props.id))
 
-  const pokemon_stats = useQuery(() => ({
-    ...pokemonsQueries.detail(props.id),
-    select: [
-      select,
-      function (data) {
+  const pokemon_stats = useQuery(() =>
+    queryOptions({
+      ...pokemonsQueries.detail(props.id),
+      select: select(function (data) {
         const nameMap = {
           hp: 'HP',
           attack: 'Attack',
@@ -109,10 +109,10 @@ const PokemonDex = (props: { id: string }) => {
           name: nameMap[stat.stat.name as keyof typeof nameMap],
           value: stat.base_stat,
         }))
-      },
-    ],
-    reconcile: 'name',
-  }))
+      }),
+      reconcile: 'name',
+    }),
+  )
 
   const is_server_rendered = useQuery(() => ({
     queryKey: ['is_server_rendered', props.id],
@@ -194,11 +194,10 @@ const PokemonDex = (props: { id: string }) => {
 const SideNav = () => {
   const id = usePokemonID()
 
-  const pokemonsList = useQuery(() => ({
-    ...pokemonsQueries.list(),
-    select: [
-      select,
-      function (data) {
+  const pokemonsList = useQuery(() =>
+    queryOptions({
+      ...pokemonsQueries.list(),
+      select: select(function (data) {
         return data.results.map((p) => {
           const regex = /\/pokemon\/(\d+)\/$/
           const match = p.url.match(regex)
@@ -209,11 +208,11 @@ const SideNav = () => {
             avatar: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`,
           }
         })
-      },
-    ],
-    placeholderData: placeholderData(keepPreviousData),
-    reconcile: 'id',
-  }))
+      }),
+      placeholderData: placeholderData(keepPreviousData),
+      reconcile: 'id',
+    }),
+  )
 
   const activeClass = (pokemonID: string) =>
     id() === pokemonID ? 'bg-gray-50' : 'hover:bg-gray-50'

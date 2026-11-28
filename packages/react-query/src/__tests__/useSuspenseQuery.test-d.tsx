@@ -46,7 +46,7 @@ describe('useSuspenseQuery', () => {
       suspenseQueryOptions({
         queryKey: createKey(),
         queryFn: Math.random() > 0.5 ? skipToken : () => Promise.resolve(5),
-        select: [select, (data) => data.toString()],
+        select: select((data) => data.toString()),
       }),
     )
 
@@ -93,7 +93,7 @@ describe('useSuspenseQuery', () => {
         queryKey: createKey(),
         queryFn: () => Promise.resolve(5),
         placeholderData: placeholderData(0),
-        select: [select, (data) => data.toString()],
+        select: select((data) => data.toString()),
       }),
     )
 

@@ -15,7 +15,9 @@ import type { QueryKey, QueryObserverOptionsBase } from './types'
 export function select<TInput, TData>(
   transform: (input: TInput) => TData,
 ): Select<TInput, TData> {
-  return [select, transform]
+  // A callable option lets TypeScript infer the callback input from the surrounding query.
+  const selection = [select, transform] as const
+  return () => selection
 }
 
 select.project = projectResult

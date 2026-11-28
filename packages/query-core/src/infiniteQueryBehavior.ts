@@ -35,65 +35,40 @@ export function prepareInfiniteFetch<TQueryFnData, TError, TData, TPageParam>(
     const signalContext: FetchSignalContext = context
     const queryFn = ensureQueryFn(options, fetchOptions)
 
-    // Create function to fetch a page
-    const fetchPage = async (
-      data: InfiniteData<unknown>,
-      param: unknown,
-      previous?: boolean,
-    ): Promise<InfiniteData<unknown>> => {
-      if (cancelled) {
-        throw context.signal.reason
-      }
+    const fetchMore = previousData.pages.length ? direction : undefined
+    const previous = fetchMore === 'backward'
+    const remaining = options.pages ?? previousData.pages.length
 
-      if (param == null && data.pages.length) {
-        return data
-      }
+    const [firstPageParam = options.initialPageParam] = previousData.pageParams
 
-      const queryFnContext = addConsumeAwareSignal(
-        {
-          client,
-          queryKey,
-          pageParam: param,
-          meta: options.meta,
-        },
+    // A directional fetch extends the cached pages once. A refetch starts at
+    // the first cursor and keeps completed pages when an attempt is retried.
+    do {
+      const data = fetchMore ? previousData : result
+      const param =
+        fetchMore || currentPage > 0
+          ? getPageParam(options, data, previous)
+          : firstPageParam
+
+      if (param == null && data.pages.length) return data
+      // oxlint-disable-next-line typescript/no-unnecessary-condition -- a previous page can consume the signal and abort while its query function runs.
+      if (cancelled) throw context.signal.reason
+
+      const pageContext = addConsumeAwareSignal(
+        { client, queryKey, pageParam: param, meta: options.meta },
         () => context.signal,
         () => (cancelled = true),
         signalContext[fetchSignal],
       )
-
-      const page = await queryFn(queryFnContext)
-
+      const page = await queryFn(pageContext)
       const { maxPages } = options
-      return {
+      result = {
         pages: addToArray(data.pages, page, maxPages, previous),
         pageParams: addToArray(data.pageParams, param, maxPages, previous),
       }
-    }
-
-    // fetch next / previous page?
-    if (direction && previousData.pages.length) {
-      const previous = direction === 'backward'
-      const param = getPageParam(options, previousData, previous)
-
-      result = await fetchPage(previousData, param, previous)
-    } else {
-      const remainingPages = options.pages ?? previousData.pages.length
-
-      // Fetch all pages
-      do {
-        const param =
-          currentPage === 0
-            ? previousData.pageParams[0] === undefined
-              ? options.initialPageParam
-              : previousData.pageParams[0]
-            : getPageParam(options, result)
-        if (currentPage > 0 && param == null) {
-          break
-        }
-        result = await fetchPage(result, param)
-        currentPage++
-      } while (currentPage < remainingPages)
-    }
+      if (fetchMore) break
+      currentPage++
+    } while (currentPage < remaining)
 
     return result
   }

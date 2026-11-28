@@ -672,7 +672,7 @@ export interface QueryObserverOptionsBase<
     | ThrowOnError<TQueryFnData, TError, TQueryData, TQueryKey>
     | QueryErrorBoundaryOption<TQueryFnData, TError, TQueryData, TQueryKey>
 
-  /** Pass [select, transform] to derive the data returned by this observer. */
+  /** Pass `select(transform)` to derive the data returned by this observer. */
   select?: Select<TQueryData, TData>
 
   /**
@@ -790,6 +790,18 @@ export type DefaultedInfiniteQueryObserverOptions<
   InfiniteQueryPageParamsOptions<TQueryFnData, TPageParam>
 
 /**
+ * Enables inference of the selector input from `queryFn` when its result is the stored data.
+ * Observers that store a different shape, such as infinite pages, use the general overload.
+ * @internal
+ */
+export type MatchingQueryData<TQueryData, TQueryFnData> = [
+  TQueryData,
+  TQueryFnData,
+] extends [TQueryFnData, TQueryData]
+  ? unknown
+  : never
+
+/**
  * The options of `query`: the {@link QueryOptions} of the query, plus a `staleTime`
  * that decides whether cached data is returned instead of fetching, and a `select` that only
  * transforms the value the call resolves with.
@@ -810,7 +822,7 @@ export interface QueryExecuteOptions<
    */
   initialPageParam?: never
 
-  /** Pass [select, transform] to derive the resolved value while retaining the fetched data in the cache. */
+  /** Pass `select(transform)` to derive the resolved value while retaining the fetched data in the cache. */
   select?: Select<TQueryData, TData>
 
   /**

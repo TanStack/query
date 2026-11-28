@@ -52,7 +52,7 @@ describe('result reader types', () => {
     > = {
       queryKey: ['value'],
       queryFn: ({ pageParam }) => pageParam,
-      select: [select, (data) => data.pages.join(',')],
+      select: select((data) => data.pages.join(',')),
       initialPageParam: 0,
       getNextPageParam: (last) => last + 1,
       queryHash: 'value',

@@ -1,4 +1,5 @@
 import {
+  infiniteQueryOptions,
   createInfiniteQueryController,
   isFetching,
   isFetchingNextPage,
@@ -21,16 +22,18 @@ class SearchResults extends LitElement {
 
   query = ''
 
-  private readonly products = createInfiniteQueryController(this, () => ({
-    ...productsQueries.search<Product>({
-      indexName: 'bestbuy',
-      query: this.query,
-      hitsPerPage: 5,
+  private readonly products = createInfiniteQueryController(this, () =>
+    infiniteQueryOptions({
+      ...productsQueries.search<Product>({
+        indexName: 'bestbuy',
+        query: this.query,
+        hitsPerPage: 5,
+      }),
+      select: select((data) => data.pages.flatMap((page) => page.hits)),
+      staleTime: 30 * 1000, // 30s
+      gcTime: 15 * 60 * 1000, // 15m
     }),
-    select: [select, (data) => data.pages.flatMap((page) => page.hits)],
-    staleTime: 30 * 1000, // 30s
-    gcTime: 15 * 60 * 1000, // 15m
-  }))
+  )
 
   protected override createRenderRoot(): HTMLElement | DocumentFragment {
     return this

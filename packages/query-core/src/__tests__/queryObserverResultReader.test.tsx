@@ -92,7 +92,7 @@ describe('query observer result readers', () => {
         ...options,
         queryKey: keyB,
         queryHash: undefined,
-        select: [selectData, (data) => ({ selected: data.value * 10 })],
+        select: selectData((data) => ({ selected: data.value * 10 })),
       }),
     )
 

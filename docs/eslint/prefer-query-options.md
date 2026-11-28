@@ -64,7 +64,7 @@ function useFooQuery(id) {
   return useQuery(
     queryOptions({
       ...getFooOptions(id),
-      select: [select, (data) => data.foo],
+      select: select((data) => data.foo),
     }),
   )
 }

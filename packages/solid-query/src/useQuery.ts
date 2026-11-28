@@ -107,14 +107,16 @@ export function useQuery<
  * actually stored in the cache — the cache still holds the full `Post[]`, but `data` here is a `number`:
  * ```tsx
  * import { Match, Switch } from 'solid-js'
- * import { useQuery } from '@tanstack/solid-query'
+ * import { queryOptions, select, useQuery } from '@tanstack/solid-query'
  *
  * function PostCount() {
- *   const postsQuery = useQuery(() => ({
- *     queryKey: ['posts'],
- *     queryFn: fetchPosts,
- *     select: (posts) => posts.length,
- *   }))
+ *   const postsQuery = useQuery(() =>
+ *     queryOptions({
+ *       queryKey: ['posts'],
+ *       queryFn: fetchPosts,
+ *       select: select((posts) => posts.length),
+ *     }),
+ *   )
  *
  *   return (
  *     <Switch>

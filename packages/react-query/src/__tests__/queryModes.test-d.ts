@@ -73,7 +73,7 @@ describe('query render modes', () => {
     const seeded = queryOptions({
       ...options,
       initialData: { title: 'Seed' },
-      select: [select, (post) => post.title],
+      select: select((post) => post.title),
     })
     expectTypeOf(useQuery(seeded).data).toEqualTypeOf<string>()
     const conflicting = { ...options, throwOnError: true }
@@ -82,7 +82,7 @@ describe('query render modes', () => {
     const title = useQuery(
       suspenseQueryOptions({
         ...options,
-        select: [select, (post) => post.title],
+        select: select((post) => post.title),
       }),
     )
     expectTypeOf(title.data).toEqualTypeOf<string>()
@@ -147,7 +147,7 @@ describe('query render modes', () => {
       queryOptions({
         queryKey: ['books'],
         queryFn: (): Array<string> => [],
-        select: [select, (titles) => titles.at(0)],
+        select: select((titles) => titles.at(0)),
       }),
     )
     if (isSuccess(selected)) {
@@ -173,15 +173,12 @@ describe('query render modes', () => {
         return [pageParam.cursor.toString()]
       },
       getNextPageParam: (_lastPage, pages) => ({ cursor: pages.length }),
-      select: [
-        select,
-        (data) => {
-          expectTypeOf(data).toEqualTypeOf<
-            InfiniteData<Array<string>, { cursor: number }>
-          >()
-          return data.pages.flat().join(',')
-        },
-      ],
+      select: select((data) => {
+        expectTypeOf(data).toEqualTypeOf<
+          InfiniteData<Array<string>, { cursor: number }>
+        >()
+        return data.pages.flat().join(',')
+      }),
     })
     expectTypeOf(descriptor.queryKey[dataTagSymbol]).toEqualTypeOf<
       InfiniteData<Array<string>, { cursor: number }>
@@ -215,7 +212,7 @@ describe('query render modes', () => {
       queryFn: ({ pageParam }) => String(pageParam),
       initialPageParam: 0,
       getNextPageParam: () => 1,
-      select: [select, (data) => data.pages.length],
+      select: select((data) => data.pages.length),
     })
     expectTypeOf(
       useQuery(suspenseInfiniteQueryOptions(explicit)).error,
@@ -242,7 +239,7 @@ describe('query render modes', () => {
     const selected = useQuery(
       suspenseInfiniteQueryOptions({
         ...options,
-        select: [select, (pages) => pages.pages.join(',')],
+        select: select((pages) => pages.pages.join(',')),
       }),
     )
     expectTypeOf(selected.data).toEqualTypeOf<string>()

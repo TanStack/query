@@ -63,14 +63,11 @@ describe('usePrefetchQuery', () => {
     usePrefetchQuery<string, Error, number, { value: string }>({
       queryKey: createKey(),
       queryFn: () => Promise.resolve('data'),
-      select: [
-        select,
-        (data) => {
-          expectTypeOf(data).toEqualTypeOf<{ value: string }>()
+      select: select((data) => {
+        expectTypeOf(data).toEqualTypeOf<{ value: string }>()
 
-          return data.value.length
-        },
-      ],
+        return data.value.length
+      }),
     })
   })
 })

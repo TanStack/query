@@ -266,7 +266,7 @@ describe('useQuery', () => {
         const query = useQuery(
           queryOptions({
             ...options,
-            select: [select, (data) => data > 1],
+            select: select((data) => data > 1),
           }),
         )
 

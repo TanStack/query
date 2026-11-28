@@ -90,14 +90,20 @@ useInfiniteQuery(() => ({
 [//]: # 'Example4'
 
 ```tsx
-useInfiniteQuery(() => ({
-  queryKey: ['projects'],
-  queryFn: fetchProjects,
-  select: (data) => ({
-    pages: [...data.pages].reverse(),
-    pageParams: [...data.pageParams].reverse(),
+import { infiniteQueryOptions, select } from '@tanstack/solid-query'
+
+useInfiniteQuery(() =>
+  infiniteQueryOptions({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    select: select((data) => ({
+      pages: [...data.pages].reverse(),
+      pageParams: [...data.pageParams].reverse(),
+    })),
   }),
-}))
+)
 ```
 
 [//]: # 'Example4'

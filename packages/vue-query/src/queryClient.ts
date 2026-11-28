@@ -405,6 +405,30 @@ export function query<
       TQueryFnData,
       TError,
       TData,
+      TQueryFnData,
+      TQueryKey,
+      TPageParam
+    >
+  > &
+    ([TQueryData, TQueryFnData] extends [TQueryFnData, TQueryData]
+      ? unknown
+      : never),
+): Promise<TData>
+
+export function query<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = never,
+>(
+  client: QueryClient,
+  options: WithoutSkipToken<
+    QueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
       TQueryData,
       TQueryKey,
       TPageParam

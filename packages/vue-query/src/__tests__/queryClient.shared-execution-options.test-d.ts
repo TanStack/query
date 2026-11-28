@@ -15,7 +15,7 @@ describe('shared query options', () => {
       queryFn: computed(() =>
         enabled.value ? () => Promise.resolve('value') : skipToken,
       ),
-      select: [select, (data) => data.length],
+      select: select((data) => data.length),
     }
 
     expectTypeOf(query(queryClient, options)).toEqualTypeOf<
@@ -40,7 +40,7 @@ describe('shared query options', () => {
     const options: UseQueryOptions<string, Error, number, string, ['key']> = {
       queryKey: () => ['key'],
       queryFn: () => Promise.resolve('value'),
-      select: [select, (data) => data.length],
+      select: select((data) => data.length),
     }
 
     expectTypeOf(

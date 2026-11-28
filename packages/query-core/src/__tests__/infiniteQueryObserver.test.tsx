@@ -38,13 +38,10 @@ describe('InfiniteQueryObserver', () => {
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => sleep(10).then(() => 1),
-      select: [
-        select,
-        (data) => ({
-          pages: data.pages.map((x) => `${x}`),
-          pageParams: data.pageParams,
-        }),
-      ],
+      select: select((data) => ({
+        pages: data.pages.map((x) => `${x}`),
+        pageParams: data.pageParams,
+      })),
       initialPageParam: 1,
       getNextPageParam: () => 2,
     })
@@ -70,13 +67,10 @@ describe('InfiniteQueryObserver', () => {
       meta,
       queryKey: key,
       queryFn,
-      select: [
-        select,
-        (data) => ({
-          pages: data.pages.map((x) => `${x}`),
-          pageParams: data.pageParams,
-        }),
-      ],
+      select: select((data) => ({
+        pages: data.pages.map((x) => `${x}`),
+        pageParams: data.pageParams,
+      })),
       initialPageParam: 1,
       getNextPageParam: () => 2,
     })

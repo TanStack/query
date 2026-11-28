@@ -738,7 +738,7 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: key,
           queryFn: () => ({ name: 'test' }),
-          select: [querySelect, (data) => data.name],
+          select: querySelect((data) => data.name),
         }),
       )
       states.push(state)
@@ -765,7 +765,7 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: key,
           queryFn: () => ({ name: 'test' }),
-          select: [querySelect, (data) => data.name],
+          select: querySelect((data) => data.name),
         }),
       )
       states.push(state)
@@ -793,12 +793,9 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: key,
           queryFn: () => ({ name: 'test' }),
-          select: [
-            querySelect,
-            () => {
-              throw error
-            },
-          ],
+          select: querySelect(() => {
+            throw error
+          }),
         }),
       )
       states.push(state)
@@ -1406,12 +1403,9 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: [key, count],
           queryFn: () => sleep(10).then(() => ({ count })),
-          select: [
-            querySelect,
-            function (data) {
-              return data.count
-            },
-          ],
+          select: querySelect((data) => {
+            return data.count
+          }),
           placeholderData: placeholderData(keepPreviousData),
         }),
       )
@@ -1477,12 +1471,9 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: [key, count],
           queryFn: () => sleep(10).then(() => ({ count })),
-          select: [
-            querySelect,
-            function (data) {
-              return data.count
-            },
-          ],
+          select: querySelect((data) => {
+            return data.count
+          }),
           placeholderData: [
             placeholderData,
             (prevData, prevQuery) => {
@@ -1534,12 +1525,9 @@ describe('useQuery', () => {
         queryOptions({
           queryKey: [key, count],
           queryFn: () => sleep(10).then(() => ({ count })),
-          select: [
-            querySelect,
-            function (data) {
-              return data.count
-            },
-          ],
+          select: querySelect((data) => {
+            return data.count
+          }),
           placeholderData: placeholderData(keepPreviousData),
         }),
       )
@@ -2205,7 +2193,7 @@ describe('useQuery', () => {
           queryOptions({
             queryKey: key,
             queryFn: () => ({ name: 'test' }),
-            select: [querySelect, (data) => data.name],
+            select: querySelect((data) => data.name),
           }),
         )
 
@@ -4519,7 +4507,7 @@ describe('useQuery', () => {
           queryKey: key1,
           queryFn: () => 1,
           placeholderData: placeholderData(23),
-          select: [querySelect, (data) => String(data * 2)],
+          select: querySelect((data) => String(data * 2)),
         }),
       )
 
@@ -4570,7 +4558,7 @@ describe('useQuery', () => {
               return 23
             },
           ],
-          select: [querySelect, (data) => String(data * 2)],
+          select: querySelect((data) => String(data * 2)),
         }),
       )
 
@@ -4722,7 +4710,7 @@ describe('useQuery', () => {
           queryKey: key1,
           queryFn: () => sleep(10).then(() => [1, 2]),
 
-          select: [querySelect, (res) => res.map((x) => x + 1)],
+          select: querySelect((res) => res.map((x) => x + 1)),
         }),
       )
 

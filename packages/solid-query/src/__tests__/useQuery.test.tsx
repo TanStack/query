@@ -41,6 +41,7 @@ import {
 import { reconcile } from 'solid-js/store'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  queryOptions,
   IsRestoringProvider,
   QueryCache,
   QueryClient,
@@ -600,11 +601,13 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
-      const state = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ name: 'test' })),
-        select: [select, (data) => data.name],
-      }))
+      const state = useQuery(() =>
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ name: 'test' })),
+          select: select((data) => data.name),
+        }),
+      )
       createRenderEffect(() => {
         states.push({ ...state })
       })
@@ -624,11 +627,13 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
-      const state = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ name: 'test' })),
-        select: [select, (data) => data.name],
-      }))
+      const state = useQuery(() =>
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ name: 'test' })),
+          select: select((data) => data.name),
+        }),
+      )
       createRenderEffect(() => {
         states.push({ ...state })
       })
@@ -648,11 +653,13 @@ describe('useQuery', () => {
     const states: Array<UseQueryResult<string>> = []
 
     function Page() {
-      const state = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ name: 'test' })),
-        select: [select, (data) => data.name],
-      }))
+      const state = useQuery(() =>
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ name: 'test' })),
+          select: select((data) => data.name),
+        }),
+      )
       createRenderEffect(() => {
         states.push({ ...state })
       })
@@ -673,16 +680,15 @@ describe('useQuery', () => {
     const error = new Error('Select Error')
 
     function Page() {
-      const state = useQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ name: 'test' })),
-        select: [
-          select,
-          () => {
+      const state = useQuery(() =>
+        queryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ name: 'test' })),
+          select: select(() => {
             throw error
-          },
-        ],
-      }))
+          }),
+        }),
+      )
       createRenderEffect(() => {
         if (state.status === 'pending')
           states.push({ status: 'pending', data: undefined })
@@ -3862,7 +3868,7 @@ describe('useQuery', () => {
         queryKey: key1,
         queryFn: () => sleep(10).then(() => 1),
         placeholderData: placeholderData(23),
-        select: [select, (data) => String(data * 2)],
+        select: select((data: number) => String(data * 2)),
       }))
 
       createRenderEffect(() => {
@@ -3913,7 +3919,7 @@ describe('useQuery', () => {
             return 23
           },
         ],
-        select: [select, (data) => String(data * 2)],
+        select: select((data: number) => String(data * 2)),
       }))
 
       createRenderEffect(() => {
@@ -4009,7 +4015,7 @@ describe('useQuery', () => {
       const state = useQuery(() => ({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => [1, 2]),
-        select: [select, (res) => res.map((x) => x + 1)],
+        select: select((res: Array<number>) => res.map((x) => x + 1)),
       }))
 
       createEffect(() => {
@@ -4055,7 +4061,7 @@ describe('useQuery', () => {
       const state = useQuery(() => ({
         queryKey: key1,
         queryFn: () => sleep(10).then(() => [1, 2]),
-        select: [select, (res) => res.map((x) => x + 1)],
+        select: select((res: Array<number>) => res.map((x) => x + 1)),
         reconcile(oldData, newData) {
           return reconcile(newData)(oldData)
         },

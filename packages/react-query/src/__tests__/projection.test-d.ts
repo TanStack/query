@@ -27,16 +27,34 @@ describe('projection feature types', () => {
     const suspense = useQuery(
       suspenseQueryOptions({
         ...options,
-        select: [
-          select,
-          (order) => {
-            expectTypeOf(order).toEqualTypeOf<{ count: number }>()
-            return order.count
-          },
-        ],
+        select: select((order) => {
+          expectTypeOf(order).toEqualTypeOf<{ count: number }>()
+          return order.count
+        }),
       }),
     )
     expectTypeOf(suspense.data).toEqualTypeOf<number>()
+  })
+
+  it('infers a selection when extending a prepared post query', () => {
+    const getPostOptions = (id: number) =>
+      queryOptions({
+        queryKey: ['post', id],
+        queryFn: () => Promise.resolve({ id, title: 'TanStack Query' }),
+      })
+
+    const result = useQuery(
+      queryOptions({
+        ...getPostOptions(1),
+        select: select((post) => {
+          expectTypeOf(post).toEqualTypeOf<{ id: number; title: string }>()
+          // @ts-expect-error Only fields returned by the fetcher can be selected.
+          void post.missing
+          return post.title
+        }),
+      }),
+    )
+    expectTypeOf(result.data).toEqualTypeOf<string | undefined>()
   })
 
   it('infers cached pages and the page parameter before selection', () => {
@@ -48,21 +66,18 @@ describe('projection feature types', () => {
     const regular = useQuery(
       infiniteQueryOptions({
         ...paging,
-        select: [
-          select,
-          (data) => {
-            expectTypeOf(data).toEqualTypeOf<
-              InfiniteData<{ count: number }, number>
-            >()
-            return data.pages.length
-          },
-        ],
+        select: select((data) => {
+          expectTypeOf(data).toEqualTypeOf<
+            InfiniteData<{ count: number }, number>
+          >()
+          return data.pages.length
+        }),
       }),
     )
     const suspense = useQuery(
       suspenseInfiniteQueryOptions({
         ...paging,
-        select: [select, (data) => data.pageParams.join(',')],
+        select: select((data) => data.pageParams.join(',')),
       }),
     )
     expectTypeOf(regular.data).toEqualTypeOf<number | undefined>()
@@ -70,7 +85,7 @@ describe('projection feature types', () => {
   })
 
   it('requires the feature for observer selectors and placeholders', () => {
-    expectTypeOf(select(count)).toEqualTypeOf<
+    expectTypeOf(select(count)).returns.toEqualTypeOf<
       readonly [typeof select, typeof count]
     >()
     // @ts-expect-error Plain selector callbacks do not install the projection feature.

@@ -19,6 +19,7 @@ import type {
   DefaultedQueryObserverOptions,
   InferDataFromTag,
   InferErrorFromTag,
+  MatchingQueryData,
   MutationKey,
   MutationObserverOptions,
   MutationOptions,
@@ -346,6 +347,28 @@ export function query<
       TQueryFnData,
       TError,
       TData,
+      TQueryFnData,
+      TQueryKey,
+      TPageParam
+    >
+  > &
+    MatchingQueryData<TQueryData, TQueryFnData>,
+): Promise<TData>
+
+export function query<
+  TQueryFnData,
+  TError = DefaultError,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = never,
+>(
+  client: QueryClient,
+  options: WithoutSkipToken<
+    QueryExecuteOptions<
+      TQueryFnData,
+      TError,
+      TData,
       TQueryData,
       TQueryKey,
       TPageParam
@@ -422,7 +445,7 @@ export async function query<
   const select = defaultedOptions.select
 
   if (select) {
-    return select[1](queryData)
+    return select()[1](queryData)
   }
 
   return queryData as unknown as TData

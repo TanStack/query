@@ -322,19 +322,18 @@ describe('useInfiniteQuery', () => {
     const states: Array<UseInfiniteQueryResult<InfiniteData<string>>> = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ count: 1 })),
-        select: [
-          select,
-          (data) => ({
+      const state = useInfiniteQuery(() =>
+        infiniteQueryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ count: 1 })),
+          select: select((data) => ({
             pages: data.pages.map((x) => `count: ${x.count}`),
             pageParams: data.pageParams,
-          }),
-        ],
-        getNextPageParam: () => undefined,
-        initialPageParam: 0,
-      }))
+          })),
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+        }),
+      )
 
       createRenderEffect(() => {
         states.push({ ...state })
@@ -365,22 +364,21 @@ describe('useInfiniteQuery', () => {
     let selectCalled = 0
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
-        queryKey: key,
-        queryFn: () => sleep(10).then(() => ({ count: 1 })),
-        select: [
-          select,
-          (data) => {
+      const state = useInfiniteQuery(() =>
+        infiniteQueryOptions({
+          queryKey: key,
+          queryFn: () => sleep(10).then(() => ({ count: 1 })),
+          select: select((data) => {
             selectCalled++
             return {
               pages: data.pages.map((x) => ({ ...x, id: Math.random() })),
               pageParams: data.pageParams,
             }
-          },
-        ],
-        getNextPageParam: () => undefined,
-        initialPageParam: 0,
-      }))
+          }),
+          getNextPageParam: () => undefined,
+          initialPageParam: 0,
+        }),
+      )
 
       createRenderEffect(() => {
         states.push({ ...state })
@@ -409,20 +407,20 @@ describe('useInfiniteQuery', () => {
     const states: Array<RecordedPage<number>> = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
-        queryKey: key,
-        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
-        select: [
-          select,
-          (data) => ({
+      const state = useInfiniteQuery(() =>
+        infiniteQueryOptions({
+          queryKey: key,
+          queryFn: ({ pageParam }: { pageParam: number }) =>
+            sleep(10).then(() => pageParam),
+          select: select((data) => ({
             pages: [...data.pages].reverse(),
             pageParams: [...data.pageParams].reverse(),
-          }),
-        ],
-        notifyOnChangeProps: 'all',
-        getNextPageParam: () => 1,
-        initialPageParam: 0,
-      }))
+          })),
+          notifyOnChangeProps: 'all',
+          getNextPageParam: () => 1,
+          initialPageParam: 0,
+        }),
+      )
 
       createRenderEffect(
         on(
@@ -1647,19 +1645,18 @@ describe('useInfiniteQuery', () => {
     const states: Array<UseInfiniteQueryResult<InfiniteData<string>>> = []
 
     function Page() {
-      const state = useInfiniteQuery(() => ({
-        queryKey: key,
-        queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
-        initialPageParam: 1,
-        getNextPageParam: (lastPage) => (lastPage === 1 ? 2 : undefined),
-        select: [
-          select,
-          (data) => ({
+      const state = useInfiniteQuery(() =>
+        infiniteQueryOptions({
+          queryKey: key,
+          queryFn: ({ pageParam }) => sleep(10).then(() => pageParam),
+          initialPageParam: 1,
+          getNextPageParam: (lastPage) => (lastPage === 1 ? 2 : undefined),
+          select: select((data) => ({
             pages: data.pages.map((x) => x.toString()),
             pageParams: data.pageParams,
-          }),
-        ],
-      }))
+          })),
+        }),
+      )
 
       createRenderEffect(() => {
         states.push({ ...state })
