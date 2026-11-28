@@ -6,6 +6,8 @@ minimumReleaseAge: 1440
 minimumReleaseAgeExcludePrune: true
 minimumReleaseAgeExclude:
   - 'solid-js@1.9.20' # Adds setTrustedTypesPolicy, which the devtools use.
+  # Renovate security update: next@16.4.5
+  - next@16.4.5
 linkWorkspacePackages: true
 preferWorkspacePackages: true
 blockExoticSubdeps: true
