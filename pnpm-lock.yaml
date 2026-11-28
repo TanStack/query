@@ -7185,8 +7185,8 @@ importers:
   integrations/angular/types-20:
     devDependencies:
       '@angular/common':
-        specifier: ~20.1.0
-        version: 20.1.8(@angular/core@20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
+        specifier: ~20.3.0
+        version: 20.3.35(@angular/core@20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)
       '@angular/compiler':
         specifier: ~20.1.0
         version: 20.1.8
@@ -8698,11 +8698,11 @@ packages:
     engines: {node: ^22.22.3 || ^24.15.0 || >=26.0.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
     hasBin: true
 
-  '@angular/common@20.1.8':
-    resolution: {integrity: sha512-naL9BOwbjnCHU/lV36qTeRn7dp/zBVE2ROaMi2VFnNt3IUZn6izolzFEEmjBkTXGChp+X9y0ha6JlQr/HlWGqg==}
+  '@angular/common@20.3.35':
+    resolution: {integrity: sha512-igHWqtW9BFMNyrVnVDJTxVXqJWT8ycn3YHNJfpX5PZmVC1SAXB5ohcMqvvamNMwEO20I/48TM1hkDLTmWR1sJw==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0}
     peerDependencies:
-      '@angular/core': 20.1.8
+      '@angular/core': 20.3.35
       rxjs: ^6.5.3 || ^7.4.0
 
   '@angular/common@21.2.26':
@@ -24861,7 +24861,7 @@ snapshots:
       - '@types/node'
       - chokidar
 
-  '@angular/common@20.1.8(@angular/core@20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)':
+  '@angular/common@20.3.35(@angular/core@20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2)':
     dependencies:
       '@angular/core': 20.1.8(@angular/compiler@20.1.8)(rxjs@7.8.2)(zone.js@0.15.0)
       rxjs: 7.8.2
